@@ -36,100 +36,49 @@ function Copyright(props) {
   );
 }
 
-
+// TODO remove, this demo shouldn't need to reset the theme.
 
 const defaultTheme = createTheme();
 
 export default function LogIn() {
-  const [loginRoleType, setLoginRoleType] = useState("admin");
-  const [disabledLogin, setDisabledLogin] = useState(true);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    role_type: "admin",
-  });
+  const [loginRoleType, setLoginRoleType] = useState("1");
 
   const navigate = useNavigate();
-
-  /**
-   * @description: Check all fields if not empty
-   * @input: form object { email, password }
-   * @output: boolean 
-   */
-  const isFieldsMapped = (obj) => {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (obj["email"] && emailPattern.test(obj["email"]) && obj["password"]) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  /**
-   * @Description: Update changes and trigger complete flag
-   * @Input: form object { email, password }
-   * @Output: boolean 
-   */  
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-
-    // Update the form data based on the field
-    setFormData((prevFormData) => {
-      return {
-        ...prevFormData,
-        [name]: value,
-      };
-    });
-
-    // Setup flag
-    if (isFieldsMapped(formData)) {
-      setDisabledLogin(false);
-    } else {
-      setDisabledLogin(true);
-    }
-  };
-
-  /**
-   * @Description: set role type in application of tab
-   * @Input: rolestype as String
-   * @Output: String 
-   */    
-  const tabSelection = (event, newValue) => {
+  const handleChange = (event, newValue) => {
     setLoginRoleType(newValue);
   };
 
-  /**
-   * @Description: handleSubmit
-   * @Input: Event
-   * @Output: {Success/ fails} 
-   */ 
-    const handleSubmit = async (event) => {
-    event.preventDefault();
-    setDisabledLogin(true);
+  const handleSubmit = async (event) => {
     const reactAppHostname = process.env.REACT_APP_HOSTNAME;
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
     const response = await fetch(`${reactAppHostname}/api/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: formData.email,
-        role_type: loginRoleType,
-        password: formData.password,
-      }),
-    });
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: data.get("email"),
+          role_type : loginRoleType,
+          password: data.get("password")
+        }),
+      });
 
-    try {
-      if (response.status === 200) {
-        alert(`${reactAppHostname}/api/login`);
-        navigate("/dashboard");
-      } else {
-        alert("Login Failed");
-      }
-    } catch (error) {
-      console.error("Error occurred:", error);
-    }
-  };
+      try{
+        if (response.status === 200) {
+          alert(`${reactAppHostname}/api/login`);
+          navigate("/dashboard");
+          
+        } else {
+          alert("Login Failed");
+          // Handle error cases here
+        }
+      } catch (error) {
+        console.error("Error occurred:", error);
+      }   
+    
+  }
+    
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -154,25 +103,25 @@ export default function LogIn() {
           <TabContext value={loginRoleType}>
             <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
               <TabList
-                onChange={tabSelection}
-                aria-label="Login application tabs"
+                onChange={handleChange}
+                aria-label="lab API tabs"
               >
-                <Tab label="Admin" value="admin" />
-                <Tab label="Secretary" value="secretary" />
-                <Tab label="Head of Office" value="head_of_Office" />
+                <Tab label="Admin" value="1" />
+                <Tab label="Secretary" value="2" />
+                <Tab label="Head of Office" value="3" />
               </TabList>
             </Box>
-            <TabPanel value="admin">
+            <TabPanel value="1">
               <Typography component="h1" variant="h5">
                 Admin Login
               </Typography>
             </TabPanel>
-            <TabPanel value="secretary">
+            <TabPanel value="2">
               <Typography component="h1" variant="h5">
                 Secretary Login
               </Typography>
             </TabPanel>
-            <TabPanel value="head_of_Office">
+            <TabPanel value="3">
               <Typography component="h1" variant="h5">
                 Head of Office
               </Typography>
@@ -197,10 +146,8 @@ export default function LogIn() {
                     fullWidth
                     id="email"
                     label="Email Address"
-                    autoComplete="email"
                     name="email"
-                    onChange={handleChange}
-                    onBlur={handleChange}
+                    autoComplete="email"
                     autoFocus
                   />
                   <TextField
@@ -208,8 +155,6 @@ export default function LogIn() {
                     required
                     fullWidth
                     name="password"
-                    onChange={handleChange}
-                    onBlur={handleChange}
                     label="Password"
                     type="password"
                     id="password"
@@ -225,7 +170,6 @@ export default function LogIn() {
                     variant="contained"
                     color="success"
                     sx={{ mt: 3, mb: 2 }}
-                    disabled={disabledLogin}
                   >
                     LogIn
                   </Button>

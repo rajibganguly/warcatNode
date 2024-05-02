@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -7,23 +8,28 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Link from "@mui/material/Link";
-
+import { Link } from "react-router-dom";
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CustomTable from '../components/CustomTable';
+import { Button } from '@mui/material';
+import TextField from '@mui/material/TextField';
+import Dropdowns from '../components/Dropdowns';
+import Stack from '@mui/material/Stack';
+import ButtonGroup from '@mui/material/ButtonGroup';
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import IconButton from "@mui/material/IconButton"; import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { mainListItems, secondaryListItems } from "../components/listitems";
 import LogoBlack from "../components/logoblack";
 import ProfileSidePane from "../components/profileSidepane";
 import MuiDrawer from "@mui/material/Drawer";
-
-
-import Orders from "../components/orders";
+import { CircularProgressbar } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
-import SidePane from "../components/sidepane";
+
 
 const drawerWidth = 240;
 
@@ -74,8 +80,215 @@ const Drawer = styled(MuiDrawer, {
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
+const dropdownData = [
+  {
+    label: 'Select',
+    items: [
+      { label: 'All Department', value: "All Department" },
+      { label: 'Agriculture', value: "Agriculture" },
+      { label: 'Forest', value: "Forest" },
+      { label: 'Labour', value: "Labour" },
+    ],
+  },
+  {
+    label: 'Select',
+    items: [
+      { label: 'ALL Tasks', value: 'ALL Tasks' },
+      { label: 'Assigned', value: 'Assigned' },
+      { label: 'In Progress', value: 'In Progress' },
+      { label: 'Completed', value: 'Completed' },
+    ],
+  },
+];
+const handleDropdownChange = (value) => {
+  console.log('Selected value:', value);
+
+};
+
+
+const progressData = [
+  {
+    id: 1, percentage: 66, label: "Total Assigned",
+    styles: {
+      root: {},
+      path: {
+        stroke: `rgba(15, 156, 243, ${66 / 100})`,
+        strokeLinecap: 'butt',
+        transition: 'stroke-dashoffset 0.5s ease 0s',
+        transform: 'rotate(0.25turn)',
+        transformOrigin: 'center center',
+        strokeWidth: 6,
+      },
+      text: {
+        fill: "#000000",
+        fontSize: "16px",
+        fontWeight: "bold"
+      },
+      trail: {
+        stroke: '#E5E0DF',
+        strokeWidth: 6,
+      },
+    },
+  },
+  {
+    id: 2, percentage: 45, label: "Not Initiated",
+    styles: {
+      root: {},
+      path: {
+        stroke: `rgba(255, 52, 0, ${66 / 100})`,
+        strokeLinecap: 'butt',
+        transition: 'stroke-dashoffset 0.5s ease 0s',
+        transform: 'rotate(0.25turn)',
+        transformOrigin: 'center center',
+        strokeWidth: 6,
+      },
+      text: {
+        fill: "#000000",
+        fontSize: "16px",
+        fontWeight: "bold"
+      },
+      trail: {
+        stroke: '#E5E0DF',
+        strokeWidth: 6,
+      },
+    },
+  },
+  {
+    id: 3, percentage: 80, label: "In Progress",
+    styles: {
+      root: {},
+      path: {
+        stroke: `rgba(255, 195, 0, ${66 / 100})`,
+        strokeLinecap: 'butt',
+        transition: 'stroke-dashoffset 0.5s ease 0s',
+        transform: 'rotate(0.25turn)',
+        transformOrigin: 'center center',
+        strokeWidth: 6,
+      },
+      text: {
+        fill: "#000000",
+        fontSize: "16px",
+        fontWeight: "bold"
+      },
+      trail: {
+        stroke: '#E5E0DF',
+        strokeWidth: 6,
+      },
+    },
+  },
+  {
+    id: 4, percentage: 80, label: "Completed",
+    styles: {
+      root: {},
+      path: {
+        stroke: `rgba(0, 255, 29, ${66 / 100})`,
+        strokeLinecap: 'butt',
+        transition: 'stroke-dashoffset 0.5s ease 0s',
+        transform: 'rotate(0.25turn)',
+        transformOrigin: 'center center',
+        strokeWidth: 6,
+      },
+      text: {
+        fill: "#000000",
+        fontSize: "16px",
+        fontWeight: "bold"
+      },
+      trail: {
+        stroke: '#E5E0DF',
+        strokeWidth: 6,
+      },
+    },
+  },
+];
+
+const data = [
+  {
+    key: '1',
+    name: 'John Brown',
+    age: 32,
+    address: 'New York No. 1 Lake Park',
+    city: 'delhi',
+  },
+  {
+    key: '2',
+    name: 'Jim Green',
+    age: 42,
+    address: 'London No. 1 Lake Park',
+    city: 'delhi',
+  },
+  {
+    key: '3',
+    name: 'Joe Black',
+    age: 32,
+    address: 'Sydney No. 1 Lake Park',
+    city: 'delhi',
+  },
+  {
+    key: '4',
+    name: 'Jim Red',
+    age: 32,
+    address: 'London No. 2 Lake Park',
+    city: 'delhi',
+  },
+];
+
 export default function Tasks() {
   const [open, setOpen] = React.useState(true);
+  const [filteredInfo, setFilteredInfo] = useState({});
+  const [sortedInfo, setSortedInfo] = useState({});
+
+  const columns = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      filters: [
+        { text: 'Joe', value: 'Joe' },
+        { text: 'Jim', value: 'Jim' },
+      ],
+      filteredValue: filteredInfo.name || null,
+      onFilter: (value, record) => record.name.includes(value),
+      sorter: (a, b) => a.name.length - b.name.length,
+      sortOrder: sortedInfo.columnKey === 'name' ? sortedInfo.order : null,
+      ellipsis: true,
+    },
+    {
+      title: 'Age',
+      dataIndex: 'age',
+      key: 'age',
+      sorter: (a, b) => a.age - b.age,
+      sortOrder: sortedInfo.columnKey === 'age' ? sortedInfo.order : null,
+      ellipsis: true,
+    },
+    {
+      title: 'Address',
+      dataIndex: 'address',
+      key: 'address',
+      filters: [
+        { text: 'London', value: 'London' },
+        { text: 'New York', value: 'New York' },
+      ],
+      filteredValue: filteredInfo.address || null,
+      onFilter: (value, record) => record.address.includes(value),
+      sorter: (a, b) => a.address.length - b.address.length,
+      sortOrder: sortedInfo.columnKey === 'address' ? sortedInfo.order : null,
+      ellipsis: true,
+    },
+    {
+      title: 'City',
+      dataIndex: 'city',
+      key: 'city',
+      filters: [
+        { text: 'London', value: 'London' },
+        { text: 'New York', value: 'New York' },
+      ],
+      filteredValue: filteredInfo.city || null,
+      onFilter: (value, record) => record.city.includes(value),
+      sorter: (a, b) => a.city.length - b.city.length,
+      sortOrder: sortedInfo.columnKey === 'city' ? sortedInfo.order : null,
+      ellipsis: true,
+    },
+  ];
 
   const handleOutput = (open) => {
     toggleDrawer();
@@ -84,7 +297,7 @@ export default function Tasks() {
     setOpen(!open);
   };
 
-  
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -115,8 +328,8 @@ export default function Tasks() {
               textAlign: 'center'
             }}
           >
-            <ProfileSidePane />
-            </Box>
+            <ProfileSidePane isopen={open} />
+          </Box>
           <List component="nav">
             {mainListItems}
             <Divider sx={{ my: 1 }} />
@@ -164,32 +377,138 @@ export default function Tasks() {
                     </Breadcrumbs>
                   </div>
                 </div>
-                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  <div
-                    style={{
-                      paddingLeft: "15px",
-                      paddingBottom: "15px",
-                      borderBottom: "1px solid #eee",
-                    }}
-                  >
-                    All Tasks
-                  </div>
-                  <hr />
-                  <Orders />
-                </Paper>
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <Card sx={{ maxWidth: 100 + "%" }}>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          padding: 2,
+                          borderBottom: '1px solid #eff2f7',
+
+                        }}
+                      >
+                        <Stack direction="row" spacing={2} sx={{ justifyContent: 'center', alignItems: 'center' }}>
+                          <Typography variant="body1" sx={{ fontWeight: 600 }}>All Tasks</Typography>
+                          <Button
+                            variant="contained"
+                            sx={{
+                              bgcolor: '#6fd088',
+                              color: 'white',
+                              '&:hover': {
+                                bgcolor: '#5eb174',
+                              },
+                            }}
+                            component={Link} to="/addtasks"
+                          >
+                            Add Task
+                          </Button>
+                        </Stack>
+
+
+
+                        <Dropdowns dropdownData={dropdownData} onChange={handleDropdownChange} />
+                      </Box>
+
+                      <Grid container spacing={2} sx={{ py: 3, px: 2 }} >
+                        {progressData.map((item) => (
+                          <Grid item xs={3} key={item.id}>
+                            <Card sx={{ maxWidth: '100%' }} >
+                              <Card sx={{ maxWidth: '100%', p: 2 }}>
+                                <CardContent sx={{ display: 'flex', justifyContent: 'center' }}>
+                                  <div style={{ width: 130, height: 130 }}>
+                                    <CircularProgressbar value={item.percentage} text={`${item.percentage}%`} styles={item.styles} />
+                                  </div>
+
+                                </CardContent>
+                                <span style={{ display: 'flex', justifyContent: 'center', fontWeight: 'bolder' }}>{item.label}</span>
+                              </Card>
+                            </Card>
+                          </Grid>
+                        ))}
+                      </Grid>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          padding: 2,
+
+
+                        }}
+                      >
+                        <ButtonGroup variant="contained" aria-label="Basic button group"  >
+                          <Button sx={{
+                            backgroundColor: '#6c757d',
+                            borderColor: '1px solid #6c757d',
+
+                            '&:hover': {
+                              backgroundColor: '#5c636a',
+                              borderColor: '#5c636a'
+                            },
+
+                          }}>Copy</Button>
+                          <Button sx={{
+                            backgroundColor: '#6c757d',
+                            borderColor: '1px solid #6c757d',
+                            '&:hover': {
+                              backgroundColor: '#5c636a',
+                              borderColor: '#5c636a'
+                            },
+
+                          }}>Excel</Button>
+                          <Button sx={{
+                            backgroundColor: '#6c757d',
+                            borderColor: '#6c757d',
+                            '&:hover': {
+                              backgroundColor: '#5c636a',
+                              borderColor: '#5c636a'
+                            },
+
+                          }}>PDF</Button>
+                          <Button sx={{
+                            backgroundColor: '#6c757d',
+                            borderColor: '#6c757d',
+                            '&:hover': {
+                              backgroundColor: '#5c636a',
+                              borderColor: '#5c636a'
+                            },
+
+                          }}>Column Visibility</Button>
+                        </ButtonGroup>
+                        <TextField id="outlined-basic"
+                          label="Search"
+                          size="small" variant="outlined" />
+                      </Box>
+                      <CardContent>
+                        <CustomTable
+                          data={data}
+                          columns={columns}
+                          filteredInfo={filteredInfo}
+                          sortedInfo={sortedInfo}
+                          setFilteredInfo={setFilteredInfo}
+                          setSortedInfo={setSortedInfo}
+                        />
+                      </CardContent>
+                    </Card>
+                  </Grid>
+
+                </Grid>
               </Grid>
             </Grid>
           </Container>
           <Box
-          component="footer"
-          sx={{
-            width: "100%",
-            paddingBottom: "20px",
-          }}
-        >
-          <Footer />
+            component="footer"
+            sx={{
+              width: "100%",
+              paddingBottom: "20px",
+            }}
+          >
+            <Footer />
+          </Box>
         </Box>
-        </Box>        
       </Box>
     </ThemeProvider>
   );
