@@ -8,6 +8,9 @@ import Departments from './pages/Departments';
 import Meetings from './pages/Meetings';
 import Reports from './pages/Reports';
 import Tasks from './pages/Tasks';
+import AddNewMeeting from './pages/AddNewMeeting';
+import AddTask from './pages/AddTasks';
+
 
 function App() {
   // const [ isLoggedIn, setIsLoggedIn] = useState({login: false})
@@ -21,7 +24,9 @@ function App() {
         <Route path="/meetings" element={<Meetings />} />
         <Route path="/tasks" element={<Tasks />} />
         <Route path="/reports" element={<Reports />} />   
-        <Route path="/add_department" element={<AddDepartment />} />        
+        <Route path="/add_department" element={<AddDepartment />} />  
+        <Route path="/addnewmeetings" element={<AddNewMeeting />} /> 
+        <Route path="/addtasks" element={<AddTask />} />          
         {/* Add more routes as needed */}
       </Routes>
     </Router>

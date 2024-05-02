@@ -7,24 +7,26 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
 import Link from "@mui/material/Link";
-
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import IconButton from "@mui/material/IconButton"; import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { mainListItems, secondaryListItems } from "../components/listitems";
 import LogoBlack from "../components/logoblack";
 import ProfileSidePane from "../components/profileSidepane";
 import MuiDrawer from "@mui/material/Drawer";
-
-import Chart from '../components/chart';
-import Deposits from '../components/deposits';
-import Orders from "../components/orders";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
-//import SidePane from "../components/sidepane";
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import PeopleIcon from '@mui/icons-material/People';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Stack from '@mui/material/Stack';
+import AreaChart from '../components/AreaChart';
+import Linecolumnchart from '../components/Linecolumnchart';
+
 
 const drawerWidth = 240;
 
@@ -75,6 +77,13 @@ const Drawer = styled(MuiDrawer, {
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
+const cardData = [
+  { title: 'Total Department', value: 150, icon: <AccountBalanceIcon /> },
+  { title: 'Total Employees', value: 250, icon: <PeopleIcon /> },
+  { title: 'Revenue', value: '$500,000', icon: <MonetizationOnIcon /> },
+  { title: 'Profit', value: '$100,000', icon: <MonetizationOnIcon /> },
+];
+
 export default function Dashboard() {
   const [open, setOpen] = React.useState(true);
 
@@ -114,8 +123,8 @@ export default function Dashboard() {
               textAlign: 'center'
             }}
           >
-            <ProfileSidePane />
-            </Box>
+            <ProfileSidePane  isopen={open} />
+          </Box>
           <List component="nav">
             {mainListItems}
             <Divider sx={{ my: 1 }} />
@@ -130,7 +139,6 @@ export default function Dashboard() {
                 ? theme.palette.grey[100]
                 : theme.palette.grey[900],
             width: "100%",
-            height: "108vh",
             paddingBottom: "20px",
           }}
         >
@@ -138,7 +146,7 @@ export default function Dashboard() {
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
               <Grid item xs={12} md={12} lg={12}>
-              <div
+                <div
                   style={{
                     display: "flex",
                     alignItems: "start",
@@ -163,60 +171,61 @@ export default function Dashboard() {
                   </div>
                 </div>
               </Grid>
-              {/* Chart */}
-              <Grid item xs={12} md={8} lg={9}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
-                  <Chart />
-                </Paper>
+            </Grid>
+
+
+            <Grid container spacing={2} >
+              {cardData.map((data, index) => (
+                <Grid item xs={12} sm={3} key={index}>
+                  <Card sx={{ maxWidth: 345 }}>
+                    <CardContent>
+                      <Stack spacing={2} direction="row" alignItems="center">
+                        <Stack spacing={1} direction="column" alignItems="flex-start">
+                          <Typography variant="body1" component="span">
+                            {data.title}
+                          </Typography>
+                          <Typography variant="body1" component="span" sx={{ fontWeight: 'bold' }}>
+                            {data.value}
+                          </Typography>
+                        </Stack>
+                        <Box flexGrow={1} />
+                        {data.icon}
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+
+            <Box sx={{ my: 3 }} />
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Card sx={{ maxWidth: 100 + "%" }}>
+                  <CardContent>
+                    <AreaChart />
+                  </CardContent>
+                </Card>
               </Grid>
-              {/* Recent Deposits */}
-              <Grid item xs={12} md={4} lg={3}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
-                  <Deposits />
-                </Paper>
+              <Grid item xs={6}>
+                <Card sx={{ maxWidth: 100 + "%" }}>
+                  <CardContent>
+                    <Linecolumnchart />
+                  </CardContent>
+                </Card>
               </Grid>
-              {/* Recent Orders */}
-              <Grid item xs={12}>                
-                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  <div
-                    style={{
-                      paddingLeft: "15px",
-                      paddingBottom: "15px",
-                      borderBottom: "1px solid #eee",
-                    }}
-                  >
-                    All Dashboard
-                  </div>
-                  <hr />
-                  <Orders />
-                </Paper>
-              </Grid>
+
             </Grid>
           </Container>
           <Box
-          component="footer"
-          sx={{
-            width: "100%",
-            paddingBottom: "20px",
-          }}
-        >
-          <Footer />
+            component="footer"
+            sx={{
+              width: "100%",
+              paddingBottom: "20px",
+            }}
+          >
+            <Footer />
+          </Box>
         </Box>
-        </Box>        
       </Box>
     </ThemeProvider>
   );

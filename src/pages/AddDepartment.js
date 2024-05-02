@@ -7,9 +7,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Link from "@mui/material/Link";
-
+import { Link } from "react-router-dom";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
@@ -18,7 +16,7 @@ import { mainListItems, secondaryListItems } from "../components/listitems";
 import LogoBlack from "../components/logoblack";
 import ProfileSidePane from "../components/profileSidepane";
 import MuiDrawer from "@mui/material/Drawer";
-import { Button, ButtonGroup, TextField } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 
 import SearchIcon from "@mui/icons-material/Search";
 
@@ -26,8 +24,6 @@ import SearchIcon from "@mui/icons-material/Search";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
-import SidePane from "../components/sidepane";
-
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Stack from "@mui/material/Stack";
@@ -221,7 +217,7 @@ export default function AddDepartment() {
               textAlign: "center",
             }}
           >
-            <ProfileSidePane />
+            <ProfileSidePane isopen={open} />
           </Box>
           <List component="nav">
             {mainListItems}
@@ -237,7 +233,6 @@ export default function AddDepartment() {
                 ? theme.palette.grey[100]
                 : theme.palette.grey[900],
             width: "100%",
-            height: "108vh",
             paddingBottom: "20px",
           }}
         >
@@ -279,174 +274,184 @@ export default function AddDepartment() {
                     </Breadcrumbs>
                   </div>
                 </div>
-                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  <Card sx={{ width: 100 + "%", padding: 2 }}>
-                    <Box
+                <Card sx={{ width: 100 + "%", padding: 2 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      padding: 2,
+                      borderBottom: "1px solid #eff2f7",
+                    }}
+                  >
+                    <Typography variant="body1">Add Departments</Typography>
+                    <Button
+                      variant="contained"
                       sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        padding: 2,
-                        borderBottom: "1px solid #eff2f7",
-                      }}
-                    >
-                      <Typography variant="body1">Add Departments</Typography>
-                      <Button
-                        variant="contained"
-                        sx={{
+                        backgroundColor: "#fb4",
+                        color: "#000000",
+                        "&:hover": {
                           backgroundColor: "#fb4",
-                          color: "#000000",
-                          "&:hover": {
-                            backgroundColor: "#fb4",
-                          },
-                        }}
-                        component={Link}
-                        to="/departments"
-                        size="small"
+                        },
+                      }}
+                      component={Link}
+                      to="/departments"
+                      size="small"
+                    >
+                      All Departments
+                    </Button>
+                  </Box>
+                  <CardContent>
+                    <Box component="form" noValidate autoComplete="off">
+                      <label>Department / Government Organisation</label>
+                      <TextField
+                        id="outlined-basic"
+                        label="Department / Government Organisation"
+                        variant="outlined"
+                        fullWidth
+                        name="dep_name"
+                        value={formData.dep_name}
+                        onChange={handleChange}
+                      />
+
+                      <Typography
+                        variant="h5"
+                        component="h2"
+                        sx={{ marginTop: "5%", marginBottom: "2%" }}
                       >
-                        All Departments
-                      </Button>
-                    </Box>
-                    <CardContent>
-                      <Box component="form" noValidate autoComplete="off">
-                        <label>Department / Government Organisation</label>
-                        <TextField
-                          id="outlined-basic"
-                          label="Department / Government Organisation"
-                          variant="outlined"
-                          fullWidth
-                          name="dep_name"
-                          value={formData.dep_name}
-                          onChange={handleChange}
-                        />
+                        Secretary Details
+                      </Typography>
 
-                        <Typography
-                          variant="h5"
-                          component="h2"
-                          sx={{ marginTop: "5%", marginBottom: "2%" }}
-                        >
-                          Secretary Details
-                        </Typography>
+                      <Grid
+                        container
+                        spacing={2}
+                        sx={{ marginBottom: "20px" }}
+                      >
+                        <Grid item xs={12} sm={6}>
 
-                        <Grid
-                          container
-                          spacing={2}
-                          sx={{ marginBottom: "20px" }}
-                        >
-                          <Grid item xs={12} sm={6}>
-                            <Stack direction="column" spacing={2}>
-                              <label>Secretary Name</label>
-                              <TextField
-                                id="outlined-basic-1"
-                                label="Enter Secretary Name"
-                                variant="outlined"
-                                sx={{ width: "100%" }}
-                                name="secretary.name"
-                                value={formData.secretary.name}
-                                onChange={handleChange}
-                              />
-                              <label>Secretary Phone Number</label>
-                              <TextField
-                                id="outlined-basic-2"
-                                label="Enter Secretary Phone Number"
-                                variant="outlined"
-                                sx={{ width: "100%" }}
-                                name="secretary.phone_number"
-                                value={formData.secretary.phone_number}
-                                onChange={handleChange}
-                              />
-                            </Stack>
-                          </Grid>
-                          <Grid item xs={12} sm={6}>
-                            <label>Secretary Email Id</label>
+                          <label>Secretary Name</label>
+                          <TextField
+                            id="outlined-basic-1"
+                            label="Enter Secretary Name"
+                            variant="outlined"
+                            sx={{ width: "100%" }}
+                            name="secretary.name"
+                            value={formData.secretary.name}
+                            onChange={handleChange}
+                          />
+
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <label>Secretary Phone Number</label>
+                          <TextField
+                            id="outlined-basic-2"
+                            label="Enter Secretary Phone Number"
+                            variant="outlined"
+                            sx={{ width: "100%" }}
+                            name="secretary.phone_number"
+                            value={formData.secretary.phone_number}
+                            inputProps={{
+                              minLength: 10,
+                              maxLength: 10
+                            }}
+                            onChange={handleChange}
+                          />
+
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <label>Secretary Email Id</label>
+                          <TextField
+                            id="outlined-basic-3"
+                            label="Enter Secretary Email Id"
+                            variant="outlined"
+                            sx={{ width: "100%" }}
+                            name="secretary.email"
+                            value={formData.secretary.email}
+                            onChange={handleChange}
+                          />
+                        </Grid>
+
+                      </Grid>
+
+                      <Typography
+                        variant="h5"
+                        component="h2"
+                        sx={{ marginTop: "5%", marginBottom: "2%" }}
+                      >
+                        Head Of Office Details
+                      </Typography>
+
+                      <Grid
+                        container
+                        spacing={2}
+                        sx={{ marginBottom: "20px" }}
+                      >
+                        <Grid item xs={12} sm={6}>
+                          <Stack direction="column" spacing={2}>
+                            <label>Head of Office Name</label>
                             <TextField
-                              id="outlined-basic-3"
-                              label="Enter Secretary Email Id"
+                              id="outlined-basic-1"
+                              label="Enter Head of Office Name"
                               variant="outlined"
                               sx={{ width: "100%" }}
-                              name="secretary.email"
-                              value={formData.secretary.email}
+                              name="headOffice.name"
+                              value={formData.headOffice.name}
                               onChange={handleChange}
                             />
-                          </Grid>
+                            <label>Head of Office Designation</label>
+                            <TextField
+                              id="outlined-basic-2"
+                              label="Enter Head of Office Designation"
+                              variant="outlined"
+                              sx={{ width: "100%" }}
+                              name="headOffice.designation"
+                              value={formData.headOffice.designation}
+                              onChange={handleChange}
+                            />
+                          </Stack>
                         </Grid>
-
-                        <Typography
-                          variant="h5"
-                          component="h2"
-                          sx={{ marginTop: "5%", marginBottom: "2%" }}
-                        >
-                          Head Of Office Details
-                        </Typography>
-
-                        <Grid
-                          container
-                          spacing={2}
-                          sx={{ marginBottom: "20px" }}
-                        >
-                          <Grid item xs={12} sm={6}>
-                            <Stack direction="column" spacing={2}>
-                              <label>Head of Office Name</label>
-                              <TextField
-                                id="outlined-basic-1"
-                                label="Enter Head of Office Name"
-                                variant="outlined"
-                                sx={{ width: "100%" }}
-                                name="headOffice.name"
-                                value={formData.headOffice.name}
-                                onChange={handleChange}
-                              />
-                              <label>Head of Office Designation</label>
-                              <TextField
-                                id="outlined-basic-2"
-                                label="Enter Head of Office Designation"
-                                variant="outlined"
-                                sx={{ width: "100%" }}
-                                name="headOffice.designation"
-                                value={formData.headOffice.designation}
-                                onChange={handleChange}
-                              />
-                            </Stack>
-                          </Grid>
-                          <Grid item xs={12} sm={6}>
-                            <Stack direction="column" spacing={2}>
-                              <label>Head of Office Phone Number</label>
-                              <TextField
-                                id="outlined-basic-1"
-                                label="Enter Head of Office Phone Number"
-                                variant="outlined"
-                                sx={{ width: "100%" }}
-                                name="headOffice.phone_number"
-                                value={formData.headOffice.phone_number}
-                                onChange={handleChange}
-                              />
-                              <label>Head of Office Email Id</label>
-                              <TextField
-                                id="outlined-basic-2"
-                                label="Head of Office Email Id"
-                                variant="outlined"
-                                sx={{ width: "100%" }}
-                                name="headOffice.email"
-                                value={formData.headOffice.email}
-                                onChange={handleChange}
-                              />
-                            </Stack>
-                          </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <Stack direction="column" spacing={2}>
+                            <label>Head of Office Phone Number</label>
+                            <TextField
+                              id="outlined-basic-1"
+                              label="Enter Head of Office Phone Number"
+                              variant="outlined"
+                              sx={{ width: "100%" }}
+                              name="headOffice.phone_number"
+                              value={formData.headOffice.phone_number}
+                              inputProps={{
+                                minLength: 10,
+                                maxLength: 10
+                              }}
+                              onChange={handleChange}
+                            />
+                            <label>Head of Office Email Id</label>
+                            <TextField
+                              id="outlined-basic-2"
+                              label="Head of Office Email Id"
+                              variant="outlined"
+                              sx={{ width: "100%" }}
+                              name="headOffice.email"
+                              value={formData.headOffice.email}
+                              onChange={handleChange}
+                            />
+                          </Stack>
                         </Grid>
+                      </Grid>
 
-                        <Button
-                          variant="contained"
-                          color="success"
-                          sx={{ color: "white", marginTop: "2%" }}
-                          disabled={submitDisable}
-                          onClick={handleAddDepartment}
-                        >
-                          Submit
-                        </Button>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </Paper>
+                      <Button
+                        variant="contained"
+                        color="success"
+                        sx={{ color: "white", marginTop: "2%" }}
+                        disabled={submitDisable}
+                        onClick={handleAddDepartment}
+                      >
+                        Submit
+                      </Button>
+                    </Box>
+                  </CardContent>
+                </Card>
               </Grid>
             </Grid>
           </Container>

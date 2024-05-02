@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -7,26 +8,21 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
 import Link from "@mui/material/Link";
-
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CustomTable from '../components/CustomTable';
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import IconButton from "@mui/material/IconButton"; import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { mainListItems, secondaryListItems } from "../components/listitems";
 import LogoBlack from "../components/logoblack";
 import ProfileSidePane from "../components/profileSidepane";
 import MuiDrawer from "@mui/material/Drawer";
 import { Button, ButtonGroup, TextField } from "@mui/material";
-
-import SearchIcon from '@mui/icons-material/Search';
-
-
-import Orders from "../components/orders";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
-//import SidePane from "../components/sidepane";
 import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
@@ -78,9 +74,97 @@ const Drawer = styled(MuiDrawer, {
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
+const data = [
+  {
+    key: '1',
+    name: 'John Brown',
+    age: 32,
+    address: 'New York No. 1 Lake Park',
+    city: 'delhi',
+
+  },
+  {
+    key: '2',
+    name: 'Jim Green',
+    age: 42,
+    address: 'London No. 1 Lake Park',
+    city: 'delhi',
+  },
+  {
+    key: '3',
+    name: 'Joe Black',
+    age: 32,
+    address: 'Sydney No. 1 Lake Park',
+    city: 'delhi',
+  },
+  {
+    key: '4',
+    name: 'Jim Red',
+    age: 32,
+    address: 'London No. 2 Lake Park',
+    city: 'delhi',
+  },
+];
+
 export default function Departments() {
   const [open, setOpen] = React.useState(true);
   const navigate = useNavigate();
+  const [filteredInfo, setFilteredInfo] = useState({});
+  const [sortedInfo, setSortedInfo] = useState({});
+
+  const columns = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      filters: [
+        { text: 'Joe', value: 'Joe' },
+        { text: 'Jim', value: 'Jim' },
+      ],
+      filteredValue: filteredInfo.name || null,
+      onFilter: (value, record) => record.name.includes(value),
+      sorter: (a, b) => a.name.length - b.name.length,
+      sortOrder: sortedInfo.columnKey === 'name' ? sortedInfo.order : null,
+      ellipsis: true,
+      description: 'My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.',
+    },
+    {
+      title: 'Age',
+      dataIndex: 'age',
+      key: 'age',
+      sorter: (a, b) => a.age - b.age,
+      sortOrder: sortedInfo.columnKey === 'age' ? sortedInfo.order : null,
+      ellipsis: true,
+    },
+    {
+      title: 'Address',
+      dataIndex: 'address',
+      key: 'address',
+      filters: [
+        { text: 'London', value: 'London' },
+        { text: 'New York', value: 'New York' },
+      ],
+      filteredValue: filteredInfo.address || null,
+      onFilter: (value, record) => record.address.includes(value),
+      sorter: (a, b) => a.address.length - b.address.length,
+      sortOrder: sortedInfo.columnKey === 'address' ? sortedInfo.order : null,
+      ellipsis: true,
+    },
+    {
+      title: 'City',
+      dataIndex: 'city',
+      key: 'city',
+      filters: [
+        { text: 'London', value: 'London' },
+        { text: 'New York', value: 'New York' },
+      ],
+      filteredValue: filteredInfo.city || null,
+      onFilter: (value, record) => record.city.includes(value),
+      sorter: (a, b) => a.city.length - b.city.length,
+      sortOrder: sortedInfo.columnKey === 'city' ? sortedInfo.order : null,
+      ellipsis: true,
+    },
+  ];
 
   const handleOutput = (open) => {
     toggleDrawer();
@@ -123,8 +207,8 @@ export default function Departments() {
               textAlign: 'center'
             }}
           >
-            <ProfileSidePane />
-            </Box>
+            <ProfileSidePane isopen={open} />
+          </Box>
           <List component="nav">
             {mainListItems}
             <Divider sx={{ my: 1 }} />
@@ -145,9 +229,8 @@ export default function Departments() {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
-              {/* Recent Orders */}
-              <Grid item xs={12}>
+            <Grid container spacing={2} >
+              <Grid item xs={12} >
                 <div
                   style={{
                     display: "flex",
@@ -161,80 +244,122 @@ export default function Departments() {
                       paddingBottom: "10px",
                     }}
                   >
-                    All Departments
+                    Department
                   </div>
                   <div>
                     <Breadcrumbs aria-label="breadcrumb">
-                      <Link underline="hover" color="inherit" href="/">
+                      <Link underline="hover" color="inherit" >
                         WARCAT
                       </Link>
-                      <Typography color="text.primary">Departments</Typography>
+                      <Typography color="text.primary">Department</Typography>
                     </Breadcrumbs>
                   </div>
                 </div>
-                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  <div
-                    style={{
-                      paddingLeft: "15px",
-                      paddingBottom: "15px",
-                      borderBottom: "1px solid #eee",
+              </Grid>
+              <Grid item xs={12}>
+                <Card sx={{ maxWidth: '100%' }}>
+                  <Box
+                    sx={{
                       display: 'flex',
-                      justifyContent: 'space-between'
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: 2,
+                      borderBottom: '1px solid #eff2f7',
+
                     }}
                   >
-                    <div>All Departments</div>
-                    <div>                      
-                      <Button variant="contained" color="success" size="small" onClick={handleClickAddDepartment}>
-                        Add Department
-                      </Button>
-                    </div>
-                  </div>
-                  <hr />
-                  <div
-                    style={{
+                    <Typography variant="body1" sx={{ fontWeight: 600 }}>All Departments</Typography>
+                    <Button variant="contained" sx={{
+                      backgroundColor: 'green',
+                      '&:hover': {
+                        backgroundColor: 'darkgreen',
+                      },
+
+                    }} onClick={handleClickAddDepartment}>
+                      Add Department
+                    </Button>
+                  </Box>
+
+                  <Box
+                    sx={{
                       display: 'flex',
-                      justifyContent: 'space-between'
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: 2,
+
+
                     }}
                   >
-                    <ButtonGroup variant="contained" aria-label="Basic button group" color="info">
-                      <Button>Copy</Button>
-                      <Button>Excel</Button>
-                      <Button>PDF</Button>
-                      <Button>Column visibility</Button>
+                    <ButtonGroup variant="contained" aria-label="Basic button group"  >
+                      <Button sx={{
+                        backgroundColor: '#6c757d',
+                        borderColor: '1px solid #6c757d',
+
+                        '&:hover': {
+                          backgroundColor: '#5c636a',
+                          borderColor: '#5c636a'
+                        },
+
+                      }}>Copy</Button>
+                      <Button sx={{
+                        backgroundColor: '#6c757d',
+                        borderColor: '1px solid #6c757d',
+                        '&:hover': {
+                          backgroundColor: '#5c636a',
+                          borderColor: '#5c636a'
+                        },
+
+                      }}>Excel</Button>
+                      <Button sx={{
+                        backgroundColor: '#6c757d',
+                        borderColor: '#6c757d',
+                        '&:hover': {
+                          backgroundColor: '#5c636a',
+                          borderColor: '#5c636a'
+                        },
+
+                      }}>PDF</Button>
+                      <Button sx={{
+                        backgroundColor: '#6c757d',
+                        borderColor: '#6c757d',
+                        '&:hover': {
+                          backgroundColor: '#5c636a',
+                          borderColor: '#5c636a'
+                        },
+
+                      }}>Column Visibility</Button>
                     </ButtonGroup>
-                    <div>
-                    <TextField
-                      id="outlined-textarea"
+                    <TextField id="outlined-basic"
                       label="Search"
-                      variant="outlined"
-                      placeholder="Enter search"
-                      size="small"
-                      InputProps={{
-                        endAdornment: (
-                          <IconButton>
-                            <SearchIcon />
-                          </IconButton>
-                        ),
-                      }}
+                      size="small" variant="outlined" />
+                  </Box>
+                  <CardContent>
+                    <CustomTable
+                      data={data}
+                      columns={columns}
+                      filteredInfo={filteredInfo}
+                      sortedInfo={sortedInfo}
+                      setFilteredInfo={setFilteredInfo}
+                      setSortedInfo={setSortedInfo}
+
                     />
-                    </div>
-                  </div>
-                  
-                  <Orders />
-                </Paper>
+                  </CardContent>
+                </Card>
               </Grid>
             </Grid>
+            <Box
+              component="footer"
+              sx={{
+                width: "100%",
+                paddingBottom: "20px",
+              }}
+            >
+              <Footer />
+            </Box>
           </Container>
-          <Box
-          component="footer"
-          sx={{
-            width: "100%",
-            paddingBottom: "20px",
-          }}
-        >
-          <Footer />
+
+
         </Box>
-        </Box>        
       </Box>
     </ThemeProvider>
   );
