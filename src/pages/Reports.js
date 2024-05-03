@@ -228,7 +228,6 @@ export default function Reports() {
                 ? theme.palette.grey[100]
                 : theme.palette.grey[900],
             width: "100%",
-            height: "108vh",
             paddingBottom: "20px",
           }}
         >

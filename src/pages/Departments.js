@@ -27,6 +27,7 @@ import { useNavigate } from "react-router-dom";
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 
+
 const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
@@ -111,6 +112,8 @@ export default function Departments() {
   const [modalVisible, setModalVisible] = React.useState(false);
   const [selectedRecord, setSelectedRecord] = React.useState(null);
 
+  
+
   const handleSeeClick = (record) => {
     setSelectedRecord(record);
     setModalVisible(true);
@@ -119,6 +122,9 @@ export default function Departments() {
 
   const handleEditClick = (record) => {
     console.log('Edit clicked for:', record);
+   
+  // Navigate to the edit page
+  navigate('/edit-departments');
     // Implement logic for editing
   };
 
@@ -161,13 +167,13 @@ export default function Departments() {
         <>
 
           <div className="d-flex justify-content-center" style={{ backgroundColor: 'transparent', width: 'fit-content' }}>
-            <Button type="primary" onClick={() => handleSeeClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#1890ff', color: '#fff' }}>
+            <Button type="primary" onClick={() => handleSeeClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#fb4', color: '#fff' }}>
               <EyeOutlined />
             </Button>
-            <Button type="primary" onClick={() => handleEditClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#1890ff', color: '#fff' }}>
+            <Button type="primary" onClick={() => handleEditClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#0097a7', color: '#fff' }}>
               <EditOutlined />
             </Button>
-            <Button type="danger" onClick={() => handleDeleteClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#ff4d4f', color: '#fff' }}>
+            <Button type="danger" onClick={() => handleDeleteClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#f32f53', color: '#fff' }}>
               <DeleteOutlined />
             </Button>
           </div>
@@ -240,7 +246,6 @@ export default function Departments() {
                 ? theme.palette.grey[100]
                 : theme.palette.grey[900],
             width: "100%",
-            height: "108vh",
             paddingBottom: "20px",
           }}
         >

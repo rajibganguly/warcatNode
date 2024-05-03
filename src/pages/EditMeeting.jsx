@@ -142,7 +142,7 @@ const Drawer = styled(MuiDrawer, {
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
-export default function AddNewMeeting() {
+export default function EditMeeting() {
     const [open, setOpen] = React.useState(true);
 
     const [personName, setPersonName] = React.useState([]);
@@ -232,7 +232,7 @@ export default function AddNewMeeting() {
                                             paddingBottom: "10px",
                                         }}
                                     >
-                                        Add Meeting
+                                        Meetings
                                     </div>
                                     <div>
                                         <Breadcrumbs aria-label="breadcrumb">
@@ -247,7 +247,7 @@ export default function AddNewMeeting() {
                                                 Meetings
                                             </Link>
                                             <Typography color="text.primary">
-                                                Add Meeting
+                                                Edit Meeting
                                             </Typography>
                                         </Breadcrumbs>
                                     </div>
@@ -265,7 +265,7 @@ export default function AddNewMeeting() {
 
                                             }}
                                         >
-                                            <Typography variant="body1">Add Meetings</Typography>
+                                            <Typography variant="body1">Edit Meetings</Typography>
                                             <Button variant="contained" sx={{
                                                 backgroundColor: '#fb4',
                                                 color: '#000000',
@@ -353,7 +353,7 @@ export default function AddNewMeeting() {
                                                 </Grid>
 
                                                 <Grid item xs={12}>
-                                                    <TextField id="outlined-basic" label="Enter Meeting Topic" variant="outlined" fullWidth />
+                                                    <TextField id="outlined-basic" label="Meeting 1" value={'Meeting 1'} variant="outlined" fullWidth />
                                                 </Grid>
 
                                                 <Grid item xs={12}>
@@ -394,7 +394,7 @@ export default function AddNewMeeting() {
                                                     </LocalizationProvider>
                                                 </Grid>
                                             </Grid>
-                                            <Button variant="contained" color="success" sx={{ color: 'white', marginTop: '2%' }}>Add Meeting</Button>
+                                            <Button variant="contained" color="success" sx={{ color: 'white', marginTop: '2%' }}>Update</Button>
                                         </Box>
                                     </CardContent>
                                 </Card>

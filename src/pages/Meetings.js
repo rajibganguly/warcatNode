@@ -9,7 +9,6 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import { Link } from "react-router-dom";
-
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton"; import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -23,10 +22,12 @@ import CustomTable from '../components/CustomTable';
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
+import { useNavigate } from "react-router-dom";
 
 import { Button } from "@mui/material";
 //import SidePane from "../components/sidepane";
-import { EyeOutlined, EditOutlined } from '@ant-design/icons';
+import { EyeOutlined, EditOutlined,PlusCircleOutlined } from '@ant-design/icons';
+
 
 const drawerWidth = 240;
 
@@ -114,6 +115,7 @@ export default function Meetings() {
   const [sortedInfo, setSortedInfo] = useState({});
   const [modalVisible, setModalVisible] = React.useState(false);
   const [selectedRecord, setSelectedRecord] = React.useState(null);
+  const navigate = useNavigate();
 
   const handleSeeClick = (record) => {
     setSelectedRecord(record);
@@ -121,8 +123,14 @@ export default function Meetings() {
   };
 
 
+  const handleplusClick = (record) => {
+    console.log('Edit clicked for:', record);
+    navigate('/addtasks')
+    // Implement logic for editing
+  };
   const handleEditClick = (record) => {
     console.log('Edit clicked for:', record);
+    navigate('/edit-meeting')
     // Implement logic for editing
   };
 
@@ -196,12 +204,13 @@ export default function Meetings() {
         <>
 
           <div className="d-flex justify-content-center" style={{ backgroundColor: 'transparent', width: 'fit-content' }}>
-            <Button type="primary" onClick={() => handleSeeClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#1890ff', color: '#fff' }}>
+          <Button type="primary" onClick={() => handleplusClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#0a1832', color: '#fff' }}>
+              <PlusCircleOutlined />
+            </Button>
+            <Button type="primary" onClick={() => handleSeeClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#fb4', color: '#fff' }}>
               <EyeOutlined />
             </Button>
-            <Button type="primary" onClick={() => handleEditClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#1890ff', color: '#fff' }}>
-              <EditOutlined />
-            </Button>
+           
            
           </div>
 
@@ -215,7 +224,7 @@ export default function Meetings() {
         <>
 
           <div className="d-flex justify-content-center" style={{ backgroundColor: 'transparent', width: 'fit-content' }}>
-          <Button type="primary" onClick={() => handleEditClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#1890ff', color: '#fff' }}>
+          <Button type="primary" onClick={() => handleEditClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#0097a7', color: '#fff' }}>
               <EditOutlined />
             </Button>
            
@@ -283,7 +292,6 @@ export default function Meetings() {
                 ? theme.palette.grey[100]
                 : theme.palette.grey[900],
             width: "100%",
-            height: "108vh",
             paddingBottom: "20px",
           }}
         >
