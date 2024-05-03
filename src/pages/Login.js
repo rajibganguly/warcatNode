@@ -17,122 +17,68 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import Logo from "../components/Logo";
 import { useNavigate } from "react-router-dom";
+import { API } from "../api";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { Copyright } from "./Copyright";
 
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://teminos.com/">
-        Teminos
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
-
-
-
-const defaultTheme = createTheme();
-
-export default function LogIn() {
-  const [loginRoleType, setLoginRoleType] = useState("admin");
-  const [disabledLogin, setDisabledLogin] = useState(true);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    role_type: "admin",
-  });
-
+function LogIn() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [roleType, setRoleType] = useState("admin");
   const navigate = useNavigate();
 
-  /**
-   * @description: Check all fields if not empty
-   * @input: form object { email, password }
-   * @output: boolean 
-   */
-  const isFieldsMapped = (obj) => {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (obj["email"] && emailPattern.test(obj["email"]) && obj["password"]) {
-      return true;
-    } else {
-      return false;
-    }
-  };
 
-  /**
-   * @Description: Update changes and trigger complete flag
-   * @Input: form object { email, password }
-   * @Output: boolean 
-   */  
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-
-    // Update the form data based on the field
-    setFormData((prevFormData) => {
-      return {
-        ...prevFormData,
-        [name]: value,
-      };
-    });
-
-    // Setup flag
-    if (isFieldsMapped(formData)) {
-      setDisabledLogin(false);
-    } else {
-      setDisabledLogin(true);
-    }
-  };
-
-  /**
-   * @Description: set role type in application of tab
-   * @Input: rolestype as String
-   * @Output: String 
-   */    
-  const tabSelection = (event, newValue) => {
-    setLoginRoleType(newValue);
-  };
-
-  /**
-   * @Description: handleSubmit
-   * @Input: Event
-   * @Output: {Success/ fails} 
-   */ 
-    const handleSubmit = async (event) => {
-    event.preventDefault();
-    setDisabledLogin(true);
-    const reactAppHostname = process.env.REACT_APP_HOSTNAME;
-    const response = await fetch(`${reactAppHostname}/api/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: formData.email,
-        role_type: loginRoleType,
-        password: formData.password,
-      }),
-    });
-
+  const handleLogin = async () => {
     try {
-      if (response.status === 200) {
-        alert(`${reactAppHostname}/api/login`);
-        navigate("/dashboard");
-      } else {
-        alert("Login Failed");
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!email || !emailRegex.test(email)) {
+        toast.error("Please enter a valid email address.");
+        return; // Stop further execution if email is invalid
       }
+
+      // Password validation
+      if (!password) {
+        toast.error("Please enter a password.");
+        return; // Stop further execution if password is missing
+      }
+
+      const response = await API.login({ email, role_type: roleType, password });
+
+      if (response && response?.data?.statusTxt === "error") {
+        // Display error message in toast
+        toast.error(response?.data?.message);
+        return; // Stop further execution if login failed
+      }
+
+      // Login successful
+      toast.success("Login successful");
+      // Store token in local storage
+      const token = response?.data?.token;
+      if (token) {
+        localStorage.setItem('token', token);
+        // Perform actions after successful login, such as redirecting to another page
+        navigate('/dashboard');
+      }
+      // Perform actions after successful login
     } catch (error) {
-      console.error("Error occurred:", error);
+      console.error("Login failed", error);
+      const errorMessage = error.message || "An unknown error occurred";
+      toast.error(errorMessage);
+      // Handle login error
     }
+  };
+  const token = localStorage.getItem('token');
+  React.useEffect(() => {
+  }, [token]);
+
+  const tabSelection = (newValue) => {
+    setRoleType(newValue);
   };
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <ThemeProvider theme={createTheme()}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -151,10 +97,13 @@ export default function LogIn() {
           >
             <Logo />
           </Box>
-          <TabContext value={loginRoleType}>
+          <TabContext value={roleType}>
             <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
               <TabList
-                onChange={tabSelection}
+                onChange={(event, newValue) => {
+                  setRoleType(newValue);
+                  tabSelection(newValue)
+                }}
                 aria-label="Login application tabs"
               >
                 <Tab label="Admin" value="admin" />
@@ -187,7 +136,6 @@ export default function LogIn() {
               >
                 <Box
                   component="form"
-                  onSubmit={handleSubmit}
                   noValidate
                   sx={{ mt: 1 }}
                 >
@@ -199,8 +147,8 @@ export default function LogIn() {
                     label="Email Address"
                     autoComplete="email"
                     name="email"
-                    onChange={handleChange}
-                    onBlur={handleChange}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     autoFocus
                   />
                   <TextField
@@ -208,24 +156,23 @@ export default function LogIn() {
                     required
                     fullWidth
                     name="password"
-                    onChange={handleChange}
-                    onBlur={handleChange}
                     label="Password"
                     type="password"
                     id="password"
                     autoComplete="current-password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                   <FormControlLabel
                     control={<Checkbox value="remember" color="primary" />}
                     label="Remember me"
                   />
                   <Button
-                    type="submit"
                     fullWidth
                     variant="contained"
-                    color="success"
+                    color="primary"
                     sx={{ mt: 3, mb: 2 }}
-                    disabled={disabledLogin}
+                    onClick={handleLogin}
                   >
                     LogIn
                   </Button>
@@ -243,6 +190,9 @@ export default function LogIn() {
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
+      <ToastContainer />
     </ThemeProvider>
   );
 }
+
+export default LogIn;

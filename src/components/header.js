@@ -12,6 +12,7 @@ import Stack from "@mui/material/Stack";
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import AccountCircle from '@mui/icons-material/AccountCircle';
+import useLogout from "../pages/useLogout";
 
 const Header = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -25,6 +26,13 @@ const Header = (props) => {
 
   const toggleDrawer = () => {
     props.onOutput(!props.open);
+  };
+
+  const handleLogout = useLogout();
+
+  const handleLogoutClick = () => {
+    handleLogout();
+    handleClose(); // Close the menu after logout
   };
 
   return (
@@ -83,7 +91,7 @@ const Header = (props) => {
           }}
         >
           <Stack sx={{ minWidth: 150 }}>
-            <MenuItem onClick={handleClose} sx={{ color: 'red' }}>
+            <MenuItem onClick={handleLogoutClick} sx={{ color: 'red' }}>
               <LogoutIcon sx={{ marginRight: '10px', color: 'red' }} />
               Logout
             </MenuItem>
