@@ -350,6 +350,10 @@ export default function AddDepartment() {
                             sx={{ width: "100%" }}
                             name="secretary.phone_number"
                             value={formData.secretary.phone_number}
+                            inputProps={{
+                              minLength: 10,
+                              maxLength: 10
+                            }}
                             onChange={handleChange}
                           />
 
@@ -416,6 +420,10 @@ export default function AddDepartment() {
                               sx={{ width: "100%" }}
                               name="headOffice.phone_number"
                               value={formData.headOffice.phone_number}
+                              inputProps={{
+                                minLength: 10,
+                                maxLength: 10
+                              }}
                               onChange={handleChange}
                             />
                             <label>Head of Office Email Id</label>

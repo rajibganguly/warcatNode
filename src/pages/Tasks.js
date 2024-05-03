@@ -11,7 +11,6 @@ import Grid from "@mui/material/Grid";
 import { Link } from "react-router-dom";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CustomTable from '../components/CustomTable';
 import { Button } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Dropdowns from '../components/Dropdowns';
@@ -29,6 +28,8 @@ import "react-circular-progressbar/dist/styles.css";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
+import Reporttable from '../components/Reporttable';
+import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 
 const drawerWidth = 240;
@@ -208,6 +209,7 @@ const data = [
     age: 32,
     address: 'New York No. 1 Lake Park',
     city: 'delhi',
+    description: 'Response Rate --',
   },
   {
     key: '2',
@@ -215,6 +217,7 @@ const data = [
     age: 42,
     address: 'London No. 1 Lake Park',
     city: 'delhi',
+    description: 'Response Rate --',
   },
   {
     key: '3',
@@ -222,6 +225,7 @@ const data = [
     age: 32,
     address: 'Sydney No. 1 Lake Park',
     city: 'delhi',
+    description: 'Response Rate --',
   },
   {
     key: '4',
@@ -229,6 +233,7 @@ const data = [
     age: 32,
     address: 'London No. 2 Lake Park',
     city: 'delhi',
+    description: 'Response Rate --',
   },
 ];
 
@@ -236,6 +241,24 @@ export default function Tasks() {
   const [open, setOpen] = React.useState(true);
   const [filteredInfo, setFilteredInfo] = useState({});
   const [sortedInfo, setSortedInfo] = useState({});
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [selectedRecord, setSelectedRecord] = React.useState(null);
+
+  const handleSeeClick = (record) => {
+    setSelectedRecord(record);
+    setModalVisible(true);
+  };
+
+
+  const handleEditClick = (record) => {
+    console.log('Edit clicked for:', record);
+    // Implement logic for editing
+  };
+
+  const handleDeleteClick = (record) => {
+    console.log('Delete clicked for:', record);
+    // Implement logic for deleting
+  };
 
   const columns = [
     {
@@ -287,6 +310,27 @@ export default function Tasks() {
       sorter: (a, b) => a.city.length - b.city.length,
       sortOrder: sortedInfo.columnKey === 'city' ? sortedInfo.order : null,
       ellipsis: true,
+    },
+    {
+      title: 'Operation',
+      key: 'operation',
+      render: (text, record) => (
+        <>
+
+          <div className="d-flex justify-content-center" style={{ backgroundColor: 'transparent', width: 'fit-content' }}>
+            <Button type="primary" onClick={() => handleSeeClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#1890ff', color: '#fff' }}>
+              <EyeOutlined />
+            </Button>
+            <Button type="primary" onClick={() => handleEditClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#1890ff', color: '#fff' }}>
+              <EditOutlined />
+            </Button>
+            <Button type="danger" onClick={() => handleDeleteClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#ff4d4f', color: '#fff' }}>
+              <DeleteOutlined />
+            </Button>
+          </div>
+
+        </>
+      ),
     },
   ];
 
@@ -483,13 +527,16 @@ export default function Tasks() {
                           size="small" variant="outlined" />
                       </Box>
                       <CardContent>
-                        <CustomTable
+                        <Reporttable
                           data={data}
                           columns={columns}
                           filteredInfo={filteredInfo}
                           sortedInfo={sortedInfo}
                           setFilteredInfo={setFilteredInfo}
                           setSortedInfo={setSortedInfo}
+                          modalVisible={modalVisible}
+                          setModalVisible={setModalVisible}
+                          selectedRecord={selectedRecord}
                         />
                       </CardContent>
                     </Card>

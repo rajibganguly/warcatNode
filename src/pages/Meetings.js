@@ -20,15 +20,13 @@ import MuiDrawer from "@mui/material/Drawer";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CustomTable from '../components/CustomTable';
-
-
-import Orders from "../components/orders";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
 
 import { Button } from "@mui/material";
 //import SidePane from "../components/sidepane";
+import { EyeOutlined, EditOutlined } from '@ant-design/icons';
 
 const drawerWidth = 240;
 
@@ -79,35 +77,34 @@ const Drawer = styled(MuiDrawer, {
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
-const data = [
+const Meetingdata = [
   {
     key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    city: 'delhi',
+    meetingid: 'KCD0034',
+    meetingtopic: 'Meeting 1',
+    departments: '	Labour Department',
+    tag: 'Secretary, Head of Office',
+    date: '2024-03-07',
+    time: '12:00 PM',
+    attachments: 'meeting.jpeg',
+    tasks: '',
+    operation: ''
+
   },
   {
     key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    city: 'delhi',
+    meetingid: 'KCD0034',
+    meetingtopic: 'Meeting 1',
+    departments: 'Forest Department, Agriculture & Fermers Department',
+    tag: 'Secretary, Head of Office',
+    date: '2024-03-07',
+    time: '12:00 PM',
+    attachments: 'meeting.jpeg',
+    tasks: '',
+    operation: ''
+
   },
-  {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sydney No. 1 Lake Park',
-    city: 'delhi',
-  },
-  {
-    key: '4',
-    name: 'Jim Red',
-    age: 32,
-    address: 'London No. 2 Lake Park',
-    city: 'delhi',
-  },
+  
 ];
 
 
@@ -115,58 +112,119 @@ export default function Meetings() {
   const [open, setOpen] = React.useState(true);
   const [filteredInfo, setFilteredInfo] = useState({});
   const [sortedInfo, setSortedInfo] = useState({});
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [selectedRecord, setSelectedRecord] = React.useState(null);
+
+  const handleSeeClick = (record) => {
+    setSelectedRecord(record);
+    setModalVisible(true);
+  };
+
+
+  const handleEditClick = (record) => {
+    console.log('Edit clicked for:', record);
+    // Implement logic for editing
+  };
+
 
   const columns = [
     {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
-      filters: [
-        { text: 'Joe', value: 'Joe' },
-        { text: 'Jim', value: 'Jim' },
-      ],
-      filteredValue: filteredInfo.name || null,
-      onFilter: (value, record) => record.name.includes(value),
-      sorter: (a, b) => a.name.length - b.name.length,
-      sortOrder: sortedInfo.columnKey === 'name' ? sortedInfo.order : null,
-      ellipsis: true,
+      title: '#Meeting Id',
+      dataIndex: 'meetingid',
+      key: 'meetingid',
+     
+      sorter: (a, b) => a.department.localeCompare(b.department),
+      sortOrder: sortedInfo.columnKey === 'department' ? sortedInfo.order : null,
+     
+      description: 'My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.',
     },
     {
-      title: 'Age',
-      dataIndex: 'age',
-      key: 'age',
-      sorter: (a, b) => a.age - b.age,
-      sortOrder: sortedInfo.columnKey === 'age' ? sortedInfo.order : null,
-      ellipsis: true,
+      title: 'Meeting Topic',
+      dataIndex: 'meetingtopic',
+      key: 'meetingtopic',
+      sorter: (a, b) => a.secretary.localeCompare(b.secretary),
+      sortOrder: sortedInfo.columnKey === 'secretary' ? sortedInfo.order : null,
+     
     },
     {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
-      filters: [
-        { text: 'London', value: 'London' },
-        { text: 'New York', value: 'New York' },
-      ],
-      filteredValue: filteredInfo.address || null,
-      onFilter: (value, record) => record.address.includes(value),
-      sorter: (a, b) => a.address.length - b.address.length,
-      sortOrder: sortedInfo.columnKey === 'address' ? sortedInfo.order : null,
-      ellipsis: true,
+      title: 'Departments',
+      dataIndex: 'departments',
+      key: 'departments',
+      sorter: (a, b) => a.headofoffice.localeCompare(b.headofoffice),
+      sortOrder: sortedInfo.columnKey === 'headofoffice' ? sortedInfo.order : null,
+     
+    },
+   
+    {
+      title: 'Tag',
+      dataIndex: 'tag',
+      key: 'tag',
+      sorter: (a, b) => a.headofoffice.localeCompare(b.headofoffice),
+      sortOrder: sortedInfo.columnKey === 'headofoffice' ? sortedInfo.order : null,
+     
     },
     {
-      title: 'City',
-      dataIndex: 'city',
-      key: 'city',
-      filters: [
-        { text: 'London', value: 'London' },
-        { text: 'New York', value: 'New York' },
-      ],
-      filteredValue: filteredInfo.city || null,
-      onFilter: (value, record) => record.city.includes(value),
-      sorter: (a, b) => a.city.length - b.city.length,
-      sortOrder: sortedInfo.columnKey === 'city' ? sortedInfo.order : null,
-      ellipsis: true,
+      title: 'Date',
+      dataIndex: 'date',
+      key: 'date',
+      sorter: (a, b) => a.headofoffice.localeCompare(b.headofoffice),
+      sortOrder: sortedInfo.columnKey === 'headofoffice' ? sortedInfo.order : null,
+     
     },
+    {
+      title: 'Time',
+      dataIndex: 'time',
+      key: 'time',
+      sorter: (a, b) => a.headofoffice.localeCompare(b.headofoffice),
+      sortOrder: sortedInfo.columnKey === 'headofoffice' ? sortedInfo.order : null,
+     
+    },
+    {
+      title: 'Attachments',
+      dataIndex: 'attachments',
+      key: 'attachments',
+      sorter: (a, b) => a.headofoffice.localeCompare(b.headofoffice),
+      sortOrder: sortedInfo.columnKey === 'headofoffice' ? sortedInfo.order : null,
+     
+    },
+
+
+    {
+      title: 'Tasks',
+      key: 'tasks',
+      render: (text, record) => (
+        <>
+
+          <div className="d-flex justify-content-center" style={{ backgroundColor: 'transparent', width: 'fit-content' }}>
+            <Button type="primary" onClick={() => handleSeeClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#1890ff', color: '#fff' }}>
+              <EyeOutlined />
+            </Button>
+            <Button type="primary" onClick={() => handleEditClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#1890ff', color: '#fff' }}>
+              <EditOutlined />
+            </Button>
+           
+          </div>
+
+        </>
+      ),
+    },
+    {
+      title: 'Operation',
+      key: 'operation',
+      render: (text, record) => (
+        <>
+
+          <div className="d-flex justify-content-center" style={{ backgroundColor: 'transparent', width: 'fit-content' }}>
+          <Button type="primary" onClick={() => handleEditClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#1890ff', color: '#fff' }}>
+              <EditOutlined />
+            </Button>
+           
+          </div>
+
+        </>
+      ),
+    },
+   
   ];
 
   const handleOutput = (open) => {
@@ -177,6 +235,8 @@ export default function Meetings() {
   };
 
   // const profilePic = "../assets/user/user1.png"
+
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -282,12 +342,15 @@ export default function Meetings() {
                       </Box>
                       <CardContent>
                         <CustomTable
-                          data={data}
+                          data={Meetingdata}
                           columns={columns}
                           filteredInfo={filteredInfo}
                           sortedInfo={sortedInfo}
                           setFilteredInfo={setFilteredInfo}
                           setSortedInfo={setSortedInfo}
+                          modalVisible={modalVisible}
+                          setModalVisible={setModalVisible}
+                          selectedRecord={selectedRecord}
                         />
                       </CardContent>
                     </Card>
