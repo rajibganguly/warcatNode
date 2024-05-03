@@ -43,6 +43,7 @@ const defaultTheme = createTheme();
 export default function LogIn() {
   const [loginRoleType, setLoginRoleType] = useState("admin");
   const [disabledLogin, setDisabledLogin] = useState(true);
+  //const [token, setToken] = useState('');
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -122,6 +123,8 @@ export default function LogIn() {
     try {
       if (response.status === 200) {
         alert(`${reactAppHostname}/api/login`);
+        localStorage.setItem('token', response.body.token);    
+        //setToken(response.body.token);    
         navigate("/dashboard");
       } else {
         alert("Login Failed");

@@ -1,4 +1,5 @@
 import './App.css';
+import react, { useState} from 'react'
 import LogIn from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import AddDepartment from './pages/AddDepartment';
@@ -15,8 +16,10 @@ import AddTask from './pages/AddTasks';
 
 function App() {
   // const [ isLoggedIn, setIsLoggedIn] = useState({login: false})
-  const token = sessionStorage.getItem('token');
-  const isLogin = (token) ? true: false;
+  // const [token, setToken] = useState('');
+
+  const authtoken = localStorage.getItem('token');
+  const isLogin = (authtoken) ? true: false;
   return (
     <Router>
       <Routes>
