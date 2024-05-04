@@ -78,10 +78,10 @@ const Drawer = styled(MuiDrawer, {
 const defaultTheme = createTheme();
 
 const cardData = [
-  { title: 'Total Department', value: 150, icon: <AccountBalanceIcon /> },
-  { title: 'Total Employees', value: 250, icon: <PeopleIcon /> },
-  { title: 'Revenue', value: '$500,000', icon: <MonetizationOnIcon /> },
-  { title: 'Profit', value: '$100,000', icon: <MonetizationOnIcon /> },
+  { title: 'Total Department', value: 155, icon: <AccountBalanceIcon /> },
+  { title: 'Completed Tasks', value: 38, icon: <PeopleIcon /> },
+  { title: 'Total Meeting', value: 246, icon: <MonetizationOnIcon /> },
+  { title: 'Assigned Task', value: 143, icon: <MonetizationOnIcon /> },
 ];
 
 export default function Dashboard() {

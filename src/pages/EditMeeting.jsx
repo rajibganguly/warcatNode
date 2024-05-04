@@ -25,7 +25,7 @@ import Footer from "../components/Footer";
 import Header from "../components/header";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-//import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useTheme } from '@mui/material/styles';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
@@ -142,7 +142,7 @@ const Drawer = styled(MuiDrawer, {
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
-export default function AddNewMeeting() {
+export default function EditMeeting() {
     const [open, setOpen] = React.useState(true);
 
     const [personName, setPersonName] = React.useState([]);
@@ -218,42 +218,43 @@ export default function AddNewMeeting() {
                     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
                         <Grid container spacing={3}>
                             {/* Recent Orders */}
-                            <Grid item xs={12}> 
-                            <div
-                  style={{
-                    display: "flex",
-                    alignItems: "start",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <div
-                    style={{
-                      textTransform: "uppercase",
-                      paddingBottom: "10px",
-                    }}
-                  >
-                    MEETINGS
-                  </div>
-                  <div>
-                    <Breadcrumbs aria-label="breadcrumb">
-                      <Link underline="hover" color="inherit" href="/">
-                        WARCAT
-                      </Link>
-                      <Link
-                        underline="hover"
-                        color="inherit"
-                        href="/meetings"
-                      >
-                        Meetings
-                      </Link>
-                      <Typography color="text.primary">
-                        Add New Meetings
-                      </Typography>
-                    </Breadcrumbs>
-                  </div>
-                </div>                               
+                            <Grid item xs={12}>
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "start",
+                                        justifyContent: "space-between",
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            textTransform: "uppercase",
+                                            paddingBottom: "10px",
+                                        }}
+                                    >
+                                        Meetings
+                                    </div>
+                                    <div>
+                                        <Breadcrumbs aria-label="breadcrumb">
+                                            <Link underline="hover" color="inherit" href="/">
+                                                WARCAT
+                                            </Link>
+                                            <Link
+                                                underline="hover"
+                                                color="inherit"
+
+                                            >
+                                                Meetings
+                                            </Link>
+                                            <Typography color="text.primary">
+                                                Edit Meeting
+                                            </Typography>
+                                        </Breadcrumbs>
+                                    </div>
+                                </div>
                                 <Card sx={{ width: 100 + "%", padding: 2 }}>
 
+                                    <CardContent>
                                         <Box
                                             sx={{
                                                 display: 'flex',
@@ -264,9 +265,19 @@ export default function AddNewMeeting() {
 
                                             }}
                                         >
-                                            <Typography variant="body1">Add Meetings</Typography>
+                                            <Typography variant="body1">Edit Meetings</Typography>
+                                            <Button variant="contained" sx={{
+                                                backgroundColor: '#fb4',
+                                                color: '#000000',
+
+                                                '&:hover': {
+                                                    backgroundColor: '#fb4',
+                                                },
+
+                                            }} component={Link} to="/meetings">
+                                                All Meetings
+                                            </Button>
                                         </Box>
-                                    <CardContent>
                                         <Box
                                             component="form"
 
@@ -342,7 +353,7 @@ export default function AddNewMeeting() {
                                                 </Grid>
 
                                                 <Grid item xs={12}>
-                                                    <TextField id="outlined-basic" label="Enter Meeting Topic" variant="outlined" fullWidth />
+                                                    <TextField id="outlined-basic" label="Meeting 1" value={'Meeting 1'} variant="outlined" fullWidth />
                                                 </Grid>
 
                                                 <Grid item xs={12}>
@@ -351,21 +362,22 @@ export default function AddNewMeeting() {
                                                             components={[
                                                                 'DatePicker',
                                                                 'TimePicker',
+
                                                             ]}
                                                         >
-                                                            <Grid item xs={4}>
+                                                            <Grid xs={4}>
                                                                 <DemoItem label={<Label componentName="DatePicker" valueType="date" />}>
                                                                     <DatePicker />
                                                                 </DemoItem>
                                                             </Grid>
 
-                                                            <Grid item xs={4}>
+                                                            <Grid xs={4}>
                                                                 <DemoItem label={<Label componentName="TimePicker" valueType="time" />}>
                                                                     <TimePicker />
                                                                 </DemoItem>
                                                             </Grid>
 
-                                                            <Grid item xs={4} sx={{display: 'flex',justifyContent: 'center', alignItems: 'center'}}>
+                                                            <Grid xs={4} sx={{display: 'flex',justifyContent: 'center', alignItems: 'center'}}>
                                                                 <Button
                                                                     component="label"
                                                                     role={undefined}
@@ -382,7 +394,7 @@ export default function AddNewMeeting() {
                                                     </LocalizationProvider>
                                                 </Grid>
                                             </Grid>
-                                            <Button variant="contained" color="info" sx={{ color: 'white', marginTop: '2%' }}>Add Meeting</Button>
+                                            <Button variant="contained" color="success" sx={{ color: 'white', marginTop: '2%' }}>Update</Button>
                                         </Box>
                                     </CardContent>
                                 </Card>

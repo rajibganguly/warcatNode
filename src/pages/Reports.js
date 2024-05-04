@@ -21,18 +21,11 @@ import { mainListItems, secondaryListItems } from "../components/listitems";
 import LogoBlack from "../components/logoblack";
 import ProfileSidePane from "../components/profileSidepane";
 import MuiDrawer from "@mui/material/Drawer";
-
-
-//import Orders from "../components/orders";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
-//import SidePane from "../components/sidepane";
-import EnhancedTable from "../components/tables";
 import { Button, ButtonGroup, TextField } from "@mui/material";
-
 import SearchIcon from '@mui/icons-material/Search';
-
 const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
@@ -121,6 +114,10 @@ export default function Reports() {
   const [open, setOpen] = React.useState(true);
   const [filteredInfo, setFilteredInfo] = useState({});
   const [sortedInfo, setSortedInfo] = useState({});
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [selectedRecord, setSelectedRecord] = React.useState(null);
+
+ 
 
   const columns = [
     {
@@ -136,7 +133,7 @@ export default function Reports() {
       sorter: (a, b) => a.name.length - b.name.length,
       sortOrder: sortedInfo.columnKey === 'name' ? sortedInfo.order : null,
       ellipsis: true,
-      description: 'Response Rate --',
+      
     },
     {
       title: 'Age',
@@ -174,6 +171,7 @@ export default function Reports() {
       sortOrder: sortedInfo.columnKey === 'city' ? sortedInfo.order : null,
       ellipsis: true,
     },
+   
   ];
 
   const handleOutput = (open) => {
@@ -230,7 +228,6 @@ export default function Reports() {
                 ? theme.palette.grey[100]
                 : theme.palette.grey[900],
             width: "100%",
-            height: "108vh",
             paddingBottom: "20px",
           }}
         >
@@ -367,6 +364,7 @@ export default function Reports() {
                       sortedInfo={sortedInfo}
                       setFilteredInfo={setFilteredInfo}
                       setSortedInfo={setSortedInfo}
+                     
 
                     />
                   </CardContent>
