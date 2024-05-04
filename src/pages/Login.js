@@ -45,7 +45,7 @@ const defaultTheme = createTheme();
 export default function LogIn() {
   const [loginRoleType, setLoginRoleType] = useState("admin");
   const [disabledLogin, setDisabledLogin] = useState(true);
-  //const [token, setToken] = useState('');
+  const [token, setToken] = useState('');
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -131,8 +131,11 @@ export default function LogIn() {
         try {
           if (response.status === 200) {
             alert(`${reactAppHostname}/api/login`);
-            localStorage.setItem('token', response.body.token);    
-            //setToken(response.body.token);  
+            const resData = await response.json();
+            const token = resData.token;
+            localStorage.setItem('token', token); 
+            console.log(resData)   
+            setToken(token);  
             setLoading(false);
             resolve();       
             navigate("/dashboard");

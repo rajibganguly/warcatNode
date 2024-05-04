@@ -1,5 +1,5 @@
 import './App.css';
-import react, { useContext, useState} from 'react'
+import react, { useContext, useEffect, useState} from 'react'
 import LogIn from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import AddDepartment from './pages/AddDepartment';
@@ -20,9 +20,15 @@ function App() {
   // const [ isLoggedIn, setIsLoggedIn] = useState({login: false})
   // const [token, setToken] = useState('');
   //const [tokenContx, setToken] = useContext('');
-
-  const authtoken = localStorage.getItem('token');
-  const isLogin = (authtoken) ? true: false;
+  let authtoken = localStorage.getItem('token');
+  let isLogin = (authtoken) ? true: false;
+  
+  useEffect(() => {
+    let authtoken = localStorage.getItem('token');
+    let isLogin = (!authtoken) ? true: false;
+    console.log(authtoken, isLogin)
+    
+  }, [])
   return (
     <Router>
       <Routes>
