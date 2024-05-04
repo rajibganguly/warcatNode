@@ -17,6 +17,8 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import Logo from "../components/Logo";
 import { useNavigate } from "react-router-dom";
+import { trackPromise } from 'react-promise-tracker';
+import LoadingIndicator from './../components/loadingIndicator';
 
 function Copyright(props) {
   return (
@@ -44,6 +46,8 @@ export default function LogIn() {
   const [loginRoleType, setLoginRoleType] = useState("admin");
   const [disabledLogin, setDisabledLogin] = useState(true);
   //const [token, setToken] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -105,33 +109,43 @@ export default function LogIn() {
    * @Output: {Success/ fails} 
    */ 
     const handleSubmit = async (event) => {
+      setLoading(true);
+      console.log(loading);   
+
     event.preventDefault();
     setDisabledLogin(true);
     const reactAppHostname = process.env.REACT_APP_HOSTNAME;
-    const response = await fetch(`${reactAppHostname}/api/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: formData.email,
-        role_type: loginRoleType,
-        password: formData.password,
-      }),
-    });
-
-    try {
-      if (response.status === 200) {
-        alert(`${reactAppHostname}/api/login`);
-        localStorage.setItem('token', response.body.token);    
-        //setToken(response.body.token);    
-        navigate("/dashboard");
-      } else {
-        alert("Login Failed");
-      }
-    } catch (error) {
-      console.error("Error occurred:", error);
-    }
+    trackPromise(
+      new Promise(async(resolve) => {
+        const response = await fetch(`${reactAppHostname}/api/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            role_type: loginRoleType,
+            password: formData.password,
+          }),
+        });
+        try {
+          if (response.status === 200) {
+            alert(`${reactAppHostname}/api/login`);
+            localStorage.setItem('token', response.body.token);    
+            //setToken(response.body.token);  
+            setLoading(false);
+            resolve();       
+            navigate("/dashboard");
+          } else {
+            alert("Login Failed");
+          }
+        } catch (error) {
+          console.error("Error occurred:", error);
+        } finally {
+          setLoading(false);
+        }        
+      })
+    ); 
   };
 
   return (
@@ -245,6 +259,7 @@ export default function LogIn() {
           </TabContext>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
+        <LoadingIndicator />
       </Container>
     </ThemeProvider>
   );
