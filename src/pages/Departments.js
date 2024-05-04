@@ -24,6 +24,11 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
 import { useNavigate } from "react-router-dom";
+import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+
+import SearchIcon from '@mui/icons-material/Search';
+
+
 
 const drawerWidth = 240;
 
@@ -74,36 +79,30 @@ const Drawer = styled(MuiDrawer, {
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
-const data = [
+const departmentData = [
   {
     key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    city: 'delhi',
+    department: 'Forest Department',
+    secretary: 'Dr. Avinash Kanfade IFS',
+    headofoffice: 'Dr. Avinash Kanfade IFS',
+    operation: 'iconspace',
 
   },
   {
     key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    city: 'delhi',
+    department: 'Labour Department',
+    secretary: 'Shri Tarun Kanti Debnath, IAS',
+    headofoffice: 'Shri Tarun Kanti Debnath, IAS',
+    operation: 'icon',
   },
   {
     key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sydney No. 1 Lake Park',
-    city: 'delhi',
+    department: 'Agriculture & Fermers Department',
+    secretary: 'Shri. Apurba Roy',
+    headofoffice: 'Shri. Apurba Roy',
+    operation: 'icon',
   },
-  {
-    key: '4',
-    name: 'Jim Red',
-    age: 32,
-    address: 'London No. 2 Lake Park',
-    city: 'delhi',
-  },
+
 ];
 
 export default function Departments() {
@@ -111,60 +110,84 @@ export default function Departments() {
   const navigate = useNavigate();
   const [filteredInfo, setFilteredInfo] = useState({});
   const [sortedInfo, setSortedInfo] = useState({});
+  const [data, setData] = useState([]);// Your data array
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [selectedRecord, setSelectedRecord] = React.useState(null);
+
+  
+
+  const handleSeeClick = (record) => {
+    setSelectedRecord(record);
+    setModalVisible(true);
+  };
+
+
+  const handleEditClick = (record) => {
+    console.log('Edit clicked for:', record);
+   
+  // Navigate to the edit page
+  navigate('/edit-departments');
+    // Implement logic for editing
+  };
+
+  const handleDeleteClick = (record) => {
+    console.log('Delete clicked for:', record);
+    // Implement logic for deleting
+  };
 
   const columns = [
     {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
-      filters: [
-        { text: 'Joe', value: 'Joe' },
-        { text: 'Jim', value: 'Jim' },
-      ],
-      filteredValue: filteredInfo.name || null,
-      onFilter: (value, record) => record.name.includes(value),
-      sorter: (a, b) => a.name.length - b.name.length,
-      sortOrder: sortedInfo.columnKey === 'name' ? sortedInfo.order : null,
-      ellipsis: true,
+      title: 'Department / Government Organisation',
+      dataIndex: 'department',
+      key: 'department',
+      width: '400',
+      sorter: (a, b) => a.department.localeCompare(b.department),
+      sortOrder: sortedInfo.columnKey === 'department' ? sortedInfo.order : null,
+      
       description: 'My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.',
     },
     {
-      title: 'Age',
-      dataIndex: 'age',
-      key: 'age',
-      sorter: (a, b) => a.age - b.age,
-      sortOrder: sortedInfo.columnKey === 'age' ? sortedInfo.order : null,
-      ellipsis: true,
+      title: 'Secretary',
+      dataIndex: 'secretary',
+      key: 'secretary',
+      sorter: (a, b) => a.secretary.localeCompare(b.secretary),
+      sortOrder: sortedInfo.columnKey === 'secretary' ? sortedInfo.order : null,
+      
     },
     {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
-      filters: [
-        { text: 'London', value: 'London' },
-        { text: 'New York', value: 'New York' },
-      ],
-      filteredValue: filteredInfo.address || null,
-      onFilter: (value, record) => record.address.includes(value),
-      sorter: (a, b) => a.address.length - b.address.length,
-      sortOrder: sortedInfo.columnKey === 'address' ? sortedInfo.order : null,
-      ellipsis: true,
+      title: 'Head Of Office',
+      dataIndex: 'headofoffice',
+      key: 'headofoffice',
+      sorter: (a, b) => a.headofoffice.localeCompare(b.headofoffice),
+      sortOrder: sortedInfo.columnKey === 'headofoffice' ? sortedInfo.order : null,
+      
     },
     {
-      title: 'City',
-      dataIndex: 'city',
-      key: 'city',
-      filters: [
-        { text: 'London', value: 'London' },
-        { text: 'New York', value: 'New York' },
-      ],
-      filteredValue: filteredInfo.city || null,
-      onFilter: (value, record) => record.city.includes(value),
-      sorter: (a, b) => a.city.length - b.city.length,
-      sortOrder: sortedInfo.columnKey === 'city' ? sortedInfo.order : null,
-      ellipsis: true,
+      title: 'Operation',
+      key: 'operation',
+      render: (text, record) => (
+        <>
+
+          <div className="d-flex justify-content-center" style={{ backgroundColor: 'transparent', width: 'fit-content' }}>
+            <Button type="primary" onClick={() => handleSeeClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#fb4', color: '#fff' }}>
+              <EyeOutlined />
+            </Button>
+            <Button type="primary" onClick={() => handleEditClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#0097a7', color: '#fff' }}>
+              <EditOutlined />
+            </Button>
+            <Button type="danger" onClick={() => handleDeleteClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#f32f53', color: '#fff' }}>
+              <DeleteOutlined />
+            </Button>
+          </div>
+
+        </>
+      ),
     },
+   
   ];
+
+
+
 
   const handleOutput = (open) => {
     toggleDrawer();
@@ -173,10 +196,12 @@ export default function Departments() {
     setOpen(!open);
   };
 
-  // const profilePic = "../assets/user/user1.png"
+
   const handleClickAddDepartment = () => {
     navigate('/add_department')
   }
+
+ 
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -223,7 +248,6 @@ export default function Departments() {
                 ? theme.palette.grey[100]
                 : theme.palette.grey[900],
             width: "100%",
-            height: "108vh",
             paddingBottom: "20px",
           }}
         >
@@ -329,19 +353,32 @@ export default function Departments() {
 
                       }}>Column Visibility</Button>
                     </ButtonGroup>
-                    <TextField id="outlined-basic"
-                      label="Search"
-                      size="small" variant="outlined" />
+                    <TextField
+                        id="outlined-textarea"
+                        label="Search"
+                        variant="outlined"
+                        placeholder="Enter search"
+                        size="small"
+                        InputProps={{
+                          endAdornment: (
+                            <IconButton>
+                              <SearchIcon />
+                            </IconButton>
+                          ),
+                        }}
+                      />
                   </Box>
                   <CardContent>
                     <CustomTable
-                      data={data}
+                      data={departmentData}
                       columns={columns}
                       filteredInfo={filteredInfo}
                       sortedInfo={sortedInfo}
                       setFilteredInfo={setFilteredInfo}
                       setSortedInfo={setSortedInfo}
-
+                      modalVisible={modalVisible}
+                      setModalVisible={setModalVisible}
+                      selectedRecord={selectedRecord}
                     />
                   </CardContent>
                 </Card>

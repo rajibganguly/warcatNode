@@ -11,7 +11,6 @@ import Grid from "@mui/material/Grid";
 import { Link } from "react-router-dom";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CustomTable from '../components/CustomTable';
 import { Button } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Dropdowns from '../components/Dropdowns';
@@ -29,6 +28,9 @@ import "react-circular-progressbar/dist/styles.css";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
+import Reporttable from '../components/Reporttable';
+import { EyeOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import StaticModel from "../components/StaticModel";
 
 
 const drawerWidth = 240;
@@ -204,44 +206,62 @@ const progressData = [
 const data = [
   {
     key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    city: 'delhi',
+    assigneddate: '01 Feb, 2024',
+    tasktitle: 'Website Issue 5',
+    department: 'Forest Department',
+    tag: 'Secretary',
+    targetdate: '21 Mar, 2024',
+    status: 'Assigned',
+    description: 'Response Rate --',
   },
   {
     key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    city: 'delhi',
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sydney No. 1 Lake Park',
-    city: 'delhi',
-  },
-  {
-    key: '4',
-    name: 'Jim Red',
-    age: 32,
-    address: 'London No. 2 Lake Park',
-    city: 'delhi',
-  },
+    assigneddate: '01 Feb, 2024',
+    tasktitle: 'Website Issue 5',
+    department: 'Forest Department',
+    tag: 'Secretary,Head of Office',
+    targetdate: '30 Mar, 2024',
+    status: 'In Progress',
+  }
 ];
 
 export default function Tasks() {
   const [open, setOpen] = React.useState(true);
   const [filteredInfo, setFilteredInfo] = useState({});
   const [sortedInfo, setSortedInfo] = useState({});
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [selectedRecord, setSelectedRecord] = React.useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleSeeClick = (record) => {
+    setSelectedRecord(record);
+    setModalVisible(true);
+  };
+
+
+  const handleEditClick = (record) => {
+    console.log('Edit clicked for:', record);
+    // Implement logic for editing
+  };
+
+  const handleDeleteClick = (record) => {
+    console.log('Delete clicked for:', record);
+    // Implement logic for deleting
+  };
 
   const columns = [
     {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
+      title: 'Assigned Date',
+      dataIndex: 'assigneddate',
+      key: 'assigneddate',
       filters: [
         { text: 'Joe', value: 'Joe' },
         { text: 'Jim', value: 'Jim' },
@@ -250,20 +270,20 @@ export default function Tasks() {
       onFilter: (value, record) => record.name.includes(value),
       sorter: (a, b) => a.name.length - b.name.length,
       sortOrder: sortedInfo.columnKey === 'name' ? sortedInfo.order : null,
-      ellipsis: true,
+      
     },
     {
-      title: 'Age',
-      dataIndex: 'age',
-      key: 'age',
+      title: 'Task Title',
+      dataIndex: 'tasktitle',
+      key: 'tasktitle',
       sorter: (a, b) => a.age - b.age,
       sortOrder: sortedInfo.columnKey === 'age' ? sortedInfo.order : null,
-      ellipsis: true,
+      
     },
     {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
+      title: 'Department',
+      dataIndex: 'department',
+      key: 'department',
       filters: [
         { text: 'London', value: 'London' },
         { text: 'New York', value: 'New York' },
@@ -272,12 +292,12 @@ export default function Tasks() {
       onFilter: (value, record) => record.address.includes(value),
       sorter: (a, b) => a.address.length - b.address.length,
       sortOrder: sortedInfo.columnKey === 'address' ? sortedInfo.order : null,
-      ellipsis: true,
+      
     },
     {
-      title: 'City',
-      dataIndex: 'city',
-      key: 'city',
+      title: 'Tag',
+      dataIndex: 'tag',
+      key: 'tag',
       filters: [
         { text: 'London', value: 'London' },
         { text: 'New York', value: 'New York' },
@@ -286,7 +306,57 @@ export default function Tasks() {
       onFilter: (value, record) => record.city.includes(value),
       sorter: (a, b) => a.city.length - b.city.length,
       sortOrder: sortedInfo.columnKey === 'city' ? sortedInfo.order : null,
-      ellipsis: true,
+      
+    },
+
+    {
+      title: 'Target Date',
+      dataIndex: 'targetdate',
+      key: 'targetdate',
+      filters: [
+        { text: 'London', value: 'London' },
+        { text: 'New York', value: 'New York' },
+      ],
+      filteredValue: filteredInfo.city || null,
+      onFilter: (value, record) => record.city.includes(value),
+      sorter: (a, b) => a.city.length - b.city.length,
+      sortOrder: sortedInfo.columnKey === 'city' ? sortedInfo.order : null,
+      
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      filters: [
+        { text: 'London', value: 'London' },
+        { text: 'New York', value: 'New York' },
+      ],
+      filteredValue: filteredInfo.city || null,
+      onFilter: (value, record) => record.city.includes(value),
+      sorter: (a, b) => a.city.length - b.city.length,
+      sortOrder: sortedInfo.columnKey === 'city' ? sortedInfo.order : null,
+      
+    },
+    {
+      title: 'Sub Task',
+      key: 'subtask',
+      render: (text, record) => (
+        <>
+
+          <div style={{ backgroundColor: 'transparent', width: 'fit-content', display: 'flex', justifyContent: 'center' }}>
+          <Button type="primary" onClick={handleOpenModal} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#6fd088', color: '#fff' }}>
+              <PlusCircleOutlined />
+            </Button>
+            
+            <Button type="primary" onClick={() => handleSeeClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#fb4', color: '#fff' }}>
+              <EyeOutlined />
+            </Button>
+           
+           
+          </div>
+
+        </>
+      ),
     },
   ];
 
@@ -344,12 +414,12 @@ export default function Tasks() {
                 ? theme.palette.grey[100]
                 : theme.palette.grey[900],
             width: "100%",
-            height: "108vh",
             paddingBottom: "20px",
           }}
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          <StaticModel visible={isModalVisible} onClose={handleCloseModal} />
             <Grid container spacing={3}>
               {/* Recent Orders */}
               <Grid item xs={12}>
@@ -401,7 +471,7 @@ export default function Tasks() {
                                 bgcolor: '#5eb174',
                               },
                             }}
-                            component={Link} to="/addtasks"
+                            component={Link} to="/add-tasks"
                           >
                             Add Task
                           </Button>
@@ -483,13 +553,16 @@ export default function Tasks() {
                           size="small" variant="outlined" />
                       </Box>
                       <CardContent>
-                        <CustomTable
+                        <Reporttable
                           data={data}
                           columns={columns}
                           filteredInfo={filteredInfo}
                           sortedInfo={sortedInfo}
                           setFilteredInfo={setFilteredInfo}
                           setSortedInfo={setSortedInfo}
+                          modalVisible={modalVisible}
+                          setModalVisible={setModalVisible}
+                          selectedRecord={selectedRecord}
                         />
                       </CardContent>
                     </Card>
