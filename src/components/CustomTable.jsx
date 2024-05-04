@@ -1,9 +1,9 @@
 import React from 'react';
-import { Button, Space, Table } from 'antd';
+import { Button, Space, Table, Modal } from 'antd';
 
-const CustomTable = ({ data, columns, filteredInfo = {}, sortedInfo = {}, setFilteredInfo, setSortedInfo }) => {
+
+const CustomTable = ({ data,columns, setFilteredInfo, setSortedInfo, modalVisible, setModalVisible, selectedRecord }) => {
   const handleChange = (pagination, filters, sorter) => {
-    console.log('Various parameters', pagination, filters, sorter);
     setFilteredInfo(filters);
     setSortedInfo(sorter);
   };
@@ -21,6 +21,12 @@ const CustomTable = ({ data, columns, filteredInfo = {}, sortedInfo = {}, setFil
     setSortedInfo({ order: 'descend', columnKey: 'age' });
   };
 
+  const handleSeeClick = (record) => {
+    console.log('View clicked for:', record);
+    setModalVisible(true);
+  };
+  console.log(selectedRecord)
+
   return (
     <>
       <Space style={{ marginBottom: 16 }}>
@@ -28,8 +34,26 @@ const CustomTable = ({ data, columns, filteredInfo = {}, sortedInfo = {}, setFil
         <Button onClick={clearFilters}>Clear filters</Button>
         <Button onClick={clearAll}>Clear filters and sorters</Button>
       </Space>
-      <Table columns={columns} dataSource={data} onChange={handleChange} 
-        />
+      <Table
+        columns={columns}
+        dataSource={data}
+        onChange={handleChange}
+      />
+      <Modal
+        title="View Details"
+        open={modalVisible}
+        onCancel={() => setModalVisible(false)}
+        footer={null}
+      >
+        {selectedRecord && (
+          <div>
+            <p>Department: {selectedRecord.department}</p>
+            <p>Secretary: {selectedRecord.secretary}</p>
+            <p>Head Of Office: {selectedRecord.headofoffice}</p>
+            <p>Head Of Office: {selectedRecord.meetingid}</p>
+          </div>
+        )}
+      </Modal>
     </>
   );
 };

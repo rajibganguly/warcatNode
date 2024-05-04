@@ -10,6 +10,8 @@ import Reports from './pages/Reports';
 import Tasks from './pages/Tasks';
 import AddNewMeeting from './pages/AddNewMeeting';
 import AddTask from './pages/AddTasks';
+import EditDepartment from './pages/EditDepartment';
+import EditMeeting from './pages/EditMeeting';
 
 
 function App() {
@@ -25,8 +27,10 @@ function App() {
         <Route path="/tasks" element={<Tasks />} />
         <Route path="/reports" element={<Reports />} />   
         <Route path="/add_department" element={<AddDepartment />} />  
-        <Route path="/addnewmeetings" element={<AddNewMeeting />} /> 
-        <Route path="/addtasks" element={<AddTask />} />          
+        <Route path="/add-new-meetings" element={<AddNewMeeting />} /> 
+        <Route path="/add-tasks" element={<AddTask />} />    
+        <Route path="/edit-departments" element={<EditDepartment />} /> 
+        <Route path="/edit-meeting" element={<EditMeeting />} />          
         {/* Add more routes as needed */}
       </Routes>
     </Router>
