@@ -17,8 +17,9 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import Logo from "../components/Logo";
 import { useNavigate } from "react-router-dom";
-import { trackPromise } from 'react-promise-tracker';
-import LoadingIndicator from './../components/loadingIndicator';
+import LoadingIndicator from "./../components/loadingIndicator";
+
+import { useAuth } from "../providers/AuthProvider";
 
 function Copyright(props) {
   return (
@@ -38,15 +39,15 @@ function Copyright(props) {
   );
 }
 
-
-
 const defaultTheme = createTheme();
 
-export default function LogIn() {
+export default function LogIn({ setAuthToken }) {
+  const { login } = useAuth();
+
   const [loginRoleType, setLoginRoleType] = useState("admin");
   const [disabledLogin, setDisabledLogin] = useState(true);
-  const [token, setToken] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [token, setToken] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -59,7 +60,7 @@ export default function LogIn() {
   /**
    * @description: Check all fields if not empty
    * @input: form object { email, password }
-   * @output: boolean 
+   * @output: boolean
    */
   const isFieldsMapped = (obj) => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -73,8 +74,8 @@ export default function LogIn() {
   /**
    * @Description: Update changes and trigger complete flag
    * @Input: form object { email, password }
-   * @Output: boolean 
-   */  
+   * @Output: boolean
+   */
   const handleChange = (event) => {
     const { name, value } = event.target;
 
@@ -97,8 +98,8 @@ export default function LogIn() {
   /**
    * @Description: set role type in application of tab
    * @Input: rolestype as String
-   * @Output: String 
-   */    
+   * @Output: String
+   */
   const tabSelection = (event, newValue) => {
     setLoginRoleType(newValue);
   };
@@ -106,49 +107,42 @@ export default function LogIn() {
   /**
    * @Description: handleSubmit
    * @Input: Event
-   * @Output: {Success/ fails} 
-   */ 
-    const handleSubmit = async (event) => {
-      setLoading(true);
-      console.log(loading);   
+   * @Output: {Success/ fails}
+   */
+  const handleSubmit = async (event) => {
+    setIsLoading(true);
 
     event.preventDefault();
     setDisabledLogin(true);
     const reactAppHostname = process.env.REACT_APP_HOSTNAME;
-    trackPromise(
-      new Promise(async(resolve) => {
-        const response = await fetch(`${reactAppHostname}/api/login`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: formData.email,
-            role_type: loginRoleType,
-            password: formData.password,
-          }),
-        });
-        try {
-          if (response.status === 200) {
-            alert(`${reactAppHostname}/api/login`);
-            const resData = await response.json();
-            const token = resData.token;
-            localStorage.setItem('token', token); 
-            console.log(resData)   
-            setToken(token);  
-            setLoading(false);
-            resolve();       
-            navigate("/dashboard");
-          } else {
-            alert("Login Failed");
-          }
-        } catch (error) {
-          console.error("Error occurred:", error);
-        } finally {
-          setLoading(false);
-        }        
-      })
-    ); 
+    const response = await fetch(`${reactAppHostname}/api/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: formData.email,
+        role_type: loginRoleType,
+        password: formData.password,
+      }),
+    });
+    try {
+      if (response.status === 200) {
+        alert(`Welcome to ${reactAppHostname}`);
+        const resData = await response.json();
+        const token = resData.token;
+        localStorage.setItem("token", token);
+        login(token);
+        setIsLoading(false);
+        navigate("/dashboard");
+      } else {
+        alert("Login Failed");
+      }
+    } catch (error) {
+      console.error("Error occurred:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -262,7 +256,7 @@ export default function LogIn() {
           </TabContext>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
-        <LoadingIndicator />
+        <LoadingIndicator isLoading={isLoading} />
       </Container>
     </ThemeProvider>
   );
