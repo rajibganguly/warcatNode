@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -34,12 +33,6 @@ import MenuItem from '@mui/material/MenuItem';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 
-
-
-
-function Label({ componentName, valueType }) {
-
-}
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -63,10 +56,20 @@ const names = [
     'Virginia Andrews',
     'Kelly Snyder',
 ];
-function getStyles(name, personName, theme) {
+
+function getStyles1(name, personName1, theme) {
     return {
         fontWeight:
-            personName.indexOf(name) === -1
+            personName1.indexOf(name) === -1
+                ? theme.typography.fontWeightRegular
+                : theme.typography.fontWeightMedium,
+    };
+}
+
+function getStyles2(name, personName2, theme) {
+    return {
+        fontWeight:
+            personName2.indexOf(name) === -1
                 ? theme.typography.fontWeightRegular
                 : theme.typography.fontWeightMedium,
     };
@@ -123,24 +126,35 @@ const defaultTheme = createTheme();
 
 export default function AddTasks() {
     const [open, setOpen] = React.useState(true);
-    const [personName, setPersonName] = React.useState([]);
+    const [personName1, setPersonName1] = React.useState([]);
+    const [personName2, setPersonName2] = React.useState([]);
     const theme = useTheme();
-    const handleChange = (event) => {
+    const handleChange1 = (event) => {
         const {
             target: { value },
         } = event;
-        setPersonName(
+        setPersonName1(
             // On autofill we get a stringified value.
             typeof value === 'string' ? value.split(',') : value,
         );
-    }
+    };
+
+    const handleChange2 = (event) => {
+        const {
+            target: { value },
+        } = event;
+        setPersonName2(
+            // On autofill we get a stringified value.
+            typeof value === 'string' ? value.split(',') : value,
+        );
+    };
     const handleOutput = (open) => {
         toggleDrawer();
     };
     const toggleDrawer = () => {
         setOpen(!open);
     };
-    
+
 
 
     const [inputGroups, setInputGroups] = useState([
@@ -313,14 +327,14 @@ export default function AddTasks() {
 
                                 <Grid container spacing={2} sx={{ mb: 4, borderBottom: '1px solid #eff2f7', pb: 2 }}>
                                     <Grid item xs={6}>
-                                    <InputLabel id="demo-multiple-chip-label1">Department / Government Organisation</InputLabel>
+                                        <InputLabel id="demo-multiple-chip-label1">Department / Government Organisation</InputLabel>
                                         <Select
-                                            labelId="demo-multiple-chip-label2"
-                                            id="demo-multiple-chip"
+                                            labelId="demo-multiple-chip-label1"
+                                            id="demo-multiple-chip1"
                                             fullWidth
                                             multiple
-                                            value={personName}
-                                            onChange={handleChange}
+                                            value={personName1}
+                                            onChange={handleChange1}
                                             input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
                                             renderValue={(selected) => (
                                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
@@ -335,7 +349,7 @@ export default function AddTasks() {
                                                 <MenuItem
                                                     key={name}
                                                     value={name}
-                                                    style={getStyles(name, personName, theme)}
+                                                    style={getStyles1(name, personName1, theme)}
                                                 >
                                                     {name}
                                                 </MenuItem>
@@ -343,35 +357,60 @@ export default function AddTasks() {
                                         </Select>
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <label>Department / Government Organisation</label>
+                                        <InputLabel id="demo-multiple-chip-label1">Tag</InputLabel>
+                                        <Select
+                                            labelId="demo-multiple-chip-label2"
+                                            placeholder="Tag"
+                                            id="demo-multiple-chip2"
+                                            fullWidth
+                                            multiple
+                                            value={personName2}
+                                            onChange={handleChange2}
+                                            input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                                            renderValue={(selected) => (
+                                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                                    {selected.map((value) => (
+                                                        <Chip key={value} label={value} />
+                                                    ))}
+                                                </Box>
+                                            )}
+                                            MenuProps={MenuProps}
+                                        >
+                                            <MenuItem disabled value="">
+                                                {personName2.length === 0 ? 'Tag' : ''}
+                                            </MenuItem>
+                                            {names.map((name) => (
+                                                <MenuItem
+                                                    key={name}
+                                                    value={name}
+                                                    style={getStyles2(name, personName2, theme)}
+                                                >
+                                                    {name}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <label>Meeting ID</label>
                                         <TextField
                                             id="outlined-basic"
-                                            label="Sub Task Title"
+                                            label="Meeting ID"
                                             variant="outlined"
                                             fullWidth
-                                            name="dep_name"
+                                            name="meetingid"
+                                            disabled
 
                                         />
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <label>Department / Government Organisation</label>
+                                        <label>Meeting Topic</label>
                                         <TextField
                                             id="outlined-basic"
-                                            label="Sub Task Title"
+                                            label="Meeting Topic"
                                             variant="outlined"
                                             fullWidth
-                                            name="dep_name"
-
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <label>Department / Government Organisation</label>
-                                        <TextField
-                                            id="outlined-basic"
-                                            label="Sub Task Title"
-                                            variant="outlined"
-                                            fullWidth
-                                            name="dep_name"
+                                            name="meetingtopic"
+                                            disabled
 
                                         />
                                     </Grid>
@@ -408,6 +447,8 @@ export default function AddTasks() {
                                                         </Grid>
                                                     </Grid>
                                                 ) : (
+                                                    <>
+                                                   
                                                     <TextField
                                                         id="outlined-basic"
                                                         label="Enter Task Title"
@@ -417,6 +458,7 @@ export default function AddTasks() {
                                                         onChange={(e) => handleInputChange(group[0].id, input.id, e)}
                                                         fullWidth
                                                     />
+                                                    </>
                                                 )}
                                             </Grid>
                                         ))}
@@ -425,9 +467,11 @@ export default function AddTasks() {
                                                 <Button
                                                     variant="contained"
                                                     color="success"
-                                                    sx={{ color: 'white', marginTop: '2%',backgroundColor: '#f32f53','&:hover': {
-                                                        backgroundColor: '#f32f53', 
-                                                    }, }}
+                                                    sx={{
+                                                        color: 'white', marginTop: '2%', backgroundColor: '#f32f53', '&:hover': {
+                                                            backgroundColor: '#f32f53',
+                                                        },
+                                                    }}
                                                     onClick={() => handleRemoveClick(group[0].id)}
                                                 >
                                                     Remove Task
