@@ -19,6 +19,7 @@ import EditDepartment from "./EditDepartment";
 import EditMeeting from "./EditMeeting";
 
 import { useAuth } from "../providers/AuthProvider";
+import TaskList from "./TaskList";
 
 const Navigations = () => {
   const { authToken } = useAuth();
@@ -58,6 +59,10 @@ const Navigations = () => {
         <Route
           path="/add-tasks"
           element={!authToken ? <Navigate to="/" /> : <AddTask />}
+        />
+        <Route
+          path="/tasks-list"
+          element={!authToken ? <Navigate to="/" /> : <TaskList />}
         />
         <Route
           path="/edit-departments"
