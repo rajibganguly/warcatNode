@@ -40,6 +40,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import Sidebar from "../components/Sidebar";
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -173,36 +174,7 @@ export default function AddNewMeeting() {
                 <AppBar position="absolute" open={open}>
                     <Header props={open} onOutput={handleOutput} />
                 </AppBar>
-                <Drawer variant="permanent" open={open}>
-                    <Toolbar
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "flex-end",
-                            background: "#505d69",
-                            px: [1],
-                        }}
-                    >
-                        <LogoBlack />
-                        <IconButton onClick={toggleDrawer}>
-                            <ChevronLeftIcon sx={{ color: "white" }} />
-                        </IconButton>
-                    </Toolbar>
-                    <Divider />
-                    <Box
-                        sx={{
-                            p: 2,
-                            textAlign: "center",
-                        }}
-                    >
-                        <ProfileSidePane isopen={open} />
-                    </Box>
-                    <List component="nav">
-                        {mainListItems}
-                        <Divider sx={{ my: 1 }} />
-                        {secondaryListItems}
-                    </List>
-                </Drawer>
+                <Sidebar open={open} toggleDrawer={toggleDrawer} />
                 <Box
                     component="main"
                     sx={{

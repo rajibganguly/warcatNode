@@ -25,7 +25,7 @@ import Footer from "../components/Footer";
 import Header from "../components/header";
 import { useNavigate } from "react-router-dom";
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-
+import Sidebar from "../components/Sidebar";
 import SearchIcon from '@mui/icons-material/Search';
 
 
@@ -210,36 +210,7 @@ export default function Departments() {
         <AppBar position="absolute" open={open}>
           <Header props={open} onOutput={handleOutput} />
         </AppBar>
-        <Drawer variant="permanent" open={open}>
-          <Toolbar
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "flex-end",
-              background: "#505d69",
-              px: [1],
-            }}
-          >
-            <LogoBlack />
-            <IconButton onClick={toggleDrawer}>
-              <ChevronLeftIcon sx={{ color: "white" }} />
-            </IconButton>
-          </Toolbar>
-          <Divider />
-          <Box
-            sx={{
-              p: 2,
-              textAlign: 'center'
-            }}
-          >
-            <ProfileSidePane isopen={open} />
-          </Box>
-          <List component="nav">
-            {mainListItems}
-            <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
-          </List>
-        </Drawer>
+        <Sidebar open={open} toggleDrawer={toggleDrawer} />
         <Box
           component="main"
           sx={{
