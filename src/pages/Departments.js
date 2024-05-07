@@ -120,6 +120,9 @@ export default function Departments() {
   const [allDepartments, setAllDepartments] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  // for searching
+  const [ searchVal, setSearchVal ] = React.useState('');
+
   
   React.useEffect(() => {
     setIsLoading(true);
@@ -232,6 +235,10 @@ export default function Departments() {
 
   const handleClickAddDepartment = () => {
     navigate('/add_department')
+  }
+
+  const searchValue = (e) => {
+    setSearchVal(e.target.value)
   }
 
  
@@ -388,10 +395,11 @@ export default function Departments() {
                     </ButtonGroup>
                     <TextField
                         id="outlined-textarea"
-                        label="Search"
+                        label="Department Name"
                         variant="outlined"
                         placeholder="Enter search"
                         size="small"
+                        onChange={searchValue}
                         InputProps={{
                           endAdornment: (
                             <IconButton>
@@ -402,7 +410,7 @@ export default function Departments() {
                       />
                   </Box>
                   <CardContent>
-                  <DataTable props={allDepartments} />
+                  <DataTable props={allDepartments} filteredInfo={searchVal} />
                     {/* <CustomTable
                       data={departmentData}
                       columns={columns}
