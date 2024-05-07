@@ -12,6 +12,7 @@ import Link from "@mui/material/Link";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CustomTable from '../components/CustomTable';
+import DataTable from "../components/DataTable";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton"; import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -27,6 +28,8 @@ import { useNavigate } from "react-router-dom";
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 import SearchIcon from '@mui/icons-material/Search';
+
+import LoadingIndicator from "./../components/loadingIndicator";
 
 
 
@@ -114,13 +117,45 @@ export default function Departments() {
   const [modalVisible, setModalVisible] = React.useState(false);
   const [selectedRecord, setSelectedRecord] = React.useState(null);
 
+  const [allDepartments, setAllDepartments] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
   
+  React.useEffect(() => {
+    setIsLoading(true);
+    const myHeaders = new Headers();
+    const authToken = localStorage.getItem('token')
+    myHeaders.append("Authorization", `Bearer ${authToken}`);
+
+    const requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow"
+    };
+    
+
+    try{
+      fetch(`${process.env.REACT_APP_HOSTNAME}/api/departments`, requestOptions)
+      .then(async (result) => {
+        const resData = await result.json();
+        setAllDepartments(resData)
+        setIsLoading(false);
+      })
+      .catch((error) => console.error(error));
+    } catch (error) {
+      console.error("Error occurred:", error);
+    } finally {
+      setIsLoading(false);
+    }
+
+  }, [])
 
   const handleSeeClick = (record) => {
     setSelectedRecord(record);
     setModalVisible(true);
   };
 
+  
 
   const handleEditClick = (record) => {
     console.log('Edit clicked for:', record);
@@ -135,56 +170,54 @@ export default function Departments() {
     // Implement logic for deleting
   };
 
-  const columns = [
-    {
-      title: 'Department / Government Organisation',
-      dataIndex: 'department',
-      key: 'department',
-      width: '400',
-      sorter: (a, b) => a.department.localeCompare(b.department),
-      sortOrder: sortedInfo.columnKey === 'department' ? sortedInfo.order : null,
+  // const columns = [
+  //   {
+  //     title: 'Department / Government Organisation',
+  //     dataIndex: 'department',
+  //     key: 'department',
+  //     width: '400',
+  //     sorter: (a, b) => a.department.localeCompare(b.department),
+  //     sortOrder: sortedInfo.columnKey === 'department' ? sortedInfo.order : null,
       
-      description: 'My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.',
-    },
-    {
-      title: 'Secretary',
-      dataIndex: 'secretary',
-      key: 'secretary',
-      sorter: (a, b) => a.secretary.localeCompare(b.secretary),
-      sortOrder: sortedInfo.columnKey === 'secretary' ? sortedInfo.order : null,
+  //     description: 'My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.',
+  //   },
+  //   {
+  //     title: 'Secretary',
+  //     dataIndex: 'secretary',
+  //     key: 'secretary',
+  //     sorter: (a, b) => a.secretary.localeCompare(b.secretary),
+  //     sortOrder: sortedInfo.columnKey === 'secretary' ? sortedInfo.order : null,
       
-    },
-    {
-      title: 'Head Of Office',
-      dataIndex: 'headofoffice',
-      key: 'headofoffice',
-      sorter: (a, b) => a.headofoffice.localeCompare(b.headofoffice),
-      sortOrder: sortedInfo.columnKey === 'headofoffice' ? sortedInfo.order : null,
+  //   },
+  //   {
+  //     title: 'Head Of Office',
+  //     dataIndex: 'headofoffice',
+  //     key: 'headofoffice',
+  //     sorter: (a, b) => a.headofoffice.localeCompare(b.headofoffice),
+  //     sortOrder: sortedInfo.columnKey === 'headofoffice' ? sortedInfo.order : null,
       
-    },
-    {
-      title: 'Operation',
-      key: 'operation',
-      render: (text, record) => (
-        <>
-
-          <div className="d-flex justify-content-center" style={{ backgroundColor: 'transparent', width: 'fit-content' }}>
-            <Button type="primary" onClick={() => handleSeeClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#fb4', color: '#fff' }}>
-              <EyeOutlined />
-            </Button>
-            <Button type="primary" onClick={() => handleEditClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#0097a7', color: '#fff' }}>
-              <EditOutlined />
-            </Button>
-            <Button type="danger" onClick={() => handleDeleteClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#f32f53', color: '#fff' }}>
-              <DeleteOutlined />
-            </Button>
-          </div>
-
-        </>
-      ),
-    },
+  //   },
+  //   {
+  //     title: 'Operation',
+  //     key: 'operation',
+  //     render: (text, record) => (
+  //       <>
+  //         <div className="d-flex justify-content-center" style={{ backgroundColor: 'transparent', width: 'fit-content' }}>
+  //           <Button type="primary" onClick={() => handleSeeClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#fb4', color: '#fff' }}>
+  //             <EyeOutlined />
+  //           </Button>
+  //           <Button type="primary" onClick={() => handleEditClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#0097a7', color: '#fff' }}>
+  //             <EditOutlined />
+  //           </Button>
+  //           <Button type="danger" onClick={() => handleDeleteClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#f32f53', color: '#fff' }}>
+  //             <DeleteOutlined />
+  //           </Button>
+  //         </div>
+  //       </>
+  //     ),
+  //   },
    
-  ];
+  // ];
 
 
 
@@ -369,7 +402,8 @@ export default function Departments() {
                       />
                   </Box>
                   <CardContent>
-                    <CustomTable
+                  <DataTable props={allDepartments} />
+                    {/* <CustomTable
                       data={departmentData}
                       columns={columns}
                       filteredInfo={filteredInfo}
@@ -379,7 +413,7 @@ export default function Departments() {
                       modalVisible={modalVisible}
                       setModalVisible={setModalVisible}
                       selectedRecord={selectedRecord}
-                    />
+                    /> */}
                   </CardContent>
                 </Card>
               </Grid>
@@ -393,6 +427,7 @@ export default function Departments() {
             >
               <Footer />
             </Box>
+            <LoadingIndicator isLoading={isLoading} />
           </Container>
 
 
