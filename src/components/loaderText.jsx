@@ -1,5 +1,6 @@
 import '../App.css';
 import logo from '../assets/logo-black.png'
+import '../../src/assets/style/loader.css';
 
 const LoaderText = () => {
     const loaderBg = {
@@ -11,17 +12,15 @@ const LoaderText = () => {
         left: '0',
         zIndex: '999'
     }
-    return(
-        <>
+
+    return (
         <div style={loaderBg}>
             <div className="loader">
-                <div>
-                    <img src={logo} alt="Govt." />
-                    <p>Loading...</p>            
-                </div>
+                <img src={logo} alt="Govt." />
+                {/* <p>Loading...</p> */}
+                <div class="animation"></div>
             </div>
         </div>
-        </>
     )
 }
 

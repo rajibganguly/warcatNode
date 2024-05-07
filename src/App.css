@@ -2,25 +2,3 @@
   overflow: hidden;
   position: relative;
 }
-
-.loader {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 9999;
-}
-
-.loader>div {
-  display: inline-block;
-}
-
-.loader>div>img {
-  display: block;
-  margin: 0 auto;
-}
-
-.loader>div>p {
-  margin-top: 10px;
-  text-align: center;
-}
