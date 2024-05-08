@@ -130,31 +130,7 @@ const AppBar = styled(MuiAppBar, {
     }),
 }));
 
-const Drawer = styled(MuiDrawer, {
-    shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open }) => ({
-    "& .MuiDrawer-paper": {
-        position: "relative",
-        whiteSpace: "nowrap",
-        width: drawerWidth,
-        transition: theme.transitions.create("width", {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-        boxSizing: "border-box",
-        ...(!open && {
-            overflowX: "hidden",
-            transition: theme.transitions.create("width", {
-                easing: theme.transitions.easing.sharp,
-                duration: theme.transitions.duration.leavingScreen,
-            }),
-            width: theme.spacing(7),
-            [theme.breakpoints.up("sm")]: {
-                width: theme.spacing(9),
-            },
-        }),
-    },
-}));
+
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
@@ -270,8 +246,8 @@ export default function AddTasks() {
                                         pb: 2,
 
                                     }}>
-                                        <InputLabel id="demo-multiple-chip-label1">Add Note</InputLabel>
-                                        <Input fullWidth aria-label="Demo input" multiline placeholder="Write Note…" />
+                                        <InputLabel id="demo-multiple-chip-label1"  sx={{  marginBottom: '1%' }}>Add Note</InputLabel>
+                                        <Input fullWidth rows={4} aria-label="Demo input"  multiline placeholder="Write Note…" />
                                         <Button
                                             variant="contained"
                                             color="success"
@@ -283,7 +259,7 @@ export default function AddTasks() {
                                     </Grid>
 
                                     <Grid item xs={12}>
-                                        <label sx={{pb:2}}>Upload Report</label>
+                                        <InputLabel sx={{  marginBottom: '1%' }}>Upload Report</InputLabel>
                                         <InputFileUpload fullWidth title= "Upload Report"/>
                                         <Input sx={{pt:2}} fullWidth aria-label="Demo input" multiline placeholder="Description" />
 
