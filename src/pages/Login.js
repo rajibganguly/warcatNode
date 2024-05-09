@@ -18,6 +18,8 @@ import TabPanel from "@mui/lab/TabPanel";
 import Logo from "../components/Logo";
 import { useNavigate } from "react-router-dom";
 import LoadingIndicator from "./../components/loadingIndicator";
+import { toast } from "react-toastify"; // Import toast from react-toastify
+import "react-toastify/dist/ReactToastify.css";
 
 import { useAuth } from "../providers/AuthProvider";
 
@@ -128,7 +130,9 @@ export default function LogIn({ setAuthToken }) {
     });
     try {
       if (response.status === 200) {
-        alert(`Welcome to ${reactAppHostname}`);
+        toast.success('You are Successfully logged into Warcat', {
+          autoClose: 2000, 
+        });
         const resData = await response.json();
         const token = resData.token;
         localStorage.setItem("token", token);
@@ -136,7 +140,9 @@ export default function LogIn({ setAuthToken }) {
         setIsLoading(false);
         navigate("/dashboard");
       } else {
-        alert("Login Failed");
+        toast.error("Login Failed", {
+          autoClose: 2000, 
+        });
       }
     } catch (error) {
       console.error("Error occurred:", error);

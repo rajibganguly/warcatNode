@@ -19,6 +19,7 @@ import MuiDrawer from "@mui/material/Drawer";
 import { Button, TextField } from "@mui/material";
 import Sidebar from "../components/Sidebar";
 import SearchIcon from "@mui/icons-material/Search";
+import { toast } from "react-toastify";
 
 //import Orders from "../components/orders";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -152,10 +153,15 @@ export default function AddDepartment() {
 
     try {
       if (response.status === 200) {
-        alert(`${reactAppHostname}/api/login`);
+        toast.success('Department Added Successfully', {
+          autoClose: 2000, 
+        });
         navigate("/departments");
       } else {
-        alert("Login Failed");
+        toast.error("Something went wrong", {
+          autoClose: 2000, 
+        });
+      
         // Handle error cases here
       }
     } catch (error) {
