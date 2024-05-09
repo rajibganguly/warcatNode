@@ -11,20 +11,14 @@ import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CustomTable from '../components/CustomTable';
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton"; import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { mainListItems, secondaryListItems } from "../components/listitems";
-import LogoBlack from "../components/logoblack";
-import ProfileSidePane from "../components/profileSidepane";
-import MuiDrawer from "@mui/material/Drawer";
-import { Button, ButtonGroup, TextField } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import { Button, ButtonGroup, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
 import { useNavigate } from "react-router-dom";
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { CloseOutlined } from '@mui/icons-material';
 
 import SearchIcon from '@mui/icons-material/Search';
 import { toast } from "react-toastify";
@@ -32,14 +26,15 @@ import TableNew from "../components/TableNew";
 import axiosInstance from "../apiConfig/axoisSetup";
 import Sidebar from "../components/Sidebar";
 
+import { CardActionArea, CardActions } from '@mui/material';
 
 const column = [
   { text: 'Department', dataField: 'department.department_name' },
   { text: "Secretary", dataField: 'secretary.name' },
   { text: "Head Of Office", dataField: 'headOffice.name' },
   { text: "Operations", dataField: 'Operations' },
-
 ];
+
 const drawerWidth = 240;
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -59,77 +54,71 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-
-
-// TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
-
-
 
 export default function Departments() {
   const [open, setOpen] = React.useState(true);
   const navigate = useNavigate();
-  const [filteredInfo, setFilteredInfo] = useState({});
-  const [sortedInfo, setSortedInfo] = useState({});
   const [data, setData] = useState([]);
-  const [modalVisible, setModalVisible] = React.useState(false);
-  const [selectedRecord, setSelectedRecord] = React.useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
   const [loadingData, setLoadingData] = useState(false);
 
-
   useEffect(() => {
-
     fetchDepartmentData();
   }, []);
 
   const fetchDepartmentData = async () => {
-
     if (!toast.isActive("loading")) {
-
       toast.loading("Loading departments data...", { autoClose: false, toastId: "loading" });
     }
-
     try {
       const response = await axiosInstance.get('/api/departments');
-
       if (!response || !response.data) {
         throw new Error("Failed to fetch department data");
       }
-
       const departmentData = response.data;
       setData(departmentData);
       toast.dismiss("loading");
     } catch (error) {
       console.error("Error fetching department data:", error);
-
       toast.dismiss("loading");
-
       toast.error("Failed to fetch department data");
     }
   };
 
-
-
-
-
-  const handleSeeClick = (record) => {
-    setSelectedRecord(record);
+  const handleSeeClick = (row) => {
+    setModalContent(row);
     setModalVisible(true);
   };
 
+  const closeModal = () => {
+    setModalVisible(false);
+    setModalContent(null);
+  };
 
   const handleEditClick = (record) => {
     console.log('Edit clicked for:', record);
     navigate('/edit-departments');
-
   };
 
-  const handleDeleteClick = (record) => {
+  const handleDeleteClick = async (record) => {
     console.log('Delete clicked for:', record);
-
+    let id = record.split('-')[1];
+    try {
+      const response = await axiosInstance.delete(`/api/deleteDepartment/${id}`);
+      if (response && response.data && response.data.success) {
+        fetchDepartmentData();
+        toast.success("Department deleted successfully");
+      } else {
+        toast.error("Failed to delete department", { autoClose: 2000 });
+      }
+    } catch (error) {
+      console.error("Error deleting department:", error);
+      toast.error("Failed to delete department", { autoClose: 2000 });
+    }
+    fetchDepartmentData();
   };
-
-
 
   const icons = {
     see: <EyeOutlined />,
@@ -137,20 +126,17 @@ export default function Departments() {
     delete: <DeleteOutlined />,
   };
 
-
   const handleOutput = (open) => {
     toggleDrawer();
   };
+
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
-
   const handleClickAddDepartment = () => {
     navigate('/add_department')
   }
-
-
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -209,7 +195,6 @@ export default function Departments() {
                       alignItems: 'center',
                       padding: 2,
                       borderBottom: '1px solid #eff2f7',
-
                     }}
                   >
                     <Typography variant="body1" sx={{ fontWeight: 600 }}>All Departments</Typography>
@@ -218,7 +203,6 @@ export default function Departments() {
                       '&:hover': {
                         backgroundColor: 'darkgreen',
                       },
-
                     }} onClick={handleClickAddDepartment}>
                       Add Department
                     </Button>
@@ -230,20 +214,16 @@ export default function Departments() {
                       justifyContent: 'space-between',
                       alignItems: 'center',
                       padding: 2,
-
-
                     }}
                   >
-                    <ButtonGroup variant="contained" aria-label="Basic button group"  >
+                    <ButtonGroup variant="contained" aria-label="Basic button group">
                       <Button sx={{
                         backgroundColor: '#6c757d',
                         borderColor: '1px solid #6c757d',
-
                         '&:hover': {
                           backgroundColor: '#5c636a',
                           borderColor: '#5c636a'
                         },
-
                       }}>Copy</Button>
                       <Button sx={{
                         backgroundColor: '#6c757d',
@@ -252,7 +232,6 @@ export default function Departments() {
                           backgroundColor: '#5c636a',
                           borderColor: '#5c636a'
                         },
-
                       }}>Excel</Button>
                       <Button sx={{
                         backgroundColor: '#6c757d',
@@ -261,7 +240,6 @@ export default function Departments() {
                           backgroundColor: '#5c636a',
                           borderColor: '#5c636a'
                         },
-
                       }}>PDF</Button>
                       <Button sx={{
                         backgroundColor: '#6c757d',
@@ -270,7 +248,6 @@ export default function Departments() {
                           backgroundColor: '#5c636a',
                           borderColor: '#5c636a'
                         },
-
                       }}>Column Visibility</Button>
                     </ButtonGroup>
                     <TextField
@@ -297,6 +274,77 @@ export default function Departments() {
                       handleEditClick={handleEditClick}
                       handleDeleteClick={handleDeleteClick}
                     />
+                    <Dialog
+                      open={modalVisible}
+                      onClose={closeModal}
+                      aria-labelledby="modal-title"
+                      aria-describedby="modal-description"
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+
+                      <DialogContent sx={{ p: 0 }}>
+                        {modalContent && (
+                          <DialogContentText id="modal-description">
+                            <Card sx={{ width: '100%', maxWidth: 800, maxHeight: 600, overflowY: 'auto' }}>
+                              <CardActionArea>
+                                <IconButton
+                                  aria-label="close"
+                                  onClick={closeModal}
+                                  sx={{ position: 'absolute', right: 0, top: 0, color: 'gray' }}
+                                >
+                                  <CloseOutlined/>
+                                </IconButton>
+                                <CardContent>
+                                  <Typography variant="h6" id="modal-title">
+                                    Department Name: {modalContent.department.department_name}
+                                  </Typography>
+                                  <Typography variant="body1" color="text.secondary">
+                                    Secretary Details
+                                  </Typography>
+                                  <Typography variant="body2" color="text.secondary">
+                                    Secretary Name: {modalContent.secretary.name}
+                                  </Typography>
+                                  <Typography variant="body2" color="text.secondary">
+                                    Secretary Phone number: {modalContent.secretary.phone}
+                                  </Typography>
+                                  <Typography variant="body2" color="text.secondary">
+                                    Secretary Email Id: {modalContent.secretary.email}
+                                  </Typography>
+
+                                  <Typography variant="body1" color="text.secondary" mt={2}>
+                                    Head of Office Details
+                                  </Typography>
+                                  <Typography variant="body2" color="text.secondary">
+                                    Head of Office Name: {modalContent.headOffice.name}
+                                  </Typography>
+                                  <Typography variant="body2" color="text.secondary">
+                                    Head of Office Designation: {modalContent.headOffice.designation}
+                                  </Typography>
+                                  <Typography variant="body2" color="text.secondary">
+                                    Head of Office Phone number: {modalContent.headOffice.phone_number}
+                                  </Typography>
+                                  <Typography variant="body2" color="text.secondary">
+                                    Head of Office Email Id: {modalContent.headOffice.email}
+                                  </Typography>
+                                </CardContent>
+                              </CardActionArea>
+                              <CardActions sx={{ justifyContent: 'flex-end' }}>
+                                <Button size="small" variant="contained" color="primary" >
+                                  Email
+                                </Button>
+                                <Button size="small" variant="contained" color="primary" onClick={() => console.log('Share clicked')}>
+                                  Sms
+                                </Button>
+                              </CardActions>
+                            </Card>
+                          </DialogContentText>
+                        )}
+                      </DialogContent>
+                    </Dialog>
                   </CardContent>
                 </Card>
               </Grid>
@@ -311,8 +359,6 @@ export default function Departments() {
               <Footer />
             </Box>
           </Container>
-
-
         </Box>
       </Box>
     </ThemeProvider>
