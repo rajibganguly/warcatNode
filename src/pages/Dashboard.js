@@ -26,6 +26,7 @@ import CardContent from '@mui/material/CardContent';
 import Stack from '@mui/material/Stack';
 import AreaChart from '../components/AreaChart';
 import Linecolumnchart from '../components/Linecolumnchart';
+import Sidebar from "../components/Sidebar";
 
 
 const drawerWidth = 240;
@@ -48,31 +49,7 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open }) => ({
-  "& .MuiDrawer-paper": {
-    position: "relative",
-    whiteSpace: "nowrap",
-    width: drawerWidth,
-    transition: theme.transitions.create("width", {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-    boxSizing: "border-box",
-    ...(!open && {
-      overflowX: "hidden",
-      transition: theme.transitions.create("width", {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-      width: theme.spacing(7),
-      [theme.breakpoints.up("sm")]: {
-        width: theme.spacing(9),
-      },
-    }),
-  },
-}));
+
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
@@ -101,36 +78,7 @@ export default function Dashboard() {
         <AppBar position="absolute" open={open}>
           <Header props={open} onOutput={handleOutput} />
         </AppBar>
-        <Drawer variant="permanent" open={open}>
-          <Toolbar
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "flex-end",
-              background: "#505d69",
-              px: [1],
-            }}
-          >
-            <LogoBlack />
-            <IconButton onClick={toggleDrawer}>
-              <ChevronLeftIcon sx={{ color: "white" }} />
-            </IconButton>
-          </Toolbar>
-          <Divider />
-          <Box
-            sx={{
-              p: 2,
-              textAlign: 'center'
-            }}
-          >
-            <ProfileSidePane  isopen={open} />
-          </Box>
-          <List component="nav">
-            {mainListItems}
-            <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
-          </List>
-        </Drawer>
+        <Sidebar open={open} toggleDrawer={toggleDrawer} />
         <Box
           component="main"
           sx={{
