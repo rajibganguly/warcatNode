@@ -48,7 +48,7 @@ export default function LogIn({ setAuthToken }) {
 
   const [loginRoleType, setLoginRoleType] = useState("admin");
   const [disabledLogin, setDisabledLogin] = useState(true);
-  const [token, setToken] = useState("");
+  //const [token, setToken] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -136,11 +136,12 @@ export default function LogIn({ setAuthToken }) {
         const resData = await response.json();
         const token = resData.token;
         localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify({email: formData.email, role_type: formData.role_type}));
         login(token);
         setIsLoading(false);
         navigate("/dashboard");
       } else {
-        toast.error(`Login Failed! ${response.message}`, {
+        toast.error(`Login Failed! ${response.data.message}`, {
           autoClose: 2000, 
         });
       }

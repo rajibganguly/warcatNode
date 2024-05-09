@@ -10,6 +10,9 @@ const ProfileSidePane = ({isopen}) => {
         display: 'block'
     }
 
+    const lstoreUser = JSON.parse(localStorage.getItem('user'));
+    const userName = (lstoreUser.email).split('@')[0];
+
     return (
         <>
 
@@ -18,7 +21,9 @@ const ProfileSidePane = ({isopen}) => {
                     <div className={centerLogo}>
                         <img src={profileImg} alt="profile details" style={{ width: '90px' }} />
                     </div>
-                    <Typography variant="h6" mt={2}>Admin Name</Typography>
+                    <Typography variant="h6" mt={2}>
+                    <span style={{textTransform: 'uppercase'}}>{lstoreUser.role_type}</span>-{userName}
+                    </Typography>
 
                     <Divider />
                     <Typography variant="body1" mt={1} textAlign="left">Menu</Typography>
