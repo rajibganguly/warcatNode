@@ -208,9 +208,9 @@ export default function TaskUpload() {
                     <InputLabel sx={{ marginBottom: "1%" }}>
                       Upload Report
                     </InputLabel>
-                    <InputFileUpload fullWidth title="Upload Report" styled={{height: '100px'}} />
+                    <InputFileUpload fullWidth title="Upload Report" />
                     <Input
-                      sx={{ pt: 2, height: '100px' }}
+                      sx={{ pt: 2 }}
                       fullWidth
                       aria-label="Demo input"
                       multiline

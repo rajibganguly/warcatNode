@@ -1,9 +1,8 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-import { BASE_URL } from './config';
 
 const axiosInstance = axios.create({
-  baseURL: BASE_URL,
+  baseURL: process.env.REACT_APP_HOSTNAME,
   headers: {
     "Content-Type": "multipart/form-data",
     "Accept": "application/json",

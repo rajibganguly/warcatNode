@@ -3,9 +3,10 @@ import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 
 
-function TableNew({ column, data }) {
+function TableNew({ column, data,handleDeleteClick,handleSeeClick }) {
     const [modalOpen, setModalOpen] = useState(false);
     const fileUrl = ['icon', 'images', 'thumbnail', 'avatar'];
+   
 
     const Toggle = () => {
         setModalOpen(!modalOpen)
@@ -28,14 +29,14 @@ function TableNew({ column, data }) {
             return (
 
                 <>
-                    <Button type="primary" >
-                        <EyeOutlined /> See
+                    <Button type="primary"  onClick={() => handleSeeClick(row)}>
+                        <EyeOutlined />
                     </Button>
-                    <Button type="danger" >
-                        <DeleteOutlined /> Delete
+                    <Button type="danger" onClick={() => handleDeleteClick(row.id)} >
+                        <DeleteOutlined />
                     </Button>
                     <Button type="primary" onClick={() => console.log(row)}>
-                        <EditOutlined /> Edit
+                        <EditOutlined />
                     </Button>
 
                 </>
