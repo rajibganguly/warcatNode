@@ -18,7 +18,7 @@ const LoaderText = () => {
             <div className="loader">
                 <img src={logo} alt="Govt." />
                 {/* <p>Loading...</p> */}
-                <div class="animation"></div>
+                <div className="animation"></div>
             </div>
         </div>
     )

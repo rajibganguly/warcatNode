@@ -140,7 +140,7 @@ export default function LogIn({ setAuthToken }) {
         setIsLoading(false);
         navigate("/dashboard");
       } else {
-        toast.error("Login Failed", {
+        toast.error(`Login Failed! ${response.message}`, {
           autoClose: 2000, 
         });
       }

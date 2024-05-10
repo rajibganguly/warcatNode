@@ -423,6 +423,19 @@ export default function Tasks() {
                           >
                             Add Task
                           </Button>
+                          <Button
+                            variant="contained"
+                            sx={{
+                              bgcolor: '#6fd088',
+                              color: 'white',
+                              '&:hover': {
+                                bgcolor: '#5eb174',
+                              },
+                            }}
+                            component={Link} to="/tasks-list"
+                          >
+                            Task list
+                          </Button>
                         </Stack>
 
 

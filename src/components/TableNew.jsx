@@ -5,6 +5,7 @@ import { Button } from 'antd';
 
 function TableNew({ column, data,handleDeleteClick,handleSeeClick }) {
     const [modalOpen, setModalOpen] = useState(false);
+    const fileUrl = ['icon', 'images', 'thumbnail', 'avatar'];
    
 
     const Toggle = () => {

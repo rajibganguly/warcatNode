@@ -54,19 +54,58 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
+
+
+// TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
+
+
 
 export default function Departments() {
   const [open, setOpen] = React.useState(true);
   const navigate = useNavigate();
+  const [filteredInfo, setFilteredInfo] = useState({});
+  const [sortedInfo, setSortedInfo] = useState({});
   const [data, setData] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [selectedRecord, setSelectedRecord] = React.useState(null);
   const [loadingData, setLoadingData] = useState(false);
 
+
   useEffect(() => {
+
     fetchDepartmentData();
   }, []);
+
+  // const fetchDepartmentData = async () => {
+
+  //   if (!toast.isActive("loading")) {
+
+  //     toast.loading("Loading departments data...", { autoClose: false, toastId: "loading" });
+  //   }
+
+  //   try {
+  //     const response = await axiosInstance.get('/api/departments');
+
+  //     if (!response || !response.data) {
+  //       throw new Error("Failed to fetch department data");
+  //     }
+
+  //     const departmentData = response.data;
+  //     setData(departmentData);
+  //     toast.dismiss("loading");
+  //   } catch (error) {
+  //     console.error("Error fetching department data:", error);
+
+  //     toast.dismiss("loading");
+
+  //     toast.error("Failed to fetch department data");
+  //   }
+  // };
+
+
+
+
 
   const fetchDepartmentData = async () => {
     if (!toast.isActive("loading")) {
