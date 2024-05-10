@@ -17,8 +17,11 @@ import AddNewMeeting from "./AddNewMeeting";
 import AddTask from "./AddTasks";
 import EditDepartment from "./EditDepartment";
 import EditMeeting from "./EditMeeting";
-import Taskbox from "./Taskbox";
+import ReviewTaskSForAdmin from "./TaskNote";
 import { useAuth } from "../providers/AuthProvider";
+import TaskList from "./TaskList";
+import TaskNote from "./TaskNote";
+import TaskUpload from "./TaskUpload";
 
 const Navigations = () => {
   const { authToken } = useAuth();
@@ -60,6 +63,10 @@ const Navigations = () => {
           element={!authToken ? <Navigate to="/" /> : <AddTask />}
         />
         <Route
+          path="/tasks-list"
+          element={!authToken ? <Navigate to="/" /> : <TaskList />}
+        />
+        <Route
           path="/edit-departments"
           element={!authToken ? <Navigate to="/" /> : <EditDepartment />}
         />
@@ -67,10 +74,13 @@ const Navigations = () => {
           path="/edit-meeting"
           element={!authToken ? <Navigate to="/" /> : <EditMeeting />}
         />
-
-<Route
-          path="/add_task_detail"
-          element={!authToken ? <Navigate to="/" /> : <Taskbox />}
+        <Route
+          path="/task-note"
+          element={!authToken ? <Navigate to="/" /> : <TaskNote />}
+        />
+        <Route
+          path="/task-upload"
+          element={!authToken ? <Navigate to="/" /> : <TaskUpload />}
         />
         <Route path="*" element={<Navigate to="/" />} />
         {/* Add more routes as needed */}
