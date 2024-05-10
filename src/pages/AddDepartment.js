@@ -17,8 +17,9 @@ import LogoBlack from "../components/logoblack";
 import ProfileSidePane from "../components/profileSidepane";
 import MuiDrawer from "@mui/material/Drawer";
 import { Button, TextField } from "@mui/material";
-
+import Sidebar from "../components/Sidebar";
 import SearchIcon from "@mui/icons-material/Search";
+import { toast } from "react-toastify";
 
 //import Orders from "../components/orders";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -49,31 +50,6 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open }) => ({
-  "& .MuiDrawer-paper": {
-    position: "relative",
-    whiteSpace: "nowrap",
-    width: drawerWidth,
-    transition: theme.transitions.create("width", {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-    boxSizing: "border-box",
-    ...(!open && {
-      overflowX: "hidden",
-      transition: theme.transitions.create("width", {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-      width: theme.spacing(7),
-      [theme.breakpoints.up("sm")]: {
-        width: theme.spacing(9),
-      },
-    }),
-  },
-}));
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
@@ -177,10 +153,15 @@ export default function AddDepartment() {
 
     try {
       if (response.status === 200) {
-        alert(`${reactAppHostname}/api/login`);
+        toast.success('Department Added Successfully', {
+          autoClose: 2000, 
+        });
         navigate("/departments");
       } else {
-        alert("Login Failed");
+        toast.error("Something went wrong", {
+          autoClose: 2000, 
+        });
+      
         // Handle error cases here
       }
     } catch (error) {
@@ -195,36 +176,7 @@ export default function AddDepartment() {
         <AppBar position="absolute" open={open}>
           <Header props={open} onOutput={handleOutput} />
         </AppBar>
-        <Drawer variant="permanent" open={open}>
-          <Toolbar
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "flex-end",
-              background: "#505d69",
-              px: [1],
-            }}
-          >
-            <LogoBlack />
-            <IconButton onClick={toggleDrawer}>
-              <ChevronLeftIcon sx={{ color: "white" }} />
-            </IconButton>
-          </Toolbar>
-          <Divider />
-          <Box
-            sx={{
-              p: 2,
-              textAlign: "center",
-            }}
-          >
-            <ProfileSidePane isopen={open} />
-          </Box>
-          <List component="nav">
-            {mainListItems}
-            <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
-          </List>
-        </Drawer>
+        <Sidebar open={open} toggleDrawer={toggleDrawer} />
         <Box
           component="main"
           sx={{

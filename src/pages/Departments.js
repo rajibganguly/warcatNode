@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -27,11 +27,20 @@ import { useNavigate } from "react-router-dom";
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 import SearchIcon from '@mui/icons-material/Search';
+import { toast } from "react-toastify";
+import TableNew from "../components/TableNew";
+import axiosInstance from "../apiConfig/axoisSetup";
+import Sidebar from "../components/Sidebar";
 
 
+const column = [
+  { text: 'Department', dataField: 'department.department_name' },
+  { text: "Secretary", dataField: 'secretary.name' },
+  { text: "Head Of Office", dataField: 'headOffice.name' },
+  { text: "Operations", dataField: 'Operations' },
 
+];
 const drawerWidth = 240;
-
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
@@ -50,71 +59,58 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open }) => ({
-  "& .MuiDrawer-paper": {
-    position: "relative",
-    whiteSpace: "nowrap",
-    width: drawerWidth,
-    transition: theme.transitions.create("width", {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-    boxSizing: "border-box",
-    ...(!open && {
-      overflowX: "hidden",
-      transition: theme.transitions.create("width", {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-      width: theme.spacing(7),
-      [theme.breakpoints.up("sm")]: {
-        width: theme.spacing(9),
-      },
-    }),
-  },
-}));
+
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
-const departmentData = [
-  {
-    key: '1',
-    department: 'Forest Department',
-    secretary: 'Dr. Avinash Kanfade IFS',
-    headofoffice: 'Dr. Avinash Kanfade IFS',
-    operation: 'iconspace',
 
-  },
-  {
-    key: '2',
-    department: 'Labour Department',
-    secretary: 'Shri Tarun Kanti Debnath, IAS',
-    headofoffice: 'Shri Tarun Kanti Debnath, IAS',
-    operation: 'icon',
-  },
-  {
-    key: '3',
-    department: 'Agriculture & Fermers Department',
-    secretary: 'Shri. Apurba Roy',
-    headofoffice: 'Shri. Apurba Roy',
-    operation: 'icon',
-  },
-
-];
 
 export default function Departments() {
   const [open, setOpen] = React.useState(true);
   const navigate = useNavigate();
   const [filteredInfo, setFilteredInfo] = useState({});
   const [sortedInfo, setSortedInfo] = useState({});
-  const [data, setData] = useState([]);// Your data array
+  const [data, setData] = useState([]);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [selectedRecord, setSelectedRecord] = React.useState(null);
+  const [loadingData, setLoadingData] = useState(false);
 
-  
+
+  useEffect(() => {
+
+    fetchDepartmentData();
+  }, []);
+
+  const fetchDepartmentData = async () => {
+
+    if (!toast.isActive("loading")) {
+
+      toast.loading("Loading departments data...", { autoClose: false, toastId: "loading" });
+    }
+
+    try {
+      const response = await axiosInstance.get('/api/departments');
+
+      if (!response || !response.data) {
+        throw new Error("Failed to fetch department data");
+      }
+
+      const departmentData = response.data;
+      setData(departmentData);
+      toast.dismiss("loading");
+    } catch (error) {
+      console.error("Error fetching department data:", error);
+
+      toast.dismiss("loading");
+
+      toast.error("Failed to fetch department data");
+    }
+  };
+
+
+
+
 
   const handleSeeClick = (record) => {
     setSelectedRecord(record);
@@ -124,69 +120,22 @@ export default function Departments() {
 
   const handleEditClick = (record) => {
     console.log('Edit clicked for:', record);
-   
-  // Navigate to the edit page
-  navigate('/edit-departments');
-    // Implement logic for editing
+    navigate('/edit-departments');
+
   };
 
   const handleDeleteClick = (record) => {
     console.log('Delete clicked for:', record);
-    // Implement logic for deleting
+
   };
 
-  const columns = [
-    {
-      title: 'Department / Government Organisation',
-      dataIndex: 'department',
-      key: 'department',
-      width: '400',
-      sorter: (a, b) => a.department.localeCompare(b.department),
-      sortOrder: sortedInfo.columnKey === 'department' ? sortedInfo.order : null,
-      
-      description: 'My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.',
-    },
-    {
-      title: 'Secretary',
-      dataIndex: 'secretary',
-      key: 'secretary',
-      sorter: (a, b) => a.secretary.localeCompare(b.secretary),
-      sortOrder: sortedInfo.columnKey === 'secretary' ? sortedInfo.order : null,
-      
-    },
-    {
-      title: 'Head Of Office',
-      dataIndex: 'headofoffice',
-      key: 'headofoffice',
-      sorter: (a, b) => a.headofoffice.localeCompare(b.headofoffice),
-      sortOrder: sortedInfo.columnKey === 'headofoffice' ? sortedInfo.order : null,
-      
-    },
-    {
-      title: 'Operation',
-      key: 'operation',
-      render: (text, record) => (
-        <>
-
-          <div className="d-flex justify-content-center" style={{ backgroundColor: 'transparent', width: 'fit-content' }}>
-            <Button type="primary" onClick={() => handleSeeClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#fb4', color: '#fff' }}>
-              <EyeOutlined />
-            </Button>
-            <Button type="primary" onClick={() => handleEditClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#0097a7', color: '#fff' }}>
-              <EditOutlined />
-            </Button>
-            <Button type="danger" onClick={() => handleDeleteClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#f32f53', color: '#fff' }}>
-              <DeleteOutlined />
-            </Button>
-          </div>
-
-        </>
-      ),
-    },
-   
-  ];
 
 
+  const icons = {
+    see: <EyeOutlined />,
+    edit: <EditOutlined />,
+    delete: <DeleteOutlined />,
+  };
 
 
   const handleOutput = (open) => {
@@ -201,7 +150,7 @@ export default function Departments() {
     navigate('/add_department')
   }
 
- 
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -210,36 +159,7 @@ export default function Departments() {
         <AppBar position="absolute" open={open}>
           <Header props={open} onOutput={handleOutput} />
         </AppBar>
-        <Drawer variant="permanent" open={open}>
-          <Toolbar
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "flex-end",
-              background: "#505d69",
-              px: [1],
-            }}
-          >
-            <LogoBlack />
-            <IconButton onClick={toggleDrawer}>
-              <ChevronLeftIcon sx={{ color: "white" }} />
-            </IconButton>
-          </Toolbar>
-          <Divider />
-          <Box
-            sx={{
-              p: 2,
-              textAlign: 'center'
-            }}
-          >
-            <ProfileSidePane isopen={open} />
-          </Box>
-          <List component="nav">
-            {mainListItems}
-            <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
-          </List>
-        </Drawer>
+        <Sidebar open={open} toggleDrawer={toggleDrawer} />
         <Box
           component="main"
           sx={{
@@ -354,31 +274,28 @@ export default function Departments() {
                       }}>Column Visibility</Button>
                     </ButtonGroup>
                     <TextField
-                        id="outlined-textarea"
-                        label="Search"
-                        variant="outlined"
-                        placeholder="Enter search"
-                        size="small"
-                        InputProps={{
-                          endAdornment: (
-                            <IconButton>
-                              <SearchIcon />
-                            </IconButton>
-                          ),
-                        }}
-                      />
+                      id="outlined-textarea"
+                      label="Search"
+                      variant="outlined"
+                      placeholder="Enter search"
+                      size="small"
+                      InputProps={{
+                        endAdornment: (
+                          <IconButton>
+                            <SearchIcon />
+                          </IconButton>
+                        ),
+                      }}
+                    />
                   </Box>
                   <CardContent>
-                    <CustomTable
-                      data={departmentData}
-                      columns={columns}
-                      filteredInfo={filteredInfo}
-                      sortedInfo={sortedInfo}
-                      setFilteredInfo={setFilteredInfo}
-                      setSortedInfo={setSortedInfo}
-                      modalVisible={modalVisible}
-                      setModalVisible={setModalVisible}
-                      selectedRecord={selectedRecord}
+                    <TableNew
+                      data={data}
+                      column={column}
+                      icons={icons}
+                      handleSeeClick={handleSeeClick}
+                      handleEditClick={handleEditClick}
+                      handleDeleteClick={handleDeleteClick}
                     />
                   </CardContent>
                 </Card>
