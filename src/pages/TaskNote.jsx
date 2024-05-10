@@ -135,7 +135,7 @@ const AppBar = styled(MuiAppBar, {
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
-export default function AddTasks() {
+export default function TaskNote() {
     const [open, setOpen] = React.useState(true);
     const [personName, setPersonName] = React.useState([]);
     const theme = useTheme();
@@ -224,53 +224,21 @@ export default function AddTasks() {
                         }}
                     >
                         <Card sx={{ width: 100 + '%', padding: 2 }}>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                    padding: 2,
-                                    borderBottom: '1px solid #eff2f7',
-
-                                }}
-                            >
-                                <Typography variant="body1">Note</Typography>
-
-                            </Box>
                             <CardContent>
 
                                 <Grid container spacing={2} sx={{ mb: 4, borderBottom: '1px solid #eff2f7', pb: 2 }}>
-                                    <Grid item xs={12} sx={{
-
-                                        borderBottom: '1px solid #eff2f7',
-                                        pb: 2,
-
-                                    }}>
-                                        <InputLabel id="demo-multiple-chip-label1"  sx={{  marginBottom: '1%' }}>Add Note</InputLabel>
-                                        <Input fullWidth rows={4} aria-label="Demo input"  multiline placeholder="Write Note…" />
-                                        <Button
-                                            variant="contained"
-                                            color="success"
-                                            sx={{ color: 'white', marginTop: '2%' }}
-                                            onClick={null}
-                                        >
-                                            Add Now
-                                        </Button>
-                                    </Grid>
-
-                                    <Grid item xs={12}>
-                                        <InputLabel sx={{  marginBottom: '1%' }}>Upload Report</InputLabel>
-                                        <InputFileUpload fullWidth title= "Upload Report"/>
-                                        <Input sx={{pt:2}} fullWidth aria-label="Demo input" multiline placeholder="Description" />
-
-                                        <Button
-                                            variant="contained"
-                                            color="success"
-                                            sx={{ color: 'white', marginTop: '2%' }}
-                                            onClick={null}
-                                        >
-                                            Submit
-                                        </Button>
+                                    
+                                    <Grid item xs={12} sx={{borderBottom: '1px solid #eff2f7', pb: 2 }}>
+                                    <InputLabel id="demo-multiple-chip-label1"  sx={{  marginBottom: '1%' }}>Add Note</InputLabel>
+                                    <Input fullWidth rows={4} aria-label="Demo input"  multiline placeholder="Write Note…" />
+                                    <Button
+                                        variant="contained"
+                                        color="success"
+                                        sx={{ color: 'white', marginTop: '2%' }}
+                                        onClick={null}
+                                    >
+                                        Add Now
+                                    </Button>
                                     </Grid>
                                    
                                 </Grid>
