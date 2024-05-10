@@ -64,11 +64,9 @@ const defaultTheme = createTheme();
 export default function Departments() {
   const [open, setOpen] = React.useState(true);
   const navigate = useNavigate();
-  const [filteredInfo, setFilteredInfo] = useState({});
-  const [sortedInfo, setSortedInfo] = useState({});
   const [data, setData] = useState([]);
-  const [modalVisible, setModalVisible] = React.useState(false);
-  const [selectedRecord, setSelectedRecord] = React.useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
   const [loadingData, setLoadingData] = useState(false);
 
 

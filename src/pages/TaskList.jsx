@@ -8,7 +8,6 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import { Link } from "react-router-dom";
-import InputFileUpload from "../components/InputFileUpload";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
@@ -17,7 +16,7 @@ import { mainListItems, secondaryListItems } from "../components/listitems";
 import LogoBlack from "../components/logoblack";
 import ProfileSidePane from "../components/profileSidepane";
 import MuiDrawer from "@mui/material/Drawer";
-import { Button, TextField } from "@mui/material";
+import { Button } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
@@ -76,7 +75,7 @@ const defaultTheme = createTheme();
 
 export default function AddTasks() {
     const [open, setOpen] = React.useState(true);
-    const [personName, setPersonName] = React.useState([]);
+    const [setPersonName] = React.useState([]);
     const theme = useTheme();
     const handleChange = (event) => {
         const {
