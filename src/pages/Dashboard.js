@@ -55,10 +55,10 @@ const AppBar = styled(MuiAppBar, {
 const defaultTheme = createTheme();
 
 const cardData = [
-  { title: 'Total Department', value: 155, icon: <AccountBalanceIcon /> },
-  { title: 'Completed Tasks', value: 38, icon: <PeopleIcon /> },
-  { title: 'Total Meeting', value: 246, icon: <MonetizationOnIcon /> },
-  { title: 'Assigned Task', value: 143, icon: <MonetizationOnIcon /> },
+  { title: 'Total Department', value: 5, icon: <AccountBalanceIcon /> },
+  { title: 'Completed Tasks', value: 1, icon: <PeopleIcon /> },
+  { title: 'Total Meeting', value: 3, icon: <MonetizationOnIcon /> },
+  { title: 'Assigned Task', value: 0, icon: <MonetizationOnIcon /> },
 ];
 
 export default function Dashboard() {

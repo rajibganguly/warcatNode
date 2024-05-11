@@ -9,30 +9,23 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import { Link } from "react-router-dom";
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import { Button } from '@mui/material';
-import TextField from '@mui/material/TextField';
-import Dropdowns from '../components/Dropdowns';
-import Stack from '@mui/material/Stack';
-import ButtonGroup from '@mui/material/ButtonGroup';
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton"; import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { mainListItems, secondaryListItems } from "../components/listitems";
-import LogoBlack from "../components/logoblack";
-import ProfileSidePane from "../components/profileSidepane";
-import MuiDrawer from "@mui/material/Drawer";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import { Button } from "@mui/material";
+import Dropdowns from "../components/Dropdowns";
+import Stack from "@mui/material/Stack";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
-import Reporttable from '../components/Reporttable';
-import { EyeOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { EyeOutlined, EditOutlined, DeleteOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import StaticModel from "../components/StaticModel";
 import Sidebar from "../components/Sidebar";
+import { toast } from "react-toastify";
+import TableNew from "../components/TableNew";
 
+import axiosInstance from "../apiConfig/axoisSetup";
 
 const drawerWidth = 240;
 
@@ -54,126 +47,130 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-
-
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 const dropdownData = [
   {
-    label: 'Select',
+    label: "Select",
     items: [
-      { label: 'All Department', value: "All Department" },
-      { label: 'Agriculture', value: "Agriculture" },
-      { label: 'Forest', value: "Forest" },
-      { label: 'Labour', value: "Labour" },
+      { label: "All Department", value: "All Department" },
+      { label: "Agriculture", value: "Agriculture" },
+      { label: "Forest", value: "Forest" },
+      { label: "Labour", value: "Labour" },
     ],
   },
   {
-    label: 'Select',
+    label: "Select",
     items: [
-      { label: 'ALL Tasks', value: 'ALL Tasks' },
-      { label: 'Assigned', value: 'Assigned' },
-      { label: 'In Progress', value: 'In Progress' },
-      { label: 'Completed', value: 'Completed' },
+      { label: "ALL Tasks", value: "ALL Tasks" },
+      { label: "Assigned", value: "Assigned" },
+      { label: "In Progress", value: "In Progress" },
+      { label: "Completed", value: "Completed" },
     ],
   },
 ];
 const handleDropdownChange = (value) => {
-  console.log('Selected value:', value);
-
+  console.log("Selected value:", value);
 };
-
 
 const progressData = [
   {
-    id: 1, percentage: 66, label: "Total Assigned",
+    id: 1,
+    percentage: 66,
+    label: "Total Assigned",
     styles: {
       root: {},
       path: {
         stroke: `rgba(15, 156, 243, ${66 / 100})`,
-        strokeLinecap: 'butt',
-        transition: 'stroke-dashoffset 0.5s ease 0s',
-        transform: 'rotate(0.25turn)',
-        transformOrigin: 'center center',
+        strokeLinecap: "butt",
+        transition: "stroke-dashoffset 0.5s ease 0s",
+        transform: "rotate(0.25turn)",
+        transformOrigin: "center center",
         strokeWidth: 6,
       },
       text: {
         fill: "#000000",
         fontSize: "16px",
-        fontWeight: "bold"
+        fontWeight: "bold",
       },
       trail: {
-        stroke: '#E5E0DF',
+        stroke: "#E5E0DF",
         strokeWidth: 6,
       },
     },
   },
   {
-    id: 2, percentage: 45, label: "Not Initiated",
+    id: 2,
+    percentage: 45,
+    label: "Not Initiated",
     styles: {
       root: {},
       path: {
         stroke: `rgba(255, 52, 0, ${66 / 100})`,
-        strokeLinecap: 'butt',
-        transition: 'stroke-dashoffset 0.5s ease 0s',
-        transform: 'rotate(0.25turn)',
-        transformOrigin: 'center center',
+        strokeLinecap: "butt",
+        transition: "stroke-dashoffset 0.5s ease 0s",
+        transform: "rotate(0.25turn)",
+        transformOrigin: "center center",
         strokeWidth: 6,
       },
       text: {
         fill: "#000000",
         fontSize: "16px",
-        fontWeight: "bold"
+        fontWeight: "bold",
       },
       trail: {
-        stroke: '#E5E0DF',
+        stroke: "#E5E0DF",
         strokeWidth: 6,
       },
     },
   },
   {
-    id: 3, percentage: 80, label: "In Progress",
+    id: 3,
+    percentage: 80,
+    label: "In Progress",
     styles: {
       root: {},
       path: {
         stroke: `rgba(255, 195, 0, ${66 / 100})`,
-        strokeLinecap: 'butt',
-        transition: 'stroke-dashoffset 0.5s ease 0s',
-        transform: 'rotate(0.25turn)',
-        transformOrigin: 'center center',
+        strokeLinecap: "butt",
+        transition: "stroke-dashoffset 0.5s ease 0s",
+        transform: "rotate(0.25turn)",
+        transformOrigin: "center center",
         strokeWidth: 6,
       },
       text: {
         fill: "#000000",
         fontSize: "16px",
-        fontWeight: "bold"
+        fontWeight: "bold",
       },
       trail: {
-        stroke: '#E5E0DF',
+        stroke: "#E5E0DF",
         strokeWidth: 6,
       },
     },
   },
   {
-    id: 4, percentage: 80, label: "Completed",
+    id: 4,
+    percentage: 80,
+    label: "Completed",
     styles: {
       root: {},
       path: {
         stroke: `rgba(0, 255, 29, ${66 / 100})`,
-        strokeLinecap: 'butt',
-        transition: 'stroke-dashoffset 0.5s ease 0s',
-        transform: 'rotate(0.25turn)',
-        transformOrigin: 'center center',
+        strokeLinecap: "butt",
+        transition: "stroke-dashoffset 0.5s ease 0s",
+        transform: "rotate(0.25turn)",
+        transformOrigin: "center center",
         strokeWidth: 6,
       },
       text: {
         fill: "#000000",
         fontSize: "16px",
-        fontWeight: "bold"
+        fontWeight: "bold",
       },
       trail: {
-        stroke: '#E5E0DF',
+        stroke: "#E5E0DF",
         strokeWidth: 6,
       },
     },
@@ -182,24 +179,24 @@ const progressData = [
 
 const data = [
   {
-    key: '1',
-    assigneddate: '01 Feb, 2024',
-    tasktitle: 'Website Issue 5',
-    department: 'Forest Department',
-    tag: 'Secretary',
-    targetdate: '21 Mar, 2024',
-    status: 'Assigned',
-    description: 'Response Rate --',
+    key: "1",
+    assigneddate: "01 Feb, 2024",
+    tasktitle: "Website Issue 5",
+    department: "Forest Department",
+    tag: "Secretary",
+    targetdate: "21 Mar, 2024",
+    status: "Assigned",
+    description: "Response Rate --",
   },
   {
-    key: '2',
-    assigneddate: '01 Feb, 2024',
-    tasktitle: 'Website Issue 5',
-    department: 'Forest Department',
-    tag: 'Secretary,Head of Office',
-    targetdate: '30 Mar, 2024',
-    status: 'In Progress',
-  }
+    key: "2",
+    assigneddate: "01 Feb, 2024",
+    tasktitle: "Website Issue 5",
+    department: "Forest Department",
+    tag: "Secretary,Head of Office",
+    targetdate: "30 Mar, 2024",
+    status: "In Progress",
+  },
 ];
 
 export default function Tasks() {
@@ -209,6 +206,53 @@ export default function Tasks() {
   const [modalVisible, setModalVisible] = React.useState(false);
   const [selectedRecord, setSelectedRecord] = React.useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [data, setData] = useState([]);
+
+  const localSt = JSON.parse(localStorage.getItem("user"));
+
+  const column = [
+    { text: 'Assigned Date', dataField: 'createdAt' },
+    { text: "Assigned Title", dataField: 'secretary.name' },
+    { text: "Department", dataField: 'department' },
+    { text: "Tag", dataField: 'tag' },
+    { text: "Target Date", dataField: 'targetDate' },
+    { text: "Status", dataField: 'status' },
+    { text: "Sub Task", dataField: '' },
+    { text: "Operations", dataField: '' },
+    { text: "Varified Status", dataField: '' },
+    { text: "Action", dataField: '' },
+  ];
+  const icons = {
+    see: <EyeOutlined />,
+    edit: <EditOutlined />,
+    delete: <DeleteOutlined />,
+  };
+
+  React.useEffect(() => {
+
+    fetchTasksData();
+  }, []);
+
+  
+  const fetchTasksData = async () => {
+    if (!toast.isActive("loading")) {
+      toast.loading("Loading departments data...", { autoClose: false, toastId: "loading" });
+    }
+    try {
+      const response = await axiosInstance.get('/api/tasks');
+      if (!response || !response.data) {
+        throw new Error("Failed to fetch department data");
+      }
+      const tasksData = response.data;
+      setData(tasksData);
+      toast.dismiss("loading");
+    } catch (error) {
+      console.error("Error fetching Tasks data:", error);
+      toast.dismiss("loading");
+      toast.error("Failed to fetch Tasks data");
+    }
+  };
+
 
   const handleOpenModal = () => {
     setIsModalVisible(true);
@@ -223,115 +267,133 @@ export default function Tasks() {
     setModalVisible(true);
   };
 
-
   const handleEditClick = (record) => {
-    console.log('Edit clicked for:', record);
+    console.log("Edit clicked for:", record);
     // Implement logic for editing
   };
 
   const handleDeleteClick = (record) => {
-    console.log('Delete clicked for:', record);
+    console.log("Delete clicked for:", record);
     // Implement logic for deleting
   };
 
   const columns = [
     {
-      title: 'Assigned Date',
-      dataIndex: 'assigneddate',
-      key: 'assigneddate',
+      title: "Assigned Date",
+      dataIndex: "assigneddate",
+      key: "assigneddate",
       filters: [
-        { text: 'Joe', value: 'Joe' },
-        { text: 'Jim', value: 'Jim' },
+        { text: "Joe", value: "Joe" },
+        { text: "Jim", value: "Jim" },
       ],
       filteredValue: filteredInfo.name || null,
       onFilter: (value, record) => record.name.includes(value),
       sorter: (a, b) => a.name.length - b.name.length,
-      sortOrder: sortedInfo.columnKey === 'name' ? sortedInfo.order : null,
-      
+      sortOrder: sortedInfo.columnKey === "name" ? sortedInfo.order : null,
     },
     {
-      title: 'Task Title',
-      dataIndex: 'tasktitle',
-      key: 'tasktitle',
+      title: "Task Title",
+      dataIndex: "tasktitle",
+      key: "tasktitle",
       sorter: (a, b) => a.age - b.age,
-      sortOrder: sortedInfo.columnKey === 'age' ? sortedInfo.order : null,
-      
+      sortOrder: sortedInfo.columnKey === "age" ? sortedInfo.order : null,
     },
     {
-      title: 'Department',
-      dataIndex: 'department',
-      key: 'department',
+      title: "Department",
+      dataIndex: "department",
+      key: "department",
       filters: [
-        { text: 'London', value: 'London' },
-        { text: 'New York', value: 'New York' },
+        { text: "London", value: "London" },
+        { text: "New York", value: "New York" },
       ],
       filteredValue: filteredInfo.address || null,
       onFilter: (value, record) => record.address.includes(value),
       sorter: (a, b) => a.address.length - b.address.length,
-      sortOrder: sortedInfo.columnKey === 'address' ? sortedInfo.order : null,
-      
+      sortOrder: sortedInfo.columnKey === "address" ? sortedInfo.order : null,
     },
     {
-      title: 'Tag',
-      dataIndex: 'tag',
-      key: 'tag',
+      title: "Tag",
+      dataIndex: "tag",
+      key: "tag",
       filters: [
-        { text: 'London', value: 'London' },
-        { text: 'New York', value: 'New York' },
+        { text: "London", value: "London" },
+        { text: "New York", value: "New York" },
       ],
       filteredValue: filteredInfo.city || null,
       onFilter: (value, record) => record.city.includes(value),
       sorter: (a, b) => a.city.length - b.city.length,
-      sortOrder: sortedInfo.columnKey === 'city' ? sortedInfo.order : null,
-      
+      sortOrder: sortedInfo.columnKey === "city" ? sortedInfo.order : null,
     },
 
     {
-      title: 'Target Date',
-      dataIndex: 'targetdate',
-      key: 'targetdate',
+      title: "Target Date",
+      dataIndex: "targetdate",
+      key: "targetdate",
       filters: [
-        { text: 'London', value: 'London' },
-        { text: 'New York', value: 'New York' },
+        { text: "London", value: "London" },
+        { text: "New York", value: "New York" },
       ],
       filteredValue: filteredInfo.city || null,
       onFilter: (value, record) => record.city.includes(value),
       sorter: (a, b) => a.city.length - b.city.length,
-      sortOrder: sortedInfo.columnKey === 'city' ? sortedInfo.order : null,
-      
+      sortOrder: sortedInfo.columnKey === "city" ? sortedInfo.order : null,
     },
     {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
       filters: [
-        { text: 'London', value: 'London' },
-        { text: 'New York', value: 'New York' },
+        { text: "London", value: "London" },
+        { text: "New York", value: "New York" },
       ],
       filteredValue: filteredInfo.city || null,
       onFilter: (value, record) => record.city.includes(value),
       sorter: (a, b) => a.city.length - b.city.length,
-      sortOrder: sortedInfo.columnKey === 'city' ? sortedInfo.order : null,
-      
+      sortOrder: sortedInfo.columnKey === "city" ? sortedInfo.order : null,
     },
     {
-      title: 'Sub Task',
-      key: 'subtask',
+      title: "Sub Task",
+      key: "subtask",
       render: (text, record) => (
         <>
-
-          <div style={{ backgroundColor: 'transparent', width: 'fit-content', display: 'flex', justifyContent: 'center' }}>
-          <Button type="primary" onClick={handleOpenModal} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#6fd088', color: '#fff' }}>
+          <div
+            style={{
+              backgroundColor: "transparent",
+              width: "fit-content",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <Button
+              type="primary"
+              onClick={handleOpenModal}
+              style={{
+                padding: "6px",
+                margin: "1px",
+                minWidth: "40px",
+                width: "auto !important",
+                backgroundColor: "#6fd088",
+                color: "#fff",
+              }}
+            >
               <PlusCircleOutlined />
             </Button>
-            
-            <Button type="primary" onClick={() => handleSeeClick(record)} style={{ padding: '6px', margin: '1px', minWidth: '40px', width: 'auto !important', backgroundColor: '#fb4', color: '#fff' }}>
+
+            <Button
+              type="primary"
+              onClick={() => handleSeeClick(record)}
+              style={{
+                padding: "6px",
+                margin: "1px",
+                minWidth: "40px",
+                width: "auto !important",
+                backgroundColor: "#fb4",
+                color: "#fff",
+              }}
+            >
               <EyeOutlined />
             </Button>
-           
-           
           </div>
-
         </>
       ),
     },
@@ -343,8 +405,6 @@ export default function Tasks() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
-
-
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -367,7 +427,7 @@ export default function Tasks() {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-          <StaticModel visible={isModalVisible} onClose={handleCloseModal} />
+            <StaticModel visible={isModalVisible} onClose={handleCloseModal} />
             <Grid container spacing={3}>
               {/* Recent Orders */}
               <Grid item xs={12}>
@@ -400,135 +460,106 @@ export default function Tasks() {
                     <Card sx={{ maxWidth: 100 + "%" }}>
                       <Box
                         sx={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
                           padding: 2,
-                          borderBottom: '1px solid #eff2f7',
-
+                          borderBottom: "1px solid #eff2f7",
                         }}
                       >
-                        <Stack direction="row" spacing={2} sx={{ justifyContent: 'center', alignItems: 'center' }}>
-                          <Typography variant="body1" sx={{ fontWeight: 600 }}>All Tasks</Typography>
+                        <Stack
+                          direction="row"
+                          spacing={2}
+                          sx={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                            All Tasks
+                          </Typography>
                           <Button
                             variant="contained"
                             sx={{
-                              bgcolor: '#6fd088',
-                              color: 'white',
-                              '&:hover': {
-                                bgcolor: '#5eb174',
+                              bgcolor: "#6fd088",
+                              color: "white",
+                              "&:hover": {
+                                bgcolor: "#5eb174",
                               },
                             }}
-                            component={Link} to="/add-tasks"
+                            component={Link}
+                            to="/add-tasks"
                           >
                             Add Task
                           </Button>
-                          <Button
-                            variant="contained"
-                            sx={{
-                              bgcolor: '#6fd088',
-                              color: 'white',
-                              '&:hover': {
-                                bgcolor: '#5eb174',
-                              },
-                            }}
-                            component={Link} to="/tasks-list"
-                          >
-                            Task list
-                          </Button>
+                          {localSt.role_type === "admin" ? (
+                            <Button
+                              variant="contained"
+                              sx={{
+                                bgcolor: "#6fd088",
+                                color: "white",
+                                "&:hover": {
+                                  bgcolor: "#5eb174",
+                                },
+                              }}
+                              component={Link}
+                              to="/tasks-list"
+                            >
+                              Task list
+                            </Button>
+                          ) : null}
                         </Stack>
 
-
-
-                        <Dropdowns dropdownData={dropdownData} onChange={handleDropdownChange} />
+                        <Dropdowns
+                          dropdownData={dropdownData}
+                          onChange={handleDropdownChange}
+                        />
                       </Box>
 
-                      <Grid container spacing={2} sx={{ py: 3, px: 2 }} >
+                      <Grid container spacing={2} sx={{ py: 3, px: 2 }}>
                         {progressData.map((item) => (
                           <Grid item xs={3} key={item.id}>
-                            <Card sx={{ maxWidth: '100%' }} >
-                              <Card sx={{ maxWidth: '100%', p: 2 }}>
-                                <CardContent sx={{ display: 'flex', justifyContent: 'center' }}>
+                            <Card sx={{ maxWidth: "100%" }}>
+                              <Card sx={{ maxWidth: "100%", p: 2 }}>
+                                <CardContent
+                                  sx={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                  }}
+                                >
                                   <div style={{ width: 130, height: 130 }}>
-                                    <CircularProgressbar value={item.percentage} text={`${item.percentage}%`} styles={item.styles} />
+                                    <CircularProgressbar
+                                      value={item.percentage}
+                                      text={`${item.percentage}%`}
+                                      styles={item.styles}
+                                    />
                                   </div>
-
                                 </CardContent>
-                                <span style={{ display: 'flex', justifyContent: 'center', fontWeight: 'bolder' }}>{item.label}</span>
+                                <span
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    fontWeight: "bolder",
+                                  }}
+                                >
+                                  {item.label}
+                                </span>
                               </Card>
                             </Card>
                           </Grid>
                         ))}
                       </Grid>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          padding: 2,
-
-
-                        }}
-                      >
-                        <ButtonGroup variant="contained" aria-label="Basic button group"  >
-                          <Button sx={{
-                            backgroundColor: '#6c757d',
-                            borderColor: '1px solid #6c757d',
-
-                            '&:hover': {
-                              backgroundColor: '#5c636a',
-                              borderColor: '#5c636a'
-                            },
-
-                          }}>Copy</Button>
-                          <Button sx={{
-                            backgroundColor: '#6c757d',
-                            borderColor: '1px solid #6c757d',
-                            '&:hover': {
-                              backgroundColor: '#5c636a',
-                              borderColor: '#5c636a'
-                            },
-
-                          }}>Excel</Button>
-                          <Button sx={{
-                            backgroundColor: '#6c757d',
-                            borderColor: '#6c757d',
-                            '&:hover': {
-                              backgroundColor: '#5c636a',
-                              borderColor: '#5c636a'
-                            },
-
-                          }}>PDF</Button>
-                          <Button sx={{
-                            backgroundColor: '#6c757d',
-                            borderColor: '#6c757d',
-                            '&:hover': {
-                              backgroundColor: '#5c636a',
-                              borderColor: '#5c636a'
-                            },
-
-                          }}>Column Visibility</Button>
-                        </ButtonGroup>
-                        <TextField id="outlined-basic"
-                          label="Search"
-                          size="small" variant="outlined" />
-                      </Box>
                       <CardContent>
-                        <Reporttable
-                          data={data}
-                          columns={columns}
-                          filteredInfo={filteredInfo}
-                          sortedInfo={sortedInfo}
-                          setFilteredInfo={setFilteredInfo}
-                          setSortedInfo={setSortedInfo}
-                          modalVisible={modalVisible}
-                          setModalVisible={setModalVisible}
-                          selectedRecord={selectedRecord}
-                        />
-                      </CardContent>
+                      <TableNew
+                      data={data}
+                      column={column}
+                      icons={icons}
+                      handleSeeClick={handleSeeClick}
+                      handleEditClick={handleEditClick}
+                    />
+                    </CardContent>
                     </Card>
                   </Grid>
-
                 </Grid>
               </Grid>
             </Grid>
