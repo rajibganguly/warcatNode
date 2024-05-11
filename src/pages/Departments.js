@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { CloseOutlined } from '@mui/icons-material';
 
-import SearchIcon from '@mui/icons-material/Search';
+
 import { toast } from "react-toastify";
 import TableNew from "../components/TableNew";
 import axiosInstance from "../apiConfig/axoisSetup";
@@ -135,27 +135,10 @@ export default function Departments() {
   };
 
   const handleEditClick = (record) => {
-    console.log('Edit clicked for:', record);
-    navigate('/edit-departments');
+    navigate(`/edit-departments/${record}`);
   };
 
-  const handleDeleteClick = async (record) => {
-    console.log('Delete clicked for:', record);
-    let id = record.split('-')[1];
-    try {
-      const response = await axiosInstance.delete(`/api/deleteDepartment/${id}`);
-      if (response && response.data && response.data.success) {
-        fetchDepartmentData();
-        toast.success("Department deleted successfully");
-      } else {
-        toast.error("Failed to delete department", { autoClose: 2000 });
-      }
-    } catch (error) {
-      console.error("Error deleting department:", error);
-      toast.error("Failed to delete department", { autoClose: 2000 });
-    }
-    fetchDepartmentData();
-  };
+  
 
   const icons = {
     see: <EyeOutlined />,
@@ -243,65 +226,7 @@ export default function Departments() {
                     }} onClick={handleClickAddDepartment}>
                       Add Department
                     </Button>
-                  </Box>
-
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      padding: 2,
-                    }}
-                  >
-                    <ButtonGroup variant="contained" aria-label="Basic button group">
-                      <Button sx={{
-                        backgroundColor: '#6c757d',
-                        borderColor: '1px solid #6c757d',
-                        '&:hover': {
-                          backgroundColor: '#5c636a',
-                          borderColor: '#5c636a'
-                        },
-                      }}>Copy</Button>
-                      <Button sx={{
-                        backgroundColor: '#6c757d',
-                        borderColor: '1px solid #6c757d',
-                        '&:hover': {
-                          backgroundColor: '#5c636a',
-                          borderColor: '#5c636a'
-                        },
-                      }}>Excel</Button>
-                      <Button sx={{
-                        backgroundColor: '#6c757d',
-                        borderColor: '#6c757d',
-                        '&:hover': {
-                          backgroundColor: '#5c636a',
-                          borderColor: '#5c636a'
-                        },
-                      }}>PDF</Button>
-                      <Button sx={{
-                        backgroundColor: '#6c757d',
-                        borderColor: '#6c757d',
-                        '&:hover': {
-                          backgroundColor: '#5c636a',
-                          borderColor: '#5c636a'
-                        },
-                      }}>Column Visibility</Button>
-                    </ButtonGroup>
-                    <TextField
-                      id="outlined-textarea"
-                      label="Search"
-                      variant="outlined"
-                      placeholder="Enter search"
-                      size="small"
-                      InputProps={{
-                        endAdornment: (
-                          <IconButton>
-                            <SearchIcon />
-                          </IconButton>
-                        ),
-                      }}
-                    />
-                  </Box>
+                  </Box>                  
                   <CardContent>
                     <TableNew
                       data={data}
@@ -309,7 +234,6 @@ export default function Departments() {
                       icons={icons}
                       handleSeeClick={handleSeeClick}
                       handleEditClick={handleEditClick}
-                      handleDeleteClick={handleDeleteClick}
                     />
                     <Dialog
                       open={modalVisible}
@@ -322,24 +246,22 @@ export default function Departments() {
                         justifyContent: 'center',
                       }}
                     >
-
-                      <DialogContent sx={{ p: 0 }}>
+                      <DialogContent sx={{ p: 2, width: '600px' }}>
                         {modalContent && (
                           <DialogContentText id="modal-description">
-                            <Card sx={{ width: '100%', maxWidth: 800, maxHeight: 600, overflowY: 'auto' }}>
-                              <CardActionArea>
-                                <IconButton
+                            <Typography variant="h4" id="modal-title">
+                              Department Name: {modalContent.department.department_name}
+                            </Typography>
+                            <Card sx={{ width: '100%', maxWidth: 900, maxHeight: 600, overflowY: 'auto' }}>
+                            <IconButton
                                   aria-label="close"
                                   onClick={closeModal}
-                                  sx={{ position: 'absolute', right: 0, top: 0, color: 'gray' }}
+                                  sx={{ position: 'absolute', right: '5px', top: '0', color: 'gray' }}
                                 >
                                   <CloseOutlined/>
                                 </IconButton>
                                 <CardContent>
-                                  <Typography variant="h6" id="modal-title">
-                                    Department Name: {modalContent.department.department_name}
-                                  </Typography>
-                                  <Typography variant="body1" color="text.secondary">
+                                  <Typography variant="h5" color="text.secondary">
                                     Secretary Details
                                   </Typography>
                                   <Typography variant="body2" color="text.secondary">
@@ -352,7 +274,7 @@ export default function Departments() {
                                     Secretary Email Id: {modalContent.secretary.email}
                                   </Typography>
 
-                                  <Typography variant="body1" color="text.secondary" mt={2}>
+                                  <Typography variant="h5" color="text.secondary" mt={4} py={2}>
                                     Head of Office Details
                                   </Typography>
                                   <Typography variant="body2" color="text.secondary">
@@ -368,7 +290,6 @@ export default function Departments() {
                                     Head of Office Email Id: {modalContent.headOffice.email}
                                   </Typography>
                                 </CardContent>
-                              </CardActionArea>
                               <CardActions sx={{ justifyContent: 'flex-end' }}>
                                 <Button size="small" variant="contained" color="primary" >
                                   Email
