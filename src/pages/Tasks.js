@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -24,9 +24,7 @@ import StaticModel from "../components/StaticModel";
 import Sidebar from "../components/Sidebar";
 import { toast } from "react-toastify";
 import TableNew from "../components/TableNew";
-
 import axiosInstance from "../apiConfig/axoisSetup";
-
 const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
@@ -177,38 +175,25 @@ const progressData = [
   },
 ];
 
-const data = [
-  {
-    key: "1",
-    assigneddate: "01 Feb, 2024",
-    tasktitle: "Website Issue 5",
-    department: "Forest Department",
-    tag: "Secretary",
-    targetdate: "21 Mar, 2024",
-    status: "Assigned",
-    description: "Response Rate --",
-  },
-  {
-    key: "2",
-    assigneddate: "01 Feb, 2024",
-    tasktitle: "Website Issue 5",
-    department: "Forest Department",
-    tag: "Secretary,Head of Office",
-    targetdate: "30 Mar, 2024",
-    status: "In Progress",
-  },
-];
+
 
 export default function Tasks() {
   const [open, setOpen] = React.useState(true);
-  const [filteredInfo, setFilteredInfo] = useState({});
-  const [sortedInfo, setSortedInfo] = useState({});
   const [modalVisible, setModalVisible] = React.useState(false);
   const [selectedRecord, setSelectedRecord] = React.useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [data, setData] = useState([]);
+  const [userId, setUserId] = useState("");
+  const [roleType, setRoleType] = useState("");
 
-  const localSt = JSON.parse(localStorage.getItem("user"));
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
+      setUserId(user.userId);
+      setRoleType(user.role_type);
+    }
+    fetchTasksData();
+  }, []);
 
   const column = [
     { text: 'Assigned Date', dataField: 'createdAt' },
@@ -233,15 +218,19 @@ export default function Tasks() {
     fetchTasksData();
   }, []);
 
-  
   const fetchTasksData = async () => {
     if (!toast.isActive("loading")) {
-      toast.loading("Loading departments data...", { autoClose: false, toastId: "loading" });
+      toast.loading("Loading Task data...", { autoClose: false, toastId: "loading" });
     }
     try {
-      const response = await axiosInstance.get('/api/tasks');
+      const response = await axiosInstance.get('/api/tasks', {
+        params: {
+          userId: userId,
+          role_type: roleType,
+        },
+      });
       if (!response || !response.data) {
-        throw new Error("Failed to fetch department data");
+        throw new Error("Failed to Load Task data");
       }
       const tasksData = response.data;
       setData(tasksData);
@@ -252,7 +241,7 @@ export default function Tasks() {
       toast.error("Failed to fetch Tasks data");
     }
   };
-
+  console.log(data)
 
   const handleOpenModal = () => {
     setIsModalVisible(true);
@@ -269,135 +258,14 @@ export default function Tasks() {
 
   const handleEditClick = (record) => {
     console.log("Edit clicked for:", record);
-    // Implement logic for editing
+
   };
 
   const handleDeleteClick = (record) => {
     console.log("Delete clicked for:", record);
-    // Implement logic for deleting
+
   };
 
-  const columns = [
-    {
-      title: "Assigned Date",
-      dataIndex: "assigneddate",
-      key: "assigneddate",
-      filters: [
-        { text: "Joe", value: "Joe" },
-        { text: "Jim", value: "Jim" },
-      ],
-      filteredValue: filteredInfo.name || null,
-      onFilter: (value, record) => record.name.includes(value),
-      sorter: (a, b) => a.name.length - b.name.length,
-      sortOrder: sortedInfo.columnKey === "name" ? sortedInfo.order : null,
-    },
-    {
-      title: "Task Title",
-      dataIndex: "tasktitle",
-      key: "tasktitle",
-      sorter: (a, b) => a.age - b.age,
-      sortOrder: sortedInfo.columnKey === "age" ? sortedInfo.order : null,
-    },
-    {
-      title: "Department",
-      dataIndex: "department",
-      key: "department",
-      filters: [
-        { text: "London", value: "London" },
-        { text: "New York", value: "New York" },
-      ],
-      filteredValue: filteredInfo.address || null,
-      onFilter: (value, record) => record.address.includes(value),
-      sorter: (a, b) => a.address.length - b.address.length,
-      sortOrder: sortedInfo.columnKey === "address" ? sortedInfo.order : null,
-    },
-    {
-      title: "Tag",
-      dataIndex: "tag",
-      key: "tag",
-      filters: [
-        { text: "London", value: "London" },
-        { text: "New York", value: "New York" },
-      ],
-      filteredValue: filteredInfo.city || null,
-      onFilter: (value, record) => record.city.includes(value),
-      sorter: (a, b) => a.city.length - b.city.length,
-      sortOrder: sortedInfo.columnKey === "city" ? sortedInfo.order : null,
-    },
-
-    {
-      title: "Target Date",
-      dataIndex: "targetdate",
-      key: "targetdate",
-      filters: [
-        { text: "London", value: "London" },
-        { text: "New York", value: "New York" },
-      ],
-      filteredValue: filteredInfo.city || null,
-      onFilter: (value, record) => record.city.includes(value),
-      sorter: (a, b) => a.city.length - b.city.length,
-      sortOrder: sortedInfo.columnKey === "city" ? sortedInfo.order : null,
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      filters: [
-        { text: "London", value: "London" },
-        { text: "New York", value: "New York" },
-      ],
-      filteredValue: filteredInfo.city || null,
-      onFilter: (value, record) => record.city.includes(value),
-      sorter: (a, b) => a.city.length - b.city.length,
-      sortOrder: sortedInfo.columnKey === "city" ? sortedInfo.order : null,
-    },
-    {
-      title: "Sub Task",
-      key: "subtask",
-      render: (text, record) => (
-        <>
-          <div
-            style={{
-              backgroundColor: "transparent",
-              width: "fit-content",
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            <Button
-              type="primary"
-              onClick={handleOpenModal}
-              style={{
-                padding: "6px",
-                margin: "1px",
-                minWidth: "40px",
-                width: "auto !important",
-                backgroundColor: "#6fd088",
-                color: "#fff",
-              }}
-            >
-              <PlusCircleOutlined />
-            </Button>
-
-            <Button
-              type="primary"
-              onClick={() => handleSeeClick(record)}
-              style={{
-                padding: "6px",
-                margin: "1px",
-                minWidth: "40px",
-                width: "auto !important",
-                backgroundColor: "#fb4",
-                color: "#fff",
-              }}
-            >
-              <EyeOutlined />
-            </Button>
-          </div>
-        </>
-      ),
-    },
-  ];
 
   const handleOutput = (open) => {
     toggleDrawer();
@@ -492,7 +360,7 @@ export default function Tasks() {
                           >
                             Add Task
                           </Button>
-                          {localSt.role_type === "admin" ? (
+                          {localStorage?.role_type === "admin" ? (
                             <Button
                               variant="contained"
                               sx={{
@@ -550,14 +418,14 @@ export default function Tasks() {
                         ))}
                       </Grid>
                       <CardContent>
-                      <TableNew
-                      data={data}
-                      column={column}
-                      icons={icons}
-                      handleSeeClick={handleSeeClick}
-                      handleEditClick={handleEditClick}
-                    />
-                    </CardContent>
+                        <TableNew
+                          data={data}
+                          column={column}
+                          icons={icons}
+                          handleSeeClick={handleSeeClick}
+                          handleEditClick={handleEditClick}
+                        />
+                      </CardContent>
                     </Card>
                   </Grid>
                 </Grid>

@@ -107,7 +107,6 @@ export default function AddDepartment() {
    */
   const handleChange = (event) => {
     const { name, value } = event.target;
-
     // Split the name to get the nested object structure
     const [field, nestedField] = name.split(".");
 
@@ -154,14 +153,14 @@ export default function AddDepartment() {
     try {
       if (response.status === 200) {
         toast.success('Department Added Successfully', {
-          autoClose: 2000, 
+          autoClose: 2000,
         });
         navigate("/departments");
       } else {
         toast.error("Something went wrong", {
-          autoClose: 2000, 
+          autoClose: 2000,
         });
-      
+
         // Handle error cases here
       }
     } catch (error) {
@@ -293,18 +292,24 @@ export default function AddDepartment() {
                           />
 
                         </Grid>
+
                         <Grid item xs={12} sm={6}>
                           <label>Secretary Phone Number</label>
                           <TextField
                             id="outlined-basic-2"
                             label="Enter Secretary Phone Number"
+                            type="number"
                             variant="outlined"
                             sx={{ width: "100%" }}
                             name="secretary.phone_number"
                             value={formData.secretary.phone_number}
+
                             inputProps={{
                               minLength: 10,
-                              maxLength: 10
+                              maxLength: 10,
+                              pattern: '[0-9]*',
+                              inputMode: 'numeric',
+
                             }}
                             onChange={handleChange}
                           />
@@ -368,6 +373,7 @@ export default function AddDepartment() {
                             <TextField
                               id="outlined-basic-1"
                               label="Enter Head of Office Phone Number"
+                              type="number"
                               variant="outlined"
                               sx={{ width: "100%" }}
                               name="headOffice.phone_number"

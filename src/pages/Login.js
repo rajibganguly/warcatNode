@@ -23,27 +23,24 @@ import "react-toastify/dist/ReactToastify.css";
 
 import { useAuth } from "../providers/AuthProvider";
 
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://teminos.com/">
-        Teminos
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
+function decodeToken(token) {
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split('')
+      .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+      .join('')
   );
+  return JSON.parse(jsonPayload);
 }
 
-const defaultTheme = createTheme();
+function storeUserToLocalStorage(token) {
+  const decodedToken = decodeToken(token);
+  localStorage.setItem("user", JSON.stringify(decodedToken));
+}
 
-export default function LogIn({ setAuthToken }) {
+function LogIn({ setAuthToken }) {
   const { login } = useAuth();
 
   const [loginRoleType, setLoginRoleType] = useState("admin");
@@ -59,11 +56,6 @@ export default function LogIn({ setAuthToken }) {
 
   const navigate = useNavigate();
 
-  /**
-   * @description: Check all fields if not empty
-   * @input: form object { email, password }
-   * @output: boolean
-   */
   const isFieldsMapped = (obj) => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (obj["email"] && emailPattern.test(obj["email"]) && obj["password"]) {
@@ -73,15 +65,9 @@ export default function LogIn({ setAuthToken }) {
     }
   };
 
-  /**
-   * @Description: Update changes and trigger complete flag
-   * @Input: form object { email, password }
-   * @Output: boolean
-   */
   const handleChange = (event) => {
     const { name, value } = event.target;
 
-    // Update the form data based on the field
     setFormData((prevFormData) => {
       return {
         ...prevFormData,
@@ -89,7 +75,6 @@ export default function LogIn({ setAuthToken }) {
       };
     });
 
-    // Setup flag
     if (isFieldsMapped(formData)) {
       setDisabledLogin(false);
     } else {
@@ -97,20 +82,10 @@ export default function LogIn({ setAuthToken }) {
     }
   };
 
-  /**
-   * @Description: set role type in application of tab
-   * @Input: rolestype as String
-   * @Output: String
-   */
   const tabSelection = (event, newValue) => {
     setLoginRoleType(newValue);
   };
 
-  /**
-   * @Description: handleSubmit
-   * @Input: Event
-   * @Output: {Success/ fails}
-   */
   const handleSubmit = async (event) => {
     setIsLoading(true);
 
@@ -131,17 +106,18 @@ export default function LogIn({ setAuthToken }) {
     try {
       if (response.status === 200) {
         toast.success('You are Successfully logged into Warcat', {
-          autoClose: 2000, 
+          autoClose: 2000,
         });
         const resData = await response.json();
         const token = resData.token;
         localStorage.setItem("token", token);
+        storeUserToLocalStorage(token); // Store user data in local storage
         login(token);
         setIsLoading(false);
         navigate("/dashboard");
       } else {
         toast.error(`Login Failed! ${response.message}`, {
-          autoClose: 2000, 
+          autoClose: 2000,
         });
       }
     } catch (error) {
@@ -152,7 +128,7 @@ export default function LogIn({ setAuthToken }) {
   };
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <ThemeProvider theme={createTheme()}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -261,9 +237,10 @@ export default function LogIn({ setAuthToken }) {
             </Box>
           </TabContext>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
         <LoadingIndicator isLoading={isLoading} />
       </Container>
     </ThemeProvider>
   );
 }
+
+export default LogIn;

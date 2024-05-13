@@ -24,7 +24,6 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Sidebar from "../components/Sidebar";
 import { toast } from "react-toastify";
-
 import axiosInstance from "../apiConfig/axoisSetup";
 const drawerWidth = 240;
 
@@ -156,33 +155,32 @@ export default function EditDepartment() {
    * Post call on submit
    */
   const handleAddDepartment = async () => {
-    const reactAppHostname = process.env.REACT_APP_HOSTNAME;
-    setSubmitDisable(true);
     const auth_token = localStorage.getItem('token');
-    const response = await fetch(
-      `${reactAppHostname}/api/edit-register-user-with-department`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          token: `Bearer ${auth_token}`
-        },
-        body: JSON.stringify(formData),
-      }
-    );
-
+    setSubmitDisable(true);
     try {
+      const response = await fetch(
+        `${reactAppHostname}/api/edit-register-user-with-department`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${auth_token}` // Include the Authorization header with the token
+          },
+          body: JSON.stringify(formData),
+        }
+      );
       if (response.status === 200) {
-        alert(`${reactAppHostname}/api/login`);
+        // Handle success case
         navigate("/departments");
       } else {
-        alert("Login Failed");
-        // Handle error cases here
+        // Handle other status codes or errors
+        console.error("Error updating department:", response.statusText);
       }
     } catch (error) {
-      console.error("Error occurred:", error);
+      console.error("Error updating department:", error.message);
     }
   };
+
 
   return (
     <ThemeProvider theme={defaultTheme}>

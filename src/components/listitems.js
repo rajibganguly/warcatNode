@@ -8,7 +8,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import LayersIcon from '@mui/icons-material/Layers';
-import AssignmentIcon from '@mui/icons-material/Assignment';
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import { Link } from 'react-router-dom';
 
 export const mainListItems = (
@@ -42,6 +42,13 @@ export const mainListItems = (
         <LayersIcon />
       </ListItemIcon>
       <ListItemText primary="Reports" />
+    </ListItemButton>
+
+    <ListItemButton component={Link} to="/task-approval">
+      <ListItemIcon>
+        <AssignmentTurnedInIcon />
+      </ListItemIcon>
+      <ListItemText primary="Task Approval" />
     </ListItemButton>
   </React.Fragment>
 );
