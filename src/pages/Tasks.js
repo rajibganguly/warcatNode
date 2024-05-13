@@ -25,7 +25,8 @@ import Sidebar from "../components/Sidebar";
 import { toast } from "react-toastify";
 import TableNew from "../components/TableNew";
 
-import axiosInstance from "../apiConfig/axoisSetup";
+
+import ApiConfig from '../config/ApiConfig'
 
 const drawerWidth = 240;
 
@@ -209,6 +210,7 @@ export default function Tasks() {
   const [data, setData] = useState([]);
 
   const localSt = JSON.parse(localStorage.getItem("user"));
+  const currentRoleType = localSt.role_type;
 
   const column = [
     { text: 'Assigned Date', dataField: 'createdAt' },
@@ -233,27 +235,35 @@ export default function Tasks() {
     fetchTasksData();
   }, []);
 
-  
+  /**
+   * @description Private function for fetch Task data
+   */
   const fetchTasksData = async () => {
     if (!toast.isActive("loading")) {
       toast.loading("Loading departments data...", { autoClose: false, toastId: "loading" });
     }
+    const localData = localStorage.getItem("user");
+    const userObj = JSON.parse(localData)    
     try {
-      const response = await axiosInstance.get('/api/tasks');
-      if (!response || !response.data) {
-        throw new Error("Failed to fetch department data");
-      }
-      const tasksData = response.data;
-      setData(tasksData);
+      const localObj = { userId: userObj._id, role_type: userObj.role_type }; 
+      
+      const params = {
+        userId: localObj.userId,
+        role_type: localObj.role_type
+      };
+      const tasksData = await ApiConfig.requestData('get', '/tasks', params, null);
+      console.log(tasksData.tasks, params)
+      //setData(tasksData);
       toast.dismiss("loading");
     } catch (error) {
       console.error("Error fetching Tasks data:", error);
       toast.dismiss("loading");
       toast.error("Failed to fetch Tasks data");
-    }
+    }    
   };
 
-
+  
+  
   const handleOpenModal = () => {
     setIsModalVisible(true);
   };
@@ -478,6 +488,7 @@ export default function Tasks() {
                           <Typography variant="body1" sx={{ fontWeight: 600 }}>
                             All Tasks
                           </Typography>
+                          {currentRoleType === "admin" && (
                           <Button
                             variant="contained"
                             sx={{
@@ -491,8 +502,8 @@ export default function Tasks() {
                             to="/add-tasks"
                           >
                             Add Task
-                          </Button>
-                          {localSt.role_type === "admin" ? (
+                          </Button>)}
+                          {currentRoleType === "admin" && (
                             <Button
                               variant="contained"
                               sx={{
@@ -507,7 +518,7 @@ export default function Tasks() {
                             >
                               Task list
                             </Button>
-                          ) : null}
+                          )}
                         </Stack>
 
                         <Dropdowns

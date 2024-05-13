@@ -23,7 +23,8 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../apiConfig/axoisSetup";
+//import axiosInstance from "../apiConfig/axoisSetup";
+import ApiConfig from "../config/ApiConfig";
 import { Button } from "@mui/material";
 import { EyeOutlined, EditOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import TableNew from "../components/TableNew";
@@ -84,30 +85,37 @@ export default function Meetings() {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
 
+  const localUser = JSON.parse(localStorage.getItem('user'));
+  const currentRoleType = localUser.role_type;
+
   useEffect(() => {
     fetchMeetingData();
   }, []);
 
+  /**
+   * @description Private function for fetch Meeting data
+   */
   const fetchMeetingData = async () => {
-    if (!toast.isActive("loadingMeetings")) {
-      toast.loading("Loading meetings data...", { autoClose: false, toastId: "loadingMeetings" });
-    }
-
-    try {
-      const response = await axiosInstance.get('/api/meetings');
-
-      if (!response || !response.data) {
-        throw new Error("Failed to fetch meetings data");
+    if (!toast.isActive("loading")) {
+        toast.loading("Loading meetings data...", { autoClose: false, toastId: "loading" });
       }
-
-      const meetingData = response.data.meetings;
-      setData(meetingData);
-      toast.dismiss("loadingMeetings");
+    const localData = localStorage.getItem("user");
+    const userObj = JSON.parse(localData)    
+    try {
+      const localObj = { userId: userObj._id, role_type: userObj.role_type }; 
+      
+      const params = {
+        userId: localObj.userId,
+        role_type: localObj.role_type
+      };
+      const meetingData = await ApiConfig.requestData('get', '/meetings', params, null);
+      setData(meetingData.meetings);
+      toast.dismiss("loading");
     } catch (error) {
-      console.error("Error fetching meetings data:", error);
-      toast.dismiss("loadingMeetings"); 
-      toast.error("Failed to fetch meetings data");
-    }
+      console.error("Error fetching meeting data:", error);
+      toast.dismiss("loading");
+      toast.error("Failed to fetch meeting data");
+    }    
   };
 
 
@@ -205,15 +213,14 @@ export default function Meetings() {
                         }}
                       >
                         <Typography variant="body1" sx={{ fontWeight: 600 }}>Meetings</Typography>
-                        <Button variant="contained" sx={{
+                        { currentRoleType === 'admin' && (<Button variant="contained" sx={{
                           backgroundColor: 'green',
                           '&:hover': {
                             backgroundColor: 'darkgreen',
                           },
-
                         }} component={Link} to="/add-new-meetings">
                           Add New Meetings
-                        </Button>
+                        </Button>)}
                       </Box>
                       <CardContent>
                         <TableNew
