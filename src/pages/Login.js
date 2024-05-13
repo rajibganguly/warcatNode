@@ -23,6 +23,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import { useAuth } from "../providers/AuthProvider";
 
+
 function Copyright(props) {
   return (
     <Typography
@@ -116,6 +117,7 @@ export default function LogIn({ setAuthToken }) {
 
     event.preventDefault();
     setDisabledLogin(true);
+
     const reactAppHostname = process.env.REACT_APP_HOSTNAME;
     const response = await fetch(`${reactAppHostname}/api/login`, {
       method: "POST",
@@ -136,6 +138,8 @@ export default function LogIn({ setAuthToken }) {
         const resData = await response.json();
         const token = resData.token;
         localStorage.setItem("token", token);
+        const user = decodeToken(token);
+        localStorage.setItem("user", JSON.stringify(user));
         login(token);
         setIsLoading(false);
         navigate("/dashboard");
@@ -149,6 +153,19 @@ export default function LogIn({ setAuthToken }) {
     } finally {
       setIsLoading(false);
     }
+  };
+
+
+  const decodeToken = (token) => {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
   };
 
   return (
