@@ -27,6 +27,9 @@ import Stack from '@mui/material/Stack';
 import AreaChart from '../components/AreaChart';
 import Linecolumnchart from '../components/Linecolumnchart';
 import Sidebar from "../components/Sidebar";
+import { toast } from "react-toastify";
+import ApiConfig from "../config/ApiConfig";
+import { BarChart } from '@mui/x-charts/BarChart';
 
 
 const drawerWidth = 240;
@@ -63,12 +66,53 @@ const cardData = [
 
 export default function Dashboard() {
   const [open, setOpen] = React.useState(true);
+  const [data, setData] = React.useState([]);
 
   const handleOutput = (open) => {
     toggleDrawer();
   };
   const toggleDrawer = () => {
     setOpen(!open);
+  };
+
+  React.useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  
+
+  /**
+   * @description Private function for fetch Dashboard data
+   */
+  const fetchDashboardData = async () => {
+    if (!toast.isActive("loading")) {
+      toast.loading("Loading dashbaord data...", { autoClose: false, toastId: "loading" });
+    }
+    const localData = localStorage.getItem("user");
+    const userObj = JSON.parse(localData)    
+    try {
+      const localObj = { userId: userObj._id, role_type: userObj.role_type }; 
+      
+      const params = {
+        userId: localObj.userId,
+        role_type: localObj.role_type
+      };
+      const dashboard = await ApiConfig.requestData('get', '/task-status-percentages', params, null);
+      setData(dashboard);
+      cardData.map((f) => {
+        if(f.title === 'Completed Tasks') {
+          f.value = dashboard.completed
+        }
+        if(f.title === 'Assigned Task') {
+          f.value = dashboard.totalAssigned
+        }
+      })
+      toast.dismiss("loading");
+    } catch (error) {
+      console.error("Error fetching department data:", error);
+      toast.dismiss("loading");
+      toast.error("Failed to fetch department data");
+    }    
   };
 
   return (
@@ -147,17 +191,26 @@ export default function Dashboard() {
 
             <Box sx={{ my: 3 }} />
             <Grid container spacing={2}>
-              <Grid item xs={6}>
+              {/* <Grid item xs={6}>
                 <Card sx={{ maxWidth: 100 + "%" }}>
                   <CardContent>
                     <AreaChart />
                   </CardContent>
                 </Card>
-              </Grid>
-              <Grid item xs={6}>
+              </Grid> */}
+              <Grid item xs={12}>
                 <Card sx={{ maxWidth: 100 + "%" }}>
                   <CardContent>
-                    <Linecolumnchart />
+                  <h5 style={{textAlign: 'center'}}>Status Overview</h5>
+                  <BarChart
+                    xAxis={[{ scaleType: 'band', data: ['Initiated', 'Inprogress', 'Completed'], name: 'Status' }]}
+                    yAxis={[{ name: 'Number of Tasks' }]}
+                    series={[{ data: [4, 1, 2] }]}
+                    width={1000}
+                    height={300}
+                    title="Status Overview"
+                  />
+                    {/* <Linecolumnchart /> */}
                   </CardContent>
                 </Card>
               </Grid>
