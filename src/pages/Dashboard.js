@@ -8,13 +8,6 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton"; import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { mainListItems, secondaryListItems } from "../components/listitems";
-import LogoBlack from "../components/logoblack";
-import ProfileSidePane from "../components/profileSidepane";
-import MuiDrawer from "@mui/material/Drawer";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
@@ -24,8 +17,6 @@ import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Stack from '@mui/material/Stack';
-import AreaChart from '../components/AreaChart';
-import Linecolumnchart from '../components/Linecolumnchart';
 import Sidebar from "../components/Sidebar";
 import { toast } from "react-toastify";
 import ApiConfig from "../config/ApiConfig";
@@ -191,13 +182,6 @@ export default function Dashboard() {
 
             <Box sx={{ my: 3 }} />
             <Grid container spacing={2}>
-              {/* <Grid item xs={6}>
-                <Card sx={{ maxWidth: 100 + "%" }}>
-                  <CardContent>
-                    <AreaChart />
-                  </CardContent>
-                </Card>
-              </Grid> */}
               <Grid item xs={12}>
                 <Card sx={{ maxWidth: 100 + "%" }}>
                   <CardContent>
@@ -210,7 +194,6 @@ export default function Dashboard() {
                     height={300}
                     title="Status Overview"
                   />
-                    {/* <Linecolumnchart /> */}
                   </CardContent>
                 </Card>
               </Grid>
@@ -222,6 +205,7 @@ export default function Dashboard() {
             sx={{
               width: "100%",
               paddingBottom: "20px",
+              textAlign: "left"
             }}
           >
             <Footer />
