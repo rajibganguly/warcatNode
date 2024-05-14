@@ -4,6 +4,8 @@ import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
 
 const ProfileSidePane = ({isopen}) => {
+    const localUser = localStorage.getItem('user');
+    const user = JSON.parse(localUser);
     const centerLogo = {
         width: '170px',
         height: '20px',
@@ -18,7 +20,7 @@ const ProfileSidePane = ({isopen}) => {
                     <div className={centerLogo}>
                         <img src={profileImg} alt="profile details" style={{ width: '90px' }} />
                     </div>
-                    <Typography variant="h6" mt={2}>Admin Name</Typography>
+                    <Typography variant="h6" mt={2}>{user.role_type}</Typography>
 
                     <Divider />
                     <Typography variant="body1" mt={1} textAlign="left">Menu</Typography>

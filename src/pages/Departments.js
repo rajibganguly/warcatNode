@@ -296,9 +296,9 @@ export default function Departments() {
                 paddingBottom: "20px",
               }}
             >
-              <Footer />
             </Box>
           </Container>
+            <Footer />
         </Box>
       </Box>
     </ThemeProvider>
