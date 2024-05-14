@@ -21,6 +21,7 @@ import Sidebar from "../components/Sidebar";
 import { toast } from "react-toastify";
 import ApiConfig from "../config/ApiConfig";
 import { BarChart } from '@mui/x-charts/BarChart';
+import { getItem } from '../config/storage';
 
 
 const drawerWidth = 240;
@@ -49,15 +50,16 @@ const AppBar = styled(MuiAppBar, {
 const defaultTheme = createTheme();
 
 const cardData = [
-  { title: 'Total Department', value: 5, icon: <AccountBalanceIcon /> },
-  { title: 'Completed Tasks', value: 1, icon: <PeopleIcon /> },
-  { title: 'Total Meeting', value: 3, icon: <MonetizationOnIcon /> },
-  { title: 'Assigned Task', value: 0, icon: <MonetizationOnIcon /> },
+  { id: 1, title: 'Total Department', value: 5, icon: <AccountBalanceIcon /> },
+  { id: 2, title: 'Completed Tasks', value: 1, icon: <PeopleIcon /> },
+  { id: 3, title: 'Total Meeting', value: 3, icon: <MonetizationOnIcon /> },
+  { id: 4, title: 'Assigned Task', value: 0, icon: <MonetizationOnIcon /> },
 ];
 
 export default function Dashboard() {
   const [open, setOpen] = React.useState(true);
   const [data, setData] = React.useState([]);
+  const [user, setUser] = React.useState({});
 
   const handleOutput = (open) => {
     toggleDrawer();
@@ -79,20 +81,29 @@ export default function Dashboard() {
     if (!toast.isActive("loading")) {
       toast.loading("Loading dashbaord data...", { autoClose: false, toastId: "loading" });
     }
-    const localData = localStorage.getItem("user");
-    const userObj = JSON.parse(localData)    
+
+    // Local stored data
+    const localData = getItem("user");
+    if (localData !== null) {
+      setUser(localData);
+    }
+   
     try {
-      const localObj = { userId: userObj._id, role_type: userObj.role_type }; 
+      const localObj = { userId: user._id, role_type: user.role_type }; 
       
       const params = {
         userId: localObj.userId,
         role_type: localObj.role_type
       };
       const dashboard = await ApiConfig.requestData('get', '/task-status-percentages', params, null);
+      const departments = await ApiConfig.requestData('get', '/departments', params, null);
       setData(dashboard);
       cardData.map((f) => {
+        if(f.title === 'Total Department') {
+          f.value = departments.length
+        }
         if(f.title === 'Completed Tasks') {
-          f.value = dashboard.completed
+          f.value = dashboard.completed.count
         }
         if(f.title === 'Assigned Task') {
           f.value = dashboard.totalAssigned
@@ -100,9 +111,8 @@ export default function Dashboard() {
       })
       toast.dismiss("loading");
     } catch (error) {
-      console.error("Error fetching department data:", error);
       toast.dismiss("loading");
-      toast.error("Failed to fetch department data");
+      toast.error("Failed to fetch dashboard data");
     }    
   };
 
@@ -158,21 +168,21 @@ export default function Dashboard() {
 
 
             <Grid container spacing={2} >
-              {cardData.map((data, index) => (
-                <Grid item xs={12} sm={3} key={index}>
+              {cardData.map((cardItems, index) => (
+                <Grid item xs={12} sm={3} key={cardItems.id}>
                   <Card sx={{ maxWidth: 345 }}>
                     <CardContent>
                       <Stack spacing={2} direction="row" alignItems="center">
                         <Stack spacing={1} direction="column" alignItems="flex-start">
                           <Typography variant="body1" component="span">
-                            {data.title}
+                            {cardItems.title}
                           </Typography>
                           <Typography variant="body1" component="span" sx={{ fontWeight: 'bold' }}>
-                            {data.value}
+                            {cardItems.value}
                           </Typography>
                         </Stack>
                         <Box flexGrow={1} />
-                        {data.icon}
+                        {cardItems.icon}
                       </Stack>
                     </CardContent>
                   </Card>

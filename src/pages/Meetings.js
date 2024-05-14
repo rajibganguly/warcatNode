@@ -172,7 +172,7 @@ export default function Meetings() {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
+            <Grid container spacing={3} style={{height: "560px", overflowY: "scroll", overflowX: "hidden"}}>
               {/* Recent Orders */}
               <Grid item xs={12}>
                 <div
