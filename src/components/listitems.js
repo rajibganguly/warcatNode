@@ -11,6 +11,9 @@ import LayersIcon from '@mui/icons-material/Layers';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import { Link } from 'react-router-dom';
 
+const user = localStorage.getItem("user");
+const currentRoleType = JSON.parse(user);
+
 export const mainListItems = (
   <React.Fragment>
     <ListItemButton component={Link} to="/dashboard">
@@ -43,6 +46,12 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Reports" />
     </ListItemButton>
+    {currentRoleType.role_type === 'admin' && (<ListItemButton component={Link} to="/task-approval">
+      <ListItemIcon>
+        <LayersIcon />
+      </ListItemIcon>
+      <ListItemText primary="Task Approval" />
+    </ListItemButton>)}
   </React.Fragment>
 );
 

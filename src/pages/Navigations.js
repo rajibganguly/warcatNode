@@ -21,6 +21,7 @@ import { useAuth } from "../providers/AuthProvider";
 import TaskList from "./TaskList";
 import TaskNote from "./TaskNote";
 import TaskUpload from "./TaskUpload";
+import TaskApproval from "./TaskApproval";
 
 const Navigations = () => {
   const { authToken } = useAuth();
@@ -80,6 +81,10 @@ const Navigations = () => {
         <Route
           path="/task-upload"
           element={!authToken ? <Navigate to="/" /> : <TaskUpload />}
+        />
+        <Route
+          path="/task-approval"
+          element={!authToken ? <Navigate to="/" /> : <TaskApproval />}
         />
         <Route path="*" element={<Navigate to="/" />} />
         {/* Add more routes as needed */}
