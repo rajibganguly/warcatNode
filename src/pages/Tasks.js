@@ -243,10 +243,10 @@ export default function Tasks() {
       toast.loading("Loading departments data...", { autoClose: false, toastId: "loading" });
     }
     const localData = localStorage.getItem("user");
-    const userObj = JSON.parse(localData)    
+    const userObj = JSON.parse(localData)
     try {
-      const localObj = { userId: userObj._id, role_type: userObj.role_type }; 
-      
+      const localObj = { userId: userObj._id, role_type: userObj.role_type };
+
       const params = {
         userId: localObj.userId,
         role_type: localObj.role_type
@@ -259,11 +259,11 @@ export default function Tasks() {
       console.error("Error fetching Tasks data:", error);
       toast.dismiss("loading");
       toast.error("Failed to fetch Tasks data");
-    }    
+    }
   };
 
-  
-  
+
+
   const handleOpenModal = () => {
     setIsModalVisible(true);
   };
@@ -287,127 +287,6 @@ export default function Tasks() {
     // Implement logic for deleting
   };
 
-  const columns = [
-    {
-      title: "Assigned Date",
-      dataIndex: "assigneddate",
-      key: "assigneddate",
-      filters: [
-        { text: "Joe", value: "Joe" },
-        { text: "Jim", value: "Jim" },
-      ],
-      filteredValue: filteredInfo.name || null,
-      onFilter: (value, record) => record.name.includes(value),
-      sorter: (a, b) => a.name.length - b.name.length,
-      sortOrder: sortedInfo.columnKey === "name" ? sortedInfo.order : null,
-    },
-    {
-      title: "Task Title",
-      dataIndex: "tasktitle",
-      key: "tasktitle",
-      sorter: (a, b) => a.age - b.age,
-      sortOrder: sortedInfo.columnKey === "age" ? sortedInfo.order : null,
-    },
-    {
-      title: "Department",
-      dataIndex: "department",
-      key: "department",
-      filters: [
-        { text: "London", value: "London" },
-        { text: "New York", value: "New York" },
-      ],
-      filteredValue: filteredInfo.address || null,
-      onFilter: (value, record) => record.address.includes(value),
-      sorter: (a, b) => a.address.length - b.address.length,
-      sortOrder: sortedInfo.columnKey === "address" ? sortedInfo.order : null,
-    },
-    {
-      title: "Tag",
-      dataIndex: "tag",
-      key: "tag",
-      filters: [
-        { text: "London", value: "London" },
-        { text: "New York", value: "New York" },
-      ],
-      filteredValue: filteredInfo.city || null,
-      onFilter: (value, record) => record.city.includes(value),
-      sorter: (a, b) => a.city.length - b.city.length,
-      sortOrder: sortedInfo.columnKey === "city" ? sortedInfo.order : null,
-    },
-
-    {
-      title: "Target Date",
-      dataIndex: "targetdate",
-      key: "targetdate",
-      filters: [
-        { text: "London", value: "London" },
-        { text: "New York", value: "New York" },
-      ],
-      filteredValue: filteredInfo.city || null,
-      onFilter: (value, record) => record.city.includes(value),
-      sorter: (a, b) => a.city.length - b.city.length,
-      sortOrder: sortedInfo.columnKey === "city" ? sortedInfo.order : null,
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      filters: [
-        { text: "London", value: "London" },
-        { text: "New York", value: "New York" },
-      ],
-      filteredValue: filteredInfo.city || null,
-      onFilter: (value, record) => record.city.includes(value),
-      sorter: (a, b) => a.city.length - b.city.length,
-      sortOrder: sortedInfo.columnKey === "city" ? sortedInfo.order : null,
-    },
-    {
-      title: "Sub Task",
-      key: "subtask",
-      render: (text, record) => (
-        <>
-          <div
-            style={{
-              backgroundColor: "transparent",
-              width: "fit-content",
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            <Button
-              type="primary"
-              onClick={handleOpenModal}
-              style={{
-                padding: "6px",
-                margin: "1px",
-                minWidth: "40px",
-                width: "auto !important",
-                backgroundColor: "#6fd088",
-                color: "#fff",
-              }}
-            >
-              <PlusCircleOutlined />
-            </Button>
-
-            <Button
-              type="primary"
-              onClick={() => handleSeeClick(record)}
-              style={{
-                padding: "6px",
-                margin: "1px",
-                minWidth: "40px",
-                width: "auto !important",
-                backgroundColor: "#fb4",
-                color: "#fff",
-              }}
-            >
-              <EyeOutlined />
-            </Button>
-          </div>
-        </>
-      ),
-    },
-  ];
 
   const handleOutput = (open) => {
     toggleDrawer();
@@ -489,20 +368,20 @@ export default function Tasks() {
                             All Tasks
                           </Typography>
                           {currentRoleType === "admin" && (
-                          <Button
-                            variant="contained"
-                            sx={{
-                              bgcolor: "#6fd088",
-                              color: "white",
-                              "&:hover": {
-                                bgcolor: "#5eb174",
-                              },
-                            }}
-                            component={Link}
-                            to="/add-tasks"
-                          >
-                            Add Task
-                          </Button>)}
+                            <Button
+                              variant="contained"
+                              sx={{
+                                bgcolor: "#6fd088",
+                                color: "white",
+                                "&:hover": {
+                                  bgcolor: "#5eb174",
+                                },
+                              }}
+                              component={Link}
+                              to="/add-tasks"
+                            >
+                              Add Task
+                            </Button>)}
                           {currentRoleType === "admin" && (
                             <Button
                               variant="contained"
@@ -561,14 +440,14 @@ export default function Tasks() {
                         ))}
                       </Grid>
                       <CardContent>
-                      <TableNew
-                      data={data}
-                      column={column}
-                      icons={icons}
-                      handleSeeClick={handleSeeClick}
-                      handleEditClick={handleEditClick}
-                    />
-                    </CardContent>
+                        <TableNew
+                          data={data}
+                          column={column}
+                          icons={icons}
+                          handleSeeClick={handleSeeClick}
+                          handleEditClick={handleEditClick}
+                        />
+                      </CardContent>
                     </Card>
                   </Grid>
                 </Grid>

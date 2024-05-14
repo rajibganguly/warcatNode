@@ -1,5 +1,5 @@
-
 import * as React from "react";
+import { useState } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -8,39 +8,25 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-
 import { Link } from "react-router-dom";
-
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { mainListItems, secondaryListItems } from "../components/listitems";
-import LogoBlack from "../components/logoblack";
-import ProfileSidePane from "../components/profileSidepane";
-import MuiDrawer from "@mui/material/Drawer";
 import { Button, TextField } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-//import { useNavigate } from "react-router-dom";
 import { useTheme } from '@mui/material/styles';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import Chip from '@mui/material/Chip';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import Sidebar from "../components/Sidebar";
+import axios from 'axios';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -54,41 +40,7 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-
-
-
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-    PaperProps: {
-        style: {
-            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-            width: 250,
-        },
-    },
-};
-
-const names = [
-    'Oliver Hansen',
-    'Van Henry',
-    'April Tucker',
-    'Ralph Hubbard',
-    'Omar Alexander',
-    'Carlos Abbott',
-    'Miriam Wagner',
-    'Bradley Wilkerson',
-    'Virginia Andrews',
-    'Kelly Snyder',
-];
-function getStyles(name, personName, theme) {
-    return {
-        fontWeight:
-            personName.indexOf(name) === -1
-                ? theme.typography.fontWeightRegular
-                : theme.typography.fontWeightMedium,
-    };
-}
+const defaultTheme = createTheme();
 
 function Label({ componentName, valueType }) {
 
@@ -114,35 +66,74 @@ const AppBar = styled(MuiAppBar, {
     }),
 }));
 
-
-
-// TODO remove, this demo shouldn't need to reset the theme.
-const defaultTheme = createTheme();
-
 export default function AddNewMeeting() {
     const [open, setOpen] = React.useState(true);
-
-    const [personName, setPersonName] = React.useState([]);
+    const [file, setFile] = useState(null);
+    const [formData, setFormData] = useState({
+        departmentIds: '',
+        tag: '',
+        meetingTopic: '',
+        selectDate: null,
+        selectTime: null,
+    });
     const theme = useTheme();
+
     const handleChange = (event) => {
-        const {
-            target: { value },
-        } = event;
-        setPersonName(
-            // On autofill we get a stringified value.
-            typeof value === 'string' ? value.split(',') : value,
-        );
-    }
+        const { name, value } = event.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+    };
 
+    const handleDateChange = (date) => {
+        setFormData((prevData) => ({
+            ...prevData,
+            selectDate: date,
+        }));
+    };
 
+    const handleTimeChange = (time) => {
+        setFormData((prevData) => ({
+            ...prevData,
+            selectTime: time,
+        }));
+    };
+
+    const handleAddMeeting = async () => {
+        try {
+            const { departmentIds, tag, meetingTopic, selectDate, selectTime } = formData;
+
+            const formDataSend = new FormData();
+            formDataSend.append('departmentIds', departmentIds);
+            formDataSend.append('tag', tag);
+            formDataSend.append('meetingTopic', meetingTopic);
+            formDataSend.append('selectDate', selectDate);
+            formDataSend.append('selectTime', selectTime);
+            formDataSend.append('file', file);
+
+            
+            const token = localStorage.getItem('token');
+            const response = await axios.post('https://warcat2024-qy2v.onrender.com/api/add-meeting', formDataSend, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            console.log(response.data);
+        } catch (error) {
+            console.error('Error occurred:', error);
+        }
+        
+    };
+   
     const handleOutput = (open) => {
         toggleDrawer();
     };
     const toggleDrawer = () => {
         setOpen(!open);
     };
-
-
     return (
         <ThemeProvider theme={defaultTheme}>
             <Box sx={{ display: "flex" }}>
@@ -165,172 +156,104 @@ export default function AddNewMeeting() {
                     <Toolbar />
                     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
                         <Grid container spacing={3}>
-                            {/* Recent Orders */}
-                            <Grid item xs={12}> 
-                            <div
-                  style={{
-                    display: "flex",
-                    alignItems: "start",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <div
-                    style={{
-                      textTransform: "uppercase",
-                      paddingBottom: "10px",
-                    }}
-                  >
-                    MEETINGS
-                  </div>
-                  <div>
-                    <Breadcrumbs aria-label="breadcrumb">
-                      <Link underline="hover" color="inherit" href="/">
-                        WARCAT
-                      </Link>
-                      <Link
-                        underline="hover"
-                        color="inherit"
-                        href="/meetings"
-                      >
-                        Meetings
-                      </Link>
-                      <Typography color="text.primary">
-                        Add New Meetings
-                      </Typography>
-                    </Breadcrumbs>
-                  </div>
-                </div>                               
+                            <Grid item xs={12}>
                                 <Card sx={{ width: 100 + "%", padding: 2 }}>
-
-                                        <Box
-                                            sx={{
-                                                display: 'flex',
-                                                justifyContent: 'space-between',
-                                                alignItems: 'center',
-                                                padding: 2,
-                                                borderBottom: '1px solid #eff2f7',
-
-                                            }}
-                                        >
-                                            <Typography variant="body1">Add Meetings</Typography>
-                                        </Box>
                                     <CardContent>
                                         <Box
                                             component="form"
-
                                             noValidate
                                             autoComplete="off"
                                             sx={{ marginTop: 2 }}
                                         >
-
                                             <Grid container spacing={2}>
                                                 <Grid item xs={6}>
                                                     <FormControl sx={{ width: 100 + '%' }}>
-                                                        <InputLabel id="demo-multiple-chip-label1">Department / Government Organisation</InputLabel>
-                                                        <Select
-                                                            labelId="demo-multiple-chip-label1"
-                                                            id="demo-multiple-chip"
+                                                        <TextField
+                                                            id="department"
+                                                            name="departmentIds"
+                                                            label="Department / Government Organisation"
+                                                            variant="outlined"
                                                             fullWidth
-                                                            multiple
-                                                            value={personName}
+                                                            value={formData.departmentIds}
                                                             onChange={handleChange}
-                                                            input={<OutlinedInput id="select-multiple-chip1" label="Chip" />}
-                                                            renderValue={(selected) => (
-                                                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                                                    {selected.map((value) => (
-                                                                        <Chip key={value} label={value} />
-                                                                    ))}
-                                                                </Box>
-                                                            )}
-                                                            MenuProps={MenuProps}
-                                                        >
-                                                            {names.map((name) => (
-                                                                <MenuItem
-                                                                    key={name}
-                                                                    value={name}
-                                                                    style={getStyles(name, personName, theme)}
-                                                                >
-                                                                    {name}
-                                                                </MenuItem>
-                                                            ))}
-                                                        </Select>
+                                                        />
                                                     </FormControl>
                                                 </Grid>
                                                 <Grid item xs={6}>
                                                     <FormControl sx={{ width: 100 + '%' }}>
-                                                        <InputLabel id="demo-multiple-chip-label2">Tag</InputLabel>
-                                                        <Select
-                                                            labelId="demo-multiple-chip-label2"
-                                                            id="demo-multiple-chip"
+                                                        <TextField
+                                                            id="tag"
+                                                            name="tag"
+                                                            label="Tag"
+                                                            variant="outlined"
                                                             fullWidth
-                                                            multiple
-                                                            value={personName}
+                                                            value={formData.tag}
                                                             onChange={handleChange}
-                                                            input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-                                                            renderValue={(selected) => (
-                                                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                                                    {selected.map((value) => (
-                                                                        <Chip key={value} label={value} />
-                                                                    ))}
-                                                                </Box>
-                                                            )}
-                                                            MenuProps={MenuProps}
-                                                        >
-                                                            {names.map((name) => (
-                                                                <MenuItem
-                                                                    key={name}
-                                                                    value={name}
-                                                                    style={getStyles(name, personName, theme)}
-                                                                >
-                                                                    {name}
-                                                                </MenuItem>
-                                                            ))}
-                                                        </Select>
+                                                        />
                                                     </FormControl>
                                                 </Grid>
 
                                                 <Grid item xs={12}>
-                                                    <TextField id="outlined-basic" label="Enter Meeting Topic" variant="outlined" fullWidth />
+                                                    <TextField
+                                                        id="outlined-basic"
+                                                        name="meetingTopic"
+                                                        label="Enter Meeting Topic"
+                                                        variant="outlined"
+                                                        fullWidth
+                                                        value={formData.meetingTopic}
+                                                        onChange={handleChange}
+                                                    />
                                                 </Grid>
 
                                                 <Grid item xs={12}>
                                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                                         <DemoContainer
-                                                            components={[
-                                                                'DatePicker',
-                                                                'TimePicker',
-                                                            ]}
+                                                            components={['DatePicker', 'TimePicker']}
                                                         >
                                                             <Grid item xs={4}>
-                                                                <DemoItem label={<Label componentName="DatePicker" valueType="date" />}>
-                                                                    <DatePicker />
+                                                                <DemoItem label="Select Date">
+                                                                    <DatePicker
+                                                                        value={formData.selectDate}
+                                                                        onChange={handleDateChange}
+                                                                    />
                                                                 </DemoItem>
                                                             </Grid>
 
                                                             <Grid item xs={4}>
-                                                                <DemoItem label={<Label componentName="TimePicker" valueType="time" />}>
-                                                                    <TimePicker />
+                                                                <DemoItem label="Select Time">
+                                                                    <TimePicker
+                                                                        value={formData.selectTime}
+                                                                        onChange={handleTimeChange}
+                                                                    />
                                                                 </DemoItem>
                                                             </Grid>
 
-                                                            <Grid item xs={4} sx={{display: 'flex',justifyContent: 'center', alignItems: 'center'}}>
+                                                            <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                                                 <Button
                                                                     component="label"
-                                                                    role={undefined}
                                                                     variant="contained"
-                                                                    tabIndex={-1}
                                                                     startIcon={<CloudUploadIcon />}
-                                                                    sx={{display: 'flex',justifyContent: 'center', alignItems: 'center',width: '100%'}}
+                                                                    sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}
                                                                 >
                                                                     Upload file
-                                                                    <VisuallyHiddenInput type="file" />
+                                                                    <VisuallyHiddenInput
+                                                                        type="file"
+                                                                        onChange={(e) => setFile(e.target.files[0])}
+                                                                    />
                                                                 </Button>
                                                             </Grid>
                                                         </DemoContainer>
                                                     </LocalizationProvider>
                                                 </Grid>
                                             </Grid>
-                                            <Button variant="contained" color="info" sx={{ color: 'white', marginTop: '2%' }}>Add Meeting</Button>
+                                            <Button
+                                                variant="contained"
+                                                color="info"
+                                                sx={{ color: 'white', marginTop: '2%' }}
+                                                onClick={handleAddMeeting}
+                                            >
+                                                Add Meeting
+                                            </Button>
                                         </Box>
                                     </CardContent>
                                 </Card>
