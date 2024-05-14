@@ -24,9 +24,11 @@ import StaticModel from "../components/StaticModel";
 import Sidebar from "../components/Sidebar";
 import { toast } from "react-toastify";
 import TableNew from "../components/TableNew";
+import { getItem } from '../config/storage';
 
 
 import ApiConfig from '../config/ApiConfig'
+
 
 const drawerWidth = 240;
 
@@ -208,16 +210,17 @@ export default function Tasks() {
   const [selectedRecord, setSelectedRecord] = React.useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [data, setData] = useState([]);
+  const [ user, setUser ] = useState({})
 
   const localSt = JSON.parse(localStorage.getItem("user"));
   const currentRoleType = localSt.role_type;
 
   const column = [
-    { text: 'Assigned Date', dataField: 'createdAt' },
+    { text: 'Assigned Date', dataField: 'timestamp' },
     { text: "Assigned Title", dataField: 'secretary.name' },
     { text: "Department", dataField: 'department' },
-    { text: "Tag", dataField: 'tag' },
-    { text: "Target Date", dataField: 'targetDate' },
+    { text: "Tag", dataField: '' },
+    { text: "Target Date", dataField: 'target_date' },
     { text: "Status", dataField: 'status' },
     { text: "Sub Task", dataField: '' },
     { text: "Operations", dataField: '' },
@@ -242,10 +245,15 @@ export default function Tasks() {
     if (!toast.isActive("loading")) {
       toast.loading("Loading departments data...", { autoClose: false, toastId: "loading" });
     }
-    const localData = localStorage.getItem("user");
-    const userObj = JSON.parse(localData)    
+    
+    // Local stored data
+    const localData = getItem("user");
+    if (localData !== null) {
+      setUser(localData);
+    }
+
     try {
-      const localObj = { userId: userObj._id, role_type: userObj.role_type }; 
+      const localObj = { userId: user._id, role_type: user.role_type }; 
       
       const params = {
         userId: localObj.userId,
@@ -253,7 +261,7 @@ export default function Tasks() {
       };
       const tasksData = await ApiConfig.requestData('get', '/tasks', params, null);
       console.log(tasksData.tasks, params)
-      //setData(tasksData);
+      setData(tasksData.tasks);
       toast.dismiss("loading");
     } catch (error) {
       console.error("Error fetching Tasks data:", error);
@@ -438,7 +446,7 @@ export default function Tasks() {
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <StaticModel visible={isModalVisible} onClose={handleCloseModal} />
-            <Grid container spacing={3}>
+            <Grid container spacing={3} style={{height: "560px", overflowY: "scroll", overflowX: "hidden"}}>
               {/* Recent Orders */}
               <Grid item xs={12}>
                 <div

@@ -9,6 +9,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import LayersIcon from '@mui/icons-material/Layers';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import ContentPasteGoIcon from '@mui/icons-material/ContentPasteGo';
 import { Link } from 'react-router-dom';
 
 // const user = localStorage.getItem("user");
@@ -48,7 +49,7 @@ export const mainListItems = (
     </ListItemButton>
     <ListItemButton component={Link} to="/task-approval">
       <ListItemIcon>
-        <LayersIcon />
+        <ContentPasteGoIcon />
       </ListItemIcon>
       <ListItemText primary="Task Approval" />
     </ListItemButton>
