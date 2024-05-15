@@ -26,10 +26,28 @@ import { toast } from "react-toastify";
 import { CloseOutlined } from '@mui/icons-material';
 import TableNew from "../components/TableNew";
 import { ButtonGroup, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
-
+import CardActions from "@mui/material/CardActions";
 import ApiConfig from '../config/ApiConfig'
+import FormControl from '@mui/material/FormControl';
+import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+
 
 const drawerWidth = 240;
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -183,13 +201,10 @@ const progressData = [
 
 export default function Tasks() {
   const [open, setOpen] = React.useState(true);
-  const [filteredInfo, setFilteredInfo] = useState({});
-  const [sortedInfo, setSortedInfo] = useState({});
-  const [selectedRecord, setSelectedRecord] = React.useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible1, setModalVisible1] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [data, setData] = useState([]);
-
   const localSt = JSON.parse(localStorage.getItem("user"));
   const currentRoleType = localSt.role_type;
 
@@ -221,7 +236,7 @@ export default function Tasks() {
    */
   const fetchTasksData = async () => {
     if (!toast.isActive("loading")) {
-      toast.loading("Loading departments data...", { autoClose: false, toastId: "loading" });
+      toast.loading("Loading Tasks data...", { autoClose: false, toastId: "loading" });
     }
     const localData = localStorage.getItem("user");
     const userObj = JSON.parse(localData)
@@ -248,6 +263,15 @@ export default function Tasks() {
   const handleSeeClick = (row) => {
     setModalContent(row);
     setModalVisible(true);
+  };
+
+  const handleSeeClick1 = () => {
+    setModalVisible1(true);
+
+  };
+
+  const closeModal1 = () => {
+    setModalVisible1(false);
   };
 
   const closeModal = () => {
@@ -427,6 +451,7 @@ export default function Tasks() {
                           icons={icons}
                           handleSeeClick={handleSeeClick}
                           handleEditClick={handleEditClick}
+                          handleSeeClick1={handleSeeClick1}
                         />
 
                         <Dialog
@@ -444,7 +469,7 @@ export default function Tasks() {
                             {modalContent && (
                               <DialogContentText id="modal-description">
                                 <Typography variant="h4" id="modal-title">
-                                  Department Name: {modalContent.department.task_title}
+                                  Website Issue
                                 </Typography>
                                 <Card sx={{ width: '100%', maxWidth: 900, maxHeight: 600, overflowY: 'auto' }}>
                                   <IconButton
@@ -456,33 +481,18 @@ export default function Tasks() {
                                   </IconButton>
                                   <CardContent>
                                     <Typography variant="h5" color="text.secondary">
-                                      Secretary Details
+                                      Subtask
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
-                                      Secretary Name: {modalContent.secretary.name}
+                                      {modalContent.task_title}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
-                                      Secretary Phone number: {modalContent.secretary.phone}
+                                      Target Date:  {modalContent.target_date}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
-                                      Secretary Email Id: {modalContent.secretary.email}
+                                      Attachment.png
                                     </Typography>
 
-                                    <Typography variant="h5" color="text.secondary" mt={4} py={2}>
-                                      Head of Office Details
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      Head of Office Name: {modalContent.headOffice.name}
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      Head of Office Designation: {modalContent.headOffice.designation}
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      Head of Office Phone number: {modalContent.headOffice.phone_number}
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      Head of Office Email Id: {modalContent.headOffice.email}
-                                    </Typography>
                                   </CardContent>
                                   <CardActions sx={{ justifyContent: 'flex-end' }}>
                                     <Button size="small" variant="contained" color="primary" >
@@ -495,6 +505,120 @@ export default function Tasks() {
                                 </Card>
                               </DialogContentText>
                             )}
+                          </DialogContent>
+                        </Dialog>
+
+                        <Dialog
+                          open={modalVisible1}
+                          onClose={closeModal1}
+                          aria-labelledby="modal-title"
+                          aria-describedby="modal-description"
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <DialogContent sx={{ p: 2, width: '600px' }}>
+                            <DialogContentText id="modal-description">
+                              <Typography variant="h4" id="modal-title">
+                                Task Title: Website Issue
+                              </Typography>
+                              <Card sx={{ width: '100%', maxWidth: 900, maxHeight: 600, overflowY: 'auto' }}>
+                                <IconButton
+                                  aria-label="close"
+                                  onClick={closeModal1}
+                                  sx={{ position: 'absolute', right: '5px', top: '0', color: 'gray' }}
+                                >
+                                  <CloseOutlined />
+                                </IconButton>
+                                <CardContent>
+                                  <Grid container spacing={2}>
+                                    <Grid item xs={6}>
+                                      <FormControl sx={{ width: 100 + '%' }}>
+                                        <TextField
+                                          id="department"
+                                          name="departmentIds"
+                                          label="Department / Government Organisation"
+                                          variant="outlined"
+                                          fullWidth
+                                          value={null}
+                                          onChange={null}
+                                        />
+                                      </FormControl>
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                      <FormControl sx={{ width: 100 + '%' }}>
+                                        <TextField
+                                          id="tag"
+                                          name="tag"
+                                          label="Tag"
+                                          variant="outlined"
+                                          fullWidth
+                                          value={null}
+                                          onChange={null}
+                                        />
+                                      </FormControl>
+                                    </Grid>
+
+                                    <Grid item xs={12}>
+                                      <TextField
+                                        id="outlined-basic"
+                                        name="meetingTopic"
+                                        label="Enter Meeting Topic"
+                                        variant="outlined"
+                                        fullWidth
+                                        value={null}
+                                          onChange={null}
+                                      />
+                                    </Grid>
+
+                                    <Grid item xs={12}>
+                                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <DemoContainer
+                                          components={['DatePicker', 'TimePicker']}
+                                        >
+                                          <Grid item xs={4}>
+                                            <DemoItem label="Select Date">
+                                              <DatePicker
+                                                 value={null}
+                                                 onChange={null}
+                                              />
+                                            </DemoItem>
+                                          </Grid>
+
+                                         
+
+                                          <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                            <Button
+                                              component="label"
+                                              variant="contained"
+                                              startIcon={<CloudUploadIcon />}
+                                              sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                                            >
+                                              Upload file
+                                              <VisuallyHiddenInput
+                                                type="file"
+                                                onChange={(e) => setFile(e.target.files[0])}
+                                              />
+                                            </Button>
+                                          </Grid>
+                                        </DemoContainer>
+                                      </LocalizationProvider>
+                                    </Grid>
+                                  </Grid>
+
+                                </CardContent>
+                                <CardActions sx={{ justifyContent: 'flex-end' }}>
+                                  <Button size="small" variant="contained" color="primary" >
+                                    Email
+                                  </Button>
+                                  <Button size="small" variant="contained" color="primary" onClick={() => console.log('Share clicked')}>
+                                    Sms
+                                  </Button>
+                                </CardActions>
+                              </Card>
+                            </DialogContentText>
                           </DialogContent>
                         </Dialog>
                       </CardContent>
