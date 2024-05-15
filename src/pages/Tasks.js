@@ -178,27 +178,7 @@ const progressData = [
   },
 ];
 
-const data = [
-  {
-    key: "1",
-    assigneddate: "01 Feb, 2024",
-    tasktitle: "Website Issue 5",
-    department: "Forest Department",
-    tag: "Secretary",
-    targetdate: "21 Mar, 2024",
-    status: "Assigned",
-    description: "Response Rate --",
-  },
-  {
-    key: "2",
-    assigneddate: "01 Feb, 2024",
-    tasktitle: "Website Issue 5",
-    department: "Forest Department",
-    tag: "Secretary,Head of Office",
-    targetdate: "30 Mar, 2024",
-    status: "In Progress",
-  },
-];
+
 
 export default function Tasks() {
   const [open, setOpen] = React.useState(true);
@@ -212,14 +192,16 @@ export default function Tasks() {
   const localSt = JSON.parse(localStorage.getItem("user"));
   const currentRoleType = localSt.role_type;
 
+ 
+
   const column = [
-    { text: 'Assigned Date', dataField: 'createdAt' },
-    { text: "Assigned Title", dataField: 'secretary.name' },
-    { text: "Department", dataField: 'department' },
-    { text: "Tag", dataField: 'tag' },
-    { text: "Target Date", dataField: 'targetDate' },
+    { text: 'Assigned Date', dataField: 'timestamp' },
+    { text: "Assigned Title", dataField: 'task_title'},
+    { text: "Department", dataField: 'department[0].dep_name' },
+    { text: "Tag", dataField: 'department[0].tag' },
+    { text: "Target Date", dataField: 'target_date'},
     { text: "Status", dataField: 'status' },
-    { text: "Sub Task", dataField: '' },
+    { text: "Sub Task", dataField: 'department[0].sub_task'},
     { text: "Operations", dataField: '' },
     { text: "Varified Status", dataField: '' },
     { text: "Action", dataField: '' },
@@ -252,8 +234,8 @@ export default function Tasks() {
         role_type: localObj.role_type
       };
       const tasksData = await ApiConfig.requestData('get', '/tasks', params, null);
-      console.log(tasksData.tasks, params)
-      //setData(tasksData);
+      console.log(tasksData.tasks[0].department[0].dep_name)
+      setData(tasksData.tasks);
       toast.dismiss("loading");
     } catch (error) {
       console.error("Error fetching Tasks data:", error);

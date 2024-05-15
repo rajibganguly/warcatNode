@@ -293,7 +293,7 @@ export default function AddDepartment() {
                             id="outlined-basic-2"
                             label="Enter Secretary Phone Number"
                             variant="outlined"
-                            type="number"
+                            
                             sx={{ width: "100%" }}
                             name="secretary.phone_number"
                             value={formData.secretary.phone_number}
@@ -364,7 +364,7 @@ export default function AddDepartment() {
                               id="outlined-basic-1"
                               label="Enter Head of Office Phone Number"
                               variant="outlined"
-                              type="number"
+                             
                               sx={{ width: "100%" }}
                               name="headOffice.phone_number"
                               value={formData.headOffice.phone_number}
