@@ -20,17 +20,34 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
 import { EyeOutlined, EditOutlined, DeleteOutlined, PlusCircleOutlined } from "@ant-design/icons";
-import StaticModel from "../components/StaticModel";
+import IconButton from "@mui/material/IconButton";
 import Sidebar from "../components/Sidebar";
 import { toast } from "react-toastify";
+import { CloseOutlined } from '@mui/icons-material';
 import TableNew from "../components/TableNew";
-import { getItem } from '../config/storage';
-
-
+import { ButtonGroup, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import CardActions from "@mui/material/CardActions";
 import ApiConfig from '../config/ApiConfig'
+import FormControl from '@mui/material/FormControl';
+import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 
 const drawerWidth = 240;
+const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+});
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -180,49 +197,26 @@ const progressData = [
   },
 ];
 
-const data = [
-  {
-    key: "1",
-    assigneddate: "01 Feb, 2024",
-    tasktitle: "Website Issue 5",
-    department: "Forest Department",
-    tag: "Secretary",
-    targetdate: "21 Mar, 2024",
-    status: "Assigned",
-    description: "Response Rate --",
-  },
-  {
-    key: "2",
-    assigneddate: "01 Feb, 2024",
-    tasktitle: "Website Issue 5",
-    department: "Forest Department",
-    tag: "Secretary,Head of Office",
-    targetdate: "30 Mar, 2024",
-    status: "In Progress",
-  },
-];
+
 
 export default function Tasks() {
   const [open, setOpen] = React.useState(true);
-  const [filteredInfo, setFilteredInfo] = useState({});
-  const [sortedInfo, setSortedInfo] = useState({});
-  const [modalVisible, setModalVisible] = React.useState(false);
-  const [selectedRecord, setSelectedRecord] = React.useState(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible1, setModalVisible1] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
   const [data, setData] = useState([]);
-  const [ user, setUser ] = useState({})
-
   const localSt = JSON.parse(localStorage.getItem("user"));
   const currentRoleType = localSt.role_type;
+  const [file, setFile] = useState();
 
   const column = [
     { text: 'Assigned Date', dataField: 'timestamp' },
-    { text: "Assigned Title", dataField: 'secretary.name' },
-    { text: "Department", dataField: 'department' },
-    { text: "Tag", dataField: '' },
+    { text: "Assigned Title", dataField: 'task_title' },
+    { text: "Department", dataField: 'department[0].dep_name' },
+    { text: "Tag", dataField: 'department[0].tag' },
     { text: "Target Date", dataField: 'target_date' },
     { text: "Status", dataField: 'status' },
-    { text: "Sub Task", dataField: '' },
+    { text: "Sub Task", dataField: 'subtask' },
     { text: "Operations", dataField: '' },
     { text: "Varified Status", dataField: '' },
     { text: "Action", dataField: '' },
@@ -243,47 +237,50 @@ export default function Tasks() {
    */
   const fetchTasksData = async () => {
     if (!toast.isActive("loading")) {
-      toast.loading("Loading departments data...", { autoClose: false, toastId: "loading" });
+      toast.loading("Loading Tasks data...", { autoClose: false, toastId: "loading" });
     }
-    
-    // Local stored data
-    const localData = getItem("user");
-    if (localData !== null) {
-      setUser(localData);
-    }
-
+    const localData = localStorage.getItem("user");
+    const userObj = JSON.parse(localData)
     try {
-      const localObj = { userId: user._id, role_type: user.role_type }; 
-      
+      const localObj = { userId: userObj._id, role_type: userObj.role_type };
+
       const params = {
         userId: localObj.userId,
         role_type: localObj.role_type
       };
       const tasksData = await ApiConfig.requestData('get', '/tasks', params, null);
-      console.log(tasksData.tasks, params)
+      console.log(tasksData.tasks)
       setData(tasksData.tasks);
       toast.dismiss("loading");
     } catch (error) {
       console.error("Error fetching Tasks data:", error);
       toast.dismiss("loading");
       toast.error("Failed to fetch Tasks data");
-    }    
+    }
   };
 
-  
-  
-  const handleOpenModal = () => {
-    setIsModalVisible(true);
-  };
 
-  const handleCloseModal = () => {
-    setIsModalVisible(false);
-  };
 
-  const handleSeeClick = (record) => {
-    setSelectedRecord(record);
+  const handleSeeClick = (row) => {
+    setModalContent(row);
     setModalVisible(true);
   };
+
+  const handleSeeClick1 = () => {
+    setModalVisible1(true);
+
+  };
+
+  const closeModal1 = () => {
+    setModalVisible1(false);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+    setModalContent(null);
+  };
+
+
 
   const handleEditClick = (record) => {
     console.log("Edit clicked for:", record);
@@ -295,127 +292,6 @@ export default function Tasks() {
     // Implement logic for deleting
   };
 
-  const columns = [
-    {
-      title: "Assigned Date",
-      dataIndex: "assigneddate",
-      key: "assigneddate",
-      filters: [
-        { text: "Joe", value: "Joe" },
-        { text: "Jim", value: "Jim" },
-      ],
-      filteredValue: filteredInfo.name || null,
-      onFilter: (value, record) => record.name.includes(value),
-      sorter: (a, b) => a.name.length - b.name.length,
-      sortOrder: sortedInfo.columnKey === "name" ? sortedInfo.order : null,
-    },
-    {
-      title: "Task Title",
-      dataIndex: "tasktitle",
-      key: "tasktitle",
-      sorter: (a, b) => a.age - b.age,
-      sortOrder: sortedInfo.columnKey === "age" ? sortedInfo.order : null,
-    },
-    {
-      title: "Department",
-      dataIndex: "department",
-      key: "department",
-      filters: [
-        { text: "London", value: "London" },
-        { text: "New York", value: "New York" },
-      ],
-      filteredValue: filteredInfo.address || null,
-      onFilter: (value, record) => record.address.includes(value),
-      sorter: (a, b) => a.address.length - b.address.length,
-      sortOrder: sortedInfo.columnKey === "address" ? sortedInfo.order : null,
-    },
-    {
-      title: "Tag",
-      dataIndex: "tag",
-      key: "tag",
-      filters: [
-        { text: "London", value: "London" },
-        { text: "New York", value: "New York" },
-      ],
-      filteredValue: filteredInfo.city || null,
-      onFilter: (value, record) => record.city.includes(value),
-      sorter: (a, b) => a.city.length - b.city.length,
-      sortOrder: sortedInfo.columnKey === "city" ? sortedInfo.order : null,
-    },
-
-    {
-      title: "Target Date",
-      dataIndex: "targetdate",
-      key: "targetdate",
-      filters: [
-        { text: "London", value: "London" },
-        { text: "New York", value: "New York" },
-      ],
-      filteredValue: filteredInfo.city || null,
-      onFilter: (value, record) => record.city.includes(value),
-      sorter: (a, b) => a.city.length - b.city.length,
-      sortOrder: sortedInfo.columnKey === "city" ? sortedInfo.order : null,
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      filters: [
-        { text: "London", value: "London" },
-        { text: "New York", value: "New York" },
-      ],
-      filteredValue: filteredInfo.city || null,
-      onFilter: (value, record) => record.city.includes(value),
-      sorter: (a, b) => a.city.length - b.city.length,
-      sortOrder: sortedInfo.columnKey === "city" ? sortedInfo.order : null,
-    },
-    {
-      title: "Sub Task",
-      key: "subtask",
-      render: (text, record) => (
-        <>
-          <div
-            style={{
-              backgroundColor: "transparent",
-              width: "fit-content",
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            <Button
-              type="primary"
-              onClick={handleOpenModal}
-              style={{
-                padding: "6px",
-                margin: "1px",
-                minWidth: "40px",
-                width: "auto !important",
-                backgroundColor: "#6fd088",
-                color: "#fff",
-              }}
-            >
-              <PlusCircleOutlined />
-            </Button>
-
-            <Button
-              type="primary"
-              onClick={() => handleSeeClick(record)}
-              style={{
-                padding: "6px",
-                margin: "1px",
-                minWidth: "40px",
-                width: "auto !important",
-                backgroundColor: "#fb4",
-                color: "#fff",
-              }}
-            >
-              <EyeOutlined />
-            </Button>
-          </div>
-        </>
-      ),
-    },
-  ];
 
   const handleOutput = (open) => {
     toggleDrawer();
@@ -423,6 +299,7 @@ export default function Tasks() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -445,8 +322,8 @@ export default function Tasks() {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <StaticModel visible={isModalVisible} onClose={handleCloseModal} />
-            <Grid container spacing={3} style={{height: "560px", overflowY: "scroll", overflowX: "hidden"}}>
+
+            <Grid container spacing={3}>
               {/* Recent Orders */}
               <Grid item xs={12}>
                 <div
@@ -497,20 +374,20 @@ export default function Tasks() {
                             All Tasks
                           </Typography>
                           {currentRoleType === "admin" && (
-                          <Button
-                            variant="contained"
-                            sx={{
-                              bgcolor: "#6fd088",
-                              color: "white",
-                              "&:hover": {
-                                bgcolor: "#5eb174",
-                              },
-                            }}
-                            component={Link}
-                            to="/add-tasks"
-                          >
-                            Add Task
-                          </Button>)}
+                            <Button
+                              variant="contained"
+                              sx={{
+                                bgcolor: "#6fd088",
+                                color: "white",
+                                "&:hover": {
+                                  bgcolor: "#5eb174",
+                                },
+                              }}
+                              component={Link}
+                              to="/add-tasks"
+                            >
+                              Add Task
+                            </Button>)}
                           {currentRoleType === "admin" && (
                             <Button
                               variant="contained"
@@ -569,14 +446,183 @@ export default function Tasks() {
                         ))}
                       </Grid>
                       <CardContent>
-                      <TableNew
-                      data={data}
-                      column={column}
-                      icons={icons}
-                      handleSeeClick={handleSeeClick}
-                      handleEditClick={handleEditClick}
-                    />
-                    </CardContent>
+                        <TableNew
+                          data={data}
+                          column={column}
+                          icons={icons}
+                          handleSeeClick={handleSeeClick}
+                          handleEditClick={handleEditClick}
+                          handleSeeClick1={handleSeeClick1}
+                        />
+
+                        <Dialog
+                          open={modalVisible}
+                          onClose={closeModal}
+                          aria-labelledby="modal-title"
+                          aria-describedby="modal-description"
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <DialogContent sx={{ p: 2, width: '600px' }}>
+                            {modalContent && (
+                              <DialogContentText id="modal-description">
+                                <Typography variant="h4" id="modal-title">
+                                  Website Issue
+                                </Typography>
+                                <Card sx={{ width: '100%', maxWidth: 900, maxHeight: 600, overflowY: 'auto' }}>
+                                  <IconButton
+                                    aria-label="close"
+                                    onClick={closeModal}
+                                    sx={{ position: 'absolute', right: '5px', top: '0', color: 'gray' }}
+                                  >
+                                    <CloseOutlined />
+                                  </IconButton>
+                                  <CardContent>
+                                    <Typography variant="h5" color="text.secondary">
+                                      Subtask
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                      {modalContent.task_title}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                      Target Date:  {modalContent.target_date}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                      Attachment.png
+                                    </Typography>
+
+                                  </CardContent>
+                                  <CardActions sx={{ justifyContent: 'flex-end' }}>
+                                    <Button size="small" variant="contained" color="primary" >
+                                      Email
+                                    </Button>
+                                    <Button size="small" variant="contained" color="primary" onClick={() => console.log('Share clicked')}>
+                                      Sms
+                                    </Button>
+                                  </CardActions>
+                                </Card>
+                              </DialogContentText>
+                            )}
+                          </DialogContent>
+                        </Dialog>
+
+                        <Dialog
+                          open={modalVisible1}
+                          onClose={closeModal1}
+                          aria-labelledby="modal-title"
+                          aria-describedby="modal-description"
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <DialogContent sx={{ p: 2, width: '600px' }}>
+                            <DialogContentText id="modal-description">
+                              <Typography variant="h4" id="modal-title">
+                                Task Title: Website Issue
+                              </Typography>
+                              <Card sx={{ width: '100%', maxWidth: 900, maxHeight: 600, overflowY: 'auto' }}>
+                                <IconButton
+                                  aria-label="close"
+                                  onClick={closeModal1}
+                                  sx={{ position: 'absolute', right: '5px', top: '0', color: 'gray' }}
+                                >
+                                  <CloseOutlined />
+                                </IconButton>
+                                <CardContent>
+                                  <Grid container spacing={2}>
+                                    <Grid item xs={6}>
+                                      <FormControl sx={{ width: 100 + '%' }}>
+                                        <TextField
+                                          id="department"
+                                          name="departmentIds"
+                                          label="Department / Government Organisation"
+                                          variant="outlined"
+                                          fullWidth
+                                          value={null}
+                                          onChange={null}
+                                        />
+                                      </FormControl>
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                      <FormControl sx={{ width: 100 + '%' }}>
+                                        <TextField
+                                          id="tag"
+                                          name="tag"
+                                          label="Tag"
+                                          variant="outlined"
+                                          fullWidth
+                                          value={null}
+                                          onChange={null}
+                                        />
+                                      </FormControl>
+                                    </Grid>
+
+                                    <Grid item xs={12}>
+                                      <TextField
+                                        id="outlined-basic"
+                                        name="meetingTopic"
+                                        label="Enter Meeting Topic"
+                                        variant="outlined"
+                                        fullWidth
+                                        value={null}
+                                          onChange={null}
+                                      />
+                                    </Grid>
+
+                                    <Grid item xs={12}>
+                                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <DemoContainer
+                                          components={['DatePicker', 'TimePicker']}
+                                        >
+                                          <Grid item xs={4}>
+                                            <DemoItem label="Select Date">
+                                              <DatePicker
+                                                 value={null}
+                                                 onChange={null}
+                                              />
+                                            </DemoItem>
+                                          </Grid>
+
+                                         
+
+                                          <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                            <Button
+                                              component="label"
+                                              variant="contained"
+                                              startIcon={<CloudUploadIcon />}
+                                              sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                                            >
+                                              Upload file
+                                              <VisuallyHiddenInput
+                                                type="file"
+                                                onChange={(e) => setFile(e.target.files[0])}
+                                              />
+                                            </Button>
+                                          </Grid>
+                                        </DemoContainer>
+                                      </LocalizationProvider>
+                                    </Grid>
+                                  </Grid>
+
+                                </CardContent>
+                                <CardActions sx={{ justifyContent: 'flex-end' }}>
+                                  <Button size="small" variant="contained" color="primary" >
+                                    Email
+                                  </Button>
+                                  <Button size="small" variant="contained" color="primary" onClick={() => console.log('Share clicked')}>
+                                    Sms
+                                  </Button>
+                                </CardActions>
+                              </Card>
+                            </DialogContentText>
+                          </DialogContent>
+                        </Dialog>
+                      </CardContent>
                     </Card>
                   </Grid>
                 </Grid>

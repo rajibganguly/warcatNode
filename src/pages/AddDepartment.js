@@ -29,6 +29,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Stack from "@mui/material/Stack";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../apiConfig/axoisSetup";
 
 const drawerWidth = 240;
 
@@ -138,36 +139,42 @@ export default function AddDepartment() {
    * Post call on submit
    */
   const handleAddDepartment = async () => {
-    const reactAppHostname = process.env.REACT_APP_HOSTNAME;
     setSubmitDisable(true);
-    const response = await fetch(
-      `${reactAppHostname}/api/register-user-with-department`,
-      {
+  
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Token not found in localStorage");
+      }
+  
+      const response = await fetch("https://warcat2024-qy2v.onrender.com/api/register-user-with-department", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
-      }
-    );
-
-    try {
-      if (response.status === 200) {
-        toast.success('Department Added Successfully', {
-          autoClose: 2000, 
+      });
+  
+      const responseData = await response.json();
+  
+      if (response.ok) {
+        toast.success("Department Added Successfully", {
+          autoClose: 2000,
         });
         navigate("/departments");
       } else {
-        toast.error("Something went wrong", {
-          autoClose: 2000, 
+        toast.error(responseData.message || "Something went wrong", {
+          autoClose: 2000,
         });
-      
-        // Handle error cases here
+        
       }
     } catch (error) {
       console.error("Error occurred:", error);
+      
     }
   };
+  
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -299,12 +306,13 @@ export default function AddDepartment() {
                             id="outlined-basic-2"
                             label="Enter Secretary Phone Number"
                             variant="outlined"
+                            
                             sx={{ width: "100%" }}
                             name="secretary.phone_number"
                             value={formData.secretary.phone_number}
                             inputProps={{
-                              minLength: 10,
-                              maxLength: 10
+                              minLength: 13,
+                              maxLength: 13
                             }}
                             onChange={handleChange}
                           />
@@ -369,12 +377,13 @@ export default function AddDepartment() {
                               id="outlined-basic-1"
                               label="Enter Head of Office Phone Number"
                               variant="outlined"
+                             
                               sx={{ width: "100%" }}
                               name="headOffice.phone_number"
                               value={formData.headOffice.phone_number}
                               inputProps={{
-                                minLength: 10,
-                                maxLength: 10
+                                minLength: 13,
+                                maxLength: 13
                               }}
                               onChange={handleChange}
                             />

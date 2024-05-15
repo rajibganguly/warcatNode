@@ -8,7 +8,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from '@mui/icons-material/Add';
 
-function TableNew({ column, data, handleSeeClick, handleEditClick,handleSeeClick1 }) {
+function Tasktable({ column, data, handleSeeClick, handleEditClick }) {
   const [modalOpen, setModalOpen] = useState(false);
   //const fileUrl = ['icon', 'images', 'thumbnail', 'avatar'];
 
@@ -48,10 +48,9 @@ function TableNew({ column, data, handleSeeClick, handleEditClick,handleSeeClick
           <Button onClick={() => handleSeeClick(row)}>
             <EyeOutlined />
           </Button>
-          <Button onClick={() => handleSeeClick1()}>
+          <Button onClick={() => handleEditClick(row.id)}>
             <AddIcon />
           </Button>
-
         </div>
       );
     }
@@ -227,4 +226,4 @@ function TableNew({ column, data, handleSeeClick, handleEditClick,handleSeeClick
   );
 }
 
-export default TableNew;
+export default Tasktable;
