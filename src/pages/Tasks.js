@@ -20,15 +20,14 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
 import { EyeOutlined, EditOutlined, DeleteOutlined, PlusCircleOutlined } from "@ant-design/icons";
-import StaticModel from "../components/StaticModel";
+import IconButton from "@mui/material/IconButton";
 import Sidebar from "../components/Sidebar";
 import { toast } from "react-toastify";
+import { CloseOutlined } from '@mui/icons-material';
 import TableNew from "../components/TableNew";
-import { getItem } from '../config/storage';
-
+import { ButtonGroup, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 
 import ApiConfig from '../config/ApiConfig'
-
 
 const drawerWidth = 240;
 
@@ -186,25 +185,22 @@ export default function Tasks() {
   const [open, setOpen] = React.useState(true);
   const [filteredInfo, setFilteredInfo] = useState({});
   const [sortedInfo, setSortedInfo] = useState({});
-  const [modalVisible, setModalVisible] = React.useState(false);
   const [selectedRecord, setSelectedRecord] = React.useState(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
   const [data, setData] = useState([]);
-  const [ user, setUser ] = useState({})
 
   const localSt = JSON.parse(localStorage.getItem("user"));
   const currentRoleType = localSt.role_type;
 
- 
-
   const column = [
     { text: 'Assigned Date', dataField: 'timestamp' },
-    { text: "Assigned Title", dataField: 'task_title'},
+    { text: "Assigned Title", dataField: 'task_title' },
     { text: "Department", dataField: 'department[0].dep_name' },
     { text: "Tag", dataField: 'department[0].tag' },
-    { text: "Target Date", dataField: 'target_date'},
+    { text: "Target Date", dataField: 'target_date' },
     { text: "Status", dataField: 'status' },
-    { text: "Sub Task", dataField: 'department[0].sub_task'},
+    { text: "Sub Task", dataField: 'subtask' },
     { text: "Operations", dataField: '' },
     { text: "Varified Status", dataField: '' },
     { text: "Action", dataField: '' },
@@ -227,22 +223,17 @@ export default function Tasks() {
     if (!toast.isActive("loading")) {
       toast.loading("Loading departments data...", { autoClose: false, toastId: "loading" });
     }
-    
-    // Local stored data
-    const localData = getItem("user");
-    if (localData !== null) {
-      setUser(localData);
-    }
-
+    const localData = localStorage.getItem("user");
+    const userObj = JSON.parse(localData)
     try {
-      const localObj = { userId: user._id, role_type: user.role_type }; 
-      
+      const localObj = { userId: userObj._id, role_type: userObj.role_type };
+
       const params = {
         userId: localObj.userId,
         role_type: localObj.role_type
       };
       const tasksData = await ApiConfig.requestData('get', '/tasks', params, null);
-      console.log(tasksData.tasks[0].department[0].dep_name)
+      console.log(tasksData.tasks)
       setData(tasksData.tasks);
       toast.dismiss("loading");
     } catch (error) {
@@ -254,18 +245,17 @@ export default function Tasks() {
 
 
 
-  const handleOpenModal = () => {
-    setIsModalVisible(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalVisible(false);
-  };
-
-  const handleSeeClick = (record) => {
-    setSelectedRecord(record);
+  const handleSeeClick = (row) => {
+    setModalContent(row);
     setModalVisible(true);
   };
+
+  const closeModal = () => {
+    setModalVisible(false);
+    setModalContent(null);
+  };
+
+
 
   const handleEditClick = (record) => {
     console.log("Edit clicked for:", record);
@@ -284,6 +274,7 @@ export default function Tasks() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -306,8 +297,8 @@ export default function Tasks() {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <StaticModel visible={isModalVisible} onClose={handleCloseModal} />
-            <Grid container spacing={3} style={{height: "560px", overflowY: "scroll", overflowX: "hidden"}}>
+
+            <Grid container spacing={3}>
               {/* Recent Orders */}
               <Grid item xs={12}>
                 <div
@@ -437,6 +428,75 @@ export default function Tasks() {
                           handleSeeClick={handleSeeClick}
                           handleEditClick={handleEditClick}
                         />
+
+                        <Dialog
+                          open={modalVisible}
+                          onClose={closeModal}
+                          aria-labelledby="modal-title"
+                          aria-describedby="modal-description"
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <DialogContent sx={{ p: 2, width: '600px' }}>
+                            {modalContent && (
+                              <DialogContentText id="modal-description">
+                                <Typography variant="h4" id="modal-title">
+                                  Department Name: {modalContent.department.task_title}
+                                </Typography>
+                                <Card sx={{ width: '100%', maxWidth: 900, maxHeight: 600, overflowY: 'auto' }}>
+                                  <IconButton
+                                    aria-label="close"
+                                    onClick={closeModal}
+                                    sx={{ position: 'absolute', right: '5px', top: '0', color: 'gray' }}
+                                  >
+                                    <CloseOutlined />
+                                  </IconButton>
+                                  <CardContent>
+                                    <Typography variant="h5" color="text.secondary">
+                                      Secretary Details
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                      Secretary Name: {modalContent.secretary.name}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                      Secretary Phone number: {modalContent.secretary.phone}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                      Secretary Email Id: {modalContent.secretary.email}
+                                    </Typography>
+
+                                    <Typography variant="h5" color="text.secondary" mt={4} py={2}>
+                                      Head of Office Details
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                      Head of Office Name: {modalContent.headOffice.name}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                      Head of Office Designation: {modalContent.headOffice.designation}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                      Head of Office Phone number: {modalContent.headOffice.phone_number}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                      Head of Office Email Id: {modalContent.headOffice.email}
+                                    </Typography>
+                                  </CardContent>
+                                  <CardActions sx={{ justifyContent: 'flex-end' }}>
+                                    <Button size="small" variant="contained" color="primary" >
+                                      Email
+                                    </Button>
+                                    <Button size="small" variant="contained" color="primary" onClick={() => console.log('Share clicked')}>
+                                      Sms
+                                    </Button>
+                                  </CardActions>
+                                </Card>
+                              </DialogContentText>
+                            )}
+                          </DialogContent>
+                        </Dialog>
                       </CardContent>
                     </Card>
                   </Grid>

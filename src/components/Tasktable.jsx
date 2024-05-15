@@ -8,7 +8,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from '@mui/icons-material/Add';
 
-function TableNew({ column, data, handleSeeClick, handleEditClick }) {
+function Tasktable({ column, data, handleSeeClick, handleEditClick }) {
   const [modalOpen, setModalOpen] = useState(false);
   //const fileUrl = ['icon', 'images', 'thumbnail', 'avatar'];
 
@@ -45,13 +45,12 @@ function TableNew({ column, data, handleSeeClick, handleEditClick }) {
     if (column.dataField === "subtask") {
       return (
         <div style={{ display: 'flex' }}>
-          <Button onClick={() => handleSeeClick(row.id)}>
+          <Button onClick={() => handleSeeClick(row)}>
             <EyeOutlined />
           </Button>
           <Button onClick={() => handleEditClick(row.id)}>
-            <EditOutlined />
+            <AddIcon />
           </Button>
-
         </div>
       );
     }
@@ -227,4 +226,4 @@ function TableNew({ column, data, handleSeeClick, handleEditClick }) {
   );
 }
 
-export default TableNew;
+export default Tasktable;

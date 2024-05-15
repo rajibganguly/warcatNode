@@ -140,28 +140,41 @@ export default function AddDepartment() {
    */
   const handleAddDepartment = async () => {
     setSubmitDisable(true);
-
+  
     try {
-      const response = await axiosInstance.post("/api/register-user-with-department",
-        formData
-      );
-
-      if (response.status === 200) {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Token not found in localStorage");
+      }
+  
+      const response = await fetch("https://warcat2024-qy2v.onrender.com/api/register-user-with-department", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+  
+      const responseData = await response.json();
+  
+      if (response.ok) {
         toast.success("Department Added Successfully", {
           autoClose: 2000,
         });
         navigate("/departments");
       } else {
-        toast.error("Something went wrong", {
+        toast.error(responseData.message || "Something went wrong", {
           autoClose: 2000,
         });
-        // Handle other status codes if needed
+        
       }
     } catch (error) {
       console.error("Error occurred:", error);
-      // Handle the error, show an error toast, or log it
+      
     }
   };
+  
 
   return (
     <ThemeProvider theme={defaultTheme}>
