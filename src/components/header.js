@@ -16,6 +16,10 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 const Header = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
+  
+  const localUser = localStorage.getItem('user');
+  const user = JSON.parse(localUser);
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -69,7 +73,7 @@ const Header = (props) => {
             alignItems="center"
           >
             <Avatar alt="Avatar" src={null} />
-            <Typography sx={{ color: 'white', variant: 'body1', textTransform: 'none' }}>Admin Name</Typography>
+            <Typography sx={{ color: 'white', variant: 'body1', textTransform: 'none' }}>{user.name}</Typography>
           </Stack>
 
         </Button>

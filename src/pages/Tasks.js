@@ -24,9 +24,11 @@ import StaticModel from "../components/StaticModel";
 import Sidebar from "../components/Sidebar";
 import { toast } from "react-toastify";
 import TableNew from "../components/TableNew";
+import { getItem } from '../config/storage';
 
 
 import ApiConfig from '../config/ApiConfig'
+
 
 const drawerWidth = 240;
 
@@ -188,6 +190,7 @@ export default function Tasks() {
   const [selectedRecord, setSelectedRecord] = React.useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [data, setData] = useState([]);
+  const [ user, setUser ] = useState({})
 
   const localSt = JSON.parse(localStorage.getItem("user"));
   const currentRoleType = localSt.role_type;
@@ -224,11 +227,16 @@ export default function Tasks() {
     if (!toast.isActive("loading")) {
       toast.loading("Loading departments data...", { autoClose: false, toastId: "loading" });
     }
-    const localData = localStorage.getItem("user");
-    const userObj = JSON.parse(localData)
-    try {
-      const localObj = { userId: userObj._id, role_type: userObj.role_type };
+    
+    // Local stored data
+    const localData = getItem("user");
+    if (localData !== null) {
+      setUser(localData);
+    }
 
+    try {
+      const localObj = { userId: user._id, role_type: user.role_type }; 
+      
       const params = {
         userId: localObj.userId,
         role_type: localObj.role_type
@@ -299,7 +307,7 @@ export default function Tasks() {
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <StaticModel visible={isModalVisible} onClose={handleCloseModal} />
-            <Grid container spacing={3}>
+            <Grid container spacing={3} style={{height: "560px", overflowY: "scroll", overflowX: "hidden"}}>
               {/* Recent Orders */}
               <Grid item xs={12}>
                 <div
