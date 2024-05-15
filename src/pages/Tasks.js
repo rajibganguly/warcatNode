@@ -38,15 +38,15 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 const drawerWidth = 240;
 const VisuallyHiddenInput = styled('input')({
-    clip: 'rect(0 0 0 0)',
-    clipPath: 'inset(50%)',
-    height: 1,
-    overflow: 'hidden',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    whiteSpace: 'nowrap',
-    width: 1,
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
 });
 
 const AppBar = styled(MuiAppBar, {
@@ -535,42 +535,15 @@ export default function Tasks() {
                                 </IconButton>
                                 <CardContent>
                                   <Grid container spacing={2}>
-                                    <Grid item xs={6}>
-                                      <FormControl sx={{ width: 100 + '%' }}>
-                                        <TextField
-                                          id="department"
-                                          name="departmentIds"
-                                          label="Department / Government Organisation"
-                                          variant="outlined"
-                                          fullWidth
-                                          value={null}
-                                          onChange={null}
-                                        />
-                                      </FormControl>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                      <FormControl sx={{ width: 100 + '%' }}>
-                                        <TextField
-                                          id="tag"
-                                          name="tag"
-                                          label="Tag"
-                                          variant="outlined"
-                                          fullWidth
-                                          value={null}
-                                          onChange={null}
-                                        />
-                                      </FormControl>
-                                    </Grid>
-
                                     <Grid item xs={12}>
                                       <TextField
                                         id="outlined-basic"
-                                        name="meetingTopic"
-                                        label="Enter Meeting Topic"
+                                        name="subtasktitle"
+                                        label="Enter Subtask Title"
                                         variant="outlined"
                                         fullWidth
                                         value={null}
-                                          onChange={null}
+                                        onChange={null}
                                       />
                                     </Grid>
 
@@ -580,15 +553,15 @@ export default function Tasks() {
                                           components={['DatePicker', 'TimePicker']}
                                         >
                                           <Grid item xs={4}>
-                                            <DemoItem label="Select Date">
+                                            <DemoItem label="">
                                               <DatePicker
-                                                 value={null}
-                                                 onChange={null}
+                                                value={null}
+                                                onChange={null}
                                               />
                                             </DemoItem>
                                           </Grid>
 
-                                         
+
 
                                           <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                             <Button
@@ -610,13 +583,11 @@ export default function Tasks() {
                                   </Grid>
 
                                 </CardContent>
-                                <CardActions sx={{ justifyContent: 'flex-end' }}>
+                                <CardActions sx={{ justifyContent: 'flex-start' }}>
                                   <Button size="small" variant="contained" color="primary" >
-                                    Email
+                                    Enter Subtask Title
                                   </Button>
-                                  <Button size="small" variant="contained" color="primary" onClick={() => console.log('Share clicked')}>
-                                    Sms
-                                  </Button>
+                                  
                                 </CardActions>
                               </Card>
                             </DialogContentText>
