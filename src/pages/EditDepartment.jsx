@@ -260,6 +260,7 @@ export default function EditDepartment() {
                         <TextField
                           fullWidth
                           name="department_name"
+                          
                           value={formData?.department?.department_name}
                           onChange={handleChange}
                           aria-readonly

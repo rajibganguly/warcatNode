@@ -262,12 +262,13 @@ export default function AddDepartment() {
                   </Box>
                   <CardContent>
                     <Box component="form" noValidate autoComplete="off">
-                      <label>Department / Government Organisation</label>
+                      
                       <TextField
                         id="outlined-basic"
                         label="Department / Government Organisation"
                         variant="outlined"
                         fullWidth
+                        size="small"
                         name="dep_name"
                         value={formData.dep_name}
                         onChange={handleChange}
@@ -288,7 +289,7 @@ export default function AddDepartment() {
                       >
                         <Grid item xs={12} sm={6}>
 
-                          <label>Secretary Name</label>
+                         
                           <TextField
                             id="outlined-basic-1"
                             label="Enter Secretary Name"
@@ -297,16 +298,17 @@ export default function AddDepartment() {
                             name="secretary.name"
                             value={formData.secretary.name}
                             onChange={handleChange}
+                            size="small"
                           />
 
                         </Grid>
                         <Grid item xs={12} sm={6}>
-                          <label>Secretary Phone Number</label>
+                        
                           <TextField
                             id="outlined-basic-2"
                             label="Enter Secretary Phone Number"
                             variant="outlined"
-                            
+                            size="small"
                             sx={{ width: "100%" }}
                             name="secretary.phone_number"
                             value={formData.secretary.phone_number}
@@ -319,7 +321,7 @@ export default function AddDepartment() {
 
                         </Grid>
                         <Grid item xs={12} sm={6}>
-                          <label>Secretary Email Id</label>
+                         
                           <TextField
                             id="outlined-basic-3"
                             label="Enter Secretary Email Id"
@@ -328,6 +330,7 @@ export default function AddDepartment() {
                             name="secretary.email"
                             value={formData.secretary.email}
                             onChange={handleChange}
+                            size="small"
                           />
                         </Grid>
 
@@ -348,7 +351,7 @@ export default function AddDepartment() {
                       >
                         <Grid item xs={12} sm={6}>
                           <Stack direction="column" spacing={2}>
-                            <label>Head of Office Name</label>
+                           
                             <TextField
                               id="outlined-basic-1"
                               label="Enter Head of Office Name"
@@ -357,8 +360,9 @@ export default function AddDepartment() {
                               name="headOffice.name"
                               value={formData.headOffice.name}
                               onChange={handleChange}
+                              size="small"
                             />
-                            <label>Head of Office Designation</label>
+                            
                             <TextField
                               id="outlined-basic-2"
                               label="Enter Head of Office Designation"
@@ -367,17 +371,18 @@ export default function AddDepartment() {
                               name="headOffice.designation"
                               value={formData.headOffice.designation}
                               onChange={handleChange}
+                              size="small"
                             />
                           </Stack>
                         </Grid>
                         <Grid item xs={12} sm={6}>
                           <Stack direction="column" spacing={2}>
-                            <label>Head of Office Phone Number</label>
+                          
                             <TextField
                               id="outlined-basic-1"
                               label="Enter Head of Office Phone Number"
                               variant="outlined"
-                             
+                              size="small"
                               sx={{ width: "100%" }}
                               name="headOffice.phone_number"
                               value={formData.headOffice.phone_number}
@@ -387,7 +392,7 @@ export default function AddDepartment() {
                               }}
                               onChange={handleChange}
                             />
-                            <label>Head of Office Email Id</label>
+                           
                             <TextField
                               id="outlined-basic-2"
                               label="Head of Office Email Id"
@@ -396,6 +401,7 @@ export default function AddDepartment() {
                               name="headOffice.email"
                               value={formData.headOffice.email}
                               onChange={handleChange}
+                              size="small"
                             />
                           </Stack>
                         </Grid>
