@@ -38,15 +38,15 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 const drawerWidth = 240;
 const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1,
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
 });
 
 const AppBar = styled(MuiAppBar, {
@@ -207,6 +207,7 @@ export default function Tasks() {
   const [data, setData] = useState([]);
   const localSt = JSON.parse(localStorage.getItem("user"));
   const currentRoleType = localSt.role_type;
+  const [file, setFile] = useState();
 
   const column = [
     { text: 'Assigned Date', dataField: 'timestamp' },
