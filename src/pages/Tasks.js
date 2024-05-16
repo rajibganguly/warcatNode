@@ -94,120 +94,119 @@ const handleDropdownChange = (value) => {
   console.log("Selected value:", value);
 };
 
-const progressData = [
-  {
-    id: 1,
-    percentage: 66,
-    label: "Total Assigned",
-    styles: {
-      root: {},
-      path: {
-        stroke: `rgba(15, 156, 243, ${66 / 100})`,
-        strokeLinecap: "butt",
-        transition: "stroke-dashoffset 0.5s ease 0s",
-        transform: "rotate(0.25turn)",
-        transformOrigin: "center center",
-        strokeWidth: 6,
-      },
-      text: {
-        fill: "#000000",
-        fontSize: "16px",
-        fontWeight: "bold",
-      },
-      trail: {
-        stroke: "#E5E0DF",
-        strokeWidth: 6,
-      },
-    },
-  },
-  {
-    id: 2,
-    percentage: 45,
-    label: "Not Initiated",
-    styles: {
-      root: {},
-      path: {
-        stroke: `rgba(255, 52, 0, ${66 / 100})`,
-        strokeLinecap: "butt",
-        transition: "stroke-dashoffset 0.5s ease 0s",
-        transform: "rotate(0.25turn)",
-        transformOrigin: "center center",
-        strokeWidth: 6,
-      },
-      text: {
-        fill: "#000000",
-        fontSize: "16px",
-        fontWeight: "bold",
-      },
-      trail: {
-        stroke: "#E5E0DF",
-        strokeWidth: 6,
-      },
-    },
-  },
-  {
-    id: 3,
-    percentage: 80,
-    label: "In Progress",
-    styles: {
-      root: {},
-      path: {
-        stroke: `rgba(255, 195, 0, ${66 / 100})`,
-        strokeLinecap: "butt",
-        transition: "stroke-dashoffset 0.5s ease 0s",
-        transform: "rotate(0.25turn)",
-        transformOrigin: "center center",
-        strokeWidth: 6,
-      },
-      text: {
-        fill: "#000000",
-        fontSize: "16px",
-        fontWeight: "bold",
-      },
-      trail: {
-        stroke: "#E5E0DF",
-        strokeWidth: 6,
-      },
-    },
-  },
-  {
-    id: 4,
-    percentage: 80,
-    label: "Completed",
-    styles: {
-      root: {},
-      path: {
-        stroke: `rgba(0, 255, 29, ${66 / 100})`,
-        strokeLinecap: "butt",
-        transition: "stroke-dashoffset 0.5s ease 0s",
-        transform: "rotate(0.25turn)",
-        transformOrigin: "center center",
-        strokeWidth: 6,
-      },
-      text: {
-        fill: "#000000",
-        fontSize: "16px",
-        fontWeight: "bold",
-      },
-      trail: {
-        stroke: "#E5E0DF",
-        strokeWidth: 6,
-      },
-    },
-  },
-];
-
-
-
 export default function Tasks() {
   const [open, setOpen] = React.useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible1, setModalVisible1] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [data, setData] = useState([]);
+  const [metricsData, setMetricsData] = useState([]);
   const localSt = JSON.parse(localStorage.getItem("user"));
   const currentRoleType = localSt.role_type;
   const [file, setFile] = useState();
+
+  const progressData = [
+    {
+      id: 1,
+      percentage: metricsData?.totalAssigned ?? 0,
+      label: "Total Assigned",
+      styles: {
+        root: {},
+        path: {
+          stroke: `rgba(15, 156, 243, ${66 / 100})`,
+          strokeLinecap: "butt",
+          transition: "stroke-dashoffset 0.5s ease 0s",
+          transform: "rotate(0.25turn)",
+          transformOrigin: "center center",
+          strokeWidth: 6,
+        },
+        text: {
+          fill: "#000000",
+          fontSize: "16px",
+          fontWeight: "bold",
+        },
+        trail: {
+          stroke: "#E5E0DF",
+          strokeWidth: 6,
+        },
+      },
+    },
+    {
+      id: 2,
+      percentage: metricsData?.initiated?.percentage ?? 0,
+      label: "Initiated",
+      styles: {
+        root: {},
+        path: {
+          stroke: `rgba(255, 52, 0, ${66 / 100})`,
+          strokeLinecap: "butt",
+          transition: "stroke-dashoffset 0.5s ease 0s",
+          transform: "rotate(0.25turn)",
+          transformOrigin: "center center",
+          strokeWidth: 6,
+        },
+        text: {
+          fill: "#000000",
+          fontSize: "16px",
+          fontWeight: "bold",
+        },
+        trail: {
+          stroke: "#E5E0DF",
+          strokeWidth: 6,
+        },
+      },
+    },
+    {
+      id: 3,
+      percentage: metricsData?.inProgress?.percentage ?? 0,
+      label: "In Progress",
+      styles: {
+        root: {},
+        path: {
+          stroke: `rgba(255, 195, 0, ${66 / 100})`,
+          strokeLinecap: "butt",
+          transition: "stroke-dashoffset 0.5s ease 0s",
+          transform: "rotate(0.25turn)",
+          transformOrigin: "center center",
+          strokeWidth: 6,
+        },
+        text: {
+          fill: "#000000",
+          fontSize: "16px",
+          fontWeight: "bold",
+        },
+        trail: {
+          stroke: "#E5E0DF",
+          strokeWidth: 6,
+        },
+      },
+    },
+    {
+      id: 4,
+      percentage: metricsData?.completed?.percentage ?? 0,
+      label: "Completed",
+      styles: {
+        root: {},
+        path: {
+          stroke: `rgba(0, 255, 29, ${66 / 100})`,
+          strokeLinecap: "butt",
+          transition: "stroke-dashoffset 0.5s ease 0s",
+          transform: "rotate(0.25turn)",
+          transformOrigin: "center center",
+          strokeWidth: 6,
+        },
+        text: {
+          fill: "#000000",
+          fontSize: "16px",
+          fontWeight: "bold",
+        },
+        trail: {
+          stroke: "#E5E0DF",
+          strokeWidth: 6,
+        },
+      },
+    },
+  ];
 
   const column = [
     { text: 'Assigned Date', dataField: 'timestamp' },
@@ -228,7 +227,7 @@ export default function Tasks() {
   };
 
   React.useEffect(() => {
-
+    fetchDashboardMetricsData();
     fetchTasksData();
   }, []);
 
@@ -259,7 +258,27 @@ export default function Tasks() {
     }
   };
 
-
+  const fetchDashboardMetricsData = async () => {
+    const localData = localStorage.getItem("user");
+    const userObj = JSON.parse(localData)
+    try {
+      const localObj = { userId: userObj._id, role_type: userObj.role_type };
+      const userId = localObj.userId;
+      const role_type = localObj.role_type;
+      const params = {
+        userId: userId,
+        role_type: role_type
+      };
+      const percentageData = await ApiConfig.requestData('get', '/task-status-percentages', params, null);
+      // console.log(percentageData, 'warcat')
+      setMetricsData(percentageData);
+      // toast.dismiss("loading");
+    } catch (error) {
+      console.error("Error fetching Tasks data:", error);
+      toast.dismiss("loading");
+      toast.error("Failed to fetch Tasks data");
+    }
+  };
 
   const handleSeeClick = (row) => {
     setModalContent(row);
