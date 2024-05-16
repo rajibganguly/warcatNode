@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -22,7 +22,9 @@ import { toast } from "react-toastify";
 import ApiConfig from "../config/ApiConfig";
 import { BarChart } from '@mui/x-charts/BarChart';
 import { getItem } from '../config/storage';
-
+import { API } from "../api";
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchDepartments } from "../redux/slices/departmentSlice/departmentsSlice";
 
 const drawerWidth = 240;
 
@@ -60,19 +62,27 @@ export default function Dashboard() {
   const [open, setOpen] = React.useState(true);
   const [data, setData] = React.useState([]);
   const [user, setUser] = React.useState({});
-
+  const dispatch = useDispatch();
+  const departments = useSelector(state => state.departments.data);
   const handleOutput = (open) => {
     toggleDrawer();
   };
   const toggleDrawer = () => {
     setOpen(!open);
   };
+  const localData = getItem("user");
 
-  React.useEffect(() => {
+  useEffect(() => {
+    if (localData) {
+      setUser(localData);
+    }
+  }, [localData]);
+
+  useEffect(() => {
     fetchDashboardData();
   }, []);
 
-  
+
 
   /**
    * @description Private function for fetch Dashboard data
@@ -81,31 +91,20 @@ export default function Dashboard() {
     if (!toast.isActive("loading")) {
       toast.loading("Loading dashbaord data...", { autoClose: false, toastId: "loading" });
     }
-
-    // Local stored data
-    const localData = getItem("user");
-    if (localData !== null) {
-      setUser(localData);
-    }
-   
     try {
-      const localObj = { userId: user._id, role_type: user.role_type }; 
       
-      const params = {
-        userId: localObj.userId,
-        role_type: localObj.role_type
-      };
-      const dashboard = await ApiConfig.requestData('get', '/task-status-percentages', params, null);
-      const departments = await ApiConfig.requestData('get', '/departments', params, null);
+      const userId = localData?._id;
+      const roleType = localData?.role_type;
+      const dashboard = await API.taskStatusPercentages(userId, roleType);
       setData(dashboard);
       cardData.map((f) => {
-        if(f.title === 'Total Department') {
+        if (f.title === 'Total Department') {
           f.value = departments.length
         }
-        if(f.title === 'Completed Tasks') {
+        if (f.title === 'Completed Tasks') {
           f.value = dashboard.completed.count
         }
-        if(f.title === 'Assigned Task') {
+        if (f.title === 'Assigned Task') {
           f.value = dashboard.totalAssigned
         }
       })
@@ -113,7 +112,7 @@ export default function Dashboard() {
     } catch (error) {
       toast.dismiss("loading");
       toast.error("Failed to fetch dashboard data");
-    }    
+    }
   };
 
   return (
@@ -195,15 +194,15 @@ export default function Dashboard() {
               <Grid item xs={12}>
                 <Card sx={{ maxWidth: 100 + "%" }}>
                   <CardContent>
-                  <h5 style={{textAlign: 'center'}}>Status Overview</h5>
-                  <BarChart
-                    xAxis={[{ scaleType: 'band', data: ['Initiated', 'Inprogress', 'Completed'], name: 'Status' }]}
-                    yAxis={[{ name: 'Number of Tasks' }]}
-                    series={[{ data: [4, 1, 2] }]}
-                    width={1000}
-                    height={300}
-                    title="Status Overview"
-                  />
+                    <h5 style={{ textAlign: 'center' }}>Status Overview</h5>
+                    <BarChart
+                      xAxis={[{ scaleType: 'band', data: ['Initiated', 'Inprogress', 'Completed'], name: 'Status' }]}
+                      yAxis={[{ name: 'Number of Tasks' }]}
+                      series={[{ data: [4, 1, 2] }]}
+                      width={1000}
+                      height={300}
+                      title="Status Overview"
+                    />
                   </CardContent>
                 </Card>
               </Grid>
