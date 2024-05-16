@@ -42,8 +42,8 @@ const column = [
   { text: 'Date', dataField: 'selectDate' },
   { text: 'Time', dataField: 'selectTime' },
   { text: 'Attachment', dataField: 'imageUrl' },
-  { text: 'Tasks', dataField: '' },
-  { text: 'Operation', dataField: '' },
+  { text: 'Tasks', dataField: 'taskicon' },
+  { text: 'Operation', dataField: 'operationicon' },
 
 
 ];

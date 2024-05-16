@@ -7,6 +7,7 @@ import { Box } from "@mui/system";
 import SearchIcon from "@mui/icons-material/Search";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
 
 
 function TableNew({ column, data, handleSeeClick, handleEditClick,handleSeeClick1 }) {
@@ -53,6 +54,31 @@ function TableNew({ column, data, handleSeeClick, handleEditClick,handleSeeClick
           <Button onClick={() => handleSeeClick1()}>
             <AddIcon />
           </Button>
+
+        </div>
+      );
+    }
+    if (column.dataField === "taskicon") {
+      return (
+        <div style={{ display: 'flex' }}>
+          <Button onClick={() => handleSeeClick(row)}>
+            <EyeOutlined />
+          </Button>
+          <Button onClick={() => handleSeeClick1()}>
+            <AddIcon />
+          </Button>
+
+        </div>
+      );
+    }
+
+    if (column.dataField === "operationicon") {
+      return (
+        <div style={{ display: 'flex' }}>
+          <Button onClick={() => handleSeeClick(row)}>
+            <EditIcon />
+          </Button>
+          
 
         </div>
       );
