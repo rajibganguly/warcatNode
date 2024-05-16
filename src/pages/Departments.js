@@ -30,6 +30,7 @@ import TableNew from "../components/TableNew";
 import Sidebar from "../components/Sidebar";
 
 import { CardActionArea, CardActions } from '@mui/material';
+import { useSelector } from "react-redux";
 
 const column = [
   { text: 'Department', dataField: 'department.department_name' },
@@ -66,10 +67,11 @@ const defaultTheme = createTheme();
 
 export default function Departments() {
   const [open, setOpen] = React.useState(true);
-  const [data, setData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [loadingData, setLoadingData] = useState(false);
+  const departments = useSelector(state => state.departments.data);
+  const [data, setData] = useState(departments ? departments : []);
   const { id } = useParams();
   const navigate = useNavigate();
   const { authToken } = useAuth();
@@ -77,37 +79,36 @@ export default function Departments() {
   const localUser = JSON.parse(localStorage.getItem('user'));
   const currentRoleType = localUser.role_type;
 
-  useEffect(() => {
-    fetchDepartmentData();
-  }, []);
+
 
 
 
   /**
    * @description Private function for fetch department data
    */
-  const fetchDepartmentData = async () => {
-    if (!toast.isActive("loading")) {
-      toast.loading("Loading departments data...", { autoClose: false, toastId: "loading" });
-    }
-    const localData = localStorage.getItem("user");
-    const userObj = JSON.parse(localData)
-    try {
-      const localObj = { userId: userObj._id, role_type: userObj.role_type };
+  // const fetchDepartmentData = async () => {
+  //   if (!toast.isActive("loading")) {
+  //     toast.loading("Loading departments data...", { autoClose: false, toastId: "loading" });
+  //   }
+  //   const localData = localStorage.getItem("user");
+  //   const userObj = JSON.parse(localData)
+  //   try {
+  //     const localObj = { userId: userObj._id, role_type: userObj.role_type };
 
-      const params = {
-        userId: localObj.userId,
-        role_type: localObj.role_type
-      };
-      const departments = await ApiConfig.requestData('get', '/departments', params, null);
-      setData(departments);
-      toast.dismiss("loading");
-    } catch (error) {
-      console.error("Error fetching department data:", error);
-      toast.dismiss("loading");
-      toast.error("Failed to fetch department data");
-    }
-  };
+  //     const params = {
+  //       userId: localObj.userId,
+  //       role_type: localObj.role_type
+  //     };
+  //     const departments = await ApiConfig.requestData('get', '/departments', params, null);
+
+  //     setData(departments);
+  //     toast.dismiss("loading");
+  //   } catch (error) {
+  //     console.error("Error fetching department data:", error);
+  //     toast.dismiss("loading");
+  //     toast.error("Failed to fetch department data");
+  //   }
+  // };
 
   const handleSeeClick = (row) => {
     setModalContent(row);
@@ -122,12 +123,12 @@ export default function Departments() {
   const handleEditClick = (id) => {
     // Example navigation logic based on authentication
     if (authToken) {
-     
+
       navigate(`/edit-departments/${id}`);
 
-      
+
     } else {
-      
+
       navigate("/");
     }
   };
