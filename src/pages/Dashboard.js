@@ -11,6 +11,8 @@ import Link from "@mui/material/Link";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
+import { getItem } from '../config/storage';
+import { useAuth } from '../providers/AuthProvider';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import PeopleIcon from '@mui/icons-material/People';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
@@ -21,7 +23,6 @@ import Sidebar from "../components/Sidebar";
 import { toast } from "react-toastify";
 import ApiConfig from "../config/ApiConfig";
 import { BarChart } from '@mui/x-charts/BarChart';
-import { getItem } from '../config/storage';
 
 
 const drawerWidth = 240;
@@ -49,18 +50,22 @@ const AppBar = styled(MuiAppBar, {
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
-const cardData = [
-  { id: 1, title: 'Total Department', value: 5, icon: <AccountBalanceIcon /> },
-  { id: 2, title: 'Completed Tasks', value: 1, icon: <PeopleIcon /> },
-  { id: 3, title: 'Total Meeting', value: 3, icon: <MonetizationOnIcon /> },
-  { id: 4, title: 'Assigned Task', value: 0, icon: <MonetizationOnIcon /> },
-];
+
 
 export default function Dashboard() {
   const [open, setOpen] = React.useState(true);
   const [data, setData] = React.useState([]);
-  const [user, setUser] = React.useState({});
+  const [currUser, setCurrUser] = React.useState({});
+  const [statistics, setStatistics] = React.useState({});
+  
+  const [cardDataState, setCardDataState] = React.useState([
+    { id: 1, title: 'Total Department', value: 5, icon: <AccountBalanceIcon /> },
+    { id: 2, title: 'Completed Tasks', value: 1, icon: <PeopleIcon /> },
+    { id: 3, title: 'Total Meeting', value: 3, icon: <MonetizationOnIcon /> },
+    { id: 4, title: 'Assigned Task', value: 0, icon: <MonetizationOnIcon /> },
+  ]);
 
+  const token = useAuth()
   const handleOutput = (open) => {
     toggleDrawer();
   };
@@ -69,51 +74,88 @@ export default function Dashboard() {
   };
 
   React.useEffect(() => {
-    fetchDashboardData();
+    // Local stored data
+    setUpMyLocalUserData().then((result) => {
+      const userSetUp = result;
+      fetchDashboardData(userSetUp._id, userSetUp.role_type, token.authToken);      
+      
+
+    });
+
   }, []);
 
   
-
   /**
    * @description Private function for fetch Dashboard data
    */
-  const fetchDashboardData = async () => {
-    if (!toast.isActive("loading")) {
-      toast.loading("Loading dashbaord data...", { autoClose: false, toastId: "loading" });
-    }
-
-    // Local stored data
+  const setUpMyLocalUserData = async () => {
     const localData = getItem("user");
     if (localData !== null) {
-      setUser(localData);
+      setCurrUser(localData);
+      return localData
     }
-   
-    try {
-      const localObj = { userId: user._id, role_type: user.role_type }; 
-      
-      const params = {
-        userId: localObj.userId,
-        role_type: localObj.role_type
-      };
-      const dashboard = await ApiConfig.requestData('get', '/task-status-percentages', params, null);
-      const departments = await ApiConfig.requestData('get', '/departments', params, null);
-      setData(dashboard);
-      cardData.map((f) => {
-        if(f.title === 'Total Department') {
-          f.value = departments.length
+  }
+  
+  /**
+   * @description Private function for fetch Dashboard data
+  */
+ const fetchDashboardData = async (usId, type, authTokenId) => {
+   if (!toast.isActive("loading")) {
+     toast.loading("Loading dashbaord data...", { autoClose: false, toastId: "loading" });
+    }  
+    
+    const reactAppHostname = process.env.REACT_APP_HOSTNAME;
+    const response = await fetch(`${reactAppHostname}/api/statistics?userId=${usId}&role_type=${type}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + authTokenId
         }
-        if(f.title === 'Completed Tasks') {
-          f.value = dashboard.completed.count
+      });
+      try {
+        if (response.status === 200) {
+          if (response.ok && response.body) {
+            const resData = await response.json();
+            if(resData) {
+              cardDataChart(resData)
+            }
+            setStatistics(resData);
+
+            toast.dismiss("loading");
+          } else {
+            toast.error(`API response error: ${response.status}`, { autoClose: 2000 });
+          }
+          
+        } else {
+          toast.error(`Login Failed! ${response.message}`, {
+            autoClose: 2000, 
+          });
         }
-        if(f.title === 'Assigned Task') {
-          f.value = dashboard.totalAssigned
-        }
-      })
-      toast.dismiss("loading");
-    } catch (error) {
-      toast.dismiss("loading");
-      toast.error("Failed to fetch dashboard data");
-    }    
+      } catch (error) {
+        console.error("Error occurred:", error);
+      }
+  };
+
+
+  /**
+   * @description Setup Chat card data for following summary
+  */
+  const cardDataChart = async (data) => {
+    const updatedCardData = cardDataState.map((card) => {
+      switch (card.title) {
+        case 'Total Department':
+          return { ...card, value: data.totalDepartments };
+        case 'Completed Tasks':
+          return { ...card, value: data.completedTasks };
+        case 'Total Meeting':
+          return { ...card, value: data.totalMeetings };
+        case 'Assigned Task':
+          return { ...card, value: data.assignedTasks };
+        default:
+          return card;
+      }
+    });
+    setCardDataState(updatedCardData);
   };
 
   return (
@@ -168,7 +210,7 @@ export default function Dashboard() {
 
 
             <Grid container spacing={2} >
-              {cardData.map((cardItems, index) => (
+              {cardDataState.map((cardItems, index) => (
                 <Grid item xs={12} sm={3} key={cardItems.id}>
                   <Card sx={{ maxWidth: 345 }}>
                     <CardContent>
@@ -195,12 +237,12 @@ export default function Dashboard() {
               <Grid item xs={12}>
                 <Card sx={{ maxWidth: 100 + "%" }}>
                   <CardContent>
-                  <h5 style={{textAlign: 'center'}}>Status Overview</h5>
+                  <h5 style={{textAlign: 'center'}}>Status Overview ['Initiated','Inprogress', 'Completed']</h5>
                   <BarChart
-                    xAxis={[{ scaleType: 'band', data: ['Initiated', 'Inprogress', 'Completed'], name: 'Status' }]}
+                    xAxis={[{ scaleType: 'band', data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], name: 'Status' }]}
                     yAxis={[{ name: 'Number of Tasks' }]}
-                    series={[{ data: [4, 1, 2] }]}
-                    width={1000}
+                    series={[{ data: [4,1,2,3,5,7,2,3,2,1,3,3] }, { data: [1,3,4,4,2,2,5,7,1,3,4,6] }, { data: [3,1,2,2,3,4,5,6,7,8,2,1] }]}
+                    width={1100}
                     height={300}
                     title="Status Overview"
                   />
