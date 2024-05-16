@@ -22,10 +22,22 @@ import TaskList from "./TaskList";
 import TaskNote from "./TaskNote";
 import TaskUpload from "./TaskUpload";
 import TaskApproval from "./TaskApproval";
+import { getItem } from "../config/storage";
+import { useEffect } from "react";
+import { fetchDepartments } from "../redux/slices/departmentSlice/departmentsSlice";
+import { useDispatch } from "react-redux";
 
 const Navigations = () => {
   const { authToken } = useAuth();
+  const localData = getItem("user");
+  const dispatch = useDispatch();
+  useEffect(() => {
 
+  }, [localData]);
+
+  const userId = localData?._id;
+  const roleType = localData?.role_type;
+  dispatch(fetchDepartments({ userId, roleType }));
   return (
     <Router>
       <Routes>
