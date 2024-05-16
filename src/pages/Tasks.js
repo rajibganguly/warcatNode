@@ -604,7 +604,7 @@ export default function Tasks() {
                                 </CardContent>
                                 <CardActions sx={{ justifyContent: 'flex-start' }}>
                                   <Button size="small" variant="contained" color="primary" >
-                                    Enter Subtask Title
+                                    ADD
                                   </Button>
                                   
                                 </CardActions>

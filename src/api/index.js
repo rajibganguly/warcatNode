@@ -4,11 +4,12 @@ import axios from 'axios';
 axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
 
 const getAllDepartments = (userId, role_type) => {
-    console.log(role_type,'role_typerole_typerole_typerole_typerole_typerole_typerole_type')
+    console.log(process.env.REACT_APP_API)
     return axios({
         method: 'get',
         url: `${process.env.REACT_APP_API}/departments?userId=${userId}&role_type=${role_type}`
     });
+
 };
 
 
@@ -24,3 +25,5 @@ export const API = {
     getAllDepartments,
     taskStatusPercentages
 };
+
+

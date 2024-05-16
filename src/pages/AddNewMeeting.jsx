@@ -3,13 +3,14 @@ import { useState } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
+
 import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import { Link } from "react-router-dom";
-import { Button, TextField } from "@mui/material";
+import { Button, TextField, FormControl, MenuItem } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
@@ -17,7 +18,6 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import { useTheme } from '@mui/material/styles';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -27,6 +27,7 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import Sidebar from "../components/Sidebar";
 import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -77,6 +78,8 @@ export default function AddNewMeeting() {
         selectTime: null,
     });
     const theme = useTheme();
+    const departments = useSelector(state => state.departments.data);
+
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -112,7 +115,7 @@ export default function AddNewMeeting() {
             formDataSend.append('selectTime', selectTime);
             formDataSend.append('file', file);
 
-            
+
             const token = localStorage.getItem('token');
             const response = await axios.post('https://warcat2024-qy2v.onrender.com/api/add-meeting', formDataSend, {
                 headers: {
@@ -125,15 +128,16 @@ export default function AddNewMeeting() {
         } catch (error) {
             console.error('Error occurred:', error);
         }
-        
+
     };
-   
+
     const handleOutput = (open) => {
         toggleDrawer();
     };
     const toggleDrawer = () => {
         setOpen(!open);
     };
+    const departmentNames = departments.map((dept) => dept.department.department_name);
     return (
         <ThemeProvider theme={defaultTheme}>
             <Box sx={{ display: "flex" }}>
@@ -167,16 +171,21 @@ export default function AddNewMeeting() {
                                         >
                                             <Grid container spacing={2}>
                                                 <Grid item xs={6}>
-                                                    <FormControl sx={{ width: 100 + '%' }}>
+                                                    <FormControl fullWidth variant="outlined">
                                                         <TextField
                                                             id="department"
                                                             name="departmentIds"
                                                             label="Department / Government Organisation"
-                                                            variant="outlined"
-                                                            fullWidth
+                                                            select
                                                             value={formData.departmentIds}
                                                             onChange={handleChange}
-                                                        />
+                                                        >
+                                                            {departmentNames.map((deptName) => (
+                                                                <MenuItem key={deptName} value={deptName}>
+                                                                    {deptName}
+                                                                </MenuItem>
+                                                            ))}
+                                                        </TextField>
                                                     </FormControl>
                                                 </Grid>
                                                 <Grid item xs={6}>
@@ -187,9 +196,17 @@ export default function AddNewMeeting() {
                                                             label="Tag"
                                                             variant="outlined"
                                                             fullWidth
+                                                            select
                                                             value={formData.tag}
                                                             onChange={handleChange}
-                                                        />
+                                                        >
+                                                            <MenuItem >
+                                                                Tag1
+                                                            </MenuItem>
+                                                            <MenuItem >
+                                                                Tag2
+                                                            </MenuItem>
+                                                        </TextField>
                                                     </FormControl>
                                                 </Grid>
 

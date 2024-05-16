@@ -34,6 +34,7 @@ import MenuItem from '@mui/material/MenuItem';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import Sidebar from "../components/Sidebar";
+import { useDispatch, useSelector } from 'react-redux';
 
 
 
@@ -63,6 +64,7 @@ const names = [
     'Virginia Andrews',
     'Kelly Snyder',
 ];
+
 function getStyles(name, personName, theme) {
     return {
         fontWeight:
@@ -101,6 +103,9 @@ export default function AddTasks() {
     const [open, setOpen] = React.useState(true);
     const [personName, setPersonName] = React.useState([]);
     const theme = useTheme();
+
+    const departments = useSelector(state => state.departments.data);
+    const departmentNames = departments.map((dept) => dept.department.department_name);
     const handleChange = (event) => {
         const {
             target: { value },
@@ -278,7 +283,7 @@ export default function AddTasks() {
                                             )}
                                             MenuProps={MenuProps}
                                         >
-                                            {names.map((name) => (
+                                            {departmentNames.map((name) => (
                                                 <MenuItem
                                                     key={name}
                                                     value={name}
@@ -290,10 +295,10 @@ export default function AddTasks() {
                                         </Select>
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <label>Department / Government Organisation</label>
+                                        <label>Tag</label>
                                         <TextField
                                             id="outlined-basic"
-                                            label="Sub Task Title"
+                                            label="Tag"
                                             variant="outlined"
                                             fullWidth
                                             name="dep_name"
@@ -301,23 +306,25 @@ export default function AddTasks() {
                                         />
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <label>Department / Government Organisation</label>
+                                        <label>Meeting ID</label>
                                         <TextField
                                             id="outlined-basic"
-                                            label="Sub Task Title"
+                                            label="Meeting ID"
                                             variant="outlined"
                                             fullWidth
+                                            disabled
                                             name="dep_name"
 
                                         />
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <label>Department / Government Organisation</label>
+                                        <label>Meeting Topic</label>
                                         <TextField
                                             id="outlined-basic"
-                                            label="Sub Task Title"
+                                            label="Meeting Topic"
                                             variant="outlined"
                                             fullWidth
+                                            disabled
                                             name="dep_name"
 
                                         />
