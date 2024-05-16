@@ -32,12 +32,11 @@ const Navigations = () => {
   const localData = getItem("user");
   const dispatch = useDispatch();
   useEffect(() => {
+    const userId = localData?._id;
+    const roleType = localData?.role_type;
+    dispatch(fetchDepartments({ userId, roleType }));
+  }, []);
 
-  }, [localData]);
-
-  const userId = localData?._id;
-  const roleType = localData?.role_type;
-  dispatch(fetchDepartments({ userId, roleType }));
   return (
     <Router>
       <Routes>

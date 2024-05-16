@@ -24,7 +24,6 @@ import { BarChart } from '@mui/x-charts/BarChart';
 import { getItem } from '../config/storage';
 import { API } from "../api";
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchDepartments } from "../redux/slices/departmentSlice/departmentsSlice";
 
 const drawerWidth = 240;
 
@@ -62,8 +61,9 @@ export default function Dashboard() {
   const [open, setOpen] = React.useState(true);
   const [data, setData] = React.useState([]);
   const [user, setUser] = React.useState({});
-  const dispatch = useDispatch();
+
   const departments = useSelector(state => state.departments.data);
+  
   const handleOutput = (open) => {
     toggleDrawer();
   };
@@ -76,7 +76,7 @@ export default function Dashboard() {
     if (localData) {
       setUser(localData);
     }
-  }, [localData]);
+  }, []);
 
   useEffect(() => {
     fetchDashboardData();
