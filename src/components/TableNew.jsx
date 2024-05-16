@@ -8,10 +8,12 @@ import SearchIcon from "@mui/icons-material/Search";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from '@mui/icons-material/Add';
 
+
 function TableNew({ column, data, handleSeeClick, handleEditClick,handleSeeClick1 }) {
   const [modalOpen, setModalOpen] = useState(false);
   //const fileUrl = ['icon', 'images', 'thumbnail', 'avatar'];
-
+  
+ 
   const Toggle = () => {
     setModalOpen(!modalOpen);
   };

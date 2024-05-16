@@ -18,14 +18,11 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Stack from "@mui/material/Stack";
 import { useNavigate } from "react-router-dom";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
 import Sidebar from "../components/Sidebar";
 import { toast } from "react-toastify";
 
 import axiosInstance from "../apiConfig/axoisSetup";
+
 const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
@@ -51,46 +48,93 @@ const defaultTheme = createTheme();
 
 export default function EditDepartment() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [open, setOpen] = React.useState(true);
   const [submitDisable, setSubmitDisable] = React.useState(false);
   const [formData, setFormData] = React.useState({
+    department_name: "",
     secretary: {
-      email: "",
       name: "",
-      role_type: "secretary",
       phone_number: "",
+      email: "",
     },
     headOffice: {
-      email: "",
       name: "",
-      role_type: "head_of_Office",
       designation: "",
       phone_number: "",
+      email: "",
     },
-    dep_name: "",
   });
 
+
+
   React.useEffect(() => {
-    const fetchData = async () => {
-      const response = await axiosInstance.get("/api/departments");
-      const filteredData = (await response.data).filter((f) => f.id === id);
+    const fetchDepartmentData = async () => {
       try {
-        if (!filteredData) {
+        const auth_token = localStorage.getItem("token");
+        const localUser = JSON.parse(localStorage.getItem("user"));
+        const currentRoleType = localUser.role_type;
+        const currentUserId = localUser._id;
+
+        const params = new URLSearchParams({
+          role_type: currentRoleType,
+          userId: currentUserId,
+        });
+
+        const response = await fetch(
+          `https://warcat2024-qy2v.onrender.com/api/departments?${params}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${auth_token}`,
+
+            },
+          }
+        );
+
+        if (!response.ok) {
           throw new Error("Failed to fetch department data");
         }
-        setFormData(filteredData[0]);
-        console.log("......>>>>>", formData);
-        toast.dismiss("loading");
+
+        const departmentList = await response.json();
+        console.log("Department List:", departmentList);
+
+        const departmentData = departmentList.find((dept) => dept.id === id);
+        console.log("Department Data:", departmentData.department.department_name);
+
+        if (!departmentData) {
+          throw new Error("Department not found");
+        }
+
+        setFormData({
+          dep_name : departmentData.department.department_name,
+          secretary: {
+            name: departmentData.secretary.name,
+            phone_number: departmentData.secretary.phone_number,
+            email: departmentData.secretary.email,
+          },
+          headOffice: {
+            name: departmentData.headOffice.name,
+            designation: departmentData.headOffice.designation,
+            phone_number: departmentData.headOffice.phone_number,
+            email: departmentData.headOffice.email,
+          },
+        });
       } catch (error) {
-        toast.dismiss("loading");
+        console.error("Error fetching department data:", error);
         toast.error("Failed to fetch department data");
+        // Redirect or handle error here
       }
     };
 
-    fetchData();
-  }, []);
+    fetchDepartmentData();
+  }, [id]);
 
-  const navigate = useNavigate();
+
+
+
+
   const handleOutput = (open) => {
     toggleDrawer();
   };
@@ -124,65 +168,69 @@ export default function EditDepartment() {
   const handleChange = (event) => {
     const { name, value } = event.target;
 
-    // Split the name to get the nested object structure
-    const [field, nestedField] = name.split(".");
 
-    // Update the form data based on the field
-    setFormData((prevFormData) => {
-      if (field === "secretary" || field === "headOffice") {
-        return {
-          ...prevFormData,
-          [field]: {
-            ...prevFormData[field],
-            [nestedField]: value,
-          },
-        };
-      } else {
-        return {
-          ...prevFormData,
-          [name]: value,
-        };
-      }
-    });
+    if (name.includes(".")) {
+      const [parent, child] = name.split(".");
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [parent]: {
+          ...prevFormData[parent],
+          [child]: value,
+        },
+      }));
+    } else {
 
-    console.log(formData)
-
-    // if (allFieldsMapped(formData)) {
-    //   setSubmitDisable(false);
-    // }
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+      }));
+    }
   };
+
+
+  const full_id = id.toString();
+  const extracted_id = full_id.split("-")[1];
+  console.log(extracted_id);
 
   /**
    * Post call on submit
    */
-  const handleAddDepartment = async () => {
-    const reactAppHostname = process.env.REACT_APP_HOSTNAME;
-    setSubmitDisable(true);
-    const auth_token = localStorage.getItem('token');
-    const response = await fetch(
-      `${reactAppHostname}/api/edit-register-user-with-department`,
-      {
+  const handleAddDepartment = async (event) => {
+    event.preventDefault();
+
+    
+   
+
+
+    try {
+      const auth_token = localStorage.getItem("token");
+
+      const updatedFormData = {
+        ...formData,
+        department_id: extracted_id,
+      };
+
+      const response = await fetch(`https://warcat2024-qy2v.onrender.com/api/edit-register-user-with-department`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          token: `Bearer ${auth_token}`
+          Authorization: `Bearer ${auth_token}`,
         },
-        body: JSON.stringify(formData),
-      }
-    );
+        body: JSON.stringify(updatedFormData),
+      });
 
-    try {
       if (response.status === 200) {
-        alert(`${reactAppHostname}/api/login`);
+        toast.success("Department updated successfully");
         navigate("/departments");
       } else {
-        alert("Login Failed");
-        // Handle error cases here
+        toast.error("Failed to update department");
       }
     } catch (error) {
-      console.error("Error occurred:", error);
+      console.error("Error updating department:", error);
+      toast.error("Failed to update department");
     }
   };
+  console.log(formData)
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -253,6 +301,7 @@ export default function EditDepartment() {
                   >
                     <Typography variant="body1">Edit Departments</Typography>
                   </Box>
+                
                   <CardContent>
                     {formData ? (
                       <Box component="form" noValidate autoComplete="off">
@@ -260,10 +309,10 @@ export default function EditDepartment() {
                         <TextField
                           fullWidth
                           name="department_name"
-                          
-                          value={formData?.department?.department_name}
+                          value={formData.dep_name}
                           onChange={handleChange}
                           aria-readonly
+                          disabled
                         />
 
                         <Typography
@@ -285,7 +334,7 @@ export default function EditDepartment() {
                               variant="outlined"
                               sx={{ width: "100%" }}
                               name="secretary.name"
-                              value={formData?.secretary?.name}
+                              value={formData.secretary.name}
                               onChange={handleChange}
                             />
                           </Grid>
@@ -295,10 +344,10 @@ export default function EditDepartment() {
                               variant="outlined"
                               sx={{ width: "100%" }}
                               name="secretary.phone_number"
-                              value={formData?.secretary?.phone_number}
+                              value={formData.secretary.phone_number}
                               inputProps={{
-                                minLength: 10,
-                                maxLength: 10,
+                                minLength: 13,
+                                maxLength: 13,
                               }}
                               onChange={handleChange}
                             />
@@ -309,7 +358,7 @@ export default function EditDepartment() {
                               variant="outlined"
                               sx={{ width: "100%" }}
                               name="secretary.email"
-                              value={formData?.secretary?.email}
+                              value={formData.secretary.email}
                               onChange={handleChange}
                             />
                           </Grid>
@@ -337,7 +386,7 @@ export default function EditDepartment() {
                                 variant="outlined"
                                 sx={{ width: "100%" }}
                                 name="headOffice.name"
-                                value={formData?.headOffice?.name}
+                                value={formData.headOffice.name}
                                 onChange={handleChange}
                               />
                               <label>Head of Office Designation</label>
@@ -347,7 +396,7 @@ export default function EditDepartment() {
                                 variant="outlined"
                                 sx={{ width: "100%" }}
                                 name="headOffice.designation"
-                                value={formData?.headOffice?.designation}
+                                value={formData.headOffice.designation}
                                 onChange={handleChange}
                               />
                             </Stack>
@@ -361,10 +410,10 @@ export default function EditDepartment() {
                                 variant="outlined"
                                 sx={{ width: "100%" }}
                                 name="headOffice.phone_number"
-                                value={formData?.headOffice?.phone_number}
+                                value={formData.headOffice.phone_number}
                                 inputProps={{
-                                  minLength: 10,
-                                  maxLength: 10,
+                                  minLength: 13,
+                                  maxLength: 13,
                                 }}
                                 onChange={handleChange}
                               />
@@ -375,7 +424,7 @@ export default function EditDepartment() {
                                 variant="outlined"
                                 sx={{ width: "100%" }}
                                 name="headOffice.email"
-                                value={formData?.headOffice?.email}
+                                value={formData.headOffice.email}
                                 onChange={handleChange}
                               />
                             </Stack>
@@ -393,7 +442,7 @@ export default function EditDepartment() {
                         </Button>
                       </Box>
                     ) : (
-                      <span> data is not available </span>
+                      <span> Data is not available </span>
                     )}
                   </CardContent>
                 </Card>

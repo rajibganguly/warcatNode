@@ -135,9 +135,7 @@ export default function AddDepartment() {
     }
   };
 
-  /**
-   * Post call on submit
-   */
+  
   const handleAddDepartment = async () => {
     setSubmitDisable(true);
   
