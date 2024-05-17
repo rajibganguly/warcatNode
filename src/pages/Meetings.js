@@ -216,59 +216,63 @@ export default function Meetings() {
                                   >
                                     <CloseOutlined />
                                   </IconButton>
-                                  <CardContent>
-                                    <Typography variant="h5" color="text.secondary">
-                                      Tasks
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      Tasks
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      10 Feb 2024
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      Website Issue
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      Forest Department (Dr. Avinash Kanfade IFS)
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      Target Date: 30 Mar 2024
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      attachment.png
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      Assigned
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      19 Feb 2024
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      Website Issue 2
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      Forest Department (Dr. Avinash Kanfade IFS)
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      Target Date: 21 Mar 2024
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      attachment.png
-                                    </Typography>
+                                  <Grid container>
+                                    <Grid item xs={8}>
+                                      <CardContent>
+                                        <Typography variant="h5" color="text.secondary">
+                                          Tasks
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                          Tasks
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                          10 Feb 2024
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                          Website Issue
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                          Forest Department (Dr. Avinash Kanfade IFS)
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                          Target Date: 30 Mar 2024
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                          attachment.png
+                                        </Typography>
 
-
-
-
-                                  </CardContent>
-                                  <CardActions sx={{ justifyContent: 'flex-end' }}>
-                                    <Button size="small" variant="contained" color="primary" >
-                                      Email
-                                    </Button>
-                                    <Button size="small" variant="contained" color="primary" onClick={() => console.log('Share clicked')}>
-                                      Sms
-                                    </Button>
-                                  </CardActions>
+                                        
+                                        <Typography variant="body2" color="text.secondary">
+                                          Assigned
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                          19 Feb 2024
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                          Website Issue 2
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                          Forest Department (Dr. Avinash Kanfade IFS)
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                          Target Date: 21 Mar 2024
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                          attachment.png
+                                        </Typography>
+                                      </CardContent>
+                                    </Grid>
+                                    <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                      <CardActions>
+                                        <Button size="small" variant="contained" color="primary">
+                                          Assigned
+                                        </Button>
+                                        <Button size="small" variant="contained" color="primary" onClick={() => console.log('Share clicked')}>
+                                          Edit
+                                        </Button>
+                                      </CardActions>
+                                    </Grid>
+                                  </Grid>
                                 </Card>
                               </DialogContentText>
                             )}
