@@ -43,6 +43,14 @@ const editRegisterUserWithDepartment = (updatedFormData, authToken) => {
     });
 };
 
+const getAllTask = (userId, role_type) => {
+
+    return axios({
+        method: 'get',
+        url: `${process.env.REACT_APP_API}/tasks?userId=${userId}&role_type=${role_type}`
+    });
+};
+
 
 
 
@@ -50,5 +58,6 @@ export const API = {
     getAllDepartments,
     taskStatusPercentages,
     editDepartment,
-    editRegisterUserWithDepartment
+    editRegisterUserWithDepartment,
+    getAllTask
 };

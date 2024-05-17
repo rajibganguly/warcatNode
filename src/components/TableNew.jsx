@@ -9,8 +9,10 @@ import SearchIcon from "@mui/icons-material/Search";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
+import { useNavigate } from "react-router-dom";
 
 function TableNew({ column, data, handleSeeClick, handleEditClick, handleSeeClick1 }) {
+  const navigate = useNavigate();
 
   // nested key handler
   const getNestedValue = (obj, path) => {
@@ -41,10 +43,14 @@ function TableNew({ column, data, handleSeeClick, handleEditClick, handleSeeClic
     if (column.dataField === "subtask") {
       return (
         <div style={{ display: 'flex' }}>
-          <Button onClick={() => handleSeeClick(row)}>
+          <Button onClick={() => handleSeeClick(row)}
+          style={{ backgroundColor: '#fb4', color: '#000',marginRight: '2px' }}
+          >
             <EyeOutlined />
           </Button>
-          <Button onClick={() => handleSeeClick1()}>
+          <Button onClick={() => handleSeeClick1()}
+           style={{ backgroundColor: '#6fd088', color: '#ffffff' }}
+          >
             <AddIcon />
           </Button>
         </div>
@@ -53,10 +59,16 @@ function TableNew({ column, data, handleSeeClick, handleEditClick, handleSeeClic
     if (column.dataField === "taskicon") {
       return (
         <div style={{ display: 'flex' }}>
-          <Button onClick={() => handleSeeClick(row)}>
+          <Button
+            onClick={() => handleSeeClick(row)}
+            style={{ backgroundColor: '#fb4', color: 'black',marginRight: '2px' }}
+          >
             <EyeOutlined />
           </Button>
-          <Button onClick={() => handleSeeClick1()}>
+
+          <Button onClick={() => navigate('/add-tasks')}
+           style={{ backgroundColor: '#0a1832', color: '#ffffff' }}
+          >
             <AddIcon />
           </Button>
         </div>
@@ -66,7 +78,10 @@ function TableNew({ column, data, handleSeeClick, handleEditClick, handleSeeClic
     if (column.dataField === "operationicon") {
       return (
         <div style={{ display: 'flex' }}>
-          <Button onClick={() => handleSeeClick(row)}>
+          <Button onClick={() => navigate('/edit-meeting')}
+           style={{ backgroundColor: '#0097a7', color: '#ffffff' }}
+          >
+
             <EditIcon />
           </Button>
         </div>

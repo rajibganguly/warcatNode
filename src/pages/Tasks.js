@@ -104,7 +104,7 @@ export default function Tasks() {
   const [metricsData, setMetricsData] = useState([]);
   const localSt = JSON.parse(localStorage.getItem("user"));
   const currentRoleType = localSt.role_type;
-   const [file, setFile] = useState();
+  const [file, setFile] = useState();
   const localData = localStorage.getItem("user");
   const userObj = JSON.parse(localData)
   const progressData = [
@@ -243,7 +243,7 @@ export default function Tasks() {
 
     try {
       const tasksData = await API.getAllTask(userObj._id, userObj.role_type);
-      //console.log(tasksData,'setTaskData')
+      console.log(tasksData, 'setTaskData')
       setTaskData(tasksData?.data?.tasks);
       toast.dismiss("loading");
     } catch (error) {
@@ -255,8 +255,8 @@ export default function Tasks() {
 
   const fetchDashboardMetricsData = async () => {
     try {
-      const percentageData = await API.taskStatusPercentages(userObj._id,userObj.role_type);
-      console.log(percentageData,'percentageData')
+      const percentageData = await API.taskStatusPercentages(userObj._id, userObj.role_type);
+      console.log(percentageData, 'percentageData')
       setMetricsData(percentageData?.data);
       toast.dismiss("loading");
     } catch (error) {
@@ -287,7 +287,6 @@ export default function Tasks() {
 
   const handleEditClick = (record) => {
     console.log("Edit clicked for:", record);
-    // Implement logic for editing
   };
 
   const handleOutput = (open) => {
@@ -475,20 +474,26 @@ export default function Tasks() {
                                   >
                                     <CloseOutlined />
                                   </IconButton>
-                                  <CardContent>
-                                    <Typography variant="h5" color="text.secondary">
-                                      Subtask
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      {modalContent.task_title}
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      Target Date:  {modalContent.target_date}
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      Attachment.png
-                                    </Typography>
+                                  <CardContent style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <div>
+                                      <Typography variant="h5" color="text.secondary">
+                                        Subtask
+                                      </Typography>
+                                      <Typography variant="body2" color="text.secondary">
+                                        {modalContent.task_title}
+                                      </Typography>
+                                      <Typography variant="body2" color="text.secondary">
+                                        Target Date: {modalContent.target_date}
+                                      </Typography>
+                                      <Typography variant="body2" color="text.secondary">
+                                        Attachment.png
+                                      </Typography>
+                                    </div>
+                                    <Button variant="contained" color="primary">Add Subtask</Button>
                                   </CardContent>
+
+
+
                                   <CardActions sx={{ justifyContent: 'flex-end' }}>
                                     <Button size="small" variant="contained" color="primary" >
                                       Email
