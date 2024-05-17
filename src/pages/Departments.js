@@ -100,6 +100,8 @@ export default function Departments() {
     setModalVisible(true);
   };
 
+  
+
   const closeModal = () => {
     setModalVisible(false);
     setModalContent(null);
@@ -218,7 +220,7 @@ export default function Departments() {
                         {modalContent && (
                           <DialogContentText id="modal-description">
                             <Typography variant="h4" id="modal-title">
-                              Department Name: {modalContent.department.department_name}
+                              Department Name: {modalContent.department?.department_name}
                             </Typography>
                             <Card sx={{ width: '100%', maxWidth: 900, maxHeight: 600, overflowY: 'auto' }}>
                               <IconButton
@@ -233,29 +235,29 @@ export default function Departments() {
                                   Secretary Details
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                  Secretary Name: {modalContent.secretary.name}
+                                  Secretary Name: {modalContent.secretary?.name}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                  Secretary Phone number: {modalContent.secretary.phone}
+                                  Secretary Phone number: {modalContent.secretary?.phone}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                  Secretary Email Id: {modalContent.secretary.email}
+                                  Secretary Email Id: {modalContent.secretary?.email}
                                 </Typography>
 
                                 <Typography variant="h5" color="text.secondary" mt={4} py={2}>
                                   Head of Office Details
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                  Head of Office Name: {modalContent.headOffice.name}
+                                  Head of Office Name: {modalContent.headOffice?.name}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                  Head of Office Designation: {modalContent.headOffice.designation}
+                                  Head of Office Designation: {modalContent.headOffice?.designation}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                  Head of Office Phone number: {modalContent.headOffice.phone_number}
+                                  Head of Office Phone number: {modalContent.headOffice?.phone_number}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                  Head of Office Email Id: {modalContent.headOffice.email}
+                                  Head of Office Email Id: {modalContent.headOffice?.email}
                                 </Typography>
                               </CardContent>
                               <CardActions sx={{ justifyContent: 'flex-end' }}>

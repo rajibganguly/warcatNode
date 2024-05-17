@@ -19,6 +19,10 @@ import { Button } from "@mui/material";
 import TableNew from "../components/TableNew";
 import { toast } from "react-toastify";
 import Sidebar from "../components/Sidebar";
+import { CardActions } from '@mui/material';
+import { Dialog, DialogContent, DialogContentText } from "@mui/material";
+import { CloseOutlined } from '@mui/icons-material';
+import IconButton from "@mui/material/IconButton";
 
 const column = [
   { text: '#Meeting Id', dataField: 'meetingId' },
@@ -57,6 +61,8 @@ const defaultTheme = createTheme();
 export default function Meetings() {
   const [open, setOpen] = React.useState(true);
   const [data, setData] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
   const localUser = JSON.parse(localStorage.getItem('user'));
   const currentRoleType = localUser.role_type;
 
@@ -88,6 +94,15 @@ export default function Meetings() {
       toast.dismiss("loading");
       toast.error("Failed to fetch meeting data");
     }
+  };
+
+  const handleSeeTask = (row) => {
+    setModalContent(row);
+    setModalVisible(true);
+  };
+  const closeModal = () => {
+    setModalVisible(false);
+    setModalContent(null);
   };
 
   const handleOutput = (open) => {
@@ -172,8 +187,93 @@ export default function Meetings() {
                         <TableNew
                           data={data}
                           column={column}
+                          handleSeeTask={handleSeeTask}
 
                         />
+
+                        <Dialog
+                          open={modalVisible}
+                          onClose={closeModal}
+                          aria-labelledby="modal-title"
+                          aria-describedby="modal-description"
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <DialogContent sx={{ p: 2, width: '600px' }}>
+                            {modalContent && (
+                              <DialogContentText id="modal-description">
+                                <Typography variant="h4" id="modal-title">
+                                  Meeting Name:
+                                </Typography>
+                                <Card sx={{ width: '100%', maxWidth: 900, maxHeight: 600, overflowY: 'auto' }}>
+                                  <IconButton
+                                    aria-label="close"
+                                    onClick={closeModal}
+                                    sx={{ position: 'absolute', right: '5px', top: '0', color: 'gray' }}
+                                  >
+                                    <CloseOutlined />
+                                  </IconButton>
+                                  <CardContent>
+                                    <Typography variant="h5" color="text.secondary">
+                                      Tasks
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                      Tasks
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                      10 Feb 2024
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                      Website Issue
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                      Forest Department (Dr. Avinash Kanfade IFS)
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                      Target Date: 30 Mar 2024
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                      attachment.png
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                      Assigned
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                      19 Feb 2024
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                      Website Issue 2
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                      Forest Department (Dr. Avinash Kanfade IFS)
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                      Target Date: 21 Mar 2024
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                      attachment.png
+                                    </Typography>
+
+
+
+
+                                  </CardContent>
+                                  <CardActions sx={{ justifyContent: 'flex-end' }}>
+                                    <Button size="small" variant="contained" color="primary" >
+                                      Email
+                                    </Button>
+                                    <Button size="small" variant="contained" color="primary" onClick={() => console.log('Share clicked')}>
+                                      Sms
+                                    </Button>
+                                  </CardActions>
+                                </Card>
+                              </DialogContentText>
+                            )}
+                          </DialogContent>
+                        </Dialog>
                       </CardContent>
                     </Card>
                   </Grid>

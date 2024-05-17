@@ -74,6 +74,7 @@ const defaultTheme = createTheme();
 export default function AddTasks() {
     const [open, setOpen] = React.useState(true);
     const [personName, setPersonName] = React.useState([]);
+    const [selectedTag, setSelectedTag] = useState('');
     const theme = useTheme();
 
     const departments = useSelector(state => state.departments.data);
@@ -234,11 +235,12 @@ export default function AddTasks() {
 
                                 <Grid container spacing={2} sx={{ mb: 4, borderBottom: '1px solid #eff2f7', pb: 2 }}>
                                     <Grid item xs={6}>
-                                        <InputLabel id="demo-multiple-chip-label1">Department / Government Organisation</InputLabel>
+                                       
                                         <Select
                                             labelId="demo-multiple-chip-label2"
                                             id="demo-multiple-chip"
                                             fullWidth
+                                            label = 'Department/Government Organisation'
                                             multiple
                                             value={personName}
                                             onChange={handleChange}
@@ -264,27 +266,23 @@ export default function AddTasks() {
                                         </Select>
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <label>Tag</label>
+                                       
                                         <TextField
-                                            id="outlined-basic"
-                                            label="Tag"
-                                            variant="outlined"
+                                            labelId="tag-label"
+                                            id="tag-select"
+                                            label= 'Tag'
+                                            value={selectedTag}
+                                            onChange={(event) => setSelectedTag(event.target.value)}
                                             fullWidth
                                             select
-                                            name="dep_name"
-
+                                            variant="outlined"
                                         >
-                                            <MenuItem >
-                                                Admin
-                                            </MenuItem>
-                                            <MenuItem >
-                                                Secretary
-                                            </MenuItem>
-                                            <MenuItem >
-                                                Head Of Office
-                                            </MenuItem>
+                                            <MenuItem value="Admin">Admin</MenuItem>
+                                            <MenuItem value="Secretary">Secretary</MenuItem>
+                                            <MenuItem value="Head Of Office">Head Of Office</MenuItem>
                                         </TextField>
                                     </Grid>
+
                                     <Grid item xs={6}>
                                         <label>Meeting ID</label>
                                         <TextField

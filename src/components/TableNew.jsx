@@ -12,7 +12,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from '@mui/icons-material/Delete';
 
-function TableNew({ column, data, handleSeeClick, handleEditClick, handleSeeClick1 }) {
+function TableNew({ column, data, handleSeeClick, handleEditClick, handleSeeClick1,handleSeeTask }) {
   const navigate = useNavigate();
 
   // nested key handler
@@ -69,7 +69,7 @@ function TableNew({ column, data, handleSeeClick, handleEditClick, handleSeeClic
       return (
         <div style={{ display: 'flex' }}>
           <Button
-            onClick={() => handleSeeClick(row)}
+            onClick={() => handleSeeTask(row)}
             style={{ backgroundColor: '#fb4', color: 'black', marginRight: '2px' }}
           >
             <EyeOutlined />

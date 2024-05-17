@@ -19,6 +19,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import Sidebar from "../components/Sidebar";
+import Select from '@mui/material/Select';
+import InputLabel from '@mui/material/InputLabel';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 
@@ -58,6 +60,7 @@ const AppBar = styled(MuiAppBar, {
 export default function AddNewMeeting() {
     const [open, setOpen] = React.useState(true);
     const [file, setFile] = useState(null);
+    const [selectedTag, setSelectedTag] = useState('');
     const [formData, setFormData] = useState({
         departmentIds: '',
         tag: '',
@@ -173,29 +176,23 @@ export default function AddNewMeeting() {
                                                     </FormControl>
                                                 </Grid>
                                                 <Grid item xs={6}>
-                                                    <FormControl sx={{ width: 100 + '%' }}>
-                                                        <TextField
-                                                            id="tag"
-                                                            name="tag"
-                                                            label="Tag"
-                                                            variant="outlined"
-                                                            fullWidth
-                                                            select
-                                                            value={formData.tag}
-                                                            onChange={handleChange}
-                                                        >
-                                                            <MenuItem >
-                                                                Admin
-                                                            </MenuItem>
-                                                            <MenuItem >
-                                                                Secretary
-                                                            </MenuItem>
-                                                            <MenuItem >
-                                                                Head Of Office
-                                                            </MenuItem>
+                                                    
+                                                <TextField
+                                                        labelId="tag-label"
+                                                        id="tag-select"
+                                                        label= 'Tag'
+                                                        value={selectedTag}
+                                                        onChange={(event) => setSelectedTag(event.target.value)}
+                                                        fullWidth
+                                                        select
+                                                        variant="outlined"
+                                                    >
+                                                        <MenuItem value="Admin">Admin</MenuItem>
+                                                        <MenuItem value="Secretary">Secretary</MenuItem>
+                                                        <MenuItem value="Head Of Office">Head Of Office</MenuItem>
                                                         </TextField>
-                                                    </FormControl>
                                                 </Grid>
+
 
                                                 <Grid item xs={12}>
                                                     <TextField
