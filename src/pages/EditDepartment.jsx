@@ -83,17 +83,17 @@ export default function EditDepartment() {
     setFormData({
       dep_name: departmentData.department.department_name,
       secretary: {
-        name: departmentData.secretary.name,
-        phone_number: departmentData.secretary.phone_number,
+        name: departmentData.secretary?.name,
+        phone_number: departmentData.secretary?.phone_number,
         role_type: "secretary",
-        email: departmentData.secretary.email,
+        email: departmentData.secretary?.email,
       },
       headOffice: {
-        name: departmentData.headOffice.name,
+        name: departmentData.headOffice?.name,
         role_type: "head_of_Office",
-        designation: departmentData.headOffice.designation,
-        phone_number: departmentData.headOffice.phone_number,
-        email: departmentData.headOffice.email,
+        designation: departmentData.headOffice?.designation,
+        phone_number: departmentData.headOffice?.phone_number,
+        email: departmentData.headOffice?.email,
       },
     });
 

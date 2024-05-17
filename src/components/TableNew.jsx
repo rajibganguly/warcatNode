@@ -10,6 +10,7 @@ import IconButton from "@mui/material/IconButton";
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import { useNavigate } from "react-router-dom";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 function TableNew({ column, data, handleSeeClick, handleEditClick, handleSeeClick1 }) {
   const navigate = useNavigate();
@@ -30,12 +31,20 @@ function TableNew({ column, data, handleSeeClick, handleEditClick, handleSeeClic
     if (column.dataField === "Operations") {
       return (
         <>
-          <Button onClick={() => handleSeeClick(row)}>
+         <div style={{display: 'flex', justifyContent: 'center'}}>
+         <Button onClick={() => handleSeeClick(row)}
+            style={{ backgroundColor: '#fb4', color: '#000', marginRight: '2px' }}>
             <EyeOutlined />
           </Button>
-          <Button onClick={() => handleEditClick(row.id)}>
+          <Button onClick={() => handleEditClick(row.id)}
+            style={{ backgroundColor: '#0097a7', color: '#ffffff', marginRight: '2px' }}>
             <EditOutlined />
           </Button>
+          <Button onClick={() => handleEditClick(row.id)}
+            style={{ backgroundColor: '#f32f53', color: '#ffffff' }}>
+            <DeleteIcon />
+          </Button>
+         </div>
         </>
       );
     }
@@ -44,12 +53,12 @@ function TableNew({ column, data, handleSeeClick, handleEditClick, handleSeeClic
       return (
         <div style={{ display: 'flex' }}>
           <Button onClick={() => handleSeeClick(row)}
-          style={{ backgroundColor: '#fb4', color: '#000',marginRight: '2px' }}
+            style={{ backgroundColor: '#fb4', color: '#000', marginRight: '2px' }}
           >
             <EyeOutlined />
           </Button>
           <Button onClick={() => handleSeeClick1()}
-           style={{ backgroundColor: '#6fd088', color: '#ffffff' }}
+            style={{ backgroundColor: '#6fd088', color: '#ffffff' }}
           >
             <AddIcon />
           </Button>
@@ -61,13 +70,13 @@ function TableNew({ column, data, handleSeeClick, handleEditClick, handleSeeClic
         <div style={{ display: 'flex' }}>
           <Button
             onClick={() => handleSeeClick(row)}
-            style={{ backgroundColor: '#fb4', color: 'black',marginRight: '2px' }}
+            style={{ backgroundColor: '#fb4', color: 'black', marginRight: '2px' }}
           >
             <EyeOutlined />
           </Button>
 
           <Button onClick={() => navigate('/add-tasks')}
-           style={{ backgroundColor: '#0a1832', color: '#ffffff' }}
+            style={{ backgroundColor: '#0a1832', color: '#ffffff' }}
           >
             <AddIcon />
           </Button>
@@ -79,7 +88,7 @@ function TableNew({ column, data, handleSeeClick, handleEditClick, handleSeeClic
       return (
         <div style={{ display: 'flex' }}>
           <Button onClick={() => navigate('/edit-meeting')}
-           style={{ backgroundColor: '#0097a7', color: '#ffffff' }}
+            style={{ backgroundColor: '#0097a7', color: '#ffffff' }}
           >
 
             <EditIcon />
