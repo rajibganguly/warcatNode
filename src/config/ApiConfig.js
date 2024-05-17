@@ -9,7 +9,7 @@ const authToken = localStorage.getItem('token');
 
 
 const ApiConfig = {
-  requestData: async (method, endpoint, params, data) => {
+  requestData: async (method, endpoint, param, data) => {
     try {
       const response = await axios.request({
         method: method,
@@ -18,7 +18,7 @@ const ApiConfig = {
           "Accept": "application/json",
           "Authorization": `Bearer ${authToken}`,
         },
-        params: params,
+        params: param,
         data: data
       });
       return response.data;
