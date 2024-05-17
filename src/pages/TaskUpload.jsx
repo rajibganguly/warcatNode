@@ -8,19 +8,16 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import { Link } from "react-router-dom";
 import InputFileUpload from "../components/InputFileUpload";
-
 import { Button } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import { useTheme } from "@mui/material/styles";
 import InputLabel from "@mui/material/InputLabel";
 import Sidebar from "../components/Sidebar";
-
 import { Input as BaseInput } from "@mui/base/Input";
-import { height, styled } from "@mui/system";
+import { styled } from "@mui/system";
 
 const Input = React.forwardRef(function CustomInput(props, ref) {
   return (
@@ -78,8 +75,7 @@ const TextareaElement = styled("textarea", {
     color: ${theme.palette.mode === "dark" ? grey[300] : grey[900]};
     background: ${theme.palette.mode === "dark" ? grey[900] : "#fff"};
     border: 1px solid ${theme.palette.mode === "dark" ? grey[700] : grey[200]};
-    box-shadow: 0px 2px 4px ${
-      theme.palette.mode === "dark" ? "rgba(0,0,0, 0.5)" : "rgba(0,0,0, 0.05)"
+    box-shadow: 0px 2px 4px ${theme.palette.mode === "dark" ? "rgba(0,0,0, 0.5)" : "rgba(0,0,0, 0.05)"
     };
   
     &:hover {
@@ -88,9 +84,8 @@ const TextareaElement = styled("textarea", {
   
     &:focus {
       border-color: ${blue[400]};
-      box-shadow: 0 0 0 3px ${
-        theme.palette.mode === "dark" ? blue[700] : blue[200]
-      };
+      box-shadow: 0 0 0 3px ${theme.palette.mode === "dark" ? blue[700] : blue[200]
+    };
     }
   
     // firefox
@@ -125,17 +120,7 @@ const defaultTheme = createTheme();
 
 export default function TaskUpload() {
   const [open, setOpen] = React.useState(true);
-  const [personName, setPersonName] = React.useState([]);
-  const theme = useTheme();
-  const handleChange = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setPersonName(
-      // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value
-    );
-  };
+
   const handleOutput = (open) => {
     toggleDrawer();
   };

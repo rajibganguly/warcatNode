@@ -7,9 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TablePagination from '@mui/material/TablePagination';
-import { IconButton, TableSortLabel } from '@mui/material';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import { TableSortLabel } from '@mui/material';
 
 const rows = [
   { dep_id: 'DIT00126007', department_name: 'Agriculture Department', total_tasks: '65', total_completed: '30', total_initiated: '24', complete_percentage: '50', response_rate: '-' },
@@ -18,13 +16,13 @@ const rows = [
 ];
 
 const headCells = [
-    { id: 'dep_id', label: 'Department Id' },
-    { id: 'department_name', label: 'Department Name' },
-    { id: 'total_tasks', label: 'Total of Tasks' },
-    { id: 'total_completed', label: 'Total Completed' },
-    { id: 'total_initiated', label: 'Total Initiated' },
-    { id: 'complete_percentage', label: 'Completion Percentage' },
-    { id: 'response_rate', label: 'Response Rate' },
+  { id: 'dep_id', label: 'Department Id' },
+  { id: 'department_name', label: 'Department Name' },
+  { id: 'total_tasks', label: 'Total of Tasks' },
+  { id: 'total_completed', label: 'Total Completed' },
+  { id: 'total_initiated', label: 'Total Initiated' },
+  { id: 'complete_percentage', label: 'Completion Percentage' },
+  { id: 'response_rate', label: 'Response Rate' },
 ];
 
 function EnhancedTableHead({ order, orderBy, onRequestSort }) {

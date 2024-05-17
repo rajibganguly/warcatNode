@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -11,7 +11,6 @@ import Grid from "@mui/material/Grid";
 import { Link } from "react-router-dom";
 import { Button, TextField } from "@mui/material";
 import { useParams } from "react-router-dom";
-
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
@@ -53,7 +52,7 @@ export default function EditDepartment() {
   const [submitDisable, setSubmitDisable] = React.useState(false);
   const departments = useSelector(state => state.departments.data);
   // console.log(departments,'departmentsdepartments')
-  const [departmentList, setDepartmentList] = useState(departments ? departments : []);
+  const [departmentList, setDepartmentList] = React.useState(departments ? departments : []);
   const [formData, setFormData] = React.useState({
     department_name: "",
     secretary: {
@@ -79,13 +78,13 @@ export default function EditDepartment() {
         secretary: {
           name: departmentData.secretary?.name,
           phone_number: departmentData.secretary?.phone_number,
-          role_type :"secretary",
+          role_type: "secretary",
           email: departmentData.secretary?.email,
         },
         headOffice: {
           name: departmentData.headOffice?.name,
           designation: departmentData.headOffice?.designation,
-          role_type :"head_of_Office",
+          role_type: "head_of_Office",
           phone_number: departmentData.headOffice?.phone_number,
           email: departmentData.headOffice?.email,
         },
@@ -99,26 +98,6 @@ export default function EditDepartment() {
   };
   const toggleDrawer = () => {
     setOpen(!open);
-  };
-
-  /**
-   * Check all fields if not empty
-   */
-  const allFieldsMapped = (obj) => {
-    for (const key in obj) {
-      // Check if the value is an object, then recursively check its fields
-      if (typeof obj[key] === "object") {
-        if (!allFieldsMapped(obj[key])) {
-          return false;
-        }
-      } else {
-        // If any field is empty, return false
-        if (!obj[key]) {
-          return false;
-        }
-      }
-    }
-    return true; // All fields are not empty
   };
 
   /**
@@ -156,10 +135,6 @@ export default function EditDepartment() {
    */
   const handleAddDepartment = async (event) => {
     event.preventDefault();
-
-
-
-
 
     try {
       const auth_token = localStorage.getItem("token");

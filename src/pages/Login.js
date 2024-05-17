@@ -49,7 +49,7 @@ export default function LogIn({ setAuthToken }) {
 
   const [loginRoleType, setLoginRoleType] = useState("admin");
   const [disabledLogin, setDisabledLogin] = useState(true);
-  const [token, setToken] = useState("");
+  //const [token, setToken] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -133,7 +133,7 @@ export default function LogIn({ setAuthToken }) {
     try {
       if (response.status === 200) {
         toast.success('You are Successfully logged into Warcat', {
-          autoClose: 2000, 
+          autoClose: 2000,
         });
         const resData = await response.json();
         const token = resData.token;
@@ -145,7 +145,7 @@ export default function LogIn({ setAuthToken }) {
         navigate("/dashboard");
       } else {
         toast.error(`Login Failed! ${response.message}`, {
-          autoClose: 2000, 
+          autoClose: 2000,
         });
       }
     } catch (error) {

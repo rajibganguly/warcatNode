@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+/* eslint-disable jsx-a11y/img-redundant-alt */
+import React from "react";
 import { EyeOutlined, EditOutlined } from "@ant-design/icons";
 import { Button } from "@mui/material";
 import TextField from "@mui/material/TextField";
@@ -9,15 +10,7 @@ import IconButton from "@mui/material/IconButton";
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 
-
-function TableNew({ column, data, handleSeeClick, handleEditClick,handleSeeClick1 }) {
-  const [modalOpen, setModalOpen] = useState(false);
-  //const fileUrl = ['icon', 'images', 'thumbnail', 'avatar'];
-  
- 
-  const Toggle = () => {
-    setModalOpen(!modalOpen);
-  };
+function TableNew({ column, data, handleSeeClick, handleEditClick, handleSeeClick1 }) {
 
   // nested key handler
   const getNestedValue = (obj, path) => {
@@ -54,7 +47,6 @@ function TableNew({ column, data, handleSeeClick, handleEditClick,handleSeeClick
           <Button onClick={() => handleSeeClick1()}>
             <AddIcon />
           </Button>
-
         </div>
       );
     }
@@ -67,7 +59,6 @@ function TableNew({ column, data, handleSeeClick, handleEditClick,handleSeeClick
           <Button onClick={() => handleSeeClick1()}>
             <AddIcon />
           </Button>
-
         </div>
       );
     }
@@ -78,8 +69,6 @@ function TableNew({ column, data, handleSeeClick, handleEditClick,handleSeeClick
           <Button onClick={() => handleSeeClick(row)}>
             <EditIcon />
           </Button>
-          
-
         </div>
       );
     }

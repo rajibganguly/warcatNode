@@ -9,30 +9,16 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import { Link } from 'react-router-dom';
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton"; import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { mainListItems, secondaryListItems } from "../components/listitems";
-import LogoBlack from "../components/logoblack";
-import ProfileSidePane from "../components/profileSidepane";
-import MuiDrawer from "@mui/material/Drawer";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CustomTable from '../components/CustomTable';
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
-import { useNavigate } from "react-router-dom";
-//import axiosInstance from "../apiConfig/axoisSetup";
 import ApiConfig from "../config/ApiConfig";
 import { Button } from "@mui/material";
-import { EyeOutlined, EditOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import TableNew from "../components/TableNew";
 import { toast } from "react-toastify";
 import Sidebar from "../components/Sidebar";
-
-
-
 
 const column = [
   { text: '#Meeting Id', dataField: 'meetingId' },
@@ -44,10 +30,7 @@ const column = [
   { text: 'Attachment', dataField: 'imageUrl' },
   { text: 'Tasks', dataField: 'taskicon' },
   { text: 'Operation', dataField: 'operationicon' },
-
-
 ];
-
 
 const drawerWidth = 240;
 const AppBar = styled(MuiAppBar, {
@@ -68,23 +51,12 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-
-
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
-
-
-
 export default function Meetings() {
   const [open, setOpen] = React.useState(true);
-  const [filteredInfo, setFilteredInfo] = useState({});
-  const [sortedInfo, setSortedInfo] = useState({});
-  const [modalVisible, setModalVisible] = React.useState(false);
-  const [selectedRecord, setSelectedRecord] = React.useState(null);
   const [data, setData] = useState([]);
-  const navigate = useNavigate();
-
   const localUser = JSON.parse(localStorage.getItem('user'));
   const currentRoleType = localUser.role_type;
 
@@ -97,13 +69,13 @@ export default function Meetings() {
    */
   const fetchMeetingData = async () => {
     if (!toast.isActive("loading")) {
-        toast.loading("Loading meetings data...", { autoClose: false, toastId: "loading" });
-      }
+      toast.loading("Loading meetings data...", { autoClose: false, toastId: "loading" });
+    }
     const localData = localStorage.getItem("user");
-    const userObj = JSON.parse(localData)    
+    const userObj = JSON.parse(localData)
     try {
-      const localObj = { userId: userObj._id, role_type: userObj.role_type }; 
-      
+      const localObj = { userId: userObj._id, role_type: userObj.role_type };
+
       const params = {
         userId: localObj.userId,
         role_type: localObj.role_type
@@ -115,30 +87,8 @@ export default function Meetings() {
       console.error("Error fetching meeting data:", error);
       toast.dismiss("loading");
       toast.error("Failed to fetch meeting data");
-    }    
+    }
   };
-
-
-
-  const handleSeeClick = (record) => {
-    setSelectedRecord(record);
-    setModalVisible(true);
-  };
-
-
-  const handleplusClick = (record) => {
-    console.log('Edit clicked for:', record);
-    navigate('/add-tasks')
-    // Implement logic for editing
-  };
-  const handleEditClick = (record) => {
-    console.log('Edit clicked for:', record);
-    navigate('/edit-meeting')
-    // Implement logic for editing
-  };
-
-
-
 
   const handleOutput = (open) => {
     toggleDrawer();
@@ -146,10 +96,6 @@ export default function Meetings() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
-
-  // const profilePic = "../assets/user/user1.png"
-
-
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -172,7 +118,7 @@ export default function Meetings() {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3} style={{height: "560px", overflowY: "scroll", overflowX: "hidden"}}>
+            <Grid container spacing={3} style={{ height: "560px", overflowY: "scroll", overflowX: "hidden" }}>
               {/* Recent Orders */}
               <Grid item xs={12}>
                 <div
@@ -213,7 +159,7 @@ export default function Meetings() {
                         }}
                       >
                         <Typography variant="body1" sx={{ fontWeight: 600 }}>Meetings</Typography>
-                        { currentRoleType === 'admin' && (<Button variant="contained" sx={{
+                        {currentRoleType === 'admin' && (<Button variant="contained" sx={{
                           backgroundColor: 'green',
                           '&:hover': {
                             backgroundColor: 'darkgreen',

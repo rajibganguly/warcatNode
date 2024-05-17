@@ -1,4 +1,6 @@
-import React, { useEffect } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
+import React from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -21,7 +23,6 @@ import CardContent from '@mui/material/CardContent';
 import Stack from '@mui/material/Stack';
 import Sidebar from "../components/Sidebar";
 import { toast } from "react-toastify";
-import ApiConfig from "../config/ApiConfig";
 import { BarChart } from '@mui/x-charts/BarChart';
 
 const drawerWidth = 240;
@@ -44,19 +45,14 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-
-
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
-
-
 export default function Dashboard() {
   const [open, setOpen] = React.useState(true);
-  const [data, setData] = React.useState([]);
   const [currUser, setCurrUser] = React.useState({});
   const [statistics, setStatistics] = React.useState({});
-  
+
   const [cardDataState, setCardDataState] = React.useState([
     { id: 1, title: 'Total Department', value: 5, icon: <AccountBalanceIcon /> },
     { id: 2, title: 'Completed Tasks', value: 1, icon: <PeopleIcon /> },
@@ -71,20 +67,15 @@ export default function Dashboard() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
-  const localData = getItem("user");
 
   React.useEffect(() => {
     // Local stored data
     setUpMyLocalUserData().then((result) => {
       const userSetUp = result;
-      fetchDashboardData(userSetUp._id, userSetUp.role_type, token.authToken);      
-      
-
+      fetchDashboardData(userSetUp._id, userSetUp.role_type, token.authToken);
     });
-
   }, []);
 
-  
   /**
    * @description Private function for fetch Dashboard data
    */
@@ -95,45 +86,45 @@ export default function Dashboard() {
       return localData
     }
   }
-  
+
   /**
    * @description Private function for fetch Dashboard data
   */
- const fetchDashboardData = async (usId, type, authTokenId) => {
-   if (!toast.isActive("loading")) {
-     toast.loading("Loading dashbaord data...", { autoClose: false, toastId: "loading" });
-    }  
-    
+  const fetchDashboardData = async (usId, type, authTokenId) => {
+    if (!toast.isActive("loading")) {
+      toast.loading("Loading dashbaord data...", { autoClose: false, toastId: "loading" });
+    }
+
     const reactAppHostname = process.env.REACT_APP_HOSTNAME;
     const response = await fetch(`${reactAppHostname}/api/statistics?userId=${usId}&role_type=${type}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + authTokenId
-        }
-      });
-      try {
-        if (response.status === 200) {
-          if (response.ok && response.body) {
-            const resData = await response.json();
-            if(resData) {
-              cardDataChart(resData)
-            }
-            setStatistics(resData);
-
-            toast.dismiss("loading");
-          } else {
-            toast.error(`API response error: ${response.status}`, { autoClose: 2000 });
-          }
-          
-        } else {
-          toast.error(`Login Failed! ${response.message}`, {
-            autoClose: 2000, 
-          });
-        }
-      } catch (error) {
-        console.error("Error occurred:", error);
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + authTokenId
       }
+    });
+    try {
+      if (response.status === 200) {
+        if (response.ok && response.body) {
+          const resData = await response.json();
+          if (resData) {
+            cardDataChart(resData)
+          }
+          setStatistics(resData);
+
+          toast.dismiss("loading");
+        } else {
+          toast.error(`API response error: ${response.status}`, { autoClose: 2000 });
+        }
+
+      } else {
+        toast.error(`Login Failed! ${response.message}`, {
+          autoClose: 2000,
+        });
+      }
+    } catch (error) {
+      console.error("Error occurred:", error);
+    }
   };
 
 
@@ -237,15 +228,15 @@ export default function Dashboard() {
               <Grid item xs={12}>
                 <Card sx={{ maxWidth: 100 + "%" }}>
                   <CardContent>
-                  <h5 style={{textAlign: 'center'}}>Status Overview ['Initiated','Inprogress', 'Completed']</h5>
-                  <BarChart
-                    xAxis={[{ scaleType: 'band', data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], name: 'Status' }]}
-                    yAxis={[{ name: 'Number of Tasks' }]}
-                    series={[{ data: [4,1,2,3,5,7,2,3,2,1,3,3] }, { data: [1,3,4,4,2,2,5,7,1,3,4,6] }, { data: [3,1,2,2,3,4,5,6,7,8,2,1] }]}
-                    width={1100}
-                    height={300}
-                    title="Status Overview"
-                  />
+                    <h5 style={{ textAlign: 'center' }}>Status Overview ['Initiated','Inprogress', 'Completed']</h5>
+                    <BarChart
+                      xAxis={[{ scaleType: 'band', data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], name: 'Status' }]}
+                      yAxis={[{ name: 'Number of Tasks' }]}
+                      series={[{ data: [4, 1, 2, 3, 5, 7, 2, 3, 2, 1, 3, 3] }, { data: [1, 3, 4, 4, 2, 2, 5, 7, 1, 3, 4, 6] }, { data: [3, 1, 2, 2, 3, 4, 5, 6, 7, 8, 2, 1] }]}
+                      width={1100}
+                      height={300}
+                      title="Status Overview"
+                    />
                   </CardContent>
                 </Card>
               </Grid>

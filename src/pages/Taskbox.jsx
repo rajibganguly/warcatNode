@@ -1,5 +1,3 @@
-
-import { useState } from "react";
 import * as React from 'react';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -10,25 +8,17 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import { Link } from "react-router-dom";
 import InputFileUpload from "../components/InputFileUpload";
-import { Button, TextField } from "@mui/material";
+import { Button } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import { useTheme } from '@mui/material/styles';
 import InputLabel from '@mui/material/InputLabel';
 import Sidebar from "../components/Sidebar";
-
 import { Input as BaseInput } from '@mui/base/Input';
 import { styled } from '@mui/system';
 
-
-
-
-function Label({ componentName, valueType }) {
-
-}
 const Input = React.forwardRef(function CustomInput(props, ref) {
     return (
         <BaseInput
@@ -104,10 +94,6 @@ const TextareaElement = styled('textarea', {
   `,
 );
 
-
-
-
-
 const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
@@ -128,24 +114,12 @@ const AppBar = styled(MuiAppBar, {
     }),
 }));
 
-
-
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 export default function AddTasks() {
     const [open, setOpen] = React.useState(true);
-    const [personName, setPersonName] = React.useState([]);
-    const theme = useTheme();
-    const handleChange = (event) => {
-        const {
-            target: { value },
-        } = event;
-        setPersonName(
-            // On autofill we get a stringified value.
-            typeof value === 'string' ? value.split(',') : value,
-        );
-    }
+
     const handleOutput = (open) => {
         toggleDrawer();
     };
@@ -244,8 +218,8 @@ export default function AddTasks() {
                                         pb: 2,
 
                                     }}>
-                                        <InputLabel id="demo-multiple-chip-label1"  sx={{  marginBottom: '1%' }}>Add Note</InputLabel>
-                                        <Input fullWidth rows={4} aria-label="Demo input"  multiline placeholder="Write Note…" />
+                                        <InputLabel id="demo-multiple-chip-label1" sx={{ marginBottom: '1%' }}>Add Note</InputLabel>
+                                        <Input fullWidth rows={4} aria-label="Demo input" multiline placeholder="Write Note…" />
                                         <Button
                                             variant="contained"
                                             color="success"
@@ -257,9 +231,9 @@ export default function AddTasks() {
                                     </Grid>
 
                                     <Grid item xs={12}>
-                                        <InputLabel sx={{  marginBottom: '1%' }}>Upload Report</InputLabel>
-                                        <InputFileUpload fullWidth title= "Upload Report"/>
-                                        <Input sx={{pt:2}} fullWidth aria-label="Demo input" multiline placeholder="Description" />
+                                        <InputLabel sx={{ marginBottom: '1%' }}>Upload Report</InputLabel>
+                                        <InputFileUpload fullWidth title="Upload Report" />
+                                        <Input sx={{ pt: 2 }} fullWidth aria-label="Demo input" multiline placeholder="Description" />
 
                                         <Button
                                             variant="contained"
@@ -270,10 +244,10 @@ export default function AddTasks() {
                                             Submit
                                         </Button>
                                     </Grid>
-                                   
+
                                 </Grid>
 
-                                
+
                             </CardContent>
                         </Card>
                     </Box>

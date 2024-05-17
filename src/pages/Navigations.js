@@ -1,22 +1,27 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+/* eslint-disable react-hooks/exhaustive-deps */
+import "../App.css";
+import LogIn from "./Login";
+import Dashboard from "./Dashboard";
+import AddDepartment from "./AddDepartment";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import Departments from "./Departments";
+import Meetings from "./Meetings";
+import Reports from "./Reports";
+import Tasks from "./Tasks";
+import AddNewMeeting from "./AddNewMeeting";
+import AddTask from "./AddTasks";
+import EditDepartment from "./EditDepartment";
+import EditMeeting from "./EditMeeting";
 import { useAuth } from "../providers/AuthProvider";
 import { getItem } from "../config/storage";
 import { useEffect } from "react";
 import { fetchDepartments } from "../redux/slices/departmentSlice/departmentsSlice";
 import { useDispatch } from "react-redux";
-
-// Import your components
-import LogIn from "./Login";
-import Dashboard from "./Dashboard";
-import Departments from "./Departments";
-import Meetings from "./Meetings";
-import Reports from "./Reports";
-import Tasks from "./Tasks";
-import AddDepartment from "./AddDepartment";
-import AddNewMeeting from "./AddNewMeeting";
-import AddTask from "./AddTasks";
-import EditDepartment from "./EditDepartment";
-import EditMeeting from "./EditMeeting";
 import TaskList from "./TaskList";
 import TaskNote from "./TaskNote";
 import TaskUpload from "./TaskUpload";

@@ -13,14 +13,7 @@ import Link from "@mui/material/Link";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Reporttable from '../components/Reporttable';
-
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton"; import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { mainListItems, secondaryListItems } from "../components/listitems";
-import LogoBlack from "../components/logoblack";
-import ProfileSidePane from "../components/profileSidepane";
-import MuiDrawer from "@mui/material/Drawer";
+import IconButton from "@mui/material/IconButton";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
@@ -46,8 +39,6 @@ const AppBar = styled(MuiAppBar, {
     }),
   }),
 }));
-
-
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
@@ -91,10 +82,6 @@ export default function Reports() {
   const [open, setOpen] = React.useState(true);
   const [filteredInfo, setFilteredInfo] = useState({});
   const [sortedInfo, setSortedInfo] = useState({});
-  const [modalVisible, setModalVisible] = React.useState(false);
-  const [selectedRecord, setSelectedRecord] = React.useState(null);
-
- 
 
   const columns = [
     {
@@ -110,7 +97,6 @@ export default function Reports() {
       sorter: (a, b) => a.name.length - b.name.length,
       sortOrder: sortedInfo.columnKey === 'name' ? sortedInfo.order : null,
       ellipsis: true,
-      
     },
     {
       title: 'Age',
@@ -148,7 +134,6 @@ export default function Reports() {
       sortOrder: sortedInfo.columnKey === 'city' ? sortedInfo.order : null,
       ellipsis: true,
     },
-   
   ];
 
   const handleOutput = (open) => {
@@ -231,12 +216,10 @@ export default function Reports() {
                       <Button sx={{
                         backgroundColor: '#6c757d',
                         borderColor: '1px solid #6c757d',
-
                         '&:hover': {
                           backgroundColor: '#5c636a',
                           borderColor: '#5c636a'
                         },
-
                       }}>Copy</Button>
                       <Button sx={{
                         backgroundColor: '#6c757d',
@@ -245,7 +228,6 @@ export default function Reports() {
                           backgroundColor: '#5c636a',
                           borderColor: '#5c636a'
                         },
-
                       }}>Excel</Button>
                       <Button sx={{
                         backgroundColor: '#6c757d',
@@ -254,7 +236,6 @@ export default function Reports() {
                           backgroundColor: '#5c636a',
                           borderColor: '#5c636a'
                         },
-
                       }}>PDF</Button>
                       <Button sx={{
                         backgroundColor: '#6c757d',
@@ -263,7 +244,6 @@ export default function Reports() {
                           backgroundColor: '#5c636a',
                           borderColor: '#5c636a'
                         },
-
                       }}>Column Visibility</Button>
                     </ButtonGroup>
                     <div>
@@ -283,7 +263,6 @@ export default function Reports() {
                       />
                     </div>
                   </div>
-
                 </Paper>
               </Grid>
             </Grid>
@@ -298,11 +277,8 @@ export default function Reports() {
                       alignItems: 'center',
                       padding: 2,
                       borderBottom: '1px solid #eff2f7',
-
                     }}
                   >
-
-
                   </Box>
                   <CardContent>
                     <Reporttable
@@ -312,8 +288,6 @@ export default function Reports() {
                       sortedInfo={sortedInfo}
                       setFilteredInfo={setFilteredInfo}
                       setSortedInfo={setSortedInfo}
-                     
-
                     />
                   </CardContent>
                 </Card>

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Modal } from 'antd';
-import { Card, Space } from 'antd';
 import { Col, Row } from 'antd';
 import { TextField } from "@mui/material";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -23,11 +22,7 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 const StaticModel = ({ visible, onClose }) => {
-    const [selectedDate, setSelectedDate] = React.useState(null);
 
-    const handleDateChange = (date) => {
-        setSelectedDate(date);
-    };
     return (
         <>
             <Modal
@@ -36,10 +31,8 @@ const StaticModel = ({ visible, onClose }) => {
                 onCancel={onClose}
                 width={800}
                 minWidth={400}
-
                 footer={[
-
-                    <Button key="submit" type="primary" onClick={onClose} style={{ backgroundColor: '#0a1832', color: '#ffffff', display:'flex',justifyContent:'start' }}>
+                    <Button key="submit" type="primary" onClick={onClose} style={{ backgroundColor: '#0a1832', color: '#ffffff', display: 'flex', justifyContent: 'start' }}>
                         Add Sub Task
                     </Button>,
                 ]}
@@ -54,18 +47,14 @@ const StaticModel = ({ visible, onClose }) => {
                             variant="outlined"
                             fullWidth
                             name="dep_name"
-
                         />
                     </Col>
 
-
                     <Col span={12} style={{ marginBottom: 16 }}> {/* Half width */}
                         <label>Department / Government Organisation</label>
-
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker label="Basic date picker" />
                         </LocalizationProvider>
-
                     </Col>
                     <Col span={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}> {/* Half width */}
                         <Button
@@ -80,8 +69,6 @@ const StaticModel = ({ visible, onClose }) => {
                             <VisuallyHiddenInput type="file" />
                         </Button>
                     </Col>
-                   
-
                 </Row>
             </Modal>
         </>

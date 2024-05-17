@@ -1,4 +1,4 @@
-
+/* eslint-disable jsx-a11y/img-redundant-alt */
 import React, { useState } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -22,7 +22,6 @@ import Footer from "../components/Footer";
 import Header from "../components/header";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import { useTheme } from '@mui/material/styles';
 
 const drawerWidth = 240;
 
@@ -75,25 +74,12 @@ const defaultTheme = createTheme();
 
 export default function AddTasks() {
     const [open, setOpen] = React.useState(true);
-    const [setPersonName] = React.useState([]);
-    const theme = useTheme();
-    const handleChange = (event) => {
-        const {
-            target: { value },
-        } = event;
-        setPersonName(
-            // On autofill we get a stringified value.
-            typeof value === 'string' ? value.split(',') : value,
-        );
-    }
     const handleOutput = (open) => {
         toggleDrawer();
     };
     const toggleDrawer = () => {
         setOpen(!open);
     };
-
-
 
     const [inputGroups, setInputGroups] = useState([
         [
@@ -102,38 +88,6 @@ export default function AddTasks() {
             { id: 3, type: "date", value: null },
         ],
     ]);
-
-    function handleInputChange(groupId, id, e) {
-        const newInputGroups = [...inputGroups];
-        const groupIndex = newInputGroups.findIndex(
-            (group) => group[0].id === groupId
-        );
-        if (groupIndex !== -1) {
-            const inputIndex = newInputGroups[groupIndex].findIndex(
-                (input) => input.id === id
-            );
-            if (inputIndex !== -1) {
-                newInputGroups[groupIndex][inputIndex].value = e.target.value;
-                setInputGroups(newInputGroups);
-            }
-        }
-    }
-
-    function handleFileInputChange(groupId, id, e) {
-        const newInputGroups = [...inputGroups];
-        const groupIndex = newInputGroups.findIndex(
-            (group) => group[0].id === groupId
-        );
-        if (groupIndex !== -1) {
-            const inputIndex = newInputGroups[groupIndex].findIndex(
-                (input) => input.id === id
-            );
-            if (inputIndex !== -1) {
-                newInputGroups[groupIndex][inputIndex].value = e.target.files[0];
-                setInputGroups(newInputGroups);
-            }
-        }
-    }
 
     function handleAddClick() {
         const lastGroupId = inputGroups[inputGroups.length - 1][0]?.id || 0;
@@ -147,17 +101,9 @@ export default function AddTasks() {
         setInputGroups(newInputGroups);
     }
 
-    function handleRemoveClick(groupId) {
-        const newInputGroups = inputGroups.filter(
-            (group) => group[0].id !== groupId
-        );
-        setInputGroups(newInputGroups);
-    }
-
     function handleSubmit() {
         console.log(inputGroups);
     }
-
 
     return (
         <ThemeProvider theme={defaultTheme}>
@@ -263,57 +209,57 @@ export default function AddTasks() {
                             </Box>
                             <CardContent>
 
-                            <Card sx={{ width: 100 + '%', padding: 2 }}>
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'center',
-                                        padding: 2,
-                                        borderBottom: '1px solid #eff2f7',
+                                <Card sx={{ width: 100 + '%', padding: 2 }}>
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            padding: 2,
+                                            borderBottom: '1px solid #eff2f7',
 
-                                    }}
-                                >
-                                    <Typography variant="body1">Tasks 1</Typography>
+                                        }}
+                                    >
+                                        <Typography variant="body1">Tasks 1</Typography>
 
-                                </Box>
-                                <CardContent>
-                                    <Box>
-                                        <Typography>
-                                            In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before the final copy is available.
-                                        </Typography>
-                                        <Divider sx={{my:2}}/>
-                                        <Typography>
-                                            In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before the final copy is available.
-                                        </Typography>
                                     </Box>
-                                    <Box>
-                                        <img src="" alt="image" />
-                                    </Box>
+                                    <CardContent>
+                                        <Box>
+                                            <Typography>
+                                                In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before the final copy is available.
+                                            </Typography>
+                                            <Divider sx={{ my: 2 }} />
+                                            <Typography>
+                                                In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before the final copy is available.
+                                            </Typography>
+                                        </Box>
+                                        <Box>
+                                            <img src="" alt="image" />
+                                        </Box>
 
-                                    <Grid container spacing={2}>
-                                    <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'start' }}>
-                                        <Button
-                                            variant="contained"
-                                            color="success"
-                                            sx={{ color: 'white', marginTop: '2%', mr: '10px', fontWeight: 'bold' }} // Added left margin for spacing
-                                            onClick={handleAddClick}
-                                        >
-                                            Accept
-                                        </Button>
-                                        <Button
-                                            variant="contained"
-                                            color="error"
-                                            sx={{ color: 'white', marginTop: '2%' ,fontWeight: 'bold'}}
-                                            onClick={handleSubmit}
-                                        >
-                                            Reject
-                                        </Button>
-                                    </Grid>
-                                </Grid>
-                                </CardContent>
-                            </Card>
-                                
+                                        <Grid container spacing={2}>
+                                            <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'start' }}>
+                                                <Button
+                                                    variant="contained"
+                                                    color="success"
+                                                    sx={{ color: 'white', marginTop: '2%', mr: '10px', fontWeight: 'bold' }} // Added left margin for spacing
+                                                    onClick={handleAddClick}
+                                                >
+                                                    Accept
+                                                </Button>
+                                                <Button
+                                                    variant="contained"
+                                                    color="error"
+                                                    sx={{ color: 'white', marginTop: '2%', fontWeight: 'bold' }}
+                                                    onClick={handleSubmit}
+                                                >
+                                                    Reject
+                                                </Button>
+                                            </Grid>
+                                        </Grid>
+                                    </CardContent>
+                                </Card>
+
                             </CardContent>
                         </Card>
                     </Box>
