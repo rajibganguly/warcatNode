@@ -1,36 +1,32 @@
-import "../App.css";
-import LogIn from "./Login";
-import Dashboard from "./Dashboard";
-import AddDepartment from "./AddDepartment";
-
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
-import Departments from "./Departments";
-import Meetings from "./Meetings";
-import Reports from "./Reports";
-import Tasks from "./Tasks";
-import AddNewMeeting from "./AddNewMeeting";
-import AddTask from "./AddTasks";
-import EditDepartment from "./EditDepartment";
-import EditMeeting from "./EditMeeting";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "../providers/AuthProvider";
-import TaskList from "./TaskList";
-import TaskNote from "./TaskNote";
-import TaskUpload from "./TaskUpload";
-import TaskApproval from "./TaskApproval";
 import { getItem } from "../config/storage";
 import { useEffect } from "react";
 import { fetchDepartments } from "../redux/slices/departmentSlice/departmentsSlice";
 import { useDispatch } from "react-redux";
 
+// Import your components
+import LogIn from "./Login";
+import Dashboard from "./Dashboard";
+import Departments from "./Departments";
+import Meetings from "./Meetings";
+import Reports from "./Reports";
+import Tasks from "./Tasks";
+import AddDepartment from "./AddDepartment";
+import AddNewMeeting from "./AddNewMeeting";
+import AddTask from "./AddTasks";
+import EditDepartment from "./EditDepartment";
+import EditMeeting from "./EditMeeting";
+import TaskList from "./TaskList";
+import TaskNote from "./TaskNote";
+import TaskUpload from "./TaskUpload";
+import TaskApproval from "./TaskApproval";
+
 const Navigations = () => {
   const { authToken } = useAuth();
   const localData = getItem("user");
   const dispatch = useDispatch();
+
   useEffect(() => {
     const userId = localData?._id;
     const roleType = localData?.role_type;
@@ -41,64 +37,25 @@ const Navigations = () => {
     <Router>
       <Routes>
         <Route exact path="/" element={<LogIn />} />
-        <Route
-          path="/dashboard"
-          element={!authToken ? <Navigate to="/" /> : <Dashboard />}
-        />
-        <Route
-          path="/departments"
-          element={!authToken ? <Navigate to="/" /> : <Departments />}
-        />
-        <Route
-          path="/meetings"
-          element={!authToken ? <Navigate to="/" /> : <Meetings />}
-        />
-        <Route
-          path="/tasks"
-          element={!authToken ? <Navigate to="/" /> : <Tasks />}
-        />
-        <Route
-          path="/reports"
-          element={!authToken ? <Navigate to="/" /> : <Reports />}
-        />
-        <Route
-          path="/add_department"
-          element={!authToken ? <Navigate to="/" /> : <AddDepartment />}
-        />
-        <Route
-          path="/add-new-meetings"
-          element={!authToken ? <Navigate to="/" /> : <AddNewMeeting />}
-        />
-        <Route
-          path="/add-tasks"
-          element={!authToken ? <Navigate to="/" /> : <AddTask />}
-        />
-        <Route
-          path="/tasks-list"
-          element={!authToken ? <Navigate to="/" /> : <TaskList />}
-        />
-        <Route
-          path="/edit-departments/:id"
-          element={!authToken ? <Navigate to="/" /> : <EditDepartment />}
-        />
-        <Route
-          path="/edit-meeting"
-          element={!authToken ? <Navigate to="/" /> : <EditMeeting />}
-        />
-        <Route
-          path="/task-note"
-          element={!authToken ? <Navigate to="/" /> : <TaskNote />}
-        />
-        <Route
-          path="/task-upload"
-          element={!authToken ? <Navigate to="/" /> : <TaskUpload />}
-        />
-        <Route
-          path="/task-approval"
-          element={!authToken ? <Navigate to="/" /> : <TaskApproval />}
-        />
-        <Route path="*" element={<Navigate to="/" />} />
-        {/* Add more routes as needed */}
+        {authToken && (
+          <>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/departments" element={<Departments />} />
+            <Route path="/meetings" element={<Meetings />} />
+            <Route path="/tasks" element={<Tasks />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/add_department" element={<AddDepartment />} />
+            <Route path="/add-new-meetings" element={<AddNewMeeting />} />
+            <Route path="/add-tasks" element={<AddTask />} />
+            <Route path="/tasks-list" element={<TaskList />} />
+            <Route path="/edit-departments/:id" element={<EditDepartment />} />
+            <Route path="/edit-meeting" element={<EditMeeting />} />
+            <Route path="/task-note" element={<TaskNote />} />
+            <Route path="/task-upload" element={<TaskUpload />} />
+            <Route path="/task-approval" element={<TaskApproval />} />
+          </>
+        )}
+        {!authToken && <Route path="*" element={<Navigate to="/" />} />}
       </Routes>
     </Router>
   );

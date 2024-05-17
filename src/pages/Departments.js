@@ -71,6 +71,7 @@ export default function Departments() {
   const [modalContent, setModalContent] = useState(null);
   const [loadingData, setLoadingData] = useState(false);
   const departments = useSelector(state => state.departments.data);
+
   const [data, setData] = useState(departments ? departments : []);
   const { id } = useParams();
   const navigate = useNavigate();
@@ -119,20 +120,9 @@ export default function Departments() {
     setModalVisible(false);
     setModalContent(null);
   };
-
   const handleEditClick = (id) => {
-    // Example navigation logic based on authentication
-    if (authToken) {
-
-      navigate(`/edit-departments/${id}`);
-
-
-    } else {
-
-      navigate("/");
-    }
+    navigate(`/edit-departments/${id}`);
   };
-
 
 
   const icons = {

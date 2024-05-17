@@ -1,4 +1,5 @@
-import * as React from "react";
+/* eslint-disable no-unused-vars */
+import React, { useEffect, useState } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -20,8 +21,7 @@ import Stack from "@mui/material/Stack";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import { toast } from "react-toastify";
-
-import axiosInstance from "../apiConfig/axoisSetup";
+import { useSelector } from "react-redux";
 
 const drawerWidth = 240;
 
@@ -51,6 +51,9 @@ export default function EditDepartment() {
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(true);
   const [submitDisable, setSubmitDisable] = React.useState(false);
+  const departments = useSelector(state => state.departments.data);
+  // console.log(departments,'departmentsdepartments')
+  const [departmentList, setDepartmentList] = useState(departments ? departments : []);
   const [formData, setFormData] = React.useState({
     department_name: "",
     secretary: {
@@ -66,74 +69,30 @@ export default function EditDepartment() {
     },
   });
 
+  useEffect(() => {
+    if (departmentList) {
+      const departmentData = departmentList.find((dept) => dept.id === id);
+      console.log(departmentData, 'departmentData row')
 
+      setFormData({
+        dep_name: departmentData.department.department_name,
+        secretary: {
+          name: departmentData.secretary?.name,
+          phone_number: departmentData.secretary?.phone_number,
+          role_type :"secretary",
+          email: departmentData.secretary?.email,
+        },
+        headOffice: {
+          name: departmentData.headOffice?.name,
+          designation: departmentData.headOffice?.designation,
+          role_type :"head_of_Office",
+          phone_number: departmentData.headOffice?.phone_number,
+          email: departmentData.headOffice?.email,
+        },
+      });
+    }
 
-  React.useEffect(() => {
-    const fetchDepartmentData = async () => {
-      try {
-        const auth_token = localStorage.getItem("token");
-        const localUser = JSON.parse(localStorage.getItem("user"));
-        const currentRoleType = localUser.role_type;
-        const currentUserId = localUser._id;
-
-        const params = new URLSearchParams({
-          role_type: currentRoleType,
-          userId: currentUserId,
-        });
-
-        const response = await fetch(
-          `https://warcat2024-qy2v.onrender.com/api/departments?${params}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${auth_token}`,
-
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch department data");
-        }
-
-        const departmentList = await response.json();
-        console.log("Department List:", departmentList);
-
-        const departmentData = departmentList.find((dept) => dept.id === id);
-        console.log("Department Data:", departmentData.department.department_name);
-
-        if (!departmentData) {
-          throw new Error("Department not found");
-        }
-
-        setFormData({
-          dep_name : departmentData.department.department_name,
-          secretary: {
-            name: departmentData.secretary.name,
-            phone_number: departmentData.secretary.phone_number,
-            email: departmentData.secretary.email,
-          },
-          headOffice: {
-            name: departmentData.headOffice.name,
-            designation: departmentData.headOffice.designation,
-            phone_number: departmentData.headOffice.phone_number,
-            email: departmentData.headOffice.email,
-          },
-        });
-      } catch (error) {
-        console.error("Error fetching department data:", error);
-        toast.error("Failed to fetch department data");
-        // Redirect or handle error here
-      }
-    };
-
-    fetchDepartmentData();
-  }, [id]);
-
-
-
-
+  }, [departmentList, id]);
 
   const handleOutput = (open) => {
     toggleDrawer();
@@ -198,8 +157,8 @@ export default function EditDepartment() {
   const handleAddDepartment = async (event) => {
     event.preventDefault();
 
-    
-   
+
+
 
 
     try {
@@ -301,7 +260,7 @@ export default function EditDepartment() {
                   >
                     <Typography variant="body1">Edit Departments</Typography>
                   </Box>
-                
+
                   <CardContent>
                     {formData ? (
                       <Box component="form" noValidate autoComplete="off">
