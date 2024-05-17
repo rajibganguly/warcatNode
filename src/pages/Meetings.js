@@ -1,5 +1,4 @@
-import * as React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -8,7 +7,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -55,11 +54,11 @@ const AppBar = styled(MuiAppBar, {
 const defaultTheme = createTheme();
 
 export default function Meetings() {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = useState(true);
   const [data, setData] = useState([]);
   const localUser = JSON.parse(localStorage.getItem('user'));
   const currentRoleType = localUser.role_type;
-
+  const navigate = useNavigate();
   useEffect(() => {
     fetchMeetingData();
   }, []);
@@ -95,6 +94,10 @@ export default function Meetings() {
   };
   const toggleDrawer = () => {
     setOpen(!open);
+  };
+
+  const handleAddTasks = () => {
+    navigate(`/add-tasks`);
   };
 
   return (
@@ -155,7 +158,6 @@ export default function Meetings() {
                           alignItems: 'center',
                           padding: 2,
                           borderBottom: '1px solid #eff2f7',
-
                         }}
                       >
                         <Typography variant="body1" sx={{ fontWeight: 600 }}>Meetings</Typography>
@@ -172,7 +174,7 @@ export default function Meetings() {
                         <TableNew
                           data={data}
                           column={column}
-
+                          handleSeeClick1={handleAddTasks}
                         />
                       </CardContent>
                     </Card>
