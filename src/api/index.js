@@ -12,27 +12,43 @@ const getAllDepartments = (userId, role_type) => {
 
 };
 
+const editDepartment = (departmentData, authToken) => {
+    return axios({
+        method: 'put',
+        url: `${process.env.REACT_APP_API}/edit-register-user-with-department`,
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authToken}`,
+        },
+        data: departmentData
+    });
+};
 
 const taskStatusPercentages = (userId, role_type) => {
-    
+
     return axios({
         method: 'get',
         url: `${process.env.REACT_APP_API}/task-status-percentages?userId=${userId}&role_type=${role_type}`
     });
 };
-
-
-const getAllTask = (userId, role_type) => {
-    
+const editRegisterUserWithDepartment = (updatedFormData, authToken) => {
     return axios({
-        method: 'get',
-        url: `${process.env.REACT_APP_API}/tasks?userId=${userId}&role_type=${role_type}`
+        method: 'put',
+        url: `${process.env.REACT_APP_API}/edit-register-user-with-department`,
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authToken}`,
+        },
+        data: updatedFormData
     });
 };
+
+
+
+
 export const API = {
     getAllDepartments,
     taskStatusPercentages,
-    getAllTask
+    editDepartment,
+    editRegisterUserWithDepartment
 };
-
-

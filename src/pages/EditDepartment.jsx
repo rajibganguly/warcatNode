@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import React, { useEffect } from "react";
+import * as React from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -11,6 +10,7 @@ import Grid from "@mui/material/Grid";
 import { Link } from "react-router-dom";
 import { Button, TextField } from "@mui/material";
 import { useParams } from "react-router-dom";
+
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import { API } from "../api";
 
 const drawerWidth = 240;
 
@@ -49,10 +50,10 @@ export default function EditDepartment() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(true);
+  const departmentList = useSelector(state => state.departments.data);
   const [submitDisable, setSubmitDisable] = React.useState(false);
-  const departments = useSelector(state => state.departments.data);
-  // console.log(departments,'departmentsdepartments')
-  const [departmentList, setDepartmentList] = React.useState(departments ? departments : []);
+
+
   const [formData, setFormData] = React.useState({
     department_name: "",
     secretary: {
@@ -68,30 +69,39 @@ export default function EditDepartment() {
     },
   });
 
-  useEffect(() => {
-    if (departmentList) {
-      const departmentData = departmentList.find((dept) => dept.id === id);
-      console.log(departmentData, 'departmentData row')
+  
 
-      setFormData({
-        dep_name: departmentData.department.department_name,
-        secretary: {
-          name: departmentData.secretary?.name,
-          phone_number: departmentData.secretary?.phone_number,
-          role_type: "secretary",
-          email: departmentData.secretary?.email,
-        },
-        headOffice: {
-          name: departmentData.headOffice?.name,
-          designation: departmentData.headOffice?.designation,
-          role_type: "head_of_Office",
-          phone_number: departmentData.headOffice?.phone_number,
-          email: departmentData.headOffice?.email,
-        },
-      });
+
+
+  React.useEffect(() => {
+    const departmentData = departmentList.find((dept) => dept.id === id);
+    console.log("Department Data:", departmentData.department.department_name);
+
+    if (!departmentData) {
+      throw new Error("Department not found");
     }
+    setFormData({
+      dep_name: departmentData.department.department_name,
+      secretary: {
+        name: departmentData.secretary.name,
+        phone_number: departmentData.secretary.phone_number,
+        role_type: "secretary",
+        email: departmentData.secretary.email,
+      },
+      headOffice: {
+        name: departmentData.headOffice.name,
+        role_type: "head_of_Office",
+        designation: departmentData.headOffice.designation,
+        phone_number: departmentData.headOffice.phone_number,
+        email: departmentData.headOffice.email,
+      },
+    });
 
-  }, [departmentList, id]);
+  }, [id]);
+
+
+
+
 
   const handleOutput = (open) => {
     toggleDrawer();
@@ -101,12 +111,31 @@ export default function EditDepartment() {
   };
 
   /**
+   * Check all fields if not empty
+   */
+  const allFieldsMapped = (obj) => {
+    for (const key in obj) {
+      // Check if the value is an object, then recursively check its fields
+      if (typeof obj[key] === "object") {
+        if (!allFieldsMapped(obj[key])) {
+          return false;
+        }
+      } else {
+        // If any field is empty, return false
+        if (!obj[key]) {
+          return false;
+        }
+      }
+    }
+    return true; 
+  };
+
+  /**
    * Collect form values
    */
   const handleChange = (event) => {
     const { name, value } = event.target;
-
-
+  
     if (name.includes(".")) {
       const [parent, child] = name.split(".");
       setFormData((prevFormData) => ({
@@ -117,13 +146,14 @@ export default function EditDepartment() {
         },
       }));
     } else {
-
       setFormData((prevFormData) => ({
         ...prevFormData,
         [name]: value,
       }));
     }
   };
+  
+  
 
 
   const full_id = id.toString();
@@ -137,21 +167,12 @@ export default function EditDepartment() {
     event.preventDefault();
 
     try {
-      const auth_token = localStorage.getItem("token");
-
       const updatedFormData = {
         ...formData,
         department_id: extracted_id,
       };
 
-      const response = await fetch(`https://warcat2024-qy2v.onrender.com/api/edit-register-user-with-department`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${auth_token}`,
-        },
-        body: JSON.stringify(updatedFormData),
-      });
+      const response = await API.editRegisterUserWithDepartment(updatedFormData, localStorage.getItem("token"));
 
       if (response.status === 200) {
         toast.success("Department updated successfully");
