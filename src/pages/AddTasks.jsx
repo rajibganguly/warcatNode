@@ -121,7 +121,7 @@ export default function AddTasks() {
     const toggleDrawer = () => {
         setOpen(!open);
     };
-    
+
 
 
     const [inputGroups, setInputGroups] = useState([
@@ -265,7 +265,7 @@ export default function AddTasks() {
 
                                 <Grid container spacing={2} sx={{ mb: 4, borderBottom: '1px solid #eff2f7', pb: 2 }}>
                                     <Grid item xs={6}>
-                                    <InputLabel id="demo-multiple-chip-label1">Department / Government Organisation</InputLabel>
+                                        <InputLabel id="demo-multiple-chip-label1">Department / Government Organisation</InputLabel>
                                         <Select
                                             labelId="demo-multiple-chip-label2"
                                             id="demo-multiple-chip"
@@ -301,9 +301,20 @@ export default function AddTasks() {
                                             label="Tag"
                                             variant="outlined"
                                             fullWidth
+                                            select
                                             name="dep_name"
 
-                                        />
+                                        >
+                                            <MenuItem >
+                                                Admin
+                                            </MenuItem>
+                                            <MenuItem >
+                                                Secretary
+                                            </MenuItem>
+                                            <MenuItem >
+                                                Head Of Office
+                                            </MenuItem>
+                                        </TextField>
                                     </Grid>
                                     <Grid item xs={6}>
                                         <label>Meeting ID</label>
@@ -379,9 +390,11 @@ export default function AddTasks() {
                                                 <Button
                                                     variant="contained"
                                                     color="success"
-                                                    sx={{ color: 'white', marginTop: '2%',backgroundColor: '#f32f53','&:hover': {
-                                                        backgroundColor: '#f32f53', 
-                                                    }, }}
+                                                    sx={{
+                                                        color: 'white', marginTop: '2%', backgroundColor: '#f32f53', '&:hover': {
+                                                            backgroundColor: '#f32f53',
+                                                        },
+                                                    }}
                                                     onClick={() => handleRemoveClick(group[0].id)}
                                                 >
                                                     Remove Task

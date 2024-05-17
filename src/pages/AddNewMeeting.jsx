@@ -201,10 +201,13 @@ export default function AddNewMeeting() {
                                                             onChange={handleChange}
                                                         >
                                                             <MenuItem >
-                                                                Tag1
+                                                                Admin
                                                             </MenuItem>
                                                             <MenuItem >
-                                                                Tag2
+                                                                Secretary
+                                                            </MenuItem>
+                                                            <MenuItem >
+                                                                Head Of Office
                                                             </MenuItem>
                                                         </TextField>
                                                     </FormControl>
