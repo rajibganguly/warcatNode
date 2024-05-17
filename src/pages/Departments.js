@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -12,24 +13,17 @@ import Link from "@mui/material/Link";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import IconButton from "@mui/material/IconButton";
-import { Button, ButtonGroup, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import { Button, Dialog, DialogContent, DialogContentText } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { CloseOutlined } from '@mui/icons-material';
 import { useAuth } from "../providers/AuthProvider";
-
-import ApiConfig from "../config/ApiConfig"
-
-
-import { toast } from "react-toastify";
 import TableNew from "../components/TableNew";
-//import axiosInstance from "../config/axoisSetup";
 import Sidebar from "../components/Sidebar";
-
-import { CardActionArea, CardActions } from '@mui/material';
+import { CardActions } from '@mui/material';
 import { useSelector } from "react-redux";
 
 const column = [
@@ -58,30 +52,20 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-
-
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
-
-
 
 export default function Departments() {
   const [open, setOpen] = React.useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState(null);
-  const [loadingData, setLoadingData] = useState(false);
   const departments = useSelector(state => state.departments.data);
   const [data, setData] = useState(departments ? departments : []);
-  const { id } = useParams();
   const navigate = useNavigate();
   const { authToken } = useAuth();
 
   const localUser = JSON.parse(localStorage.getItem('user'));
   const currentRoleType = localUser.role_type;
-
-
-
-
 
   /**
    * @description Private function for fetch department data
@@ -132,8 +116,6 @@ export default function Departments() {
       navigate("/");
     }
   };
-
-
 
   const icons = {
     see: <EyeOutlined />,

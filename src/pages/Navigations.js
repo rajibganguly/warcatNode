@@ -1,8 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import "../App.css";
 import LogIn from "./Login";
 import Dashboard from "./Dashboard";
 import AddDepartment from "./AddDepartment";
-
 import {
   BrowserRouter as Router,
   Routes,

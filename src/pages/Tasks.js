@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import * as React from "react";
 import { useState } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
@@ -19,22 +20,20 @@ import "react-circular-progressbar/dist/styles.css";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
-import { EyeOutlined, EditOutlined, DeleteOutlined, PlusCircleOutlined } from "@ant-design/icons";
+import { EyeOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import IconButton from "@mui/material/IconButton";
 import Sidebar from "../components/Sidebar";
 import { toast } from "react-toastify";
 import { CloseOutlined } from '@mui/icons-material';
 import TableNew from "../components/TableNew";
-import { ButtonGroup, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import { TextField, Dialog, DialogContent, DialogContentText } from "@mui/material";
 import CardActions from "@mui/material/CardActions";
 import ApiConfig from '../config/ApiConfig'
-import FormControl from '@mui/material/FormControl';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-
 
 const drawerWidth = 240;
 const VisuallyHiddenInput = styled('input')({
@@ -299,18 +298,10 @@ export default function Tasks() {
     setModalContent(null);
   };
 
-
-
   const handleEditClick = (record) => {
     console.log("Edit clicked for:", record);
     // Implement logic for editing
   };
-
-  const handleDeleteClick = (record) => {
-    console.log("Delete clicked for:", record);
-    // Implement logic for deleting
-  };
-
 
   const handleOutput = (open) => {
     toggleDrawer();
@@ -318,7 +309,6 @@ export default function Tasks() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
-
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -341,7 +331,6 @@ export default function Tasks() {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-
             <Grid container spacing={3}>
               {/* Recent Orders */}
               <Grid item xs={12}>
@@ -512,7 +501,6 @@ export default function Tasks() {
                                     <Typography variant="body2" color="text.secondary">
                                       Attachment.png
                                     </Typography>
-
                                   </CardContent>
                                   <CardActions sx={{ justifyContent: 'flex-end' }}>
                                     <Button size="small" variant="contained" color="primary" >
@@ -580,8 +568,6 @@ export default function Tasks() {
                                             </DemoItem>
                                           </Grid>
 
-
-
                                           <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                             <Button
                                               component="label"
@@ -600,13 +586,11 @@ export default function Tasks() {
                                       </LocalizationProvider>
                                     </Grid>
                                   </Grid>
-
                                 </CardContent>
                                 <CardActions sx={{ justifyContent: 'flex-start' }}>
                                   <Button size="small" variant="contained" color="primary" >
                                     ADD
                                   </Button>
-                                  
                                 </CardActions>
                               </Card>
                             </DialogContentText>

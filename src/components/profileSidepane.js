@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
 
-const ProfileSidePane = ({isopen}) => {
+const ProfileSidePane = ({ isopen }) => {
     const localUser = localStorage.getItem('user');
     const user = JSON.parse(localUser);
     const centerLogo = {
@@ -26,9 +26,6 @@ const ProfileSidePane = ({isopen}) => {
                     <Typography variant="body1" mt={1} textAlign="left">Menu</Typography>
                 </Box> : null
             }
-
-
-          
         </>
     )
 }

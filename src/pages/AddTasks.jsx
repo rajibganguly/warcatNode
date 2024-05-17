@@ -9,14 +9,6 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import { Link } from "react-router-dom";
 import InputFileUpload from "../components/InputFileUpload";
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { mainListItems, secondaryListItems } from "../components/listitems";
-import LogoBlack from "../components/logoblack";
-import ProfileSidePane from "../components/profileSidepane";
-import MuiDrawer from "@mui/material/Drawer";
 import { Button, TextField } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
@@ -34,13 +26,8 @@ import MenuItem from '@mui/material/MenuItem';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import Sidebar from "../components/Sidebar";
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
-
-
-function Label({ componentName, valueType }) {
-
-}
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -51,19 +38,6 @@ const MenuProps = {
         },
     },
 };
-
-const names = [
-    'Oliver Hansen',
-    'Van Henry',
-    'April Tucker',
-    'Ralph Hubbard',
-    'Omar Alexander',
-    'Carlos Abbott',
-    'Miriam Wagner',
-    'Bradley Wilkerson',
-    'Virginia Andrews',
-    'Kelly Snyder',
-];
 
 function getStyles(name, personName, theme) {
     return {
@@ -94,8 +68,6 @@ const AppBar = styled(MuiAppBar, {
     }),
 }));
 
-
-
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
@@ -121,8 +93,6 @@ export default function AddTasks() {
     const toggleDrawer = () => {
         setOpen(!open);
     };
-
-
 
     const [inputGroups, setInputGroups] = useState([
         [
@@ -186,7 +156,6 @@ export default function AddTasks() {
     function handleSubmit() {
         console.log(inputGroups);
     }
-
 
     return (
         <ThemeProvider theme={defaultTheme}>
@@ -403,10 +372,6 @@ export default function AddTasks() {
                                         )}
                                     </Grid>
                                 ))}
-
-
-
-
 
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'start' }}>

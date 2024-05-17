@@ -1,5 +1,3 @@
-
-import { useState } from "react";
 import * as React from 'react';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -9,28 +7,17 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import { Link } from "react-router-dom";
-import InputFileUpload from "../components/InputFileUpload";
-
-import MuiDrawer from "@mui/material/Drawer";
-import { Button, TextField } from "@mui/material";
+import { Button } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import { useTheme } from '@mui/material/styles';
 import InputLabel from '@mui/material/InputLabel';
 import Sidebar from "../components/Sidebar";
-
 import { Input as BaseInput } from '@mui/base/Input';
 import { styled } from '@mui/system';
 
-
-
-
-function Label({ componentName, valueType }) {
-
-}
 const Input = React.forwardRef(function CustomInput(props, ref) {
     return (
         <BaseInput
@@ -106,10 +93,6 @@ const TextareaElement = styled('textarea', {
   `,
 );
 
-
-
-
-
 const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
@@ -130,39 +113,18 @@ const AppBar = styled(MuiAppBar, {
     }),
 }));
 
-
-
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 export default function TaskNote() {
     const [open, setOpen] = React.useState(true);
-    const [personName, setPersonName] = React.useState([]);
-    const theme = useTheme();
-    const handleChange = (event) => {
-        const {
-            target: { value },
-        } = event;
-        setPersonName(
-            // On autofill we get a stringified value.
-            typeof value === 'string' ? value.split(',') : value,
-        );
-    }
+
     const handleOutput = (open) => {
         toggleDrawer();
     };
     const toggleDrawer = () => {
         setOpen(!open);
     };
-
-
-
-
-
-
-
-
-
 
     return (
         <ThemeProvider theme={defaultTheme}>
@@ -225,25 +187,20 @@ export default function TaskNote() {
                     >
                         <Card sx={{ width: 100 + '%', padding: 2 }}>
                             <CardContent>
-
                                 <Grid container spacing={2} sx={{ mb: 4, borderBottom: '1px solid #eff2f7', pb: 2 }}>
-                                    
-                                    <Grid item xs={12} sx={{borderBottom: '1px solid #eff2f7', pb: 2 }}>
-                                    <InputLabel id="demo-multiple-chip-label1"  sx={{  marginBottom: '1%' }}>Add Note</InputLabel>
-                                    <Input fullWidth rows={4} aria-label="Demo input"  multiline placeholder="Write Note…" />
-                                    <Button
-                                        variant="contained"
-                                        color="success"
-                                        sx={{ color: 'white', marginTop: '2%' }}
-                                        onClick={null}
-                                    >
-                                        Add Now
-                                    </Button>
+                                    <Grid item xs={12} sx={{ borderBottom: '1px solid #eff2f7', pb: 2 }}>
+                                        <InputLabel id="demo-multiple-chip-label1" sx={{ marginBottom: '1%' }}>Add Note</InputLabel>
+                                        <Input fullWidth rows={4} aria-label="Demo input" multiline placeholder="Write Note…" />
+                                        <Button
+                                            variant="contained"
+                                            color="success"
+                                            sx={{ color: 'white', marginTop: '2%' }}
+                                            onClick={null}
+                                        >
+                                            Add Now
+                                        </Button>
                                     </Grid>
-                                   
                                 </Grid>
-
-                                
                             </CardContent>
                         </Card>
                     </Box>

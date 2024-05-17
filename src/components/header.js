@@ -11,12 +11,10 @@ import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
-import AccountCircle from '@mui/icons-material/AccountCircle';
 
 const Header = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
-  
   const localUser = localStorage.getItem('user');
   const user = JSON.parse(localUser);
 

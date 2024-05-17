@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Space, Table, Modal } from 'antd';
 
 
-const CustomTable = ({ data,columns, setFilteredInfo, setSortedInfo, modalVisible, setModalVisible, selectedRecord }) => {
+const CustomTable = ({ data, columns, setFilteredInfo, setSortedInfo, modalVisible, setModalVisible, selectedRecord }) => {
   const handleChange = (pagination, filters, sorter) => {
     setFilteredInfo(filters);
     setSortedInfo(sorter);
@@ -21,10 +21,6 @@ const CustomTable = ({ data,columns, setFilteredInfo, setSortedInfo, modalVisibl
     setSortedInfo({ order: 'descend', columnKey: 'age' });
   };
 
-  const handleSeeClick = (record) => {
-    console.log('View clicked for:', record);
-    setModalVisible(true);
-  };
   console.log(selectedRecord)
 
   return (

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import * as React from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -10,7 +11,6 @@ import Grid from "@mui/material/Grid";
 import { Link } from "react-router-dom";
 import { Button, TextField } from "@mui/material";
 import { useParams } from "react-router-dom";
-
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
@@ -20,8 +20,6 @@ import Stack from "@mui/material/Stack";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import { toast } from "react-toastify";
-
-import axiosInstance from "../apiConfig/axoisSetup";
 
 const drawerWidth = 240;
 
@@ -66,8 +64,6 @@ export default function EditDepartment() {
     },
   });
 
-
-
   React.useEffect(() => {
     const fetchDepartmentData = async () => {
       try {
@@ -108,7 +104,7 @@ export default function EditDepartment() {
         }
 
         setFormData({
-          dep_name : departmentData.department.department_name,
+          dep_name: departmentData.department.department_name,
           secretary: {
             name: departmentData.secretary.name,
             phone_number: departmentData.secretary.phone_number,
@@ -131,35 +127,11 @@ export default function EditDepartment() {
     fetchDepartmentData();
   }, [id]);
 
-
-
-
-
   const handleOutput = (open) => {
     toggleDrawer();
   };
   const toggleDrawer = () => {
     setOpen(!open);
-  };
-
-  /**
-   * Check all fields if not empty
-   */
-  const allFieldsMapped = (obj) => {
-    for (const key in obj) {
-      // Check if the value is an object, then recursively check its fields
-      if (typeof obj[key] === "object") {
-        if (!allFieldsMapped(obj[key])) {
-          return false;
-        }
-      } else {
-        // If any field is empty, return false
-        if (!obj[key]) {
-          return false;
-        }
-      }
-    }
-    return true; // All fields are not empty
   };
 
   /**
@@ -197,10 +169,6 @@ export default function EditDepartment() {
    */
   const handleAddDepartment = async (event) => {
     event.preventDefault();
-
-    
-   
-
 
     try {
       const auth_token = localStorage.getItem("token");
@@ -301,7 +269,7 @@ export default function EditDepartment() {
                   >
                     <Typography variant="body1">Edit Departments</Typography>
                   </Box>
-                
+
                   <CardContent>
                     {formData ? (
                       <Box component="form" noValidate autoComplete="off">

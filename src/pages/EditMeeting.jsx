@@ -8,24 +8,13 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-
 import { Link } from "react-router-dom";
-
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { mainListItems, secondaryListItems } from "../components/listitems";
-import LogoBlack from "../components/logoblack";
-import ProfileSidePane from "../components/profileSidepane";
-import MuiDrawer from "@mui/material/Drawer";
 import { Button, TextField } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import { useNavigate } from "react-router-dom";
 import { useTheme } from '@mui/material/styles';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
@@ -52,10 +41,6 @@ const VisuallyHiddenInput = styled('input')({
     whiteSpace: 'nowrap',
     width: 1,
 });
-
-
-
-
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -113,7 +98,6 @@ const AppBar = styled(MuiAppBar, {
     }),
 }));
 
-
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
@@ -132,14 +116,12 @@ export default function EditMeeting() {
         );
     }
 
-
     const handleOutput = (open) => {
         toggleDrawer();
     };
     const toggleDrawer = () => {
         setOpen(!open);
     };
-
 
     return (
         <ThemeProvider theme={defaultTheme}>
@@ -323,14 +305,14 @@ export default function EditMeeting() {
                                                                 </DemoItem>
                                                             </Grid>
 
-                                                            <Grid xs={4} sx={{display: 'flex',justifyContent: 'center', alignItems: 'center'}}>
+                                                            <Grid xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                                                 <Button
                                                                     component="label"
                                                                     role={undefined}
                                                                     variant="contained"
                                                                     tabIndex={-1}
                                                                     startIcon={<CloudUploadIcon />}
-                                                                    sx={{display: 'flex',justifyContent: 'center', alignItems: 'center',width: '100%'}}
+                                                                    sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}
                                                                 >
                                                                     Upload file
                                                                     <VisuallyHiddenInput type="file" />

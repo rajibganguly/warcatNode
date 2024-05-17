@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+/* eslint-disable jsx-a11y/img-redundant-alt */
+import React from "react";
 import { EyeOutlined, EditOutlined } from "@ant-design/icons";
 import { Button } from "@mui/material";
 import TextField from "@mui/material/TextField";
@@ -9,12 +10,6 @@ import IconButton from "@mui/material/IconButton";
 import AddIcon from '@mui/icons-material/Add';
 
 function Tasktable({ column, data, handleSeeClick, handleEditClick }) {
-  const [modalOpen, setModalOpen] = useState(false);
-  //const fileUrl = ['icon', 'images', 'thumbnail', 'avatar'];
-
-  const Toggle = () => {
-    setModalOpen(!modalOpen);
-  };
 
   // nested key handler
   const getNestedValue = (obj, path) => {
@@ -69,18 +64,6 @@ function Tasktable({ column, data, handleSeeClick, handleEditClick }) {
     if (column.dataField.includes(".")) {
       getNestedValue(row, column.dataField);
     }
-
-    // if (Array.isArray(value) && fileUrl.includes(column.dataField)) {
-    //     return (
-    //         <div className='d-flex align-items-center'>
-    //             {value?.map((image, index) => (
-    //                 <div className='profile-image ' key={index}>
-    //                     <img className='img-xs rounded-circle' src={image?.url} alt='' />
-    //                 </div>
-    //             ))}
-    //         </div>
-    //     )
-    // }
 
     if (
       column.dataField === "imageUrl" &&
