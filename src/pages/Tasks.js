@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -34,6 +34,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { API } from "../api";
 
 
 const drawerWidth = 240;
@@ -99,12 +100,13 @@ export default function Tasks() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible1, setModalVisible1] = useState(false);
   const [modalContent, setModalContent] = useState(null);
-  const [data, setData] = useState([]);
+  const [taskData, setTaskData] = useState([]);
   const [metricsData, setMetricsData] = useState([]);
   const localSt = JSON.parse(localStorage.getItem("user"));
   const currentRoleType = localSt.role_type;
   const [file, setFile] = useState();
-
+  const localData = localStorage.getItem("user");
+  const userObj = JSON.parse(localData)
   const progressData = [
     {
       id: 1,
@@ -226,7 +228,7 @@ export default function Tasks() {
     delete: <DeleteOutlined />,
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchDashboardMetricsData();
     fetchTasksData();
   }, []);
@@ -238,18 +240,11 @@ export default function Tasks() {
     if (!toast.isActive("loading")) {
       toast.loading("Loading Tasks data...", { autoClose: false, toastId: "loading" });
     }
-    const localData = localStorage.getItem("user");
-    const userObj = JSON.parse(localData)
-    try {
-      const localObj = { userId: userObj._id, role_type: userObj.role_type };
 
-      const params = {
-        userId: localObj.userId,
-        role_type: localObj.role_type
-      };
-      const tasksData = await ApiConfig.requestData('get', '/tasks', params, null);
-      console.log(tasksData.tasks)
-      setData(tasksData.tasks);
+    try {
+      const tasksData = await API.getAllTask(userObj._id, userObj.role_type);
+      //console.log(tasksData,'setTaskData')
+      setTaskData(tasksData?.data?.tasks);
       toast.dismiss("loading");
     } catch (error) {
       console.error("Error fetching Tasks data:", error);
@@ -259,20 +254,11 @@ export default function Tasks() {
   };
 
   const fetchDashboardMetricsData = async () => {
-    const localData = localStorage.getItem("user");
-    const userObj = JSON.parse(localData)
     try {
-      const localObj = { userId: userObj._id, role_type: userObj.role_type };
-      const userId = localObj.userId;
-      const role_type = localObj.role_type;
-      const params = {
-        userId: userId,
-        role_type: role_type
-      };
-      const percentageData = await ApiConfig.requestData('get', '/task-status-percentages', params, null);
-      // console.log(percentageData, 'warcat')
-      setMetricsData(percentageData);
-      // toast.dismiss("loading");
+      const percentageData = await API.taskStatusPercentages(userObj._id,userObj.role_type);
+      console.log(percentageData,'percentageData')
+      setMetricsData(percentageData?.data);
+      toast.dismiss("loading");
     } catch (error) {
       console.error("Error fetching Tasks data:", error);
       toast.dismiss("loading");
@@ -306,10 +292,6 @@ export default function Tasks() {
     // Implement logic for editing
   };
 
-  const handleDeleteClick = (record) => {
-    console.log("Delete clicked for:", record);
-    // Implement logic for deleting
-  };
 
 
   const handleOutput = (open) => {
@@ -466,7 +448,7 @@ export default function Tasks() {
                       </Grid>
                       <CardContent>
                         <TableNew
-                          data={data}
+                          data={taskData}
                           column={column}
                           icons={icons}
                           handleSeeClick={handleSeeClick}
@@ -606,7 +588,7 @@ export default function Tasks() {
                                   <Button size="small" variant="contained" color="primary" >
                                     ADD
                                   </Button>
-                                  
+
                                 </CardActions>
                               </Card>
                             </DialogContentText>

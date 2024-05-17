@@ -21,9 +21,18 @@ const taskStatusPercentages = (userId, role_type) => {
     });
 };
 
+
+const getAllTask = (userId, role_type) => {
+    
+    return axios({
+        method: 'get',
+        url: `${process.env.REACT_APP_API}/tasks?userId=${userId}&role_type=${role_type}`
+    });
+};
 export const API = {
     getAllDepartments,
-    taskStatusPercentages
+    taskStatusPercentages,
+    getAllTask
 };
 
 
