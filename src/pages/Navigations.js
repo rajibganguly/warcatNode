@@ -36,7 +36,7 @@ const Navigations = () => {
     const userId = localData?._id;
     const roleType = localData?.role_type;
     dispatch(fetchDepartments({ userId, roleType }));
-  }, []);
+  }, [dispatch, localData]);
 
   return (
     <Router>

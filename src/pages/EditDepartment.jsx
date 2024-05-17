@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import { API } from "../api";
 
 const drawerWidth = 240;
 
@@ -74,6 +75,7 @@ export default function EditDepartment() {
       console.log(departmentData, 'departmentData row')
 
       setFormData({
+        id: departmentData.id,
         dep_name: departmentData.department.department_name,
         secretary: {
           name: departmentData.secretary?.name,
@@ -125,7 +127,6 @@ export default function EditDepartment() {
     }
   };
 
-
   const full_id = id.toString();
   const extracted_id = full_id.split("-")[1];
   console.log(extracted_id);
@@ -133,28 +134,37 @@ export default function EditDepartment() {
   /**
    * Post call on submit
    */
+
   const handleAddDepartment = async (event) => {
     event.preventDefault();
 
     try {
-      const auth_token = localStorage.getItem("token");
-
       const updatedFormData = {
         ...formData,
         department_id: extracted_id,
       };
 
-      const response = await fetch(`https://warcat2024-qy2v.onrender.com/api/edit-register-user-with-department`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${auth_token}`,
-        },
-        body: JSON.stringify(updatedFormData),
-      });
+      console.log('Updated Form Data:', updatedFormData);
+
+      const response = await API.updateDepartment(updatedFormData);
 
       if (response.status === 200) {
         toast.success("Department updated successfully");
+
+        // Update the local state to reflect the changes
+        setDepartmentList(prevDepartmentList =>
+          prevDepartmentList.map(department =>
+            department.id === extracted_id
+              ? {
+                ...department,
+                department: { department_name: formData.dep_name },
+                secretary: formData.secretary,
+                headOffice: formData.headOffice,
+              }
+              : department
+          )
+        );
+
         navigate("/departments");
       } else {
         toast.error("Failed to update department");
@@ -164,6 +174,7 @@ export default function EditDepartment() {
       toast.error("Failed to update department");
     }
   };
+
   console.log(formData)
 
   return (
