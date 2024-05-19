@@ -33,10 +33,8 @@ const column = [
   { text: 'Date', dataField: 'selectDate' },
   { text: 'Time', dataField: 'selectTime' },
   { text: 'Attachment', dataField: 'imageUrl' },
-  { text: 'Tasks', dataField: '' },
-  { text: 'Operation', dataField: '' },
-
-
+  { text: 'Tasks', dataField: 'tasks' },
+  { text: 'Operation', dataField: 'meetingoperation' },
 ];
 
 
@@ -111,23 +109,24 @@ export default function Meetings() {
 
 
 
-  // const handleSeeClick = (record) => {
-  //   setSelectedRecord(record);
-  //   setModalVisible(true);
-  // };
+  const handleSeeClick = (record) => {
+    console.log('View clicked for:', record);
+    // setSelectedRecord(record);
+    // setModalVisible(true);
+  };
 
 
-  // const handleplusClick = (record) => {
-  //   console.log('Edit clicked for:', record);
-  //   navigate('/add-tasks')
-  //   // Implement logic for editing
-  // };
+  const handleplusClick = (record) => {
+    console.log('Plus clicked for:', record);
+    navigate('/add-new-meetings')
+    // Implement logic for editing
+  };
   
-  // const handleEditClick = (record) => {
-  //   console.log('Edit clicked for:', record);
-  //   navigate('/edit-meeting')
-  //   // Implement logic for editing
-  // };
+  const handleEditClick = (record) => {
+    console.log('Edit clicked for:', record);
+    navigate('/edit-meeting')
+    // Implement logic for editing
+  };
 
 
 
@@ -218,7 +217,9 @@ export default function Meetings() {
                         <TableNew
                           data={data}
                           column={column}
-
+                          handleplusClick={handleplusClick}
+                          handleSeeClick={handleSeeClick}
+                          handleEditClick={handleEditClick}
                         />
                       </CardContent>
                     </Card>

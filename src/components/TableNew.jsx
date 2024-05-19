@@ -6,9 +6,21 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import { Box } from "@mui/system";
 import SearchIcon from "@mui/icons-material/Search";
 import IconButton from "@mui/material/IconButton";
-import AddIcon from '@mui/icons-material/Add';
+import AddIcon from "@mui/icons-material/Add";
 
-function TableNew({ column, data, handleSeeClick, handleEditClick,handleSeeClick1 }) {
+function TableNew({
+  column,
+  data,
+  handleSeeClick,
+  handleEditClick,
+  handleSeeClick1,
+  handleAddSubTaskClick,
+  handleViewSubTask,
+  handleAddNoteClick,
+  handleUploadClick,
+  handleEditOperationTask,
+  handleViewOperationTask
+}) {
   //const [modalOpen, setModalOpen] = useState(false);
   //const fileUrl = ['icon', 'images', 'thumbnail', 'avatar'];
 
@@ -44,14 +56,59 @@ function TableNew({ column, data, handleSeeClick, handleEditClick,handleSeeClick
 
     if (column.dataField === "subtask") {
       return (
-        <div style={{ display: 'flex' }}>
+        <div style={{ display: "flex" }}>
+          <Button onClick={() => handleAddSubTaskClick(row)}>
+            <EyeOutlined />
+          </Button>
+          <Button onClick={() => handleViewSubTask(row)}>
+            <AddIcon />
+          </Button>
+        </div>
+      );
+    }
+
+    if (column.dataField === "tasks") {
+      return (
+        <div style={{ display: "flex" }}>
+          <Button onClick={() => handleSeeClick1(row)}>
+            <AddIcon />
+          </Button>
           <Button onClick={() => handleSeeClick(row)}>
             <EyeOutlined />
           </Button>
-          <Button onClick={() => handleSeeClick1()}>
-            <AddIcon />
-          </Button>
+        </div>
+      );
+    }
 
+    if (column.dataField === "taskoperation") {
+      
+      return (
+        <div style={{ display: "flex" }}>
+          <Button onClick={() => handleEditOperationTask(row)}>
+            <EditOutlined />
+          </Button>
+          <Button onClick={() => handleViewOperationTask(row)}>
+            <EyeOutlined />
+          </Button>
+        </div>
+      );
+    }
+
+    if (column.dataField === "action") {
+      return (
+        <div style={{ display: "flex" }}>
+          <Button onClick={() => handleAddNoteClick(row)}>Note+</Button>
+          <Button onClick={() => handleUploadClick(row)}>Upload</Button>
+        </div>
+      );
+    }
+
+    if (column.dataField === "meetingoperation") {
+      return (
+        <div style={{ display: "flex" }}>
+          <Button onClick={() => handleSeeClick(row)}>
+            <EditOutlined />
+          </Button>
         </div>
       );
     }
