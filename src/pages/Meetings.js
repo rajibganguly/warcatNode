@@ -9,16 +9,8 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import { Link } from 'react-router-dom';
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton"; import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { mainListItems, secondaryListItems } from "../components/listitems";
-import LogoBlack from "../components/logoblack";
-import ProfileSidePane from "../components/profileSidepane";
-import MuiDrawer from "@mui/material/Drawer";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CustomTable from '../components/CustomTable';
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
@@ -26,7 +18,6 @@ import { useNavigate } from "react-router-dom";
 //import axiosInstance from "../apiConfig/axoisSetup";
 import ApiConfig from "../config/ApiConfig";
 import { Button } from "@mui/material";
-import { EyeOutlined, EditOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import TableNew from "../components/TableNew";
 import { toast } from "react-toastify";
 import Sidebar from "../components/Sidebar";
@@ -78,10 +69,10 @@ const defaultTheme = createTheme();
 
 export default function Meetings() {
   const [open, setOpen] = React.useState(true);
-  const [filteredInfo, setFilteredInfo] = useState({});
-  const [sortedInfo, setSortedInfo] = useState({});
-  const [modalVisible, setModalVisible] = React.useState(false);
-  const [selectedRecord, setSelectedRecord] = React.useState(null);
+  // const [filteredInfo, setFilteredInfo] = useState({});
+  // const [sortedInfo, setSortedInfo] = useState({});
+  // const [modalVisible, setModalVisible] = React.useState(false);
+  // const [selectedRecord, setSelectedRecord] = React.useState(null);
   const [data, setData] = useState([]);
   const navigate = useNavigate();
 
@@ -120,22 +111,23 @@ export default function Meetings() {
 
 
 
-  const handleSeeClick = (record) => {
-    setSelectedRecord(record);
-    setModalVisible(true);
-  };
+  // const handleSeeClick = (record) => {
+  //   setSelectedRecord(record);
+  //   setModalVisible(true);
+  // };
 
 
-  const handleplusClick = (record) => {
-    console.log('Edit clicked for:', record);
-    navigate('/add-tasks')
-    // Implement logic for editing
-  };
-  const handleEditClick = (record) => {
-    console.log('Edit clicked for:', record);
-    navigate('/edit-meeting')
-    // Implement logic for editing
-  };
+  // const handleplusClick = (record) => {
+  //   console.log('Edit clicked for:', record);
+  //   navigate('/add-tasks')
+  //   // Implement logic for editing
+  // };
+  
+  // const handleEditClick = (record) => {
+  //   console.log('Edit clicked for:', record);
+  //   navigate('/edit-meeting')
+  //   // Implement logic for editing
+  // };
 
 
 
@@ -172,7 +164,7 @@ export default function Meetings() {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3} style={{height: "560px", overflowY: "scroll", overflowX: "hidden"}}>
+            <Grid container spacing={3}>
               {/* Recent Orders */}
               <Grid item xs={12}>
                 <div
