@@ -18,14 +18,9 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Stack from "@mui/material/Stack";
 import { useNavigate } from "react-router-dom";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
 import Sidebar from "../components/Sidebar";
-import { toast } from "react-toastify";
 
-import axiosInstance from "../apiConfig/axoisSetup";
+import { DepartmentContext } from './../context/DepartmentContext'
 const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
@@ -50,7 +45,6 @@ const AppBar = styled(MuiAppBar, {
 const defaultTheme = createTheme();
 
 export default function EditDepartment() {
-  const { id } = useParams();
   const [open, setOpen] = React.useState(true);
   const [submitDisable, setSubmitDisable] = React.useState(false);
   const [formData, setFormData] = React.useState({
@@ -67,27 +61,21 @@ export default function EditDepartment() {
       designation: "",
       phone_number: "",
     },
-    dep_name: "",
+    department_id: "",
   });
 
-  React.useEffect(() => {
-    const fetchData = async () => {
-      const response = await axiosInstance.get("/api/departments");
-      const filteredData = (await response.data).filter((f) => f.id === id);
-      try {
-        if (!filteredData) {
-          throw new Error("Failed to fetch department data");
-        }
-        setFormData(filteredData[0]);
-        console.log("......>>>>>", formData);
-        toast.dismiss("loading");
-      } catch (error) {
-        toast.dismiss("loading");
-        toast.error("Failed to fetch department data");
-      }
-    };
+  const { selectedDepartmentData } = React.useContext(DepartmentContext);
 
-    fetchData();
+  React.useEffect(() => {
+    console.log(selectedDepartmentData)
+    const updateDataforCurrentData = {
+      headOffice: selectedDepartmentData.headOffice,
+      secretary: selectedDepartmentData.secretary,
+      department: selectedDepartmentData.department,
+      department_id: selectedDepartmentData.department._id
+    }
+    setFormData(updateDataforCurrentData)
+    console.log('EDIT>>86>', selectedDepartmentData, formData)
   }, []);
 
   const navigate = useNavigate();
@@ -127,15 +115,21 @@ export default function EditDepartment() {
     // Split the name to get the nested object structure
     const [field, nestedField] = name.split(".");
 
+    console.log(name, value, field)
+
     // Update the form data based on the field
     setFormData((prevFormData) => {
       if (field === "secretary" || field === "headOffice") {
         return {
           ...prevFormData,
-          [field]: {
+          [field === "phone_number"]: {
+            ...prevFormData[field],
+            [nestedField]: "+91" + value,
+          },
+          [field !== "phone_number"]: {
             ...prevFormData[field],
             [nestedField]: value,
-          },
+          }
         };
       } else {
         return {
@@ -147,9 +141,9 @@ export default function EditDepartment() {
 
     console.log(formData)
 
-    // if (allFieldsMapped(formData)) {
-    //   setSubmitDisable(false);
-    // }
+    if (allFieldsMapped(formData)) {
+      setSubmitDisable(false);
+    }
   };
 
   /**
@@ -173,11 +167,10 @@ export default function EditDepartment() {
 
     try {
       if (response.status === 200) {
-        alert(`${reactAppHostname}/api/login`);
+        alert(`put working`);
         navigate("/departments");
       } else {
         alert("Login Failed");
-        // Handle error cases here
       }
     } catch (error) {
       console.error("Error occurred:", error);

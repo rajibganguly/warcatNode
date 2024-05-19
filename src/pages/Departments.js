@@ -1,5 +1,4 @@
-import * as React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -12,13 +11,14 @@ import Link from "@mui/material/Link";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import IconButton from "@mui/material/IconButton";
-import { Button, ButtonGroup, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import { Button, Dialog, DialogContent, DialogContentText } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
 import { useNavigate } from "react-router-dom";
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { CloseOutlined } from '@mui/icons-material';
+import { DepartmentContext } from '../context/DepartmentContext'
 
 import ApiConfig from "../config/ApiConfig"
 
@@ -28,7 +28,7 @@ import TableNew from "../components/TableNew";
 //import axiosInstance from "../config/axoisSetup";
 import Sidebar from "../components/Sidebar";
 
-import { CardActionArea, CardActions } from '@mui/material';
+import { CardActions } from '@mui/material';
 
 const column = [
   { text: 'Department', dataField: 'department.department_name' },
@@ -64,12 +64,14 @@ const defaultTheme = createTheme();
 
 
 export default function Departments() {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = useState(true);
   const navigate = useNavigate();
   const [data, setData] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-  const [loadingData, setLoadingData] = useState(false);
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [modalContent, setModalContent] = React.useState(null);
+  //const [loadingData, setLoadingData] = React.useState(false);
+
+  const { selectedDepartmentData, setSelectedDepartmentData } = React.useContext(DepartmentContext);
 
   const localUser = JSON.parse(localStorage.getItem('user'));
   const currentRoleType = localUser.role_type;
@@ -96,8 +98,8 @@ export default function Departments() {
         userId: localObj.userId,
         role_type: localObj.role_type
       };
-      const departments = await ApiConfig.requestData('get', '/departments', params, null);
-      setData(departments);
+      const departmentsAll = await ApiConfig.requestData('get', '/departments', params, null);
+      setData(departmentsAll);
       toast.dismiss("loading");
     } catch (error) {
       console.error("Error fetching department data:", error);
@@ -105,6 +107,8 @@ export default function Departments() {
       toast.error("Failed to fetch department data");
     }    
   };
+
+  
 
   const handleSeeClick = (row) => {
     setModalContent(row);
@@ -117,7 +121,9 @@ export default function Departments() {
   };
 
   const handleEditClick = (record) => {
-    navigate(`/edit-departments/${record}`);
+    console.log(record)
+    setSelectedDepartmentData(record)  
+    navigate(`/edit-departments/${record.department._id}`);
   };
 
   
@@ -161,7 +167,7 @@ export default function Departments() {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={2} style={{height: "560px", overflowY: "scroll", overflowX: "hidden"}}>
+            <Grid container spacing={2}>
               <Grid item xs={12} >
                 <div
                   style={{

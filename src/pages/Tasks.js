@@ -19,21 +19,23 @@ import "react-circular-progressbar/dist/styles.css";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
-import { EyeOutlined, EditOutlined, DeleteOutlined, PlusCircleOutlined } from "@ant-design/icons";
+import { EyeOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import IconButton from "@mui/material/IconButton";
 import Sidebar from "../components/Sidebar";
 import { toast } from "react-toastify";
 import { CloseOutlined } from '@mui/icons-material';
 import TableNew from "../components/TableNew";
-import { ButtonGroup, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import { TextField, Dialog, DialogContent, DialogContentText} from "@mui/material";
 import CardActions from "@mui/material/CardActions";
 import ApiConfig from '../config/ApiConfig'
-import FormControl from '@mui/material/FormControl';
+
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+
+import {TaskChartData} from '../constant/taskChartData'
 
 
 const drawerWidth = 240;
@@ -94,108 +96,7 @@ const handleDropdownChange = (value) => {
   console.log("Selected value:", value);
 };
 
-const progressData = [
-  {
-    id: 1,
-    percentage: 66,
-    label: "Total Assigned",
-    styles: {
-      root: {},
-      path: {
-        stroke: `rgba(15, 156, 243, ${66 / 100})`,
-        strokeLinecap: "butt",
-        transition: "stroke-dashoffset 0.5s ease 0s",
-        transform: "rotate(0.25turn)",
-        transformOrigin: "center center",
-        strokeWidth: 6,
-      },
-      text: {
-        fill: "#000000",
-        fontSize: "16px",
-        fontWeight: "bold",
-      },
-      trail: {
-        stroke: "#E5E0DF",
-        strokeWidth: 6,
-      },
-    },
-  },
-  {
-    id: 2,
-    percentage: 45,
-    label: "Not Initiated",
-    styles: {
-      root: {},
-      path: {
-        stroke: `rgba(255, 52, 0, ${66 / 100})`,
-        strokeLinecap: "butt",
-        transition: "stroke-dashoffset 0.5s ease 0s",
-        transform: "rotate(0.25turn)",
-        transformOrigin: "center center",
-        strokeWidth: 6,
-      },
-      text: {
-        fill: "#000000",
-        fontSize: "16px",
-        fontWeight: "bold",
-      },
-      trail: {
-        stroke: "#E5E0DF",
-        strokeWidth: 6,
-      },
-    },
-  },
-  {
-    id: 3,
-    percentage: 80,
-    label: "In Progress",
-    styles: {
-      root: {},
-      path: {
-        stroke: `rgba(255, 195, 0, ${66 / 100})`,
-        strokeLinecap: "butt",
-        transition: "stroke-dashoffset 0.5s ease 0s",
-        transform: "rotate(0.25turn)",
-        transformOrigin: "center center",
-        strokeWidth: 6,
-      },
-      text: {
-        fill: "#000000",
-        fontSize: "16px",
-        fontWeight: "bold",
-      },
-      trail: {
-        stroke: "#E5E0DF",
-        strokeWidth: 6,
-      },
-    },
-  },
-  {
-    id: 4,
-    percentage: 80,
-    label: "Completed",
-    styles: {
-      root: {},
-      path: {
-        stroke: `rgba(0, 255, 29, ${66 / 100})`,
-        strokeLinecap: "butt",
-        transition: "stroke-dashoffset 0.5s ease 0s",
-        transform: "rotate(0.25turn)",
-        transformOrigin: "center center",
-        strokeWidth: 6,
-      },
-      text: {
-        fill: "#000000",
-        fontSize: "16px",
-        fontWeight: "bold",
-      },
-      trail: {
-        stroke: "#E5E0DF",
-        strokeWidth: 6,
-      },
-    },
-  },
-];
+const progressData = TaskChartData;
 
 
 
@@ -208,6 +109,7 @@ export default function Tasks() {
   const localSt = JSON.parse(localStorage.getItem("user"));
   const currentRoleType = localSt.role_type;
   const [file, setFile] = useState();
+  const [chartData, setChartData] = useState(progressData);
 
   const column = [
     { text: 'Assigned Date', dataField: 'timestamp' },
@@ -228,7 +130,7 @@ export default function Tasks() {
   };
 
   React.useEffect(() => {
-
+    fetchTasksChart()
     fetchTasksData();
   }, []);
 
@@ -249,11 +151,50 @@ export default function Tasks() {
         role_type: localObj.role_type
       };
       const tasksData = await ApiConfig.requestData('get', '/tasks', params, null);
-      console.log(tasksData.tasks)
       setData(tasksData.tasks);
       toast.dismiss("loading");
     } catch (error) {
       console.error("Error fetching Tasks data:", error);
+      toast.dismiss("loading");
+      toast.error("Failed to fetch Tasks data");
+    }
+  };
+
+  /**
+   * @description Private function for fetch Task Chart
+   */
+  const fetchTasksChart = async () => {
+    if (!toast.isActive("loading")) {
+      toast.loading("Loading Tasks Chart data...", { autoClose: false, toastId: "loading" });
+    }
+    const localData = localStorage.getItem("user");
+    const userObj = JSON.parse(localData)
+    try {
+      const localObj = { userId: userObj._id, role_type: userObj.role_type };
+
+      const params = {
+        userId: localObj.userId,
+        role_type: localObj.role_type
+      };
+      const tasksChartData = await ApiConfig.requestData('get', '/task-status-percentages', params, null);
+      const updateTaskCahrtValues = chartData;
+      if(updateTaskCahrtValues[0]['label'] === 'Total Assigned') {
+        updateTaskCahrtValues[0].percentage = tasksChartData.totalAssigned
+      }
+      if(updateTaskCahrtValues[1]['label'] === 'Not Initiated') {
+        updateTaskCahrtValues[1].percentage = tasksChartData.initiated.percentage
+      }
+      if(updateTaskCahrtValues[2]['label'] === 'In Progress') {
+        updateTaskCahrtValues[2].percentage = tasksChartData.inProgress.percentage
+      }
+      if(updateTaskCahrtValues[3]['label'] === 'Completed') {
+        updateTaskCahrtValues[3].percentage = tasksChartData.completed.percentage
+      }
+      setChartData(updateTaskCahrtValues)
+      //setData(tasksData.tasks);
+      toast.dismiss("loading");
+    } catch (error) {
+      console.error("Error fetching Tasks Chart data:", error);
       toast.dismiss("loading");
       toast.error("Failed to fetch Tasks data");
     }
@@ -283,12 +224,12 @@ export default function Tasks() {
 
 
   const handleEditClick = (record) => {
-    console.log("Edit clicked for:", record);
+    console.info("Edit clicked for:", record);
     // Implement logic for editing
   };
 
   const handleDeleteClick = (record) => {
-    console.log("Delete clicked for:", record);
+    console.info("Delete clicked for:", record);
     // Implement logic for deleting
   };
 
@@ -413,7 +354,7 @@ export default function Tasks() {
                       </Box>
 
                       <Grid container spacing={2} sx={{ py: 3, px: 2 }}>
-                        {progressData.map((item) => (
+                        {chartData.map((item) => (
                           <Grid item xs={3} key={item.id}>
                             <Card sx={{ maxWidth: "100%" }}>
                               <Card sx={{ maxWidth: "100%", p: 2 }}>

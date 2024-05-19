@@ -9,12 +9,12 @@ import IconButton from "@mui/material/IconButton";
 import AddIcon from '@mui/icons-material/Add';
 
 function TableNew({ column, data, handleSeeClick, handleEditClick,handleSeeClick1 }) {
-  const [modalOpen, setModalOpen] = useState(false);
+  //const [modalOpen, setModalOpen] = useState(false);
   //const fileUrl = ['icon', 'images', 'thumbnail', 'avatar'];
 
-  const Toggle = () => {
-    setModalOpen(!modalOpen);
-  };
+  // const Toggle = () => {
+  //   setModalOpen(!modalOpen);
+  // };
 
   // nested key handler
   const getNestedValue = (obj, path) => {
@@ -35,7 +35,7 @@ function TableNew({ column, data, handleSeeClick, handleEditClick,handleSeeClick
           <Button onClick={() => handleSeeClick(row)}>
             <EyeOutlined />
           </Button>
-          <Button onClick={() => handleEditClick(row.id)}>
+          <Button onClick={() => handleEditClick(row)}>
             <EditOutlined />
           </Button>
         </>

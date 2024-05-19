@@ -10,22 +10,11 @@ import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Link from "@mui/material/Link";
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Reporttable from '../components/Reporttable';
+import report from '../assets/Screenshot_2024-05-19_171305.png';
 
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton"; import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { mainListItems, secondaryListItems } from "../components/listitems";
-import LogoBlack from "../components/logoblack";
-import ProfileSidePane from "../components/profileSidepane";
-import MuiDrawer from "@mui/material/Drawer";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
-import { Button, ButtonGroup, TextField } from "@mui/material";
-import SearchIcon from '@mui/icons-material/Search';
 import Sidebar from "../components/Sidebar";
 const drawerWidth = 240;
 
@@ -91,8 +80,8 @@ export default function Reports() {
   const [open, setOpen] = React.useState(true);
   const [filteredInfo, setFilteredInfo] = useState({});
   const [sortedInfo, setSortedInfo] = useState({});
-  const [modalVisible, setModalVisible] = React.useState(false);
-  const [selectedRecord, setSelectedRecord] = React.useState(null);
+  // const [modalVisible, setModalVisible] = React.useState(false);
+  // const [selectedRecord, setSelectedRecord] = React.useState(null);
 
  
 
@@ -227,96 +216,9 @@ export default function Reports() {
                       justifyContent: 'space-between'
                     }}
                   >
-                    <ButtonGroup variant="contained" aria-label="Basic button group"  >
-                      <Button sx={{
-                        backgroundColor: '#6c757d',
-                        borderColor: '1px solid #6c757d',
-
-                        '&:hover': {
-                          backgroundColor: '#5c636a',
-                          borderColor: '#5c636a'
-                        },
-
-                      }}>Copy</Button>
-                      <Button sx={{
-                        backgroundColor: '#6c757d',
-                        borderColor: '1px solid #6c757d',
-                        '&:hover': {
-                          backgroundColor: '#5c636a',
-                          borderColor: '#5c636a'
-                        },
-
-                      }}>Excel</Button>
-                      <Button sx={{
-                        backgroundColor: '#6c757d',
-                        borderColor: '#6c757d',
-                        '&:hover': {
-                          backgroundColor: '#5c636a',
-                          borderColor: '#5c636a'
-                        },
-
-                      }}>PDF</Button>
-                      <Button sx={{
-                        backgroundColor: '#6c757d',
-                        borderColor: '#6c757d',
-                        '&:hover': {
-                          backgroundColor: '#5c636a',
-                          borderColor: '#5c636a'
-                        },
-
-                      }}>Column Visibility</Button>
-                    </ButtonGroup>
-                    <div>
-                      <TextField
-                        id="outlined-textarea"
-                        label="Search"
-                        variant="outlined"
-                        placeholder="Enter search"
-                        size="small"
-                        InputProps={{
-                          endAdornment: (
-                            <IconButton>
-                              <SearchIcon />
-                            </IconButton>
-                          ),
-                        }}
-                      />
-                    </div>
-                  </div>
-
+                  </div>  
+                    <img src={report} alt="" style={{display: 'block', width: '100%', height: '146px'}} />
                 </Paper>
-              </Grid>
-            </Grid>
-
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <Card sx={{ maxWidth: 100 + "%" }}>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      padding: 2,
-                      borderBottom: '1px solid #eff2f7',
-
-                    }}
-                  >
-
-
-                  </Box>
-                  <CardContent>
-                    <Reporttable
-                      data={data}
-                      columns={columns}
-                      filteredInfo={filteredInfo}
-                      sortedInfo={sortedInfo}
-                      setFilteredInfo={setFilteredInfo}
-                      setSortedInfo={setSortedInfo}
-                     
-
-                    />
-                  </CardContent>
-                </Card>
               </Grid>
             </Grid>
           </Container>
