@@ -35,7 +35,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
-import {TaskChartData} from '../constant/taskChartData'
+import {TaskChartData} from '../constant/taskChartData';
+import { useNavigate } from "react-router-dom";
 
 
 const drawerWidth = 240;
@@ -110,6 +111,7 @@ export default function Tasks() {
   const currentRoleType = localSt.role_type;
   const [file, setFile] = useState();
   const [chartData, setChartData] = useState(progressData);
+  const navigate = useNavigate();
 
   const column = [
     { text: 'Assigned Date', dataField: 'timestamp' },
@@ -119,9 +121,9 @@ export default function Tasks() {
     { text: "Target Date", dataField: 'target_date' },
     { text: "Status", dataField: 'status' },
     { text: "Sub Task", dataField: 'subtask' },
-    { text: "Operations", dataField: '' },
+    { text: "Operations", dataField: 'taskoperation' },
     { text: "Varified Status", dataField: '' },
-    { text: "Action", dataField: '' },
+    { text: "Action", dataField: 'action' },
   ];
   const icons = {
     see: <EyeOutlined />,
@@ -202,13 +204,13 @@ export default function Tasks() {
 
 
 
-  const handleSeeClick = (row) => {
-    setModalContent(row);
-    setModalVisible(true);
+  const handleViewOperationTask = (row) => {
+    // setModalContent(row);
+    // setModalVisible(true);
   };
 
-  const handleSeeClick1 = () => {
-    setModalVisible1(true);
+  const handleEditOperationTask = (row) => {
+    // setModalVisible1(true);
 
   };
 
@@ -222,13 +224,24 @@ export default function Tasks() {
   };
 
 
+  const handleAddNoteClick = (record) => {
+    console.info("Edit clicked for:", record);
+    navigate('/task-note')
+    // Implement logic for editing
+  };
 
-  const handleEditClick = (record) => {
+  const handleUploadClick = (record) => {
+    console.info("Edit clicked for:", record);
+    navigate('/task-upload')
+    // Implement logic for editing
+  };
+
+  const handleAddSubTaskClick = (record) => {
     console.info("Edit clicked for:", record);
     // Implement logic for editing
   };
 
-  const handleDeleteClick = (record) => {
+  const handleViewSubTask = (record) => {
     console.info("Delete clicked for:", record);
     // Implement logic for deleting
   };
@@ -391,9 +404,12 @@ export default function Tasks() {
                           data={data}
                           column={column}
                           icons={icons}
-                          handleSeeClick={handleSeeClick}
-                          handleEditClick={handleEditClick}
-                          handleSeeClick1={handleSeeClick1}
+                          handleAddSubTaskClick={handleAddSubTaskClick}
+                          handleViewSubTask={handleViewSubTask}
+                          handleViewOperationTask={handleViewOperationTask}
+                          handleEditOperationTask={handleEditOperationTask}
+                          handleAddNoteClick={handleAddNoteClick}
+                          handleUploadClick={handleUploadClick}
                         />
 
                         <Dialog
