@@ -139,8 +139,7 @@ export default function AddDepartment() {
    * Post call on submit
    */
   const handleAddDepartment = async () => {
-    setSubmitDisable(true);
-  
+    setSubmitDisable(true);  
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -307,6 +306,7 @@ export default function AddDepartment() {
                           <TextField
                             id="outlined-basic-2"
                             label="Enter Secretary Phone Number"
+                            placeholder="ex +91XXXXXXXXXX"
                             variant="outlined"
                             size="small"
                             sx={{ width: "100%" }}
@@ -381,6 +381,7 @@ export default function AddDepartment() {
                             <TextField
                               id="outlined-basic-1"
                               label="Enter Head of Office Phone Number"
+                              placeholder="ex +91XXXXXXXXXX"
                               variant="outlined"
                               size="small"
                               sx={{ width: "100%" }}
