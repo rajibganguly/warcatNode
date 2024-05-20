@@ -71,7 +71,8 @@ export default function Departments() {
   const [modalContent, setModalContent] = React.useState(null);
   //const [loadingData, setLoadingData] = React.useState(false);
 
-  const { selectedDepartmentData, setSelectedDepartmentData } = React.useContext(DepartmentContext);
+  const { setSelectedDepartmentData } = React.useContext(DepartmentContext);
+  const { setAllDepartmentList } = React.useContext(DepartmentContext);
 
   const localUser = JSON.parse(localStorage.getItem('user'));
   const currentRoleType = localUser.role_type;
@@ -100,6 +101,7 @@ export default function Departments() {
       };
       const departmentsAll = await ApiConfig.requestData('get', '/departments', params, null);
       setData(departmentsAll);
+      setAllDepartmentList(departmentsAll)
       toast.dismiss("loading");
     } catch (error) {
       console.error("Error fetching department data:", error);

@@ -1,5 +1,4 @@
-import * as React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -26,6 +25,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import Sidebar from "../components/Sidebar";
+
+import { DepartmentContext } from '../context/DepartmentContext';
 import axios from 'axios';
 
 const VisuallyHiddenInput = styled('input')({
@@ -76,7 +77,23 @@ export default function AddNewMeeting() {
         selectDate: null,
         selectTime: null,
     });
+    const [deptNames, setDeptNames] = React.useState([]);
     const theme = useTheme();
+    const { allDepartmentList } = React.useContext(DepartmentContext);
+
+        useEffect(() => {
+            const depNameArr = [];
+            if(allDepartmentList) {
+                allDepartmentList.forEach((each) => {
+                    depNameArr.push(each?.department?.department_name)
+                })
+                setDeptNames(depNameArr)
+            } else {
+                setDeptNames(["Not found"])
+            }
+
+        }, [])
+
 
     const handleChange = (event) => {
         const { name, value } = event.target;

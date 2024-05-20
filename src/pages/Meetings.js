@@ -121,15 +121,11 @@ export default function Meetings() {
 
 
   const handleTasksAddInMeeting = (record) => {
-    console.log('Plus clicked for:', record);
     navigate('/add-tasks')
-    // Implement logic for editing
   };
   
   const handleEditClick = (record) => {
-    console.log('Edit clicked for:', record);
     navigate('/edit-meeting')
-    // Implement logic for editing
   };
 
 

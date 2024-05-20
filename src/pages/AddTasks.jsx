@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -9,14 +9,6 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import { Link } from "react-router-dom";
 import InputFileUpload from "../components/InputFileUpload";
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { mainListItems, secondaryListItems } from "../components/listitems";
-import LogoBlack from "../components/logoblack";
-import ProfileSidePane from "../components/profileSidepane";
-import MuiDrawer from "@mui/material/Drawer";
 import { Button, TextField } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
@@ -34,12 +26,12 @@ import MenuItem from '@mui/material/MenuItem';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import Sidebar from "../components/Sidebar";
+import {DepartmentContext} from './../context/DepartmentContext'
 
 
+// function Label({ componentName, valueType }) {
 
-function Label({ componentName, valueType }) {
-
-}
+// }
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -51,18 +43,7 @@ const MenuProps = {
     },
 };
 
-const names = [
-    'Oliver Hansen',
-    'Van Henry',
-    'April Tucker',
-    'Ralph Hubbard',
-    'Omar Alexander',
-    'Carlos Abbott',
-    'Miriam Wagner',
-    'Bradley Wilkerson',
-    'Virginia Andrews',
-    'Kelly Snyder',
-];
+
 function getStyles(name, personName, theme) {
     return {
         fontWeight:
@@ -98,9 +79,27 @@ const AppBar = styled(MuiAppBar, {
 const defaultTheme = createTheme();
 
 export default function AddTasks() {
+
     const [open, setOpen] = React.useState(true);
     const [personName, setPersonName] = React.useState([]);
     const theme = useTheme();
+    const [deptNames, setDeptNames] = React.useState([]);
+
+    const { allDepartmentList } = React.useContext(DepartmentContext);
+
+  useEffect(() => {
+    const depNameArr = [];
+    if(allDepartmentList) {
+        allDepartmentList.forEach((each) => {
+            depNameArr.push(each?.department?.department_name)
+        })
+        setDeptNames(depNameArr)
+    } else {
+        setDeptNames(["Not found"])
+    }
+
+  }, [])
+
     const handleChange = (event) => {
         const {
             target: { value },
@@ -278,9 +277,9 @@ export default function AddTasks() {
                                             )}
                                             MenuProps={MenuProps}
                                         >
-                                            {names.map((name) => (
+                                            {deptNames.map((name, index) => (
                                                 <MenuItem
-                                                    key={name}
+                                                    key={index}
                                                     value={name}
                                                     style={getStyles(name, personName, theme)}
                                                 >
@@ -310,7 +309,6 @@ export default function AddTasks() {
                                             name="dep_name"
                                             size="small"
                                             aria-readonly
-                                            disabled="true"
                                         />
                                     </Grid>
                                     <Grid item xs={12} md={6}>
@@ -323,7 +321,6 @@ export default function AddTasks() {
                                             name="dep_name"
                                             size="small"
                                             aria-readonly
-                                            disabled="true"
                                         />
                                     </Grid>
                                 </Grid>
