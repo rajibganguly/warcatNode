@@ -109,16 +109,20 @@ export default function Meetings() {
 
 
 
-  const handleSeeClick = (record) => {
-    console.log('View clicked for:', record);
+  /**
+   * @description DEFINED CLICK EVENTS:
+   * @click to view details about the meeting
+   */
+  const handleTasksViewInMeeting = (record) => {
+    console.log('View clicked for view meetings:', record);
     // setSelectedRecord(record);
     // setModalVisible(true);
   };
 
 
-  const handleplusClick = (record) => {
+  const handleTasksAddInMeeting = (record) => {
     console.log('Plus clicked for:', record);
-    navigate('/add-new-meetings')
+    navigate('/add-tasks')
     // Implement logic for editing
   };
   
@@ -217,8 +221,8 @@ export default function Meetings() {
                         <TableNew
                           data={data}
                           column={column}
-                          handleplusClick={handleplusClick}
-                          handleSeeClick={handleSeeClick}
+                          handleTasksAddInMeeting={handleTasksAddInMeeting}
+                          handleTasksViewInMeeting={handleTasksViewInMeeting}
                           handleEditClick={handleEditClick}
                         />
                       </CardContent>

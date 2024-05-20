@@ -259,15 +259,15 @@ export default function AddTasks() {
                             <CardContent>
 
                                 <Grid container spacing={2} sx={{ mb: 4, borderBottom: '1px solid #eff2f7', pb: 2 }}>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} md={6}>
                                     <InputLabel id="demo-multiple-chip-label1">Department / Government Organisation</InputLabel>
                                         <Select
                                             labelId="demo-multiple-chip-label2"
                                             id="demo-multiple-chip"
                                             fullWidth
-                                            multiple
                                             value={personName}
                                             onChange={handleChange}
+                                            size="small"
                                             input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
                                             renderValue={(selected) => (
                                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
@@ -289,37 +289,41 @@ export default function AddTasks() {
                                             ))}
                                         </Select>
                                     </Grid>
-                                    <Grid item xs={6}>
-                                        <label>Department / Government Organisation</label>
+                                    <Grid item xs={12} md={6}>
+                                        <label>Tag</label>
                                         <TextField
                                             id="outlined-basic"
-                                            label="Sub Task Title"
+                                            label="Tag"
                                             variant="outlined"
                                             fullWidth
                                             name="dep_name"
-
+                                            size="small"
                                         />
                                     </Grid>
-                                    <Grid item xs={6}>
-                                        <label>Department / Government Organisation</label>
+                                    <Grid item xs={12} md={6}>
+                                        <label>Meeting Id</label>
                                         <TextField
                                             id="outlined-basic"
-                                            label="Sub Task Title"
+                                            label="Meeting Id"
                                             variant="outlined"
                                             fullWidth
                                             name="dep_name"
-
+                                            size="small"
+                                            aria-readonly
+                                            disabled="true"
                                         />
                                     </Grid>
-                                    <Grid item xs={6}>
-                                        <label>Department / Government Organisation</label>
+                                    <Grid item xs={12} md={6}>
+                                        <label>Meeting Topic</label>
                                         <TextField
                                             id="outlined-basic"
-                                            label="Sub Task Title"
+                                            label="Meeting Topic"
                                             variant="outlined"
                                             fullWidth
                                             name="dep_name"
-
+                                            size="small"
+                                            aria-readonly
+                                            disabled="true"
                                         />
                                     </Grid>
                                 </Grid>
@@ -327,34 +331,38 @@ export default function AddTasks() {
                                 {inputGroups.map((group, index) => (
                                     <Grid container key={group[0].id} spacing={2} sx={{ marginBottom: '20px' }}>
                                         {group.map((input) => (
-                                            <Grid item xs={12} sm={6} key={input.id}>
+                                            <Grid item xs={12} md={12} key={input.id}>
                                                 {input.type === 'file' ? (
-                                                    <Grid container >
-                                                        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
+                                                        <Grid item xs={12} md={6}>
                                                             <InputFileUpload
                                                                 groupId={group[0].id}
                                                                 inputId={input.id}
                                                                 handleFileInputChange={handleFileInputChange}
                                                                 sx={{ minWidth: '100%', width: '100%' }}
                                                                 fullWidth
+                                                                size="small"
                                                             />
                                                         </Grid>
-                                                    </Grid>
                                                 ) : input.type === 'date' ? (
-                                                    <Grid container justifyContent="start" alignItems="center">
-                                                        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'start' }}>
+                                                        <Grid item xs={12} md={6}>
                                                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                                                 <DatePicker
                                                                     label="Select Date"
                                                                     selectedDate={input.value}
                                                                     handleDateChange={(date) => handleInputChange(group[0].id, input.id, date)}
-                                                                    fullWidth
-                                                                    sx={{ minWidth: '100%', width: '100%' }}
+                                                                    renderInput={(params) => (
+                                                                        <TextField
+                                                                            {...params}
+                                                                            fullWidth
+                                                                            size="small"
+                                                                            sx={{ minWidth: '100%', width: '100%' }}
+                                                                        />
+                                                                    )}
                                                                 />
                                                             </LocalizationProvider>
                                                         </Grid>
-                                                    </Grid>
                                                 ) : (
+                                                    <Grid item xs={12} md={12}>
                                                     <TextField
                                                         id="outlined-basic"
                                                         label="Enter Task Title"
@@ -363,7 +371,9 @@ export default function AddTasks() {
                                                         value={input.value}
                                                         onChange={(e) => handleInputChange(group[0].id, input.id, e)}
                                                         fullWidth
+                                                        size="small"
                                                     />
+                                                    </Grid>
                                                 )}
                                             </Grid>
                                         ))}

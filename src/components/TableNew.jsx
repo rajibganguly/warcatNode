@@ -13,7 +13,8 @@ function TableNew({
   data,
   handleSeeClick,
   handleEditClick,
-  handleSeeClick1,
+  handleTasksAddInMeeting,
+  handleTasksViewInMeeting,
   handleAddSubTaskClick,
   handleViewSubTask,
   handleAddNoteClick,
@@ -70,10 +71,10 @@ function TableNew({
     if (column.dataField === "tasks") {
       return (
         <div style={{ display: "flex" }}>
-          <Button onClick={() => handleSeeClick1(row)}>
+          <Button onClick={() => handleTasksAddInMeeting(row)}>
             <AddIcon />
           </Button>
-          <Button onClick={() => handleSeeClick(row)}>
+          <Button onClick={() => handleTasksViewInMeeting(row)}>
             <EyeOutlined />
           </Button>
         </div>

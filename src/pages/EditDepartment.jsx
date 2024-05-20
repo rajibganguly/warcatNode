@@ -115,21 +115,15 @@ export default function EditDepartment() {
     // Split the name to get the nested object structure
     const [field, nestedField] = name.split(".");
 
-    console.log(name, value, field)
-
     // Update the form data based on the field
     setFormData((prevFormData) => {
       if (field === "secretary" || field === "headOffice") {
         return {
           ...prevFormData,
-          [field === "phone_number"]: {
+          [field]: {
             ...prevFormData[field],
-            [nestedField]: "+91" + value,
+            [nestedField]: nestedField === "phone_number" ? value : value,
           },
-          [field !== "phone_number"]: {
-            ...prevFormData[field],
-            [nestedField]: value,
-          }
         };
       } else {
         return {
@@ -139,7 +133,7 @@ export default function EditDepartment() {
       }
     });
 
-    console.log(formData)
+    console.log('MMMMMMMMMM', formData)
 
     if (allFieldsMapped(formData)) {
       setSubmitDisable(false);
@@ -152,6 +146,13 @@ export default function EditDepartment() {
   const handleAddDepartment = async () => {
     const reactAppHostname = process.env.REACT_APP_HOSTNAME;
     setSubmitDisable(true);
+    const setDataPropMap = {
+      department_id: formData.department_id,
+      dep_name: formData.department.department_name,
+      secretary: formData.secretary,
+      headOffice: formData.headOffice
+    }
+    console.log('+++++++++++++++++++++++', formData, setDataPropMap)
     const auth_token = localStorage.getItem('token');
     const response = await fetch(
       `${reactAppHostname}/api/edit-register-user-with-department`,
@@ -161,7 +162,7 @@ export default function EditDepartment() {
           "Content-Type": "application/json",
           token: `Bearer ${auth_token}`
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(setDataPropMap),
       }
     );
 
@@ -252,8 +253,7 @@ export default function EditDepartment() {
                         <label>Department / Government Organisation</label>
                         <TextField
                           fullWidth
-                          name="department_name"
-                          
+                          name="department_name"                          
                           value={formData?.department?.department_name}
                           onChange={handleChange}
                           aria-readonly
@@ -290,8 +290,8 @@ export default function EditDepartment() {
                               name="secretary.phone_number"
                               value={formData?.secretary?.phone_number}
                               inputProps={{
-                                minLength: 10,
-                                maxLength: 10,
+                                minLength: 13,
+                                maxLength: 13,
                               }}
                               onChange={handleChange}
                             />
@@ -356,8 +356,8 @@ export default function EditDepartment() {
                                 name="headOffice.phone_number"
                                 value={formData?.headOffice?.phone_number}
                                 inputProps={{
-                                  minLength: 10,
-                                  maxLength: 10,
+                                  minLength: 13,
+                                  maxLength: 13,
                                 }}
                                 onChange={handleChange}
                               />
