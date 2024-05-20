@@ -131,9 +131,7 @@ export default function EditDepartment() {
           [name]: value,
         };
       }
-    });
-
-    console.log('MMMMMMMMMM', formData)
+    });    
 
     if (allFieldsMapped(formData)) {
       setSubmitDisable(false);
@@ -152,7 +150,6 @@ export default function EditDepartment() {
       secretary: formData.secretary,
       headOffice: formData.headOffice
     }
-    console.log('+++++++++++++++++++++++', formData, setDataPropMap)
     const auth_token = localStorage.getItem('token');
     const response = await fetch(
       `${reactAppHostname}/api/edit-register-user-with-department`,
