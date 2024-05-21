@@ -22,6 +22,7 @@ function TableNew({
   handleEditOperationTask,
   handleViewOperationTask,
   handleSeeClick1,
+  handleEditmeeting
 }) {
   const getNestedValue = (obj, path) => {
     const keys = path.split(".");
@@ -38,10 +39,12 @@ function TableNew({
     if (column.dataField === "Operations") {
       return (
         <>
-          <Button onClick={() => handleSeeClick(row)}>
+          <Button onClick={() => handleSeeClick(row)}
+            style={{ backgroundColor: '#fb4', color: '#000', marginRight: '2px' }}>
             <EyeOutlined />
           </Button>
-          <Button onClick={() => handleEditClick(row)}>
+          <Button onClick={() => handleEditClick(row)}
+            style={{ backgroundColor: '#0097a7', color: '#ffffff', marginRight: '2px' }}>
             <EditOutlined />
           </Button>
         </>
@@ -64,10 +67,12 @@ function TableNew({
     if (column.dataField === "tasks") {
       return (
         <div style={{ display: "flex" }}>
-          <Button onClick={() => handleTasksAddInMeeting(row)}>
+          <Button onClick={() => handleTasksAddInMeeting(row)}
+            style={{ backgroundColor: '#0a1832', color: '#ffffff', marginRight: '2px' }}>
             <AddIcon />
           </Button>
-          <Button onClick={() => handleSeeClick1(row)}>
+          <Button onClick={() => handleSeeClick1(row)}
+            style={{ backgroundColor: '#fb4', color: 'black' }}>
             <EyeOutlined />
           </Button>
         </div>
@@ -99,7 +104,8 @@ function TableNew({
     if (column.dataField === "meetingoperation") {
       return (
         <div style={{ display: "flex" }}>
-          <Button onClick={() => handleSeeClick(row)}>
+          <Button onClick={()=> handleEditmeeting(row)}
+            style={{ backgroundColor: '#0097a7', color: '#ffffff' }}>
             <EditOutlined />
           </Button>
         </div>

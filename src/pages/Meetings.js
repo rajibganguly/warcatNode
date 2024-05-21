@@ -109,6 +109,8 @@ export default function Meetings() {
     width: 1,
   });
 
+ 
+
   useEffect(() => {
     fetchMeetingData();
   }, []);
@@ -158,9 +160,9 @@ export default function Meetings() {
     // Implement logic for editing
   };
   
-  const handleEditClick = (record) => {
+  const handleEditmeeting = (record) => {
     console.log('Edit clicked for:', record);
-    navigate('/edit-meeting')
+    navigate(`/edit-meeting/${record.meetingId}`, { state: { rowData: record } });
     // Implement logic for editing
   };
   const handleSeeClick1 = () => {
@@ -260,7 +262,7 @@ export default function Meetings() {
                           column={column}
                           handleTasksAddInMeeting={handleTasksAddInMeeting}
                           handleTasksViewInMeeting={handleTasksViewInMeeting}
-                          handleEditClick={handleEditClick}
+                          handleEditmeeting={handleEditmeeting}
                           handleSeeClick1={handleSeeClick1}
                         />
                        <Dialog

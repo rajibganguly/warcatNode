@@ -80,7 +80,7 @@ export default function Departments() {
     fetchDepartmentData();
   }, []);
 
-  
+
 
   /**
    * @description Private function for fetch department data
@@ -90,10 +90,10 @@ export default function Departments() {
       toast.loading("Loading departments data...", { autoClose: false, toastId: "loading" });
     }
     const localData = localStorage.getItem("user");
-    const userObj = JSON.parse(localData)    
+    const userObj = JSON.parse(localData)
     try {
-      const localObj = { userId: userObj._id, role_type: userObj.role_type }; 
-      
+      const localObj = { userId: userObj._id, role_type: userObj.role_type };
+
       const params = {
         userId: localObj.userId,
         role_type: localObj.role_type
@@ -105,10 +105,10 @@ export default function Departments() {
       console.error("Error fetching department data:", error);
       toast.dismiss("loading");
       toast.error("Failed to fetch department data");
-    }    
+    }
   };
 
-  
+
 
   const handleSeeClick = (row) => {
     setModalContent(row);
@@ -122,11 +122,13 @@ export default function Departments() {
 
   const handleEditClick = (record) => {
     console.log(record)
-    setSelectedDepartmentData(record)  
+    setSelectedDepartmentData(record)
     navigate(`/edit-departments/${record.department._id}`);
   };
 
-  
+
+
+
 
   const icons = {
     see: <EyeOutlined />,
@@ -206,7 +208,7 @@ export default function Departments() {
                     }}
                   >
                     <Typography variant="body1" sx={{ fontWeight: 600 }}>All Departments</Typography>
-                    { currentRoleType === 'admin' && (<Button variant="contained" sx={{
+                    {currentRoleType === 'admin' && (<Button variant="contained" sx={{
                       backgroundColor: 'green',
                       '&:hover': {
                         backgroundColor: 'darkgreen',
@@ -214,7 +216,7 @@ export default function Departments() {
                     }} onClick={handleClickAddDepartment}>
                       Add Department
                     </Button>)}
-                  </Box>                  
+                  </Box>
                   <CardContent>
                     <TableNew
                       data={data}
@@ -222,6 +224,7 @@ export default function Departments() {
                       icons={icons}
                       handleSeeClick={handleSeeClick}
                       handleEditClick={handleEditClick}
+
                     />
                     <Dialog
                       open={modalVisible}
@@ -241,43 +244,43 @@ export default function Departments() {
                               Department Name: {modalContent.department.department_name}
                             </Typography>
                             <Card sx={{ width: '100%', maxWidth: 900, maxHeight: 600, overflowY: 'auto' }}>
-                            <IconButton
-                                  aria-label="close"
-                                  onClick={closeModal}
-                                  sx={{ position: 'absolute', right: '5px', top: '0', color: 'gray' }}
-                                >
-                                  <CloseOutlined/>
-                                </IconButton>
-                                <CardContent>
-                                  <Typography variant="h5" color="text.secondary">
-                                    Secretary Details
-                                  </Typography>
-                                  <Typography variant="body2" color="text.secondary">
-                                    Secretary Name: {modalContent.secretary.name}
-                                  </Typography>
-                                  <Typography variant="body2" color="text.secondary">
-                                    Secretary Phone number: {modalContent.secretary.phone}
-                                  </Typography>
-                                  <Typography variant="body2" color="text.secondary">
-                                    Secretary Email Id: {modalContent.secretary.email}
-                                  </Typography>
+                              <IconButton
+                                aria-label="close"
+                                onClick={closeModal}
+                                sx={{ position: 'absolute', right: '5px', top: '0', color: 'gray' }}
+                              >
+                                <CloseOutlined />
+                              </IconButton>
+                              <CardContent>
+                                <Typography variant="h5" color="text.secondary">
+                                  Secretary Details
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                  Secretary Name: {modalContent.secretary.name}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                  Secretary Phone number: {modalContent.secretary.phone}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                  Secretary Email Id: {modalContent.secretary.email}
+                                </Typography>
 
-                                  <Typography variant="h5" color="text.secondary" mt={4} py={2}>
-                                    Head of Office Details
-                                  </Typography>
-                                  <Typography variant="body2" color="text.secondary">
-                                    Head of Office Name: {modalContent.headOffice.name}
-                                  </Typography>
-                                  <Typography variant="body2" color="text.secondary">
-                                    Head of Office Designation: {modalContent.headOffice.designation}
-                                  </Typography>
-                                  <Typography variant="body2" color="text.secondary">
-                                    Head of Office Phone number: {modalContent.headOffice.phone_number}
-                                  </Typography>
-                                  <Typography variant="body2" color="text.secondary">
-                                    Head of Office Email Id: {modalContent.headOffice.email}
-                                  </Typography>
-                                </CardContent>
+                                <Typography variant="h5" color="text.secondary" mt={4} py={2}>
+                                  Head of Office Details
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                  Head of Office Name: {modalContent.headOffice.name}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                  Head of Office Designation: {modalContent.headOffice.designation}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                  Head of Office Phone number: {modalContent.headOffice.phone_number}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                  Head of Office Email Id: {modalContent.headOffice.email}
+                                </Typography>
+                              </CardContent>
                               <CardActions sx={{ justifyContent: 'flex-end' }}>
                                 <Button size="small" variant="contained" color="primary" >
                                   Email
@@ -304,7 +307,7 @@ export default function Departments() {
             >
             </Box>
           </Container>
-            <Footer />
+          <Footer />
         </Box>
       </Box>
     </ThemeProvider>
