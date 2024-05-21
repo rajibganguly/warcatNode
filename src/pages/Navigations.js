@@ -71,7 +71,7 @@ const Navigations = () => {
           element={!authToken ? <Navigate to="/" /> : <EditDepartment />}
         />
         <Route
-          path="/edit-meeting"
+          path="/edit-meeting/:id"
           element={!authToken ? <Navigate to="/" /> : <EditMeeting />}
         />
         <Route

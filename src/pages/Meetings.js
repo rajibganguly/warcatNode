@@ -109,7 +109,7 @@ export default function Meetings() {
     width: 1,
   });
 
- 
+
 
   useEffect(() => {
     fetchMeetingData();
@@ -120,13 +120,13 @@ export default function Meetings() {
    */
   const fetchMeetingData = async () => {
     if (!toast.isActive("loading")) {
-        toast.loading("Loading meetings data...", { autoClose: false, toastId: "loading" });
-      }
+      toast.loading("Loading meetings data...", { autoClose: false, toastId: "loading" });
+    }
     const localData = localStorage.getItem("user");
-    const userObj = JSON.parse(localData)    
+    const userObj = JSON.parse(localData)
     try {
-      const localObj = { userId: userObj._id, role_type: userObj.role_type }; 
-      
+      const localObj = { userId: userObj._id, role_type: userObj.role_type };
+
       const params = {
         userId: localObj.userId,
         role_type: localObj.role_type
@@ -138,7 +138,7 @@ export default function Meetings() {
       console.error("Error fetching meeting data:", error);
       toast.dismiss("loading");
       toast.error("Failed to fetch meeting data");
-    }    
+    }
   };
 
 
@@ -159,12 +159,21 @@ export default function Meetings() {
     navigate('/add-tasks')
     // Implement logic for editing
   };
-  
-  const handleEditmeeting = (record) => {
-    console.log('Edit clicked for:', record);
-    navigate(`/edit-meeting/${record.meetingId}`, { state: { rowData: record } });
-    // Implement logic for editing
+
+  const handleEditmeeting = (row) => {
+    console.log('Edit clicked for:', row);
+    // Check if row and row.meetings are defined
+    if (row && row.meetingId) {
+      navigate(`/edit-meeting/${row.meetingId}`);
+    } else {
+      // Log an error if any property is undefined
+      console.error('Invalid row data:', row);
+      // Optionally, handle the error or provide feedback to the user
+    }
   };
+  
+  
+
   const handleSeeClick1 = () => {
     setModalVisible1(true);
 
@@ -247,7 +256,7 @@ export default function Meetings() {
                         }}
                       >
                         <Typography variant="body1" sx={{ fontWeight: 600 }}>Meetings</Typography>
-                        { currentRoleType === 'admin' && (<Button variant="contained" sx={{
+                        {currentRoleType === 'admin' && (<Button variant="contained" sx={{
                           backgroundColor: 'green',
                           '&:hover': {
                             backgroundColor: 'darkgreen',
@@ -265,9 +274,9 @@ export default function Meetings() {
                           handleEditmeeting={handleEditmeeting}
                           handleSeeClick1={handleSeeClick1}
                         />
-                       <Dialog
-                           open={modalVisible1}
-                           onClose={closeModal1}
+                        <Dialog
+                          open={modalVisible1}
+                          onClose={closeModal1}
                           aria-labelledby="modal-title"
                           aria-describedby="modal-description"
                           sx={{
@@ -323,9 +332,6 @@ export default function Meetings() {
                             )}
                           </DialogContent>
                         </Dialog>
-
-                        
-
                       </CardContent>
                     </Card>
                   </Grid>
