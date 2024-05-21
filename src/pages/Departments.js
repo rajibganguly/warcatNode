@@ -246,8 +246,7 @@ export default function Departments() {
                             </Typography>
 
                             <Typography variant="h5" id="modal-title">
-                              <u className='textclr'>Department Name: </u>
-
+                              <u className='textclr'>Secretary Details </u>
                             </Typography>
 
                             <Typography variant="h4" id="modal-title">
@@ -258,6 +257,9 @@ export default function Departments() {
                               <h6 className='textclr'> Secretary Phone number: <b className='textclr2'>{modalContent.secretary.phone}</b></h6>
                             </Typography>
 
+                            <Typography variant="h4" id="modal-title">
+                              <h6 className='textclr'> Secretary Email Id: <b className='textclr2'>{modalContent.secretary.email}</b></h6>
+                            </Typography>
 
                             <Card sx={{ width: '100%', maxWidth: 900, maxHeight: 600, overflowY: 'auto' }}>
                               <IconButton
@@ -267,44 +269,30 @@ export default function Departments() {
                               >
                                 <CloseOutlined />
                               </IconButton>
-                              <CardContent>
-                                <Typography variant="h5" color="text.secondary">
-                                  Secretary Details
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                  Secretary Name: {modalContent.secretary.name}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                  Secretary Phone number: {modalContent.secretary.phone}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                  Secretary Email Id: {modalContent.secretary.email}
+                              {/* <CardContent> */}
+
+                                <Typography variant="h5" id="modal-title">
+                                  <u className='textclr'> Head of Office Details </u>
                                 </Typography>
 
-                                <Typography variant="h5" color="text.secondary" mt={4} py={2}>
-                                  Head of Office Details
+                                <Typography variant="h4" id="modal-title">
+                                  <h6 className='textclr'> Head of Office Name: <b className='textclr2'>{modalContent.headOffice.name}</b></h6>
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                  Head of Office Name: {modalContent.headOffice.name}
+
+                                <Typography variant="h4" id="modal-title">
+                                  <h6 className='textclr'>  Head of Office Designation: <b className='textclr2'>{modalContent.headOffice.designation}</b></h6>
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                  Head of Office Designation: {modalContent.headOffice.designation}
+
+                                <Typography variant="h4" id="modal-title">
+                                  <h6 className='textclr'> Head of Office Phone number: <b className='textclr2'>{modalContent.headOffice.phone_number}</b></h6>
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                  Head of Office Phone number: {modalContent.headOffice.phone_number}
+
+                                <Typography variant="h4" id="modal-title">
+                                  <h6 className='textclr'> Head of Office Email Id: <b className='textclr2'>{modalContent.headOffice.email}</b></h6>
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                  Head of Office Email Id: {modalContent.headOffice.email}
-                                </Typography>
-                              </CardContent>
-                              <CardActions sx={{ justifyContent: 'flex-end' }}>
-                                <Button size="small" variant="contained" color="primary" >
-                                  Email
-                                </Button>
-                                <Button size="small" variant="contained" color="primary" onClick={() => console.log('Share clicked')}>
-                                  Sms
-                                </Button>
-                              </CardActions>
+
+                              {/* </CardContent> */}
+
                             </Card>
                           </DialogContentText>
                         )}
