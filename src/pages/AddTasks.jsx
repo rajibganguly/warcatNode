@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 
 import React, { useState, useEffect } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
@@ -26,7 +27,7 @@ import MenuItem from '@mui/material/MenuItem';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import Sidebar from "../components/Sidebar";
-import {DepartmentContext} from './../context/DepartmentContext'
+import { DepartmentContext } from './../context/DepartmentContext'
 
 
 // function Label({ componentName, valueType }) {
@@ -83,39 +84,43 @@ export default function AddTasks() {
     const [open, setOpen] = React.useState(true);
     const [personName, setPersonName] = React.useState([]);
     const theme = useTheme();
-    const [deptNames, setDeptNames] = React.useState([]);
-
+    // const [deptNames, setDeptNames] = React.useState([]);
     const { allDepartmentList } = React.useContext(DepartmentContext);
+    const allDepartmentData = allDepartmentList.map((dept) => dept.department);
 
-  useEffect(() => {
-    const depNameArr = [];
-    if(allDepartmentList) {
-        allDepartmentList.forEach((each) => {
-            depNameArr.push(each?.department?.department_name)
-        })
-        setDeptNames(depNameArr)
-    } else {
-        setDeptNames(["Not found"])
-    }
+    //   useEffect(() => {
+    //     const depNameArr = [];
+    //     if(allDepartmentList) {
+    //         allDepartmentList.forEach((each) => {
+    //             depNameArr.push(each?.department?.department_name)
+    //         })
+    //         setDeptNames(depNameArr)
+    //     } else {
+    //         setDeptNames(["Not found"])
+    //     }
 
-  }, [])
+    //   }, [])
 
     const handleChange = (event) => {
         const {
             target: { value },
         } = event;
-        setPersonName(
-            // On autofill we get a stringified value.
-            typeof value === 'string' ? value.split(',') : value,
-        );
-    }
+        // Find the department object with the matching _id
+        const selectedDept = allDepartmentData.find(dept => dept._id === value);
+        // If a matching department is found, add its name to the personName array
+        if (selectedDept) {
+            setPersonName(prevPersonName => [selectedDept.department_name]);
+        }
+    };
+
+
     const handleOutput = (open) => {
         toggleDrawer();
     };
     const toggleDrawer = () => {
         setOpen(!open);
     };
-    
+
 
 
     const [inputGroups, setInputGroups] = useState([
@@ -259,13 +264,14 @@ export default function AddTasks() {
 
                                 <Grid container spacing={2} sx={{ mb: 4, borderBottom: '1px solid #eff2f7', pb: 2 }}>
                                     <Grid item xs={12} md={6}>
-                                    <InputLabel id="demo-multiple-chip-label1">Department / Government Organisation</InputLabel>
+                                        <InputLabel id="demo-multiple-chip-label1">Department / Government Organisation</InputLabel>
                                         <Select
                                             labelId="demo-multiple-chip-label2"
                                             id="demo-multiple-chip"
                                             fullWidth
                                             value={personName}
                                             onChange={handleChange}
+                                            
                                             size="small"
                                             input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
                                             renderValue={(selected) => (
@@ -275,15 +281,16 @@ export default function AddTasks() {
                                                     ))}
                                                 </Box>
                                             )}
+
                                             MenuProps={MenuProps}
                                         >
-                                            {deptNames.map((name, index) => (
+                                            {allDepartmentData.map((value) => (
                                                 <MenuItem
-                                                    key={index}
-                                                    value={name}
-                                                    style={getStyles(name, personName, theme)}
+                                                    key={value?._id}
+                                                    value={value?._id}
+                                                    style={getStyles(value?.department_name, personName, theme)}
                                                 >
-                                                    {name}
+                                                    {value?.department_name}
                                                 </MenuItem>
                                             ))}
                                         </Select>
@@ -330,46 +337,46 @@ export default function AddTasks() {
                                         {group.map((input) => (
                                             <Grid item xs={12} md={12} key={input.id}>
                                                 {input.type === 'file' ? (
-                                                        <Grid item xs={12} md={6}>
-                                                            <InputFileUpload
-                                                                groupId={group[0].id}
-                                                                inputId={input.id}
-                                                                handleFileInputChange={handleFileInputChange}
-                                                                sx={{ minWidth: '100%', width: '100%' }}
-                                                                fullWidth
-                                                                size="small"
-                                                            />
-                                                        </Grid>
+                                                    <Grid item xs={12} md={6}>
+                                                        <InputFileUpload
+                                                            groupId={group[0].id}
+                                                            inputId={input.id}
+                                                            handleFileInputChange={handleFileInputChange}
+                                                            sx={{ minWidth: '100%', width: '100%' }}
+                                                            fullWidth
+                                                            size="small"
+                                                        />
+                                                    </Grid>
                                                 ) : input.type === 'date' ? (
-                                                        <Grid item xs={12} md={6}>
-                                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                                <DatePicker
-                                                                    label="Select Date"
-                                                                    selectedDate={input.value}
-                                                                    handleDateChange={(date) => handleInputChange(group[0].id, input.id, date)}
-                                                                    renderInput={(params) => (
-                                                                        <TextField
-                                                                            {...params}
-                                                                            fullWidth
-                                                                            size="small"
-                                                                            sx={{ minWidth: '100%', width: '100%' }}
-                                                                        />
-                                                                    )}
-                                                                />
-                                                            </LocalizationProvider>
-                                                        </Grid>
+                                                    <Grid item xs={12} md={6}>
+                                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                            <DatePicker
+                                                                label="Select Date"
+                                                                selectedDate={input.value}
+                                                                handleDateChange={(date) => handleInputChange(group[0].id, input.id, date)}
+                                                                renderInput={(params) => (
+                                                                    <TextField
+                                                                        {...params}
+                                                                        fullWidth
+                                                                        size="small"
+                                                                        sx={{ minWidth: '100%', width: '100%' }}
+                                                                    />
+                                                                )}
+                                                            />
+                                                        </LocalizationProvider>
+                                                    </Grid>
                                                 ) : (
                                                     <Grid item xs={12} md={12}>
-                                                    <TextField
-                                                        id="outlined-basic"
-                                                        label="Enter Task Title"
-                                                        variant="outlined"
-                                                        type={input.type}
-                                                        value={input.value}
-                                                        onChange={(e) => handleInputChange(group[0].id, input.id, e)}
-                                                        fullWidth
-                                                        size="small"
-                                                    />
+                                                        <TextField
+                                                            id="outlined-basic"
+                                                            label="Enter Task Title"
+                                                            variant="outlined"
+                                                            type={input.type}
+                                                            value={input.value}
+                                                            onChange={(e) => handleInputChange(group[0].id, input.id, e)}
+                                                            fullWidth
+                                                            size="small"
+                                                        />
                                                     </Grid>
                                                 )}
                                             </Grid>
@@ -379,9 +386,11 @@ export default function AddTasks() {
                                                 <Button
                                                     variant="contained"
                                                     color="success"
-                                                    sx={{ color: 'white', marginTop: '2%',backgroundColor: '#f32f53','&:hover': {
-                                                        backgroundColor: '#f32f53', 
-                                                    }, }}
+                                                    sx={{
+                                                        color: 'white', marginTop: '2%', backgroundColor: '#f32f53', '&:hover': {
+                                                            backgroundColor: '#f32f53',
+                                                        },
+                                                    }}
                                                     onClick={() => handleRemoveClick(group[0].id)}
                                                 >
                                                     Remove Task

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -19,11 +20,6 @@ import { useNavigate } from "react-router-dom";
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { CloseOutlined } from '@mui/icons-material';
 import { DepartmentContext } from '../context/DepartmentContext'
-
-import ApiConfig from "../config/ApiConfig"
-
-
-import { toast } from "react-toastify";
 import TableNew from "../components/TableNew";
 //import axiosInstance from "../config/axoisSetup";
 import Sidebar from "../components/Sidebar";
@@ -66,52 +62,16 @@ const defaultTheme = createTheme();
 export default function Departments() {
   const [open, setOpen] = useState(true);
   const navigate = useNavigate();
-  const [data, setData] = useState([]);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [modalContent, setModalContent] = React.useState(null);
   //const [loadingData, setLoadingData] = React.useState(false);
-
+ 
+  const { allDepartmentList } = React.useContext(DepartmentContext);
   const { setSelectedDepartmentData } = React.useContext(DepartmentContext);
-  const { setAllDepartmentList } = React.useContext(DepartmentContext);
-
   const localUser = JSON.parse(localStorage.getItem('user'));
   const currentRoleType = localUser.role_type;
 
-  useEffect(() => {
-    fetchDepartmentData();
-  }, []);
-
   
-
-  /**
-   * @description Private function for fetch department data
-   */
-  const fetchDepartmentData = async () => {
-    if (!toast.isActive("loading")) {
-      toast.loading("Loading departments data...", { autoClose: false, toastId: "loading" });
-    }
-    const localData = localStorage.getItem("user");
-    const userObj = JSON.parse(localData)    
-    try {
-      const localObj = { userId: userObj._id, role_type: userObj.role_type }; 
-      
-      const params = {
-        userId: localObj.userId,
-        role_type: localObj.role_type
-      };
-      const departmentsAll = await ApiConfig.requestData('get', '/departments', params, null);
-      setData(departmentsAll);
-      setAllDepartmentList(departmentsAll)
-      toast.dismiss("loading");
-    } catch (error) {
-      console.error("Error fetching department data:", error);
-      toast.dismiss("loading");
-      toast.error("Failed to fetch department data");
-    }    
-  };
-
-  
-
   const handleSeeClick = (row) => {
     setModalContent(row);
     setModalVisible(true);
@@ -219,7 +179,7 @@ export default function Departments() {
                   </Box>                  
                   <CardContent>
                     <TableNew
-                      data={data}
+                      data={allDepartmentList}
                       column={column}
                       icons={icons}
                       handleSeeClick={handleSeeClick}

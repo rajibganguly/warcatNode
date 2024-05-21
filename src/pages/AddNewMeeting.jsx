@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import { Link } from "react-router-dom";
-import { Button, TextField } from "@mui/material";
+import { Button, Chip, InputLabel, TextField } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
@@ -28,6 +28,7 @@ import Sidebar from "../components/Sidebar";
 
 import { DepartmentContext } from '../context/DepartmentContext';
 import axios from 'axios';
+import MenuItem from '@mui/material/MenuItem';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -66,6 +67,26 @@ const AppBar = styled(MuiAppBar, {
         }),
     }),
 }));
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
+
+
+function getStyles(name, personName, theme) {
+    return {
+        fontWeight:
+            personName.indexOf(name) === -1
+                ? theme.typography.fontWeightRegular
+                : theme.typography.fontWeightMedium,
+    };
+}
 
 export default function AddNewMeeting() {
     const [open, setOpen] = React.useState(true);
@@ -77,31 +98,40 @@ export default function AddNewMeeting() {
         selectDate: null,
         selectTime: null,
     });
-    const [deptNames, setDeptNames] = React.useState([]);
+    const [personName, setPersonName] = React.useState([]);
     const theme = useTheme();
     const { allDepartmentList } = React.useContext(DepartmentContext);
-
-        useEffect(() => {
-            const depNameArr = [];
-            if(allDepartmentList) {
-                allDepartmentList.forEach((each) => {
-                    depNameArr.push(each?.department?.department_name)
-                })
-                setDeptNames(depNameArr)
-            } else {
-                setDeptNames(["Not found"])
-            }
-
-        }, [])
-
+    const allDepartmentData = allDepartmentList.map((dept) => dept.department);
 
     const handleChange = (event) => {
-        const { name, value } = event.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
+        const {
+            target: { value },
+        } = event;
+
+        // Find the department objects with the matching _ids
+        const selectedDepts = allDepartmentData.filter((dept) => value.includes(dept._id));
+
+        // Create a new array to hold the updated personName state
+        let updatedPersonName = [...personName];
+
+        // Add or remove department names based on the selected value
+        selectedDepts.forEach((dept) => {
+            const index = updatedPersonName.indexOf(dept.department_name);
+            if (index === -1) {
+                // If the department name is not already in the array, add it
+                updatedPersonName.push(dept.department_name);
+            } else {
+                // If the department name is already in the array, remove it
+                updatedPersonName.splice(index, 1);
+            }
+        });
+
+        // Update the personName state with the new array
+        setPersonName(updatedPersonName);
     };
+
+
+
 
     const handleDateChange = (date) => {
         setFormData((prevData) => ({
@@ -129,7 +159,7 @@ export default function AddNewMeeting() {
             formDataSend.append('selectTime', selectTime);
             formDataSend.append('file', file);
 
-            
+
             const token = localStorage.getItem('token');
             const response = await axios.post('https://warcat2024-qy2v.onrender.com/api/add-meeting', formDataSend, {
                 headers: {
@@ -142,9 +172,9 @@ export default function AddNewMeeting() {
         } catch (error) {
             console.error('Error occurred:', error);
         }
-        
+
     };
-   
+
     const handleOutput = (open) => {
         toggleDrawer();
     };
@@ -182,85 +212,73 @@ export default function AddNewMeeting() {
                                             autoComplete="off"
                                             sx={{ marginTop: 2 }}
                                         >
-                                            <Grid container spacing={2}>
-                                                <Grid item xs={6}>
-                                                    <FormControl sx={{ width: 100 + '%' }}>
-                                                        <TextField
-                                                            id="department"
-                                                            name="departmentIds"
-                                                            label="Department / Government Organisation"
-                                                            variant="outlined"
-                                                            fullWidth
-                                                            value={formData.departmentIds}
-                                                            onChange={handleChange}
-                                                        />
-                                                    </FormControl>
-                                                </Grid>
-                                                <Grid item xs={6}>
-                                                    <FormControl sx={{ width: 100 + '%' }}>
-                                                        <TextField
-                                                            id="tag"
-                                                            name="tag"
-                                                            label="Tag"
-                                                            variant="outlined"
-                                                            fullWidth
-                                                            value={formData.tag}
-                                                            onChange={handleChange}
-                                                        />
-                                                    </FormControl>
-                                                </Grid>
+                                            <Grid container spacing={2} sx={{ mb: 4, borderBottom: '1px solid #eff2f7', pb: 2 }}>
+                                                <Grid item xs={12} md={6}>
+                                                    <InputLabel id="demo-multiple-chip-label1">Department / Government Organisation</InputLabel>
+                                                    <Select
+                                                        labelId="demo-multiple-chip-label2"
+                                                        id="demo-multiple-chip"
+                                                        fullWidth
+                                                        value={personName}
+                                                        onChange={handleChange}
+                                                        size="small"
+                                                        multiple
+                                                        input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                                                        renderValue={(selected) => (
+                                                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                                                {selected.map((value) => (
+                                                                    <Chip key={value} label={value} />
+                                                                ))}
+                                                            </Box>
+                                                        )}
 
-                                                <Grid item xs={12}>
+                                                        MenuProps={MenuProps}
+                                                    >
+                                                        {allDepartmentData.map((value) => (
+                                                            <MenuItem
+                                                                key={value?._id}
+                                                                value={value?._id}
+                                                                style={getStyles(value?.department_name, personName, theme)}
+                                                            >
+                                                                {value?.department_name}
+                                                            </MenuItem>
+                                                        ))}
+                                                    </Select>
+                                                </Grid>
+                                                <Grid item xs={12} md={6}>
+                                                    <label>Tag</label>
                                                     <TextField
                                                         id="outlined-basic"
-                                                        name="meetingTopic"
-                                                        label="Enter Meeting Topic"
+                                                        label="Tag"
                                                         variant="outlined"
                                                         fullWidth
-                                                        value={formData.meetingTopic}
-                                                        onChange={handleChange}
+                                                        name="dep_name"
+                                                        size="small"
                                                     />
                                                 </Grid>
-
-                                                <Grid item xs={12}>
-                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                        <DemoContainer
-                                                            components={['DatePicker', 'TimePicker']}
-                                                        >
-                                                            <Grid item xs={4}>
-                                                                <DemoItem label="Select Date">
-                                                                    <DatePicker
-                                                                        value={formData.selectDate}
-                                                                        onChange={handleDateChange}
-                                                                    />
-                                                                </DemoItem>
-                                                            </Grid>
-
-                                                            <Grid item xs={4}>
-                                                                <DemoItem label="Select Time">
-                                                                    <TimePicker
-                                                                        value={formData.selectTime}
-                                                                        onChange={handleTimeChange}
-                                                                    />
-                                                                </DemoItem>
-                                                            </Grid>
-
-                                                            <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                                <Button
-                                                                    component="label"
-                                                                    variant="contained"
-                                                                    startIcon={<CloudUploadIcon />}
-                                                                    sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}
-                                                                >
-                                                                    Upload file
-                                                                    <VisuallyHiddenInput
-                                                                        type="file"
-                                                                        onChange={(e) => setFile(e.target.files[0])}
-                                                                    />
-                                                                </Button>
-                                                            </Grid>
-                                                        </DemoContainer>
-                                                    </LocalizationProvider>
+                                                <Grid item xs={12} md={6}>
+                                                    <label>Meeting Id</label>
+                                                    <TextField
+                                                        id="outlined-basic"
+                                                        label="Meeting Id"
+                                                        variant="outlined"
+                                                        fullWidth
+                                                        name="dep_name"
+                                                        size="small"
+                                                        aria-readonly
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={12} md={6}>
+                                                    <label>Meeting Topic</label>
+                                                    <TextField
+                                                        id="outlined-basic"
+                                                        label="Meeting Topic"
+                                                        variant="outlined"
+                                                        fullWidth
+                                                        name="dep_name"
+                                                        size="small"
+                                                        aria-readonly
+                                                    />
                                                 </Grid>
                                             </Grid>
                                             <Button

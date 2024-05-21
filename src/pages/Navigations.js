@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import "../App.css";
 import LogIn from "./Login";
 import Dashboard from "./Dashboard";
@@ -22,10 +23,20 @@ import TaskList from "./TaskList";
 import TaskNote from "./TaskNote";
 import TaskUpload from "./TaskUpload";
 import TaskApproval from "./TaskApproval";
+import { useContext, useEffect } from "react";
+import { fetchDepartmentData } from "./common";
+import { DepartmentContext } from "../context/DepartmentContext";
 
 const Navigations = () => {
   const { authToken } = useAuth();
-
+  const { setAllDepartmentList } = useContext(DepartmentContext);
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchDepartmentData();
+      setAllDepartmentList(data);
+    };
+    fetchData();
+  }, [setAllDepartmentList]);
   return (
     <Router>
       <Routes>
