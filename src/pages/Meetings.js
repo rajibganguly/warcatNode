@@ -160,7 +160,7 @@ export default function Meetings() {
   
   const handleEditmeeting = (record) => {
     console.log('Edit clicked for:', record);
-    navigate(`/edit-meeting/${record.meetingId}`, { state: { rowData: record } });
+    //navigate(`/edit-meeting/${record.meetingId}`, { state: { rowData: record } });
     // Implement logic for editing
   };
   const handleSeeClick1 = () => {
