@@ -24,17 +24,12 @@ import Sidebar from "../components/Sidebar";
 import { TextField, Dialog, DialogContent, DialogContentText } from "@mui/material";
 import CardActions from "@mui/material/CardActions";
 // import ApiConfig from '../config/ApiConfig'
-import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import IconButton from "@mui/material/IconButton";
 import { CloseOutlined } from '@mui/icons-material';
 
 
 const column = [
-  { text: '#Meeting Id', dataField: 'meetingId' },
+  { text: 'Meeting Id', dataField: 'meetingId' },
   { text: 'Meeting Topic', dataField: 'meetingTopic' },
   { text: 'Departments', dataField: 'departmentNames' },
   { text: 'Tag', dataField: 'tag' },
@@ -75,10 +70,6 @@ const defaultTheme = createTheme();
 
 export default function Meetings() {
   const [open, setOpen] = React.useState(true);
-  // const [filteredInfo, setFilteredInfo] = useState({});
-  // const [sortedInfo, setSortedInfo] = useState({});
-  // const [modalVisible, setModalVisible] = React.useState(false);
-  // const [selectedRecord, setSelectedRecord] = React.useState(null);
   const [data, setData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible1, setModalVisible1] = useState(false);
@@ -97,20 +88,7 @@ export default function Meetings() {
   const localUser = JSON.parse(localStorage.getItem('user'));
   const currentRoleType = localUser.role_type;
 
-  const VisuallyHiddenInput = styled('input')({
-    clip: 'rect(0 0 0 0)',
-    clipPath: 'inset(50%)',
-    height: 1,
-    overflow: 'hidden',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    whiteSpace: 'nowrap',
-    width: 1,
-  });
-
-
-
+  
   useEffect(() => {
     fetchMeetingData();
   }, []);
@@ -149,8 +127,6 @@ export default function Meetings() {
    */
   const handleTasksViewInMeeting = (record) => {
     console.log('View clicked for view meetings:', record);
-    // setSelectedRecord(record);
-    // setModalVisible(true);
   };
 
 

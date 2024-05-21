@@ -221,6 +221,7 @@ export default function Departments() {
                                 maxWidth: 900,
                                 maxHeight: 600,
                                 overflowY: "auto",
+                                border: 'none'
                               }}
                             >
                               <IconButton
@@ -268,7 +269,7 @@ export default function Departments() {
                                   </strong>
                                 </Typography>
                               </CardContent>
-                              <CardActions sx={{ justifyContent: "flex-end" }}>
+                              {/* <CardActions sx={{ justifyContent: "flex-end" }}>
                                 <Button
                                   size="small"
                                   variant="contained"
@@ -284,7 +285,7 @@ export default function Departments() {
                                 >
                                   Sms
                                 </Button>
-                              </CardActions>
+                              </CardActions> */}
                               <CardContent>
                                 <Typography
                                   variant="body3"
@@ -331,7 +332,7 @@ export default function Departments() {
                                   </strong>
                                 </Typography>
                               </CardContent>
-                              <CardActions sx={{ justifyContent: "flex-end" }}>
+                              {/* <CardActions sx={{ justifyContent: "flex-end" }}>
                                 <Button
                                   size="small"
                                   variant="contained"
@@ -347,7 +348,7 @@ export default function Departments() {
                                 >
                                   Sms
                                 </Button>
-                              </CardActions>
+                              </CardActions> */}
                             </Card>
                           </DialogContentText>
                         )}
