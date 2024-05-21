@@ -21,8 +21,16 @@ import { Button } from "@mui/material";
 import TableNew from "../components/TableNew";
 import { toast } from "react-toastify";
 import Sidebar from "../components/Sidebar";
-
-
+import { TextField, Dialog, DialogContent, DialogContentText } from "@mui/material";
+import CardActions from "@mui/material/CardActions";
+// import ApiConfig from '../config/ApiConfig'
+import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import IconButton from "@mui/material/IconButton";
+import { CloseOutlined } from '@mui/icons-material';
 
 
 const column = [
@@ -72,10 +80,34 @@ export default function Meetings() {
   // const [modalVisible, setModalVisible] = React.useState(false);
   // const [selectedRecord, setSelectedRecord] = React.useState(null);
   const [data, setData] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible1, setModalVisible1] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const [file, setFile] = useState();
   const navigate = useNavigate();
+
+  const closeModal = () => {
+    setModalVisible(false);
+    setModalContent(null);
+  };
+  const closeModal1 = () => {
+    setModalVisible1(false);
+  };
 
   const localUser = JSON.parse(localStorage.getItem('user'));
   const currentRoleType = localUser.role_type;
+
+  const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+  });
 
   useEffect(() => {
     fetchMeetingData();
@@ -131,6 +163,11 @@ export default function Meetings() {
     navigate('/edit-meeting')
     // Implement logic for editing
   };
+  const handleSeeClick1 = () => {
+    setModalVisible1(true);
+
+  };
+
 
 
 
@@ -224,7 +261,69 @@ export default function Meetings() {
                           handleTasksAddInMeeting={handleTasksAddInMeeting}
                           handleTasksViewInMeeting={handleTasksViewInMeeting}
                           handleEditClick={handleEditClick}
+                          handleSeeClick1={handleSeeClick1}
                         />
+                       <Dialog
+                           open={modalVisible1}
+                           onClose={closeModal1}
+                          aria-labelledby="modal-title"
+                          aria-describedby="modal-description"
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <DialogContent sx={{ p: 2, width: '600px' }}>
+                            {modalContent && (
+                              <DialogContentText id="modal-description">
+                                <Typography variant="h4" id="modal-title">
+                                  Website Issue
+                                </Typography>
+                                <Card sx={{ width: '100%', maxWidth: 900, maxHeight: 600, overflowY: 'auto' }}>
+                                  <IconButton
+                                    aria-label="close"
+                                    onClick={closeModal}
+                                    sx={{ position: 'absolute', right: '5px', top: '0', color: 'gray' }}
+                                  >
+                                    <CloseOutlined />
+                                  </IconButton>
+                                  <CardContent style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <div>
+                                      <Typography variant="h5" color="text.secondary">
+                                        Subtask
+                                      </Typography>
+                                      <Typography variant="body2" color="text.secondary">
+                                        {modalContent.task_title}
+                                      </Typography>
+                                      <Typography variant="body2" color="text.secondary">
+                                        Target Date: {modalContent.target_date}
+                                      </Typography>
+                                      <Typography variant="body2" color="text.secondary">
+                                        Attachment.png
+                                      </Typography>
+                                    </div>
+                                    <Button variant="contained" color="primary">Add Subtask</Button>
+                                  </CardContent>
+
+
+
+                                  <CardActions sx={{ justifyContent: 'flex-end' }}>
+                                    <Button size="small" variant="contained" color="primary" >
+                                      Email
+                                    </Button>
+                                    <Button size="small" variant="contained" color="primary" onClick={() => console.log('Share clicked')}>
+                                      Sms
+                                    </Button>
+                                  </CardActions>
+                                </Card>
+                              </DialogContentText>
+                            )}
+                          </DialogContent>
+                        </Dialog>
+
+                        
+
                       </CardContent>
                     </Card>
                   </Grid>

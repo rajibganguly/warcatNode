@@ -20,16 +20,9 @@ function TableNew({
   handleAddNoteClick,
   handleUploadClick,
   handleEditOperationTask,
-  handleViewOperationTask
+  handleViewOperationTask,
+  handleSeeClick1,
 }) {
-  //const [modalOpen, setModalOpen] = useState(false);
-  //const fileUrl = ['icon', 'images', 'thumbnail', 'avatar'];
-
-  // const Toggle = () => {
-  //   setModalOpen(!modalOpen);
-  // };
-
-  // nested key handler
   const getNestedValue = (obj, path) => {
     const keys = path.split(".");
     let value = obj;
@@ -74,7 +67,7 @@ function TableNew({
           <Button onClick={() => handleTasksAddInMeeting(row)}>
             <AddIcon />
           </Button>
-          <Button onClick={() => handleTasksViewInMeeting(row)}>
+          <Button onClick={() => handleSeeClick1(row)}>
             <EyeOutlined />
           </Button>
         </div>
@@ -82,7 +75,6 @@ function TableNew({
     }
 
     if (column.dataField === "taskoperation") {
-      
       return (
         <div style={{ display: "flex" }}>
           <Button onClick={() => handleEditOperationTask(row)}>
@@ -129,23 +121,7 @@ function TableNew({
       getNestedValue(row, column.dataField);
     }
 
-    // if (Array.isArray(value) && fileUrl.includes(column.dataField)) {
-    //     return (
-    //         <div className='d-flex align-items-center'>
-    //             {value?.map((image, index) => (
-    //                 <div className='profile-image ' key={index}>
-    //                     <img className='img-xs rounded-circle' src={image?.url} alt='' />
-    //                 </div>
-    //             ))}
-    //         </div>
-    //     )
-    // }
-
-    if (
-      column.dataField === "imageUrl" &&
-      typeof value === "string" &&
-      value.startsWith("data:image/")
-    ) {
+    if (column.dataField === "imageUrl" && typeof value === "string" && value.startsWith("data:image/")) {
       return (
         <div
           style={{
@@ -184,7 +160,6 @@ function TableNew({
             sx={{
               backgroundColor: "#6c757d",
               borderColor: "1px solid #6c757d",
-
               "&:hover": {
                 backgroundColor: "#5c636a",
                 borderColor: "#5c636a",
@@ -251,32 +226,20 @@ function TableNew({
             {/* Your table header */}
             <thead className="ms-1 me-1 table-header-text">
               <tr>
-                {column?.map((column, index) => (
-                  <th className="text-sm" key={index}>
-                    {column.text}
-                  </th>
+                {column?.map((col) => (
+                  <th key={col.dataField}>{col.text}</th>
                 ))}
               </tr>
             </thead>
-            <tbody className="w-100">
-              {/* Your table body */}
-              {Array.isArray(data) && data.length >= 1 ? (
-                data?.map((row, rowIndex) => (
-                  <tr className="" key={rowIndex}>
-                    {column?.map((column, columnIndex) => (
-                      <td className="border-0" key={columnIndex}>
-                        {renderCellValue(row, column)}
-                      </td>
-                    ))}
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="6" className="text-secondary text-center p-2">
-                    No data available in table
-                  </td>
+            {/* Your table body */}
+            <tbody>
+              {data?.map((row, index) => (
+                <tr key={index}>
+                  {column?.map((col) => (
+                    <td key={col.dataField}>{renderCellValue(row, col)}</td>
+                  ))}
                 </tr>
-              )}
+              ))}
             </tbody>
           </table>
         </div>
