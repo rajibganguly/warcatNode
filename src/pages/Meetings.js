@@ -26,7 +26,7 @@ import CardActions from "@mui/material/CardActions";
 // import ApiConfig from '../config/ApiConfig'
 import IconButton from "@mui/material/IconButton";
 import { CloseOutlined } from '@mui/icons-material';
-
+import { MeetingContext } from './../context/MeetingContext'
 
 const column = [
   { text: 'Meeting Id', dataField: 'meetingId' },
@@ -87,37 +87,50 @@ export default function Meetings() {
 
   const localUser = JSON.parse(localStorage.getItem('user'));
   const currentRoleType = localUser.role_type;
-
+  const { allMeetingLists } = React.useContext(MeetingContext);
+  const allDepartmentListData = allMeetingLists?.meetings;
   
-  useEffect(() => {
-    fetchMeetingData();
-  }, []);
+  const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+  });
 
-  /**
-   * @description Private function for fetch Meeting data
-   */
-  const fetchMeetingData = async () => {
-    if (!toast.isActive("loading")) {
-      toast.loading("Loading meetings data...", { autoClose: false, toastId: "loading" });
-    }
-    const localData = localStorage.getItem("user");
-    const userObj = JSON.parse(localData)
-    try {
-      const localObj = { userId: userObj._id, role_type: userObj.role_type };
 
-      const params = {
-        userId: localObj.userId,
-        role_type: localObj.role_type
-      };
-      const meetingData = await ApiConfig.requestData('get', '/meetings', params, null);
-      setData(meetingData.meetings);
-      toast.dismiss("loading");
-    } catch (error) {
-      console.error("Error fetching meeting data:", error);
-      toast.dismiss("loading");
-      toast.error("Failed to fetch meeting data");
-    }
-  };
+
+
+
+  // /**
+  //  * @description Private function for fetch Meeting data
+  //  */
+  // const fetchMeetingData = async () => {
+  //   if (!toast.isActive("loading")) {
+  //     toast.loading("Loading meetings data...", { autoClose: false, toastId: "loading" });
+  //   }
+  //   const localData = localStorage.getItem("user");
+  //   const userObj = JSON.parse(localData)
+  //   try {
+  //     const localObj = { userId: userObj._id, role_type: userObj.role_type };
+
+  //     const params = {
+  //       userId: localObj.userId,
+  //       role_type: localObj.role_type
+  //     };
+  //     const meetingData = await ApiConfig.requestData('get', '/meetings', params, null);
+  //     setData(meetingData.meetings);
+  //     toast.dismiss("loading");
+  //   } catch (error) {
+  //     console.error("Error fetching meeting data:", error);
+  //     toast.dismiss("loading");
+  //     toast.error("Failed to fetch meeting data");
+  //   }
+  // };
 
 
 
@@ -241,7 +254,7 @@ export default function Meetings() {
                       </Box>
                       <CardContent>
                         <TableNew
-                          data={data}
+                          data={allDepartmentListData}
                           column={column}
                           handleTasksAddInMeeting={handleTasksAddInMeeting}
                           handleTasksViewInMeeting={handleTasksViewInMeeting}

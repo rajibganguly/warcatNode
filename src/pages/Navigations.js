@@ -24,16 +24,22 @@ import TaskNote from "./TaskNote";
 import TaskUpload from "./TaskUpload";
 import TaskApproval from "./TaskApproval";
 import { useContext, useEffect } from "react";
-import { fetchDepartmentData } from "./common";
+import { fetchDepartmentData, fetchMeetingData } from "./common";
 import { DepartmentContext } from "../context/DepartmentContext";
+import { MeetingContext } from "../context/MeetingContext";
+
 
 const Navigations = () => {
   const { authToken } = useAuth();
   const { setAllDepartmentList } = useContext(DepartmentContext);
+  const { setAllMeetingLists } = useContext(MeetingContext);
+
   useEffect(() => {
     const fetchData = async () => {
-      const data = await fetchDepartmentData();
-      setAllDepartmentList(data);
+      const fetchDepdata = await fetchDepartmentData();
+      setAllDepartmentList(fetchDepdata);
+      const fetchMeetingsData = await fetchMeetingData();
+      setAllMeetingLists(fetchMeetingsData);
     };
     fetchData();
   }, [setAllDepartmentList]);
