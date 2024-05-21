@@ -176,7 +176,9 @@ export default function EditMeeting() {
             toast.error("Failed to fetch department data");
         }
     };
-    console.log(data);
+
+
+   
 
     const handleOutput = (open) => {
         toggleDrawer();

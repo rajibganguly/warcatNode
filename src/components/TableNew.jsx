@@ -104,7 +104,7 @@ function TableNew({
     if (column.dataField === "meetingoperation") {
       return (
         <div style={{ display: "flex" }}>
-          <Button onClick={()=> handleEditmeeting(row)}
+          <Button onClick={() => handleEditmeeting(row)}
             style={{ backgroundColor: '#0097a7', color: '#ffffff' }}>
             <EditOutlined />
           </Button>
