@@ -1,5 +1,6 @@
 
 import * as React from "react";
+import { useState, useEffect } from 'react';
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -40,6 +41,9 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import Sidebar from "../components/Sidebar";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { toast } from "react-toastify";
+import ApiConfig from "../config/ApiConfig"
+import { useLocation } from "react-router-dom";
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -119,6 +123,17 @@ const defaultTheme = createTheme();
 
 export default function EditMeeting() {
     const [open, setOpen] = React.useState(true);
+    const [data, setData] = useState([]);
+    const location = useLocation();
+    const rowData = location.state?.rowData;
+
+    useEffect(() => {
+
+        if (rowData) {
+
+            console.log("Row Data:", rowData);
+        }
+    }, [rowData]);
 
     const [personName, setPersonName] = React.useState([]);
     const theme = useTheme();
@@ -132,6 +147,36 @@ export default function EditMeeting() {
         );
     }
 
+    useEffect(() => {
+        fetchDepartmentData();
+    }, []);
+
+    const departmentNames = data.map((dept) => dept.department.department_name);
+
+    const fetchDepartmentData = async () => {
+        if (!toast.isActive("loading")) {
+            toast.loading("Loading departments data...", { autoClose: false, toastId: "loading" });
+        }
+        const localData = localStorage.getItem("user");
+        const userObj = JSON.parse(localData)
+        try {
+            const localObj = { userId: userObj._id, role_type: userObj.role_type };
+
+            const params = {
+                userId: localObj.userId,
+                role_type: localObj.role_type
+            };
+            const departmentsAll = await ApiConfig.requestData('get', '/departments', params, null);
+            setData(departmentsAll);
+
+            toast.dismiss("loading");
+        } catch (error) {
+            console.error("Error fetching department data:", error);
+            toast.dismiss("loading");
+            toast.error("Failed to fetch department data");
+        }
+    };
+    console.log(data);
 
     const handleOutput = (open) => {
         toggleDrawer();
@@ -253,13 +298,9 @@ export default function EditMeeting() {
                                                             )}
                                                             MenuProps={MenuProps}
                                                         >
-                                                            {names.map((name) => (
-                                                                <MenuItem
-                                                                    key={name}
-                                                                    value={name}
-                                                                    style={getStyles(name, personName, theme)}
-                                                                >
-                                                                    {name}
+                                                            {departmentNames.map((deptName) => (
+                                                                <MenuItem key={deptName} value={deptName}>
+                                                                    {deptName}
                                                                 </MenuItem>
                                                             ))}
                                                         </Select>
@@ -323,14 +364,14 @@ export default function EditMeeting() {
                                                                 </DemoItem>
                                                             </Grid>
 
-                                                            <Grid xs={4} sx={{display: 'flex',justifyContent: 'center', alignItems: 'center'}}>
+                                                            <Grid xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                                                 <Button
                                                                     component="label"
                                                                     role={undefined}
                                                                     variant="contained"
                                                                     tabIndex={-1}
                                                                     startIcon={<CloudUploadIcon />}
-                                                                    sx={{display: 'flex',justifyContent: 'center', alignItems: 'center',width: '100%'}}
+                                                                    sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}
                                                                 >
                                                                     Upload file
                                                                     <VisuallyHiddenInput type="file" />
