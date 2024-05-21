@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import * as React from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -9,7 +10,7 @@ import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import { Link } from "react-router-dom";
 import { Button, TextField } from "@mui/material";
-import { useParams } from "react-router-dom";
+// import { useParams } from "react-router-dom";
 
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
@@ -21,6 +22,7 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 
 import { DepartmentContext } from './../context/DepartmentContext'
+import { fetchDepartmentData } from "./common";
 const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
@@ -65,6 +67,7 @@ export default function EditDepartment() {
   });
 
   const { selectedDepartmentData } = React.useContext(DepartmentContext);
+  const { setAllDepartmentList } = React.useContext(DepartmentContext);
 
   React.useEffect(() => {
     console.log(selectedDepartmentData)
@@ -85,6 +88,14 @@ export default function EditDepartment() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
+    /**
+   * Fetch Department Data & set the data
+   */
+    const fetchDepartmentDataList = async () => {
+      const data = await fetchDepartmentData();
+      setAllDepartmentList(data);
+    };
 
   /**
    * Check all fields if not empty
@@ -131,9 +142,7 @@ export default function EditDepartment() {
           [name]: value,
         };
       }
-    });
-
-    console.log('MMMMMMMMMM', formData)
+    });    
 
     if (allFieldsMapped(formData)) {
       setSubmitDisable(false);
@@ -152,7 +161,6 @@ export default function EditDepartment() {
       secretary: formData.secretary,
       headOffice: formData.headOffice
     }
-    console.log('+++++++++++++++++++++++', formData, setDataPropMap)
     const auth_token = localStorage.getItem('token');
     const response = await fetch(
       `${reactAppHostname}/api/edit-register-user-with-department`,
@@ -168,7 +176,8 @@ export default function EditDepartment() {
 
     try {
       if (response.status === 200) {
-        alert(`put working`);
+        
+        await fetchDepartmentDataList();
         navigate("/departments");
       } else {
         alert("Login Failed");

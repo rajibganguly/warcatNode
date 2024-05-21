@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useContext } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -30,6 +30,10 @@ import CardContent from "@mui/material/CardContent";
 import Stack from "@mui/material/Stack";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../apiConfig/axoisSetup";
+import { fetchDepartmentData } from "./common";
+import { DepartmentContext } from "../context/DepartmentContext";
+
+
 
 const drawerWidth = 240;
 
@@ -75,6 +79,7 @@ export default function AddDepartment() {
     dep_name: "",
   });
 
+  const { setAllDepartmentList } = useContext(DepartmentContext);
   const navigate = useNavigate();
   const handleOutput = (open) => {
     toggleDrawer();
@@ -101,6 +106,14 @@ export default function AddDepartment() {
       }
     }
     return true; // All fields are not empty
+  };
+
+  /**
+   * Fetch Department Data & set the data
+   */
+  const fetchDepartmentDataList = async () => {
+    const data = await fetchDepartmentData();
+    setAllDepartmentList(data);
   };
 
   /**
@@ -135,17 +148,18 @@ export default function AddDepartment() {
     }
   };
 
+
   /**
    * Post call on submit
    */
   const handleAddDepartment = async () => {
-    setSubmitDisable(true);  
+    setSubmitDisable(true);
     try {
       const token = localStorage.getItem("token");
       if (!token) {
         throw new Error("Token not found in localStorage");
       }
-  
+
       const response = await fetch("https://warcat2024-qy2v.onrender.com/api/register-user-with-department", {
         method: "POST",
         headers: {
@@ -154,26 +168,27 @@ export default function AddDepartment() {
         },
         body: JSON.stringify(formData),
       });
-  
+
       const responseData = await response.json();
-  
+
       if (response.ok) {
         toast.success("Department Added Successfully", {
           autoClose: 2000,
         });
+        await fetchDepartmentDataList();
         navigate("/departments");
       } else {
         toast.error(responseData.message || "Something went wrong", {
           autoClose: 2000,
         });
-        
+
       }
     } catch (error) {
       console.error("Error occurred:", error);
-      
+
     }
   };
-  
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -261,7 +276,7 @@ export default function AddDepartment() {
                   </Box>
                   <CardContent>
                     <Box component="form" noValidate autoComplete="off">
-                      
+
                       <TextField
                         id="outlined-basic"
                         label="Department / Government Organisation"
@@ -288,7 +303,7 @@ export default function AddDepartment() {
                       >
                         <Grid item xs={12} sm={6}>
 
-                         
+
                           <TextField
                             id="outlined-basic-1"
                             label="Enter Secretary Name"
@@ -302,7 +317,7 @@ export default function AddDepartment() {
 
                         </Grid>
                         <Grid item xs={12} sm={6}>
-                        
+
                           <TextField
                             id="outlined-basic-2"
                             label="Enter Secretary Phone Number"
@@ -321,7 +336,7 @@ export default function AddDepartment() {
 
                         </Grid>
                         <Grid item xs={12} sm={6}>
-                         
+
                           <TextField
                             id="outlined-basic-3"
                             label="Enter Secretary Email Id"
@@ -351,7 +366,7 @@ export default function AddDepartment() {
                       >
                         <Grid item xs={12} sm={6}>
                           <Stack direction="column" spacing={2}>
-                           
+
                             <TextField
                               id="outlined-basic-1"
                               label="Enter Head of Office Name"
@@ -362,7 +377,7 @@ export default function AddDepartment() {
                               onChange={handleChange}
                               size="small"
                             />
-                            
+
                             <TextField
                               id="outlined-basic-2"
                               label="Enter Head of Office Designation"
@@ -377,7 +392,7 @@ export default function AddDepartment() {
                         </Grid>
                         <Grid item xs={12} sm={6}>
                           <Stack direction="column" spacing={2}>
-                          
+
                             <TextField
                               id="outlined-basic-1"
                               label="Enter Head of Office Phone Number"
@@ -393,7 +408,7 @@ export default function AddDepartment() {
                               }}
                               onChange={handleChange}
                             />
-                           
+
                             <TextField
                               id="outlined-basic-2"
                               label="Head of Office Email Id"

@@ -239,6 +239,7 @@ export default function LogIn({ setAuthToken }) {
                     onChange={handleChange}
                     onBlur={handleChange}
                     autoFocus
+                    size="small"
                   />
                   <TextField
                     margin="normal"
@@ -251,6 +252,7 @@ export default function LogIn({ setAuthToken }) {
                     type="password"
                     id="password"
                     autoComplete="current-password"
+                    size="small"
                   />
                   <FormControlLabel
                     control={<Checkbox value="remember" color="primary" />}
