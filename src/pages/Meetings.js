@@ -27,6 +27,7 @@ import CardActions from "@mui/material/CardActions";
 import IconButton from "@mui/material/IconButton";
 import { CloseOutlined } from '@mui/icons-material';
 import { MeetingContext } from './../context/MeetingContext'
+import { TaskContext } from "../context/TaskContext";
 
 const column = [
   { text: 'Meeting Id', dataField: 'meetingId' },
@@ -73,7 +74,7 @@ export default function Meetings() {
   const [data, setData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible1, setModalVisible1] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
+  const [modalContent, setModalContent] = useState([]);
   const [file, setFile] = useState();
   const navigate = useNavigate();
 
@@ -89,7 +90,9 @@ export default function Meetings() {
   const currentRoleType = localUser.role_type;
   const { allMeetingLists } = React.useContext(MeetingContext);
   const allDepartmentListData = allMeetingLists?.meetings;
-  
+  const { allTaskLists } = React.useContext(TaskContext);
+  const allTaskListsData = allTaskLists?.tasks;
+
   const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -101,36 +104,6 @@ export default function Meetings() {
     whiteSpace: 'nowrap',
     width: 1,
   });
-
-
-
-
-
-  // /**
-  //  * @description Private function for fetch Meeting data
-  //  */
-  // const fetchMeetingData = async () => {
-  //   if (!toast.isActive("loading")) {
-  //     toast.loading("Loading meetings data...", { autoClose: false, toastId: "loading" });
-  //   }
-  //   const localData = localStorage.getItem("user");
-  //   const userObj = JSON.parse(localData)
-  //   try {
-  //     const localObj = { userId: userObj._id, role_type: userObj.role_type };
-
-  //     const params = {
-  //       userId: localObj.userId,
-  //       role_type: localObj.role_type
-  //     };
-  //     const meetingData = await ApiConfig.requestData('get', '/meetings', params, null);
-  //     setData(meetingData.meetings);
-  //     toast.dismiss("loading");
-  //   } catch (error) {
-  //     console.error("Error fetching meeting data:", error);
-  //     toast.dismiss("loading");
-  //     toast.error("Failed to fetch meeting data");
-  //   }
-  // };
 
 
 
@@ -158,10 +131,14 @@ export default function Meetings() {
       // Optionally, handle the error or provide feedback to the user
     }
   };
-  
-  
 
-  const handleSeeClick1 = () => {
+
+  const findMeetingRows = (meetingId) => {
+    return allTaskListsData.filter(row => row.meetingId && row.meetingId === meetingId);
+  };
+
+  const handleTaskView = (data) => {
+    setModalContent(findMeetingRows(data?.meetingId))
     setModalVisible1(true);
 
   };
@@ -259,11 +236,11 @@ export default function Meetings() {
                           handleTasksAddInMeeting={handleTasksAddInMeeting}
                           handleTasksViewInMeeting={handleTasksViewInMeeting}
                           handleEditmeeting={handleEditmeeting}
-                          handleSeeClick1={handleSeeClick1}
+                          handleTaskView={handleTaskView}
                         />
                         <Dialog
-                          open={modalVisible1}
-                          onClose={closeModal1}
+                          open={modalVisible}
+                          onClose={closeModal}
                           aria-labelledby="modal-title"
                           aria-describedby="modal-description"
                           sx={{
@@ -273,7 +250,7 @@ export default function Meetings() {
                           }}
                         >
                           <DialogContent sx={{ p: 2, width: '600px' }}>
-                            {modalContent && (
+                            {modalContent ? (
                               <DialogContentText id="modal-description">
                                 <Typography variant="h4" id="modal-title">
                                   Website Issue
@@ -304,8 +281,6 @@ export default function Meetings() {
                                     <Button variant="contained" color="primary">Add Subtask</Button>
                                   </CardContent>
 
-
-
                                   <CardActions sx={{ justifyContent: 'flex-end' }}>
                                     <Button size="small" variant="contained" color="primary" >
                                       Email
@@ -315,6 +290,10 @@ export default function Meetings() {
                                     </Button>
                                   </CardActions>
                                 </Card>
+                              </DialogContentText>
+                            ) : (
+                              <DialogContentText id="modal-description">
+                                No record found.
                               </DialogContentText>
                             )}
                           </DialogContent>

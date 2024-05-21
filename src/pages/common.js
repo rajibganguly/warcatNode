@@ -41,3 +41,21 @@ import ApiConfig from '../config/ApiConfig';
     } catch (error) {
     }
   };
+
+
+      /**
+   * @description Private function for fetch Task data
+   */
+ export const fetchTaskData = async () => {
+  const localData = localStorage.getItem("user");
+  const userObj = JSON.parse(localData)
+  try {
+    const params = {
+      userId: userObj._id,
+      role_type: userObj.role_type
+    };
+    const allTasks = await ApiConfig.requestData('get', '/tasks', params, null);
+    return allTasks;
+  } catch (error) {
+  }
+};

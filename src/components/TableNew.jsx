@@ -21,7 +21,7 @@ function TableNew({
   handleUploadClick,
   handleEditOperationTask,
   handleViewOperationTask,
-  handleSeeClick1,
+  handleTaskView,
   handleEditmeeting
 }) {
   const getNestedValue = (obj, path) => {
@@ -71,7 +71,7 @@ function TableNew({
             style={{ backgroundColor: '#0a1832', color: '#ffffff', marginRight: '2px' }}>
             <AddIcon />
           </Button>
-          <Button onClick={() => handleSeeClick1(row)}
+          <Button onClick={() => handleTaskView(row)}
             style={{ backgroundColor: '#fb4', color: 'black' }}>
             <EyeOutlined />
           </Button>
