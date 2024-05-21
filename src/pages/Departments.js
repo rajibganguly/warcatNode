@@ -242,12 +242,20 @@ export default function Departments() {
                           <DialogContentText id="modal-description">
                             <Typography variant="h4" id="modal-title">
                               <h5 className='textclr'>Department Name: <b className='textclr2'>{modalContent.department.department_name}</b></h5>
-                               
+
                             </Typography>
 
                             <Typography variant="h5" id="modal-title">
                               <u className='textclr'>Department Name: </u>
-                               
+
+                            </Typography>
+
+                            <Typography variant="h4" id="modal-title">
+                              <h6 className='textclr'>Secretary Name: <b className='textclr2'>{modalContent.secretary.name}</b></h6>
+                            </Typography>
+
+                            <Typography variant="h4" id="modal-title">
+                              <h6 className='textclr'> Secretary Phone number: <b className='textclr2'>{modalContent.secretary.phone}</b></h6>
                             </Typography>
 
 
