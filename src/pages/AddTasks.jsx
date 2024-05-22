@@ -85,6 +85,7 @@ export default function AddTasks() {
     const location = useLocation();
     const [personName, setPersonName] = React.useState([]);
     const [meetingId, setMeetingId] = useState('');
+    const [meetingRow, setMeetingRow] = useState([]);
     const [meetingTopic, setMeetingTopic] = useState('');
     const theme = useTheme();
     const { allDepartmentList } = React.useContext(DepartmentContext);
@@ -96,7 +97,7 @@ export default function AddTasks() {
         const queryParams = new URLSearchParams(location.search);
         const encodedMeetingId = queryParams.get('meetingId');
         const encodedMeetingTopic = queryParams.get('meetingTopic');
-
+        const encodedMeetingRow = queryParams.get('meetingRow');
         if (encodedMeetingId && encodedMeetingTopic) {
             // Base64 decode the parameters
             const decodedMeetingId = window.atob(encodedMeetingId);
@@ -105,8 +106,14 @@ export default function AddTasks() {
             setMeetingId(decodedMeetingId);
             setMeetingTopic(decodedMeetingTopic);
         }
+        if (encodedMeetingRow) {
+            const decodedObject = window.atob(encodedMeetingRow);
+            // Parse the JSON string back to an object
+            const parsedObject = JSON.parse(decodedObject);
+            // Set the decrypted object in state
+            setMeetingRow(parsedObject);
+        }
     }, [location.search]);
-
 
     const handleChange = (event) => {
         const {
@@ -190,6 +197,9 @@ export default function AddTasks() {
     }
 
     function handleSubmit() {
+        if (meetingRow.length > 0) {
+            
+        }
         console.log(inputGroups);
     }
 
@@ -427,21 +437,23 @@ export default function AddTasks() {
 
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'start' }}>
-                                        <Button
-                                            variant="contained"
-                                            color="success"
-                                            sx={{ color: 'white', marginTop: '2%', mr: '10px', fontWeight: 'bold' }} // Added left margin for spacing
-                                            onClick={handleAddClick}
-                                        >
-                                            <PlusCircleOutlined />
-                                        </Button>
+                                        {meetingRow.length === 0 && ( // Conditionally render the button if meetingRow === 0
+                                            <Button
+                                                variant="contained"
+                                                color="success"
+                                                sx={{ color: 'white', marginTop: '2%', mr: '10px', fontWeight: 'bold' }}
+                                                onClick={handleAddClick}
+                                            >
+                                                <PlusCircleOutlined />
+                                            </Button>
+                                        )}
                                         <Button
                                             variant="contained"
                                             color="success"
                                             sx={{ color: 'white', marginTop: '2%' }}
                                             onClick={handleSubmit}
                                         >
-                                            Submit
+                                            {meetingRow.length > 0 ? 'Update' : 'Submit'}
                                         </Button>
                                     </Grid>
                                 </Grid>

@@ -210,7 +210,9 @@ export default function Tasks() {
   };
 
   const handleEditOperationTask = (row) => {
-    // setModalVisible1(true);
+     const stringifiedObject = JSON.stringify(row);
+     const encodedObject = window.btoa(stringifiedObject);
+     navigate(`/add-tasks?meetingRow=${encodeURIComponent(encodedObject)}`);
 
   };
 
