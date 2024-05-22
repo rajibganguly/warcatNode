@@ -28,6 +28,7 @@ import IconButton from "@mui/material/IconButton";
 import { CloseOutlined } from '@mui/icons-material';
 import { MeetingContext } from './../context/MeetingContext'
 import { TaskContext } from "../context/TaskContext";
+import { formatDate, formatDateWithmonth } from "./common";
 
 const column = [
   { text: 'Meeting Id', dataField: 'meetingId' },
@@ -71,20 +72,16 @@ const defaultTheme = createTheme();
 
 export default function Meetings() {
   const [open, setOpen] = React.useState(true);
-  const [data, setData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [modalVisible1, setModalVisible1] = useState(false);
-  const [modalContent, setModalContent] = useState([]);
-  const [file, setFile] = useState();
+  const [taskDataView, setTaskDataView] = useState([]);
+  const [meetingData, setMeetingData] = useState([]);
   const navigate = useNavigate();
 
   const closeModal = () => {
     setModalVisible(false);
-    setModalContent(null);
+    setTaskDataView([]);
   };
-  const closeModal1 = () => {
-    setModalVisible1(false);
-  };
+
 
   const localUser = JSON.parse(localStorage.getItem('user'));
   const currentRoleType = localUser.role_type;
@@ -138,11 +135,13 @@ export default function Meetings() {
   };
 
   const handleTaskView = (data) => {
-    setModalContent(findMeetingRows(data?.meetingId))
-    setModalVisible1(true);
+    console.log(allTaskListsData)
+    console.log(data)
+    setMeetingData(data);
+    setTaskDataView(findMeetingRows(data?.meetingId))
+    setModalVisible(true);
 
   };
-
 
 
 
@@ -250,46 +249,59 @@ export default function Meetings() {
                           }}
                         >
                           <DialogContent sx={{ p: 2, width: '600px' }}>
-                            {modalContent ? (
+                            {taskDataView && taskDataView.length > 0 ? (
                               <DialogContentText id="modal-description">
                                 <Typography variant="h4" id="modal-title">
-                                  Website Issue
+                                  {meetingData?.meetingTopic}
+                                  <div className="flex">
+                                    <h4>{formatDate(meetingData?.selectDate)}</h4>
+                                    <h4>{meetingData?.selectTime}</h4>
+                                  </div>
                                 </Typography>
-                                <Card sx={{ width: '100%', maxWidth: 900, maxHeight: 600, overflowY: 'auto' }}>
-                                  <IconButton
-                                    aria-label="close"
-                                    onClick={closeModal}
-                                    sx={{ position: 'absolute', right: '5px', top: '0', color: 'gray' }}
+                                {taskDataView.map((task, index) => (
+                                  <Card
+                                    key={index}
+                                    sx={{ width: '100%', maxWidth: 900, maxHeight: 600, overflowY: 'auto', marginBottom: 2 }}
                                   >
-                                    <CloseOutlined />
-                                  </IconButton>
-                                  <CardContent style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <div>
-                                      <Typography variant="h5" color="text.secondary">
-                                        Subtask
-                                      </Typography>
-                                      <Typography variant="body2" color="text.secondary">
-                                        {modalContent.task_title}
-                                      </Typography>
-                                      <Typography variant="body2" color="text.secondary">
-                                        Target Date: {modalContent.target_date}
-                                      </Typography>
-                                      <Typography variant="body2" color="text.secondary">
-                                        Attachment.png
-                                      </Typography>
-                                    </div>
-                                    <Button variant="contained" color="primary">Add Subtask</Button>
-                                  </CardContent>
+                                    <IconButton
+                                      aria-label="close"
+                                      onClick={closeModal}
+                                      sx={{ position: 'absolute', right: '5px', top: '0', color: 'gray' }}
+                                    >
+                                      <CloseOutlined />
+                                    </IconButton>
+                                    <CardContent style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                      <div>
+                                        <Typography variant="h5" color="text.secondary">
+                                          Tasks
+                                        </Typography>
+                                        <h5>{formatDateWithmonth(task.timestamp)}</h5>
+                                        <Typography variant="body2" color="text.secondary">
+                                          {task.task_title}
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                          Target Date: {formatDateWithmonth(task.target_date)}
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                        {task.status}
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                        {task.task_image}
+                                        </Typography>
+                                      </div>
+                                      <Button variant="contained" color="primary">Add Subtask</Button>
+                                    </CardContent>
 
-                                  <CardActions sx={{ justifyContent: 'flex-end' }}>
-                                    <Button size="small" variant="contained" color="primary" >
-                                      Email
-                                    </Button>
-                                    <Button size="small" variant="contained" color="primary" onClick={() => console.log('Share clicked')}>
-                                      Sms
-                                    </Button>
-                                  </CardActions>
-                                </Card>
+                                    <CardActions sx={{ justifyContent: 'flex-end' }}>
+                                      <Button size="small" variant="contained" color="primary">
+                                        Email
+                                      </Button>
+                                      <Button size="small" variant="contained" color="primary" onClick={() => console.log('Share clicked')}>
+                                        Sms
+                                      </Button>
+                                    </CardActions>
+                                  </Card>
+                                ))}
                               </DialogContentText>
                             ) : (
                               <DialogContentText id="modal-description">

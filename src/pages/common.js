@@ -59,3 +59,20 @@ import ApiConfig from '../config/ApiConfig';
   } catch (error) {
   }
 };
+
+
+  // Function to format the date
+  export const formatDate = (isoString) => {
+    const date = new Date(isoString);
+    return date.toLocaleDateString('en-GB');
+  };
+
+
+  export const formatDateWithmonth = (isoString) => {
+    const date = new Date(isoString);
+    return date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }).replace(/ /g, ' ');
+  };
