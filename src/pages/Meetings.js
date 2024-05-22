@@ -1,35 +1,38 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
-import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import Box from "@mui/material/Box";
-import MuiAppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
+import { useState } from "react";
+import {
+  Box,
+  Grid,
+  Card,
+  Chip,
+  styled,
+  Dialog,
+  Button,
+  Divider,
+  Toolbar,
+  Container,
+  IconButton,
+  Typography,
+  createTheme,
+  CssBaseline,
+  Breadcrumbs,
+  CardContent,
+  ThemeProvider,
+  DialogContent,
+  Link as MuiLink
+} from "@mui/material";
 import { Link } from 'react-router-dom';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
-import { useNavigate } from "react-router-dom";
-//import axiosInstance from "../apiConfig/axoisSetup";
-import ApiConfig from "../config/ApiConfig";
-import { Button, Chip, Divider } from "@mui/material";
-import TableNew from "../components/TableNew";
-import { toast } from "react-toastify";
 import Sidebar from "../components/Sidebar";
-import { TextField, Dialog, DialogContent, DialogContentText } from "@mui/material";
-import CardActions from "@mui/material/CardActions";
-// import ApiConfig from '../config/ApiConfig'
-import IconButton from "@mui/material/IconButton";
+import MuiAppBar from "@mui/material/AppBar";
+import TableNew from "../components/TableNew";
+import { useNavigate } from "react-router-dom";
 import { CloseOutlined } from '@mui/icons-material';
 import { MeetingContext } from './../context/MeetingContext'
 import { TaskContext } from "../context/TaskContext";
 import { formatDate, formatDateWithmonth } from "./common";
-import { Link as MuiLink } from '@mui/material';
+// import TaskViewDialog from "../dialog/TaskViewDialog";
 
 const column = [
   { text: 'Meeting Id', dataField: 'meetingId' },
@@ -123,7 +126,6 @@ export default function Meetings() {
     setMeetingData(data);
     setTaskDataView(findMeetingRows(data?.meetingId))
     setModalVisible(true);
-
   };
 
   const handleOutput = (open) => {
@@ -212,6 +214,12 @@ export default function Meetings() {
                           handleTasksViewInMeeting={handleTasksViewInMeeting}
                           handleEditmeeting={handleEditmeeting}
                         />
+                        {/* <TaskViewDialog
+                          open={modalVisible}
+                          onClose={closeModal}
+                          task={taskDataView}
+                          meetingData={meetingData}
+                        /> */}
                         <Dialog
                           fullWidth
                           open={modalVisible}
