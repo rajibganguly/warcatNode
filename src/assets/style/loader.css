@@ -50,7 +50,10 @@
 .animation:after {
     content: "";
     position: absolute;
-    inset: 0 0 auto auto;
+    top: 0px;
+    right: 0px;
+    bottom: auto; /* Explicitly set to 'auto' */
+    left: auto;   /* Explicitly set to 'auto' */
     width: 8px;
     height: 8px;
     border-radius: 50%;
