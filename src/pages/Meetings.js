@@ -17,7 +17,7 @@ import Header from "../components/header";
 import { useNavigate } from "react-router-dom";
 //import axiosInstance from "../apiConfig/axoisSetup";
 import ApiConfig from "../config/ApiConfig";
-import { Button } from "@mui/material";
+import { Button, Divider } from "@mui/material";
 import TableNew from "../components/TableNew";
 import { toast } from "react-toastify";
 import Sidebar from "../components/Sidebar";
@@ -29,6 +29,7 @@ import { CloseOutlined } from '@mui/icons-material';
 import { MeetingContext } from './../context/MeetingContext'
 import { TaskContext } from "../context/TaskContext";
 import { formatDate, formatDateWithmonth } from "./common";
+import { Link as MuiLink } from '@mui/material';
 
 const column = [
   { text: 'Meeting Id', dataField: 'meetingId' },
@@ -238,77 +239,77 @@ export default function Meetings() {
                           handleTaskView={handleTaskView}
                         />
                         <Dialog
+                          fullWidth
                           open={modalVisible}
                           onClose={closeModal}
                           aria-labelledby="modal-title"
                           aria-describedby="modal-description"
-                          sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}
                         >
-                          <DialogContent sx={{ p: 2, width: '600px' }}>
-                            {taskDataView && taskDataView.length > 0 ? (
-                              <DialogContentText id="modal-description">
-                                <Typography variant="h4" id="modal-title">
-                                  {meetingData?.meetingTopic}
-                                  <div className="flex">
-                                    <h4>{formatDate(meetingData?.selectDate)}</h4>
-                                    <h4>{meetingData?.selectTime}</h4>
-                                  </div>
-                                </Typography>
-                                {taskDataView.map((task, index) => (
-                                  <Card
-                                    key={index}
-                                    sx={{ width: '100%', maxWidth: 900, maxHeight: 600, overflowY: 'auto', marginBottom: 2 }}
+                          {taskDataView && taskDataView.length > 0 ? (
+                            <>
+                              <Box
+                                p={2}
+                                display={'flex'}
+                                justifyContent={'space-between'}
+                              >
+                                <Box>
+                                  <Typography variant="h6" color="text.primary">{meetingData?.meetingTopic}</Typography>
+                                  <Box
+                                    display={'flex'}
+                                    gap={2}
                                   >
-                                    <IconButton
-                                      aria-label="close"
-                                      onClick={closeModal}
-                                      sx={{ position: 'absolute', right: '5px', top: '0', color: 'gray' }}
-                                    >
-                                      <CloseOutlined />
-                                    </IconButton>
-                                    <CardContent style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                      <div>
-                                        <Typography variant="h5" color="text.secondary">
-                                          Tasks
-                                        </Typography>
-                                        <h5>{formatDateWithmonth(task.timestamp)}</h5>
-                                        <Typography variant="body2" color="text.secondary">
-                                          {task.task_title}
-                                        </Typography>
-                                        <Typography variant="body2" color="text.secondary">
-                                          Target Date: {formatDateWithmonth(task.target_date)}
-                                        </Typography>
-                                        <Typography variant="body2" color="text.secondary">
-                                        {task.status}
-                                        </Typography>
-                                        <Typography variant="body2" color="text.secondary">
-                                        {task.task_image}
-                                        </Typography>
-                                      </div>
-                                      <Button variant="contained" color="primary">Add Subtask</Button>
-                                    </CardContent>
-
-                                    <CardActions sx={{ justifyContent: 'flex-end' }}>
-                                      <Button size="small" variant="contained" color="primary">
-                                        Email
-                                      </Button>
-                                      <Button size="small" variant="contained" color="primary" onClick={() => console.log('Share clicked')}>
-                                        Sms
-                                      </Button>
-                                    </CardActions>
-                                  </Card>
+                                    <Typography color="text.secondary">{formatDate(meetingData?.selectDate)}</Typography>
+                                    <Typography color="text.secondary">{meetingData?.selectTime}</Typography>
+                                  </Box>
+                                </Box>
+                                <IconButton
+                                  size="small"
+                                  aria-label="close"
+                                  onClick={closeModal}
+                                >
+                                  <CloseOutlined />
+                                </IconButton>
+                              </Box>
+                              <Divider/>
+                              <DialogContent>
+                                <Box mb={2} display={'flex'} gap={4} alignItems={'center'}>
+                                  <Typography variant="h6" color="text.primary" className="text-underline">
+                                    Tasks
+                                  </Typography>
+                                  <Button variant="contained" color="primary" sx={{fontSize:'12px'}}>Add New Subtask</Button>
+                                </Box>
+                                {taskDataView.map((task, index) => (
+                                  <Box key={index}>
+                                    <Typography fontSize={'12px'} color="text.secondary">
+                                      {formatDateWithmonth(task.timestamp)}
+                                    </Typography>
+                                    <Typography color="text.primary" variant="h6" mb={.5}>
+                                      {task.task_title}
+                                    </Typography>
+                                    <Box display={'flex'} gap={1} alignItems={'center'}>
+                                      <Typography color="text.secondary">
+                                        Target Date:
+                                      </Typography>
+                                      <Typography color="error">
+                                        {formatDateWithmonth(task.target_date)}
+                                      </Typography>
+                                    </Box>
+                                    <Typography color="text.secondary">
+                                      {task.status}
+                                    </Typography>
+                                    <MuiLink component="a" href={task.task_image} download="attachment.png">
+                                      attachment.png
+                                    </MuiLink>
+                                    {index < taskDataView.length - 1 && <Divider sx={{my:2}} />}
+                                  </Box>
                                 ))}
-                              </DialogContentText>
-                            ) : (
-                              <DialogContentText id="modal-description">
-                                No record found.
-                              </DialogContentText>
-                            )}
-                          </DialogContent>
+                              </DialogContent>
+                            </>
+                          ) : (
+                            <DialogContent id="modal-description">
+                              Task not found.
+                            </DialogContent>
+                          )}
                         </Dialog>
                       </CardContent>
                     </Card>
