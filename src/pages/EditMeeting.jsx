@@ -1,6 +1,5 @@
-
 import * as React from "react";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -9,9 +8,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-
 import { Link } from "react-router-dom";
-
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
@@ -42,8 +39,9 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import Sidebar from "../components/Sidebar";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { toast } from "react-toastify";
-import ApiConfig from "../config/ApiConfig"
-import { useLocation } from "react-router-dom";
+import ApiConfig from "../config/ApiConfig";
+import { MeetingContext } from './../context/MeetingContext';
+import { useParams } from "react-router-dom";
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -57,10 +55,6 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-
-
-
-
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -73,16 +67,8 @@ const MenuProps = {
 };
 
 const names = [
-    'Oliver Hansen',
-    'Van Henry',
-    'April Tucker',
-    'Ralph Hubbard',
-    'Omar Alexander',
-    'Carlos Abbott',
-    'Miriam Wagner',
-    'Bradley Wilkerson',
-    'Virginia Andrews',
-    'Kelly Snyder',
+    'Head Of office',
+    'Secretary',
 ];
 function getStyles(name, personName, theme) {
     return {
@@ -91,10 +77,6 @@ function getStyles(name, personName, theme) {
                 ? theme.typography.fontWeightRegular
                 : theme.typography.fontWeightMedium,
     };
-}
-
-function Label({ componentName, valueType }) {
-
 }
 
 const drawerWidth = 240;
@@ -117,35 +99,90 @@ const AppBar = styled(MuiAppBar, {
     }),
 }));
 
-
-// TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 export default function EditMeeting() {
-    const [open, setOpen] = React.useState(true);
+    const [open, setOpen] = useState(true);
     const [data, setData] = useState([]);
-    const location = useLocation();
-    const rowData = location.state?.rowData;
+    const [filteredMeeting, setFilteredMeeting] = useState([]);
+    const { id } = useParams();
+    const { allMeetingLists } = useContext(MeetingContext);
+
+    const [formData, setFormData] = useState({
+        departmentNames: [],
+        imageUrl: "",
+        meetingTopic: "",
+        selectDate: "",
+        selectTime: "",
+        tag: []
+    });
 
     useEffect(() => {
-
-        if (rowData) {
-
-            console.log("Row Data:", rowData);
+        if (Array.isArray(allMeetingLists?.meetings)) {
+            const filteredMeetings = allMeetingLists?.meetings.filter(meeting => meeting.meetingId === id);
+            setFilteredMeeting(filteredMeetings);
+        } else {
+            console.error("Error getting Data");
         }
-    }, [rowData]);
+    }, [allMeetingLists, id]);
 
-    const [personName, setPersonName] = React.useState([]);
+    
+
+    useEffect(() => {
+        if (filteredMeeting.length > 0) {
+            const meetingData = filteredMeeting[0];
+            setFormData({
+                departmentNames: meetingData.departmentNames,
+                imageUrl: meetingData.imageUrl,
+                meetingTopic: meetingData.meetingTopic,
+                selectDate: meetingData.selectDate,
+                selectTime: meetingData.selectTime,
+                tag: meetingData.tag
+            });
+        }
+    }, [filteredMeeting]);
+
+
+    const [personName, setPersonName] = useState([]);
     const theme = useTheme();
+
     const handleChange = (event) => {
-        const {
-            target: { value },
-        } = event;
-        setPersonName(
-            // On autofill we get a stringified value.
-            typeof value === 'string' ? value.split(',') : value,
-        );
-    }
+        const { name, value } = event.target;
+        setFormData(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const updatedData = {};
+            Object.keys(formData).forEach(key => {
+                if (formData[key] !== filteredMeeting[0][key]) {
+                    updatedData[key] = formData[key];
+                }
+            });
+            console.log(updatedData)
+
+            const response = await fetch(`https://warcat2024-qy2v.onrender.com/api/edit-meeting?meetingId=${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedData)
+            });
+            if (response.ok) {
+                toast.success('Meeting updated successfully');
+            } else {
+                console.error('Failed to update meeting');
+            }
+        } catch (error) {
+            console.error('Error updating meeting:', error);
+        }
+
+
+    };
 
     useEffect(() => {
         fetchDepartmentData();
@@ -158,17 +195,15 @@ export default function EditMeeting() {
             toast.loading("Loading departments data...", { autoClose: false, toastId: "loading" });
         }
         const localData = localStorage.getItem("user");
-        const userObj = JSON.parse(localData)
+        const userObj = JSON.parse(localData);
         try {
             const localObj = { userId: userObj._id, role_type: userObj.role_type };
-
             const params = {
                 userId: localObj.userId,
                 role_type: localObj.role_type
             };
             const departmentsAll = await ApiConfig.requestData('get', '/departments', params, null);
             setData(departmentsAll);
-
             toast.dismiss("loading");
         } catch (error) {
             console.error("Error fetching department data:", error);
@@ -177,16 +212,12 @@ export default function EditMeeting() {
         }
     };
 
-
-   
-
     const handleOutput = (open) => {
         toggleDrawer();
     };
     const toggleDrawer = () => {
         setOpen(!open);
     };
-
 
     return (
         <ThemeProvider theme={defaultTheme}>
@@ -210,7 +241,6 @@ export default function EditMeeting() {
                     <Toolbar />
                     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
                         <Grid container spacing={3}>
-                            {/* Recent Orders */}
                             <Grid item xs={12}>
                                 <div
                                     style={{
@@ -232,11 +262,7 @@ export default function EditMeeting() {
                                             <Link underline="hover" color="inherit" href="/">
                                                 WARCAT
                                             </Link>
-                                            <Link
-                                                underline="hover"
-                                                color="inherit"
-
-                                            >
+                                            <Link underline="hover" color="inherit">
                                                 Meetings
                                             </Link>
                                             <Typography color="text.primary">
@@ -245,8 +271,7 @@ export default function EditMeeting() {
                                         </Breadcrumbs>
                                     </div>
                                 </div>
-                                <Card sx={{ width: 100 + "%", padding: 2 }}>
-
+                                <Card sx={{ width: '100%', padding: 2 }}>
                                     <CardContent>
                                         <Box
                                             sx={{
@@ -255,42 +280,38 @@ export default function EditMeeting() {
                                                 alignItems: 'center',
                                                 padding: 2,
                                                 borderBottom: '1px solid #eff2f7',
-
                                             }}
                                         >
                                             <Typography variant="body1">Edit Meetings</Typography>
                                             <Button variant="contained" sx={{
                                                 backgroundColor: '#fb4',
                                                 color: '#000000',
-
                                                 '&:hover': {
                                                     backgroundColor: '#fb4',
                                                 },
-
                                             }} component={Link} to="/meetings">
                                                 All Meetings
                                             </Button>
                                         </Box>
                                         <Box
                                             component="form"
-
                                             noValidate
                                             autoComplete="off"
                                             sx={{ marginTop: 2 }}
+                                            onSubmit={handleSubmit}
                                         >
-
                                             <Grid container spacing={2}>
                                                 <Grid item xs={6}>
-                                                    <FormControl sx={{ width: 100 + '%' }}>
+                                                    <FormControl sx={{ width: '100%' }}>
                                                         <InputLabel id="demo-multiple-chip-label1">Department / Government Organisation</InputLabel>
                                                         <Select
                                                             labelId="demo-multiple-chip-label1"
                                                             id="demo-multiple-chip"
                                                             fullWidth
                                                             multiple
-                                                            value={personName}
+                                                            value={formData.departmentNames}
                                                             onChange={handleChange}
-                                                            input={<OutlinedInput id="select-multiple-chip1" label="Chip" />}
+                                                            input={<OutlinedInput id="select-multiple-chip1" label="Chip" name="departmentNames" />}
                                                             renderValue={(selected) => (
                                                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                                                     {selected.map((value) => (
@@ -307,9 +328,10 @@ export default function EditMeeting() {
                                                             ))}
                                                         </Select>
                                                     </FormControl>
+
                                                 </Grid>
                                                 <Grid item xs={6}>
-                                                    <FormControl sx={{ width: 100 + '%' }}>
+                                                    <FormControl sx={{ width: '100%' }}>
                                                         <InputLabel id="demo-multiple-chip-label2">Tag</InputLabel>
                                                         <Select
                                                             labelId="demo-multiple-chip-label2"
@@ -340,32 +362,24 @@ export default function EditMeeting() {
                                                         </Select>
                                                     </FormControl>
                                                 </Grid>
-
                                                 <Grid item xs={12}>
-                                                    <TextField id="outlined-basic" label="Meeting 1" value={'Meeting 1'} variant="outlined" fullWidth />
+                                                    <TextField id="outlined-basic"  value={formData.meetingTopic} variant="outlined" fullWidth disabled />
                                                 </Grid>
-
                                                 <Grid item xs={12}>
                                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                                         <DemoContainer
-                                                            components={[
-                                                                'DatePicker',
-                                                                'TimePicker',
-
-                                                            ]}
+                                                            components={['DatePicker', 'TimePicker']}
                                                         >
-                                                            <Grid xs={4}>
-                                                                <DemoItem label={<Label componentName="DatePicker" valueType="date" />}>
-                                                                    <DatePicker />
+                                                            <Grid item xs={4}>
+                                                                <DemoItem label="DatePicker">
+                                                                    <DatePicker value={formData.selectDate} />
                                                                 </DemoItem>
                                                             </Grid>
-
-                                                            <Grid xs={4}>
-                                                                <DemoItem label={<Label componentName="TimePicker" valueType="time" />}>
+                                                            <Grid item xs={4}>
+                                                                <DemoItem label="TimePicker">
                                                                     <TimePicker />
                                                                 </DemoItem>
                                                             </Grid>
-
                                                             <Grid xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                                                 <Button
                                                                     component="label"
@@ -383,7 +397,7 @@ export default function EditMeeting() {
                                                     </LocalizationProvider>
                                                 </Grid>
                                             </Grid>
-                                            <Button variant="contained" color="success" sx={{ color: 'white', marginTop: '2%' }}>Update</Button>
+                                            <Button type="submit" variant="contained" color="success" sx={{ color: 'white', marginTop: '2%' }}>Update</Button>
                                         </Box>
                                     </CardContent>
                                 </Card>
