@@ -28,6 +28,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import Sidebar from "../components/Sidebar";
 import { DepartmentContext } from './../context/DepartmentContext'
+import { TaskContext } from "../context/TaskContext";
 
 
 // function Label({ componentName, valueType }) {
@@ -85,11 +86,13 @@ export default function AddTasks() {
     const location = useLocation();
     const [personName, setPersonName] = React.useState([]);
     const [meetingId, setMeetingId] = useState('');
-    const [meetingRow, setMeetingRow] = useState([]);
+    const [taskRow, setTaskRow] = useState([]);
     const [meetingTopic, setMeetingTopic] = useState('');
     const theme = useTheme();
     const { allDepartmentList } = React.useContext(DepartmentContext);
     const allDepartmentData = allDepartmentList.map((dept) => dept.department);
+    // const { allTaskLists } = React.useContext(TaskContext);
+    // const allTaskListsData = allTaskLists?.tasks;
     const [tagName, setTagName] = useState(''); // Tags Store
     const availableTags = [{ id: 1, value: "secretary", text: "Secretary" }, { id: 2, value: "head_of_office", text: "Head of Office" }]
 
@@ -97,7 +100,7 @@ export default function AddTasks() {
         const queryParams = new URLSearchParams(location.search);
         const encodedMeetingId = queryParams.get('meetingId');
         const encodedMeetingTopic = queryParams.get('meetingTopic');
-        const encodedMeetingRow = queryParams.get('meetingRow');
+        const encodedTaskRowRow = queryParams.get('taskRow');
         if (encodedMeetingId && encodedMeetingTopic) {
             // Base64 decode the parameters
             const decodedMeetingId = window.atob(encodedMeetingId);
@@ -106,12 +109,12 @@ export default function AddTasks() {
             setMeetingId(decodedMeetingId);
             setMeetingTopic(decodedMeetingTopic);
         }
-        if (encodedMeetingRow) {
-            const decodedObject = window.atob(encodedMeetingRow);
+        if (encodedTaskRowRow) {
+            const decodedObject = window.atob(encodedTaskRowRow);
             // Parse the JSON string back to an object
             const parsedObject = JSON.parse(decodedObject);
             // Set the decrypted object in state
-            setMeetingRow(parsedObject);
+            setTaskRow(parsedObject);
         }
     }, [location.search]);
 
@@ -202,7 +205,7 @@ export default function AddTasks() {
     }
 
     function handleSubmit() {
-        if (meetingRow.length > 0) {
+        if (taskRow.length > 0) {
             
 
         }
@@ -442,7 +445,7 @@ export default function AddTasks() {
 
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'start' }}>
-                                        {meetingRow.length === 0 && ( // Conditionally render the button if meetingRow === 0
+                                        {taskRow.length === 0 && ( 
                                             <Button
                                                 variant="contained"
                                                 color="success"
@@ -458,7 +461,7 @@ export default function AddTasks() {
                                             sx={{ color: 'white', marginTop: '2%' }}
                                             onClick={handleSubmit}
                                         >
-                                            {meetingRow.length > 0 ? 'Update' : 'Submit'}
+                                            {taskRow.length > 0 ? 'Update' : 'Submit'}
                                         </Button>
                                     </Grid>
                                 </Grid>
