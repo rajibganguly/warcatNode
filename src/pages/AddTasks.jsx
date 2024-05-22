@@ -498,7 +498,7 @@ export default function AddTasks() {
                                                             label="Enter Task Title"
                                                             variant="outlined"
                                                             type={input.type}
-                                                            value={taskTitle}
+                                                            value={input.value}
                                                             onChange={(e) => handleInputChange(group[0].id, input.id, e)}
                                                             fullWidth
                                                             size="small"
