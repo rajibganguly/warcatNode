@@ -89,7 +89,8 @@ export default function AddTasks() {
     const theme = useTheme();
     const { allDepartmentList } = React.useContext(DepartmentContext);
     const allDepartmentData = allDepartmentList.map((dept) => dept.department);
-
+    const [tagName, setTagName] = useState(''); // Tags Store
+    const availableTags = [{ id: 1, value: "secretary", text: "Secretary" }, { id: 2, value: "head_of_office", text: "Head of Office" }]
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
@@ -303,14 +304,22 @@ export default function AddTasks() {
                                     </Grid>
                                     <Grid item xs={12} md={6}>
                                         <label>Tag</label>
-                                        <TextField
-                                            id="outlined-basic"
-                                            label="Tag"
-                                            variant="outlined"
+                                        <Select
+                                            labelId="tag"
+                                            id="tag"
                                             fullWidth
-                                            name="dep_name"
+                                            name="tag"
+                                            value={tagName}
+                                            onChange={handleChange}
                                             size="small"
-                                        />
+                                            MenuProps={MenuProps}
+                                        >
+                                            {availableTags.map((value) => (
+                                                <MenuItem key={value.id} value={value.value}>
+                                                    {value.text}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
                                     </Grid>
                                     {meetingId && (
                                         <Grid item xs={12} md={6}>
@@ -332,7 +341,7 @@ export default function AddTasks() {
                                             <label>Meeting Topic</label>
                                             <TextField
                                                 id="outlined-basic"
-                                               // label="Meeting Topic"
+                                                // label="Meeting Topic"
                                                 variant="outlined"
                                                 fullWidth
                                                 name="dep_name"
