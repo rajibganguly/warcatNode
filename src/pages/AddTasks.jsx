@@ -8,7 +8,7 @@ import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import InputFileUpload from "../components/InputFileUpload";
 import { Button, TextField } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -82,24 +82,30 @@ const defaultTheme = createTheme();
 export default function AddTasks() {
 
     const [open, setOpen] = React.useState(true);
+    const location = useLocation();
     const [personName, setPersonName] = React.useState([]);
+    const [meetingId, setMeetingId] = useState('');
+    const [meetingTopic, setMeetingTopic] = useState('');
     const theme = useTheme();
-    // const [deptNames, setDeptNames] = React.useState([]);
     const { allDepartmentList } = React.useContext(DepartmentContext);
     const allDepartmentData = allDepartmentList.map((dept) => dept.department);
 
-    //   useEffect(() => {
-    //     const depNameArr = [];
-    //     if(allDepartmentList) {
-    //         allDepartmentList.forEach((each) => {
-    //             depNameArr.push(each?.department?.department_name)
-    //         })
-    //         setDeptNames(depNameArr)
-    //     } else {
-    //         setDeptNames(["Not found"])
-    //     }
 
-    //   }, [])
+    useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        const encodedMeetingId = queryParams.get('meetingId');
+        const encodedMeetingTopic = queryParams.get('meetingTopic');
+
+        if (encodedMeetingId && encodedMeetingTopic) {
+            // Base64 decode the parameters
+            const decodedMeetingId = window.atob(encodedMeetingId);
+            const decodedMeetingTopic = window.atob(encodedMeetingTopic);
+
+            setMeetingId(decodedMeetingId);
+            setMeetingTopic(decodedMeetingTopic);
+        }
+    }, [location.search]);
+
 
     const handleChange = (event) => {
         const {
@@ -271,7 +277,7 @@ export default function AddTasks() {
                                             fullWidth
                                             value={personName}
                                             onChange={handleChange}
-                                            
+
                                             size="small"
                                             input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
                                             renderValue={(selected) => (
@@ -306,30 +312,36 @@ export default function AddTasks() {
                                             size="small"
                                         />
                                     </Grid>
-                                    <Grid item xs={12} md={6}>
-                                        <label>Meeting Id</label>
-                                        <TextField
-                                            id="outlined-basic"
-                                            label="Meeting Id"
-                                            variant="outlined"
-                                            fullWidth
-                                            name="dep_name"
-                                            size="small"
-                                            aria-readonly
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} md={6}>
-                                        <label>Meeting Topic</label>
-                                        <TextField
-                                            id="outlined-basic"
-                                            label="Meeting Topic"
-                                            variant="outlined"
-                                            fullWidth
-                                            name="dep_name"
-                                            size="small"
-                                            aria-readonly
-                                        />
-                                    </Grid>
+                                    {meetingId && (
+                                        <Grid item xs={12} md={6}>
+                                            <label>Meeting Id</label>
+                                            <TextField
+                                                id="outlined-basic"
+                                                //label="Meeting Id"
+                                                variant="outlined"
+                                                fullWidth
+                                                value={meetingId}
+                                                name="dep_name"
+                                                size="small"
+                                                disabled
+                                            />
+                                        </Grid>
+                                    )}
+                                    {meetingTopic && (
+                                        <Grid item xs={12} md={6}>
+                                            <label>Meeting Topic</label>
+                                            <TextField
+                                                id="outlined-basic"
+                                               // label="Meeting Topic"
+                                                variant="outlined"
+                                                fullWidth
+                                                name="dep_name"
+                                                size="small"
+                                                value={meetingTopic}
+                                                disabled
+                                            />
+                                        </Grid>
+                                    )}
                                 </Grid>
 
                                 {inputGroups.map((group, index) => (

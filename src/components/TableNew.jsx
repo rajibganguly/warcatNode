@@ -71,7 +71,7 @@ function TableNew({
             style={{ backgroundColor: '#0a1832', color: '#ffffff', marginRight: '2px' }}>
             <AddIcon />
           </Button>
-          <Button onClick={() => handleTaskView(row)}
+          <Button onClick={() => handleTasksViewInMeeting(row)}
             style={{ backgroundColor: '#fb4', color: 'black' }}>
             <EyeOutlined />
           </Button>
