@@ -86,7 +86,7 @@ export default function AddTasks() {
     const location = useLocation();
     const [personName, setPersonName] = React.useState([]);
     const [meetingId, setMeetingId] = useState('');
-    const [taskRow, setTaskRow] = useState([]);
+    const [taskId, setTaskId] = useState();
     const [meetingTopic, setMeetingTopic] = useState('');
     const theme = useTheme();
     const { allDepartmentList } = React.useContext(DepartmentContext);
@@ -100,7 +100,7 @@ export default function AddTasks() {
         const queryParams = new URLSearchParams(location.search);
         const encodedMeetingId = queryParams.get('meetingId');
         const encodedMeetingTopic = queryParams.get('meetingTopic');
-        const encodedTaskRowRow = queryParams.get('taskRow');
+        const encodedTaskId = queryParams.get('taskId');
         if (encodedMeetingId && encodedMeetingTopic) {
             // Base64 decode the parameters
             const decodedMeetingId = window.atob(encodedMeetingId);
@@ -109,15 +109,12 @@ export default function AddTasks() {
             setMeetingId(decodedMeetingId);
             setMeetingTopic(decodedMeetingTopic);
         }
-        if (encodedTaskRowRow) {
-            const decodedObject = window.atob(encodedTaskRowRow);
-            // Parse the JSON string back to an object
-            const parsedObject = JSON.parse(decodedObject);
-            // Set the decrypted object in state
-            setTaskRow(parsedObject);
+        if (encodedTaskId) {
+            const decodedTaskId = window.atob(encodedTaskId);
+            setTaskId(decodedTaskId);
         }
     }, [location.search]);
-
+console.log(taskId)
     const handleChange = (event) => {
         const {
             target: { value },
@@ -205,7 +202,7 @@ export default function AddTasks() {
     }
 
     function handleSubmit() {
-        if (taskRow.length > 0) {
+        if (taskId) {
             
 
         }
@@ -445,7 +442,7 @@ export default function AddTasks() {
 
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'start' }}>
-                                        {taskRow.length === 0 && ( 
+                                        {taskId && ( 
                                             <Button
                                                 variant="contained"
                                                 color="success"
@@ -461,7 +458,7 @@ export default function AddTasks() {
                                             sx={{ color: 'white', marginTop: '2%' }}
                                             onClick={handleSubmit}
                                         >
-                                            {taskRow.length > 0 ? 'Update' : 'Submit'}
+                                            {taskId ? 'Update' : 'Submit'}
                                         </Button>
                                     </Grid>
                                 </Grid>

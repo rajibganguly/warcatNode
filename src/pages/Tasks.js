@@ -210,9 +210,8 @@ export default function Tasks() {
   };
 
   const handleEditOperationTask = (row) => {
-     const stringifiedObject = JSON.stringify(row);
-     const encodedObject = window.btoa(stringifiedObject);
-     navigate(`/edit-tasks?taskRow=${encodeURIComponent(encodedObject)}`);
+     const encodedTaskId = window.btoa(row?.task_id);
+     navigate(`/edit-tasks?taskId=${encodeURIComponent(encodedTaskId)}`);
 
   };
 
