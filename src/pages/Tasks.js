@@ -210,7 +210,8 @@ export default function Tasks() {
   };
 
   const handleEditOperationTask = (row) => {
-    // setModalVisible1(true);
+     const encodedTaskId = window.btoa(row?.task_id);
+     navigate(`/edit-tasks?taskId=${encodeURIComponent(encodedTaskId)}`);
 
   };
 
