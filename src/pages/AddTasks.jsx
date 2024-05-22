@@ -90,12 +90,13 @@ export default function AddTasks() {
     const [meetingId, setMeetingId] = useState('');
     const [taskId, setTaskId] = useState();
     const [meetingTopic, setMeetingTopic] = useState('');
+    const [taskTitle, setTaskTitle] = useState('');
     const theme = useTheme();
     const { allDepartmentList } = React.useContext(DepartmentContext);
     const allDepartmentData = allDepartmentList.map((dept) => dept.department);
     const { allTaskLists } = React.useContext(TaskContext);
     const allTaskListsData = allTaskLists?.tasks;
-    const [tagName, setTagName] = useState([]); // Tags Store
+    const [tagName, setTagName] = useState(["seratary", "head_of_office"]); // Tags Store
     //const availableTags = [{ id: 1, value: "secretary", text: "Secretary" }, { id: 2, value: "head_of_office", text: "Head of Office" }]
 
     useEffect(() => {
@@ -116,22 +117,28 @@ export default function AddTasks() {
             setTaskId(decodedTaskId);
             const filteredObject = allTaskListsData?.find(task => task.task_id === decodedTaskId);
             const depIds = filteredObject?.department?.map(obj => obj.dep_id);
-            const selectedDepartments = depIds.map(id => {
-                const department = allDepartmentData.find(dept => dept._id === id);
-                return department ? department : null;
-            });
-            const departmentNames = selectedDepartments.filter(dep => dep !== null).map(dep => dep.department_name);
-            const departmentId = selectedDepartments.filter(dep => dep !== null).map(dep => dep._id);
-            setPersonName(departmentNames);
-            setDeptId(departmentId);
-            const tags = filteredObject?.department?.map(obj => obj.tag);
-            console.log(depIds); 
+            if (depIds) {
+                const selectedDepartments = depIds.map(id => {
+                    const department = allDepartmentData.find(dept => dept._id === id);
+                    return department ? department : null;
+                });
+                const departmentNames = selectedDepartments.filter(dep => dep !== null).map(dep => dep.department_name);
+                setPersonName(departmentNames);
+                const departmentId = selectedDepartments.filter(dep => dep !== null).map(dep => dep._id);
+                setDeptId(departmentId);
+                // Flatten the tags array and remove duplicates
+                const tags = [...new Set(filteredObject?.department?.flatMap(obj => obj.tag) || [])];
+                // console.log(tags)
+                setTagName(tags);
+                setTaskTitle(filteredObject?.task_title);
+
+            }
 
         }
 
     }, [location.search, allTaskListsData, allTaskListsData]);
 
-
+    console.log(tagName, 'tagNametagName')
     const handleChange = (event) => {
         const {
             target: { value },
@@ -403,19 +410,20 @@ export default function AddTasks() {
                                             id="tag"
                                             fullWidth
                                             name="tag"
+                                            multiple
                                             value={tagName}
                                             onChange={handleTagChange}
                                             size="small"
-                                            multiple
-                                    
+                                            renderValue={(selected) => (
+                                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                                    {selected.map((value) => (
+                                                        <Chip key={value} label={value} />
+                                                    ))}
+                                                </Box>
+                                            )}
                                         >
                                             <MenuItem value="seratary">Seratary</MenuItem>
                                             <MenuItem value="head_of_office">Head Office</MenuItem>
-                                            {/* {availableTags.map((value) => (
-                                                <MenuItem key={value.id} value={value.value}>
-                                                    {value.text}
-                                                </MenuItem>
-                                            ))} */}
                                         </Select>
                                     </Grid>
                                     {meetingId && (
@@ -490,7 +498,7 @@ export default function AddTasks() {
                                                             label="Enter Task Title"
                                                             variant="outlined"
                                                             type={input.type}
-                                                            value={input.value}
+                                                            value={taskTitle}
                                                             onChange={(e) => handleInputChange(group[0].id, input.id, e)}
                                                             fullWidth
                                                             size="small"
