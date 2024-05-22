@@ -29,6 +29,7 @@ import InputLabel from '@mui/material/InputLabel';
 import Sidebar from "../components/Sidebar";
 import { DepartmentContext } from './../context/DepartmentContext'
 import { TaskContext } from "../context/TaskContext";
+import axios from "axios";
 
 
 // function Label({ componentName, valueType }) {
@@ -85,6 +86,7 @@ export default function AddTasks() {
     const [open, setOpen] = React.useState(true);
     const location = useLocation();
     const [personName, setPersonName] = React.useState([]);
+    const [deptId, setDeptId] = useState('');
     const [meetingId, setMeetingId] = useState('');
     const [taskId, setTaskId] = useState();
     const [meetingTopic, setMeetingTopic] = useState('');
@@ -119,7 +121,9 @@ export default function AddTasks() {
                 return department ? department : null;
             });
             const departmentNames = selectedDepartments.filter(dep => dep !== null).map(dep => dep.department_name);
+            const departmentId = selectedDepartments.filter(dep => dep !== null).map(dep => dep._id);
             setPersonName(departmentNames);
+            setDeptId(departmentId);
             const tags = filteredObject?.department?.map(obj => obj.tag);
             console.log(depIds); 
 
@@ -137,6 +141,7 @@ export default function AddTasks() {
         const selectedDept = allDepartmentData.find(dept => dept._id === value);
         // If a matching department is found, add its name to the personName array
         if (selectedDept) {
+            setDeptId(prevPersonName => [selectedDept._id]);
             setPersonName(prevPersonName => [selectedDept.department_name]);
         }
     };
@@ -230,15 +235,57 @@ export default function AddTasks() {
         setInputGroups(newInputGroups);
     }
 
+    const convertToDepartmentFormat = (deptid, deptName, tags, task) => {
+        return {
+            meetingId: meetingId,
+            meetingTopic: meetingTopic,
+            department: deptid.map((id, index) => ({
+                dep_id: id,
+                dep_name: deptName[index],
+                tag: tags,
+                tasks: task.tasks
+            }))
+        };
+    };
+
     function handleSubmit() {
         console.log(inputGroups);
-        const transformedData = transformData(inputGroups);
-        console.log(transformedData);
-        if (taskId) {
-            console.log(taskId)
-
-        }
+        console.log(tagName, 'tags');
+        console.log(deptId, 'dept id');
+        console.log(personName, 'dept name');
+        const taskData = transformData(inputGroups);
+        console.log(taskData, 'task');
+        
+        const transformedData = convertToDepartmentFormat(deptId, personName, tagName, taskData);
+        handleAddTask(transformedData);
+        // if (taskId) {
+        //     console.log(taskId)
+        // }
     }
+
+    const handleAddTask = async (transformedData) => {
+        try {
+            console.log(transformedData, 'transformed data');
+            // const formDataSend = new FormData();
+            // formDataSend.append('departmentData', JSON.stringify(transformedData));
+            // console.log(formDataSend, 'formdataSend');
+            // formDataSend.append('departmentIds', departmentIds);
+            // formDataSend.append('tag', tag);
+
+            const token = localStorage.getItem('token');
+            const response = await axios.post('https://warcat2024-qy2v.onrender.com/api/add-task', transformedData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            console.log(response.data);
+        } catch (error) {
+            console.error('Error occurred:', error);
+        }
+
+    };
 
 
     return (
