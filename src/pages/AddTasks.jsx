@@ -28,6 +28,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import Sidebar from "../components/Sidebar";
 import { DepartmentContext } from './../context/DepartmentContext'
+import { TaskContext } from "../context/TaskContext";
 
 
 // function Label({ componentName, valueType }) {
@@ -85,18 +86,22 @@ export default function AddTasks() {
     const location = useLocation();
     const [personName, setPersonName] = React.useState([]);
     const [meetingId, setMeetingId] = useState('');
+    const [taskId, setTaskId] = useState();
     const [meetingTopic, setMeetingTopic] = useState('');
+    const [taskTitle, setTaskTitle] = useState('');
     const theme = useTheme();
     const { allDepartmentList } = React.useContext(DepartmentContext);
     const allDepartmentData = allDepartmentList.map((dept) => dept.department);
-    const [tagName, setTagName] = useState(''); // Tags Store
-    const availableTags = [{ id: 1, value: "secretary", text: "Secretary" }, { id: 2, value: "head_of_office", text: "Head of Office" }]
+    const { allTaskLists } = React.useContext(TaskContext);
+    const allTaskListsData = allTaskLists?.tasks;
+    const [tagName, setTagName] = useState(["seratary", "head_of_office"]); // Tags Store
+    //const availableTags = [{ id: 1, value: "secretary", text: "Secretary" }, { id: 2, value: "head_of_office", text: "Head of Office" }]
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
         const encodedMeetingId = queryParams.get('meetingId');
         const encodedMeetingTopic = queryParams.get('meetingTopic');
-
+        const encodedTaskId = queryParams.get('taskId');
         if (encodedMeetingId && encodedMeetingTopic) {
             // Base64 decode the parameters
             const decodedMeetingId = window.atob(encodedMeetingId);
@@ -105,13 +110,36 @@ export default function AddTasks() {
             setMeetingId(decodedMeetingId);
             setMeetingTopic(decodedMeetingTopic);
         }
-    }, [location.search]);
+        if (encodedTaskId) {
+            const decodedTaskId = window.atob(encodedTaskId);
+            setTaskId(decodedTaskId);
+            const filteredObject = allTaskListsData?.find(task => task.task_id === decodedTaskId);
+            const depIds = filteredObject?.department?.map(obj => obj.dep_id);
+            if (depIds) {
+                const selectedDepartments = depIds.map(id => {
+                    const department = allDepartmentData.find(dept => dept._id === id);
+                    return department ? department : null;
+                });
+                const departmentNames = selectedDepartments.filter(dep => dep !== null).map(dep => dep.department_name);
+                setPersonName(departmentNames);
+                // Flatten the tags array and remove duplicates
+                const tags = [...new Set(filteredObject?.department?.flatMap(obj => obj.tag) || [])];
+                // console.log(tags)
+                setTagName(tags);
+                setTaskTitle(filteredObject?.task_title);
 
+            }
 
+        }
+
+    }, [location.search, allTaskListsData, allTaskListsData]);
+
+    console.log(tagName, 'tagNametagName')
     const handleChange = (event) => {
         const {
             target: { value },
         } = event;
+        console.log(value, 'valuevaluevalue')
         // Find the department object with the matching _id
         const selectedDept = allDepartmentData.find(dept => dept._id === value);
         // If a matching department is found, add its name to the personName array
@@ -119,6 +147,10 @@ export default function AddTasks() {
             setPersonName(prevPersonName => [selectedDept.department_name]);
         }
     };
+
+    const handleTagChange = (event) => {
+        setTagName(event.target.value);
+    }
 
 
     const handleOutput = (open) => {
@@ -170,6 +202,22 @@ export default function AddTasks() {
         }
     }
 
+    const transformData = (data) => {
+        return {
+            tasks: data.map(group => {
+                const taskTitle = group.find(item => item.type === 'text')?.value || '';
+                const uploadImage = group.find(item => item.type === 'file')?.value || '';
+                const targetDate = group.find(item => item.type === 'date')?.value || '';
+
+                return {
+                    taskTitle,
+                    uploadImage,
+                    targetDate
+                };
+            })
+        };
+    };
+
     function handleAddClick() {
         const lastGroupId = inputGroups[inputGroups.length - 1][0]?.id || 0;
         const newInputGroups = [...inputGroups];
@@ -191,6 +239,12 @@ export default function AddTasks() {
 
     function handleSubmit() {
         console.log(inputGroups);
+        const transformedData = transformData(inputGroups);
+        console.log(transformedData);
+        if (taskId) {
+            console.log(taskId)
+
+        }
     }
 
 
@@ -309,16 +363,20 @@ export default function AddTasks() {
                                             id="tag"
                                             fullWidth
                                             name="tag"
+                                            multiple
                                             value={tagName}
-                                            onChange={handleChange}
+                                            onChange={handleTagChange}
                                             size="small"
-                                            MenuProps={MenuProps}
+                                            renderValue={(selected) => (
+                                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                                    {selected.map((value) => (
+                                                        <Chip key={value} label={value} />
+                                                    ))}
+                                                </Box>
+                                            )}
                                         >
-                                            {availableTags.map((value) => (
-                                                <MenuItem key={value.id} value={value.value}>
-                                                    {value.text}
-                                                </MenuItem>
-                                            ))}
+                                            <MenuItem value="seratary">Seratary</MenuItem>
+                                            <MenuItem value="head_of_office">Head Office</MenuItem>
                                         </Select>
                                     </Grid>
                                     {meetingId && (
@@ -393,7 +451,7 @@ export default function AddTasks() {
                                                             label="Enter Task Title"
                                                             variant="outlined"
                                                             type={input.type}
-                                                            value={input.value}
+                                                            value={taskTitle}
                                                             onChange={(e) => handleInputChange(group[0].id, input.id, e)}
                                                             fullWidth
                                                             size="small"
@@ -427,21 +485,23 @@ export default function AddTasks() {
 
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'start' }}>
-                                        <Button
-                                            variant="contained"
-                                            color="success"
-                                            sx={{ color: 'white', marginTop: '2%', mr: '10px', fontWeight: 'bold' }} // Added left margin for spacing
-                                            onClick={handleAddClick}
-                                        >
-                                            <PlusCircleOutlined />
-                                        </Button>
+                                        {!taskId && (
+                                            <Button
+                                                variant="contained"
+                                                color="success"
+                                                sx={{ color: 'white', marginTop: '2%', mr: '10px', fontWeight: 'bold' }}
+                                                onClick={handleAddClick}
+                                            >
+                                                <PlusCircleOutlined />
+                                            </Button>
+                                        )}
                                         <Button
                                             variant="contained"
                                             color="success"
                                             sx={{ color: 'white', marginTop: '2%' }}
                                             onClick={handleSubmit}
                                         >
-                                            Submit
+                                            {taskId ? 'Update' : 'Submit'}
                                         </Button>
                                     </Grid>
                                 </Grid>

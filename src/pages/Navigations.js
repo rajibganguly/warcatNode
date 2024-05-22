@@ -84,6 +84,10 @@ const Navigations = () => {
           element={!authToken ? <Navigate to="/" /> : <AddTask />}
         />
         <Route
+          path="/edit-tasks"
+          element={!authToken ? <Navigate to="/" /> : <AddTask />}
+        />
+        <Route
           path="/tasks-list"
           element={!authToken ? <Navigate to="/" /> : <TaskList />}
         />

@@ -25,6 +25,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import Sidebar from "../components/Sidebar";
+import { addMeetings } from './common'
 
 import { DepartmentContext } from '../context/DepartmentContext';
 import axios from 'axios';
@@ -49,7 +50,6 @@ function Label({ componentName, valueType }) {
 }
 
 const drawerWidth = 240;
-
 const AppBar = styled(MuiAppBar, {
     shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
@@ -67,6 +67,7 @@ const AppBar = styled(MuiAppBar, {
         }),
     }),
 }));
+
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -77,6 +78,8 @@ const MenuProps = {
         },
     },
 };
+
+
 
 
 function getStyles(name, personName, theme) {
@@ -98,36 +101,61 @@ export default function AddNewMeeting() {
         selectDate: null,
         selectTime: null,
     });
+    const [departmentIds, setDepartmentIds] = useState([]); // Tags Store
+    const [tagName, setTagName] = useState([]); // Tags Store
     const [personName, setPersonName] = React.useState([]);
+    const [meetingTopic, setMeetingTopic] = React.useState("");
+    const [meetingId, setMeetingId] = React.useState("");
+    const [meetingDate, setMeetingDate] = React.useState("");
+    const [meetingTime, setMeetingTime] = React.useState("");
+    const [base64Image, setBase64Image] = React.useState("");
+
     const theme = useTheme();
     const { allDepartmentList } = React.useContext(DepartmentContext);
     const allDepartmentData = allDepartmentList.map((dept) => dept.department);
 
+    
+
+    /**
+     * 
+     * All Handle change except image 
+     */
+
     const handleChange = (event) => {
-        const {
-            target: { value },
-        } = event;
+      const {
+        target: { value },
+      } = event;
 
+      if (event.target.name === "tag") {
+        setTagName([...event.target.value]);
+      }
+      if (event.target.name === "department") {
         // Find the department objects with the matching _ids
-        const selectedDepts = allDepartmentData.filter((dept) => value.includes(dept._id));
-
+        const selectedDepts = allDepartmentData.filter((dept) =>
+          value.includes(dept._id)
+        );
         // Create a new array to hold the updated personName state
         let updatedPersonName = [...personName];
+        let updatedDeptIds = [...departmentIds];
 
         // Add or remove department names based on the selected value
         selectedDepts.forEach((dept) => {
-            const index = updatedPersonName.indexOf(dept.department_name);
-            if (index === -1) {
-                // If the department name is not already in the array, add it
-                updatedPersonName.push(dept.department_name);
-            } else {
-                // If the department name is already in the array, remove it
-                updatedPersonName.splice(index, 1);
-            }
+          const index = updatedPersonName.indexOf(dept.department_name);
+          if (index === -1) {
+            // If the department name is not already in the array, add it
+            updatedPersonName.push(dept.department_name);
+            updatedDeptIds.push(dept._id);
+          } else {
+            // If the department name is already in the array, remove it
+            updatedPersonName.splice(index, 1);
+            updatedDeptIds.splice(index, 1);
+          }
         });
 
         // Update the personName state with the new array
         setPersonName(updatedPersonName);
+        setDepartmentIds(updatedDeptIds);
+      }
     };
 
 
@@ -147,28 +175,21 @@ export default function AddNewMeeting() {
         }));
     };
 
+    /**
+     * handleAddMeeting POST call
+     */
     const handleAddMeeting = async () => {
-        try {
-            const { departmentIds, tag, meetingTopic, selectDate, selectTime } = formData;
-
-            const formDataSend = new FormData();
-            formDataSend.append('departmentIds', departmentIds);
-            formDataSend.append('tag', tag);
-            formDataSend.append('meetingTopic', meetingTopic);
-            formDataSend.append('selectDate', selectDate);
-            formDataSend.append('selectTime', selectTime);
-            formDataSend.append('file', file);
-
-
-            const token = localStorage.getItem('token');
-            const response = await axios.post('https://warcat2024-qy2v.onrender.com/api/add-meeting', formDataSend, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            console.log(response.data);
+        const formDataSend = {
+            departmentIds: departmentIds,
+            tag: tagName,
+            meetingTopic: meetingTopic,
+            selectDate: meetingDate,
+            selectTime: meetingTime,
+            imageUrl: base64Image
+        }   
+        try {    
+            const setAllTaskListsData = await addMeetings(formDataSend);
+            console.log(setAllTaskListsData)
         } catch (error) {
             console.error('Error occurred:', error);
         }
@@ -181,131 +202,287 @@ export default function AddNewMeeting() {
     const toggleDrawer = () => {
         setOpen(!open);
     };
-    return (
-        <ThemeProvider theme={defaultTheme}>
-            <Box sx={{ display: "flex" }}>
-                <CssBaseline />
-                <AppBar position="absolute" open={open}>
-                    <Header props={open} onOutput={handleOutput} />
-                </AppBar>
-                <Sidebar open={open} toggleDrawer={toggleDrawer} />
-                <Box
-                    component="main"
-                    sx={{
-                        backgroundColor: (theme) =>
-                            theme.palette.mode === "light"
-                                ? theme.palette.grey[100]
-                                : theme.palette.grey[900],
-                        width: "100%",
-                        paddingBottom: "20px",
-                    }}
-                >
-                    <Toolbar />
-                    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-                        <Grid container spacing={3}>
-                            <Grid item xs={12}>
-                                <Card sx={{ width: 100 + "%", padding: 2 }}>
-                                    <CardContent>
-                                        <Box
-                                            component="form"
-                                            noValidate
-                                            autoComplete="off"
-                                            sx={{ marginTop: 2 }}
-                                        >
-                                            <Grid container spacing={2} sx={{ mb: 4, borderBottom: '1px solid #eff2f7', pb: 2 }}>
-                                                <Grid item xs={12} md={6}>
-                                                    <InputLabel id="demo-multiple-chip-label1">Department / Government Organisation</InputLabel>
-                                                    <Select
-                                                        labelId="demo-multiple-chip-label2"
-                                                        id="demo-multiple-chip"
-                                                        fullWidth
-                                                        value={personName}
-                                                        onChange={handleChange}
-                                                        size="small"
-                                                        multiple
-                                                        input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-                                                        renderValue={(selected) => (
-                                                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                                                {selected.map((value) => (
-                                                                    <Chip key={value} label={value} />
-                                                                ))}
-                                                            </Box>
-                                                        )}
 
-                                                        MenuProps={MenuProps}
-                                                    >
-                                                        {allDepartmentData.map((value) => (
-                                                            <MenuItem
-                                                                key={value?._id}
-                                                                value={value?._id}
-                                                                style={getStyles(value?.department_name, personName, theme)}
-                                                            >
-                                                                {value?.department_name}
-                                                            </MenuItem>
-                                                        ))}
-                                                    </Select>
-                                                </Grid>
-                                                <Grid item xs={12} md={6}>
-                                                    <label>Tag</label>
-                                                    <TextField
-                                                        id="outlined-basic"
-                                                        label="Tag"
-                                                        variant="outlined"
-                                                        fullWidth
-                                                        name="dep_name"
-                                                        size="small"
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={12} md={6}>
-                                                    <label>Meeting Id</label>
-                                                    <TextField
-                                                        id="outlined-basic"
-                                                        label="Meeting Id"
-                                                        variant="outlined"
-                                                        fullWidth
-                                                        name="dep_name"
-                                                        size="small"
-                                                        aria-readonly
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={12} md={6}>
-                                                    <label>Meeting Topic</label>
-                                                    <TextField
-                                                        id="outlined-basic"
-                                                        label="Meeting Topic"
-                                                        variant="outlined"
-                                                        fullWidth
-                                                        name="dep_name"
-                                                        size="small"
-                                                        aria-readonly
-                                                    />
-                                                </Grid>
-                                            </Grid>
-                                            <Button
-                                                variant="contained"
-                                                color="info"
-                                                sx={{ color: 'white', marginTop: '2%' }}
-                                                onClick={handleAddMeeting}
-                                            >
-                                                Add Meeting
-                                            </Button>
-                                        </Box>
-                                    </CardContent>
-                                </Card>
-                            </Grid>
-                        </Grid>
-                    </Container>
-                    <Box
-                        component="footer"
-                        sx={{
-                            width: "100%",
-                            paddingBottom: "20px",
-                        }}
+    function getMeetingValue(e) {
+        if(e.target.name === 'date') {
+            setMeetingDate(e.target.value);
+        }
+        if(e.target.name === 'time') {
+            setMeetingTime(e.target.value);
+        }
+    }
+
+    
+      
+            
+    /**
+     * 
+     * All Handle change for image 
+     */
+
+    const handleChangeForImage = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+            setBase64Image(reader.result);
+        };
+        reader.readAsDataURL(file);
+        }
+    }
+
+    const dateTimeStyle = {
+        width: "100%",
+        padding: "15px 10px",
+        border: "1px solid #ccc",
+        borderRadius: "6px",
+        fontFamily: 'Roboto,sans-serif',
+        fontSize: "1em"
+    }
+
+    return (
+      <ThemeProvider theme={defaultTheme}>
+        <Box sx={{ display: "flex" }}>
+          <CssBaseline />
+          <AppBar position="absolute" open={open}>
+            <Header props={open} onOutput={handleOutput} />
+          </AppBar>
+          <Sidebar open={open} toggleDrawer={toggleDrawer} />
+          <Box
+            component="main"
+            sx={{
+              backgroundColor: (theme) =>
+                theme.palette.mode === "light"
+                  ? theme.palette.grey[100]
+                  : theme.palette.grey[900],
+              width: "100%",
+              paddingBottom: "20px",
+            }}
+          >
+            <Toolbar />
+            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+              <Grid container spacing={3}>
+                <Grid item xs={12}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "start",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div
+                      style={{
+                        textTransform: "uppercase",
+                        paddingBottom: "10px",
+                      }}
                     >
-                        <Footer />
-                    </Box>
-                </Box>
+                      Add Meetings
+                    </div>
+                    <div>
+                      <Breadcrumbs aria-label="breadcrumb">
+                        <Link underline="hover" color="inherit" href="/">
+                          WARCAT
+                        </Link>
+                        <Link underline="hover" color="inherit">
+                          Meetings
+                        </Link>
+                        <Typography color="text.primary">
+                          Add Meeting
+                        </Typography>
+                      </Breadcrumbs>
+                    </div>
+                  </div>
+                  <Card sx={{ width: 100 + "%", padding: 2 }}>
+                    <CardContent>
+                      <Box
+                        component="form"
+                        noValidate
+                        autoComplete="off"
+                        sx={{ marginTop: 2 }}
+                      >
+                        <Grid
+                          container
+                          spacing={2}
+                          sx={{
+                            mb: 4,
+                            borderBottom: "1px solid #eff2f7",
+                            pb: 2,
+                          }}
+                        >
+                          <Grid item xs={12} md={6}>
+                            <FormControl fullWidth>
+                              <label>
+                                Department / Government Organisation{" "}
+                              </label>
+                              <Select
+                                labelId="demo-multiple-chip-label2"
+                                id="demo-multiple-chip"
+                                fullWidth
+                                name="department"
+                                value={personName}
+                                onChange={handleChange}
+                                size="small"
+                                multiple
+                                input={
+                                  <OutlinedInput
+                                    id="select-multiple-chip"
+                                    label="Chip"
+                                  />
+                                }
+                                renderValue={(selected) => (
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      flexWrap: "wrap",
+                                      gap: 0.5,
+                                    }}
+                                  >
+                                    {selected.map((value) => (
+                                      <Chip key={value} label={value} />
+                                    ))}
+                                  </Box>
+                                )}
+                                MenuProps={MenuProps}
+                              >
+                                {allDepartmentData.map((value) => (
+                                  <MenuItem
+                                    key={value?._id}
+                                    value={value?._id}
+                                    style={getStyles(
+                                      value?._id,
+                                      personName,
+                                      theme
+                                    )}
+                                  >
+                                    {value?.department_name}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                            </FormControl>
+                          </Grid>
+                          <Grid item xs={12} md={6}>
+                            <FormControl fullWidth>
+                              <label>Tags</label>
+                              <Select
+                                            labelId="tag"
+                                            id="tag"
+                                            fullWidth
+                                            name="tag"
+                                            multiple
+                                            value={tagName}
+                                            onChange={handleChange}
+                                            size="small"
+                                            renderValue={(selected) => (
+                                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                                    {selected.map((value) => (
+                                                        <Chip key={value} label={value} />
+                                                    ))}
+                                                </Box>
+                                            )}
+                                        >
+                                            <MenuItem value="seratary">Seratary</MenuItem>
+                                            <MenuItem value="head_of_office">Head Office</MenuItem>
+                                        </Select>                                
+                            </FormControl>
+                          </Grid>
+                          <Grid item xs={12} md={6}>
+                            <label>Meeting Id</label>
+                            <TextField
+                              id="outlined-basic"
+                              label="Meeting Id"
+                              variant="outlined"
+                              fullWidth
+                              name="meetingId"
+                              value={meetingId}
+                              onChange={(event) =>
+                                setMeetingId(event.target.value)
+                              }
+                              size="small"
+                              aria-readonly
+                            />
+                          </Grid>
+                          <Grid item xs={12} md={6}>
+                            <label>Meeting Topic</label>
+                            <TextField
+                              id="outlined-basic"
+                              label="Meeting Topic"
+                              variant="outlined"
+                              fullWidth
+                              name="meetingTopic"
+                              value={meetingTopic}
+                              onChange={(event) =>
+                                setMeetingTopic(event.target.value)
+                              }
+                              size="small"
+                              aria-readonly
+                            />
+                          </Grid>
+                        </Grid>
+                        <Grid item xs={12} md={12} >
+                          <Grid item xs={12} md={6}>
+                            <label>Date</label>
+                            <input
+                              type="date"
+                              style={dateTimeStyle}
+                              name="date"
+                              onChange={getMeetingValue}
+                            />
+                          </Grid>
+                          <Grid item xs={12} md={6}>
+                            <label>Time</label>
+                            <input
+                              type="time"
+                              name="time"
+                              style={dateTimeStyle}
+                              onChange={getMeetingValue}
+                            />
+                          </Grid>
+                          <Grid
+                            item
+                            xs={12}
+                            md={12}
+                            sx={{
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Box sx={{ maxWidth: '200px'}}>
+                            <input type="file" onChange={handleChangeForImage} />
+                            </Box>
+                            <Box sx={{ maxWidth: '200px', padding: '10px'}}>
+                                {base64Image && (
+                                    <img src={base64Image} alt="Uploaded" style={{ maxWidth: '100%' }} />
+                                )}
+                            </Box>
+                            
+                          </Grid>
+                        </Grid>
+                        <Button
+                          variant="contained"
+                          color="info"
+                          sx={{ color: "white", marginTop: "2%" }}
+                          onClick={handleAddMeeting}
+                        >
+                          Add Meeting
+                        </Button>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              </Grid>
+            </Container>
+            <Box
+              component="footer"
+              sx={{
+                width: "100%",
+                paddingBottom: "20px",
+              }}
+            >
+              <Footer />
             </Box>
-        </ThemeProvider>
+          </Box>
+        </Box>
+      </ThemeProvider>
     );
 }
