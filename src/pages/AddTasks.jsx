@@ -182,6 +182,22 @@ console.log(taskId)
         }
     }
 
+    const transformData = (data) => {
+        return {
+            tasks: data.map(group => {
+                const taskTitle = group.find(item => item.type === 'text')?.value || '';
+                const uploadImage = group.find(item => item.type === 'file')?.value || '';
+                const targetDate = group.find(item => item.type === 'date')?.value || '';
+    
+                return {
+                    taskTitle,
+                    uploadImage,
+                    targetDate
+                };
+            })
+        };
+    };
+
     function handleAddClick() {
         const lastGroupId = inputGroups[inputGroups.length - 1][0]?.id || 0;
         const newInputGroups = [...inputGroups];
@@ -202,6 +218,9 @@ console.log(taskId)
     }
 
     function handleSubmit() {
+        console.log(inputGroups);
+        const transformedData = transformData(inputGroups);
+        console.log(transformedData);
         if (taskId) {
             
 
