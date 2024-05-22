@@ -119,6 +119,7 @@ export default function AddTasks() {
         const {
             target: { value },
         } = event;
+        console.log(value,'valuevaluevalue')
         // Find the department object with the matching _id
         const selectedDept = allDepartmentData.find(dept => dept._id === value);
         // If a matching department is found, add its name to the personName array
@@ -126,6 +127,10 @@ export default function AddTasks() {
             setPersonName(prevPersonName => [selectedDept.department_name]);
         }
     };
+
+    const handleTagChange = (event) =>{
+        setTagName(event.target.value);
+    }
 
 
     const handleOutput = (open) => {
@@ -199,8 +204,8 @@ export default function AddTasks() {
     function handleSubmit() {
         if (meetingRow.length > 0) {
             
+
         }
-        console.log(inputGroups);
     }
 
 
@@ -320,7 +325,7 @@ export default function AddTasks() {
                                             fullWidth
                                             name="tag"
                                             value={tagName}
-                                            onChange={handleChange}
+                                            onChange={handleTagChange}
                                             size="small"
                                             MenuProps={MenuProps}
                                         >
