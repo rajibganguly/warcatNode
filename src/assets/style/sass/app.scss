@@ -1,0 +1,13 @@
+@import './variables.scss';
+@import './spacing.scss';
+/**  */
+.text-underline {
+    text-decoration: underline;
+}
+
+.taskStatusBtn {
+    // border-radius: 30px !important;
+    font-weight: 500 !important;
+    text-transform: capitalize !important;
+    color: white !important;
+}
