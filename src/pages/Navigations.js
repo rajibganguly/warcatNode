@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import "../App.css";
 import LogIn from "./Login";
 import Dashboard from "./Dashboard";
@@ -22,10 +23,30 @@ import TaskList from "./TaskList";
 import TaskNote from "./TaskNote";
 import TaskUpload from "./TaskUpload";
 import TaskApproval from "./TaskApproval";
+import { useContext, useEffect } from "react";
+import { fetchDepartmentData, fetchMeetingData, fetchTaskData } from "./common";
+import { DepartmentContext } from "../context/DepartmentContext";
+import { MeetingContext } from "../context/MeetingContext";
+import { TaskContext } from "../context/TaskContext";
+
 
 const Navigations = () => {
   const { authToken } = useAuth();
+  const { setAllDepartmentList } = useContext(DepartmentContext);
+  const { setAllMeetingLists } = useContext(MeetingContext);
+  const { setAllTaskLists } = useContext(TaskContext);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const fetchDepdata = await fetchDepartmentData();
+      setAllDepartmentList(fetchDepdata);
+      const fetchMeetingsData = await fetchMeetingData();
+      setAllMeetingLists(fetchMeetingsData);
+      const setAllTaskListsData = await fetchTaskData();
+      setAllTaskLists(setAllTaskListsData)
+    };
+    fetchData();
+  }, [setAllDepartmentList,setAllMeetingLists,setAllTaskLists]);
   return (
     <Router>
       <Routes>
@@ -63,6 +84,10 @@ const Navigations = () => {
           element={!authToken ? <Navigate to="/" /> : <AddTask />}
         />
         <Route
+          path="/edit-tasks"
+          element={!authToken ? <Navigate to="/" /> : <AddTask />}
+        />
+        <Route
           path="/tasks-list"
           element={!authToken ? <Navigate to="/" /> : <TaskList />}
         />
@@ -71,7 +96,7 @@ const Navigations = () => {
           element={!authToken ? <Navigate to="/" /> : <EditDepartment />}
         />
         <Route
-          path="/edit-meeting"
+          path="/edit-meeting/:id"
           element={!authToken ? <Navigate to="/" /> : <EditMeeting />}
         />
         <Route

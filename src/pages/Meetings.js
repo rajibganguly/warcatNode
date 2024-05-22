@@ -1,32 +1,34 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
-import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import Box from "@mui/material/Box";
-import MuiAppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
+import { useState } from "react";
+import {
+  Box,
+  Grid,
+  Card,
+  styled,
+  Button,
+  Toolbar,
+  Container,
+  Typography,
+  createTheme,
+  CssBaseline,
+  Breadcrumbs,
+  CardContent,
+  ThemeProvider,
+} from "@mui/material";
+import { toast } from "react-toastify";
 import { Link } from 'react-router-dom';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
-import { useNavigate } from "react-router-dom";
-//import axiosInstance from "../apiConfig/axoisSetup";
-import ApiConfig from "../config/ApiConfig";
-import { Button } from "@mui/material";
-import TableNew from "../components/TableNew";
-import { toast } from "react-toastify";
 import Sidebar from "../components/Sidebar";
-
-
-
+import MuiAppBar from "@mui/material/AppBar";
+import TableNew from "../components/TableNew";
+import { useNavigate } from "react-router-dom";
+import { TaskContext } from "../context/TaskContext";
+import TaskViewDialog from "../dialog/TaskViewDialog";
+import { MeetingContext } from './../context/MeetingContext'
 
 const column = [
-  { text: '#Meeting Id', dataField: 'meetingId' },
+  { text: 'Meeting Id', dataField: 'meetingId' },
   { text: 'Meeting Topic', dataField: 'meetingTopic' },
   { text: 'Departments', dataField: 'departmentNames' },
   { text: 'Tag', dataField: 'tag' },
@@ -36,7 +38,6 @@ const column = [
   { text: 'Tasks', dataField: 'tasks' },
   { text: 'Operation', dataField: 'meetingoperation' },
 ];
-
 
 const drawerWidth = 240;
 const AppBar = styled(MuiAppBar, {
@@ -57,79 +58,76 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-
-
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
-
-
-
 export default function Meetings() {
   const [open, setOpen] = React.useState(true);
-  // const [filteredInfo, setFilteredInfo] = useState({});
-  // const [sortedInfo, setSortedInfo] = useState({});
-  // const [modalVisible, setModalVisible] = React.useState(false);
-  // const [selectedRecord, setSelectedRecord] = React.useState(null);
-  const [data, setData] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [taskDataView, setTaskDataView] = useState([]);
+  const [meetingData, setMeetingData] = useState([]);
   const navigate = useNavigate();
+
+  const closeModal = () => {
+    setModalVisible(false);
+    setTaskDataView([]);
+  };
 
   const localUser = JSON.parse(localStorage.getItem('user'));
   const currentRoleType = localUser.role_type;
+  const { allMeetingLists } = React.useContext(MeetingContext);
+  const allDepartmentListData = allMeetingLists?.meetings;
+  const { allTaskLists } = React.useContext(TaskContext);
+  const allTaskListsData = allTaskLists?.tasks;
 
-  useEffect(() => {
-    fetchMeetingData();
-  }, []);
-
-  /**
-   * @description Private function for fetch Meeting data
-   */
-  const fetchMeetingData = async () => {
-    if (!toast.isActive("loading")) {
-        toast.loading("Loading meetings data...", { autoClose: false, toastId: "loading" });
-      }
-    const localData = localStorage.getItem("user");
-    const userObj = JSON.parse(localData)    
-    try {
-      const localObj = { userId: userObj._id, role_type: userObj.role_type }; 
-      
-      const params = {
-        userId: localObj.userId,
-        role_type: localObj.role_type
-      };
-      const meetingData = await ApiConfig.requestData('get', '/meetings', params, null);
-      setData(meetingData.meetings);
-      toast.dismiss("loading");
-    } catch (error) {
-      console.error("Error fetching meeting data:", error);
-      toast.dismiss("loading");
-      toast.error("Failed to fetch meeting data");
-    }    
-  };
-
-
-
-  /**
-   * @description DEFINED CLICK EVENTS:
-   * @click to view details about the meeting
-   */
-  const handleTasksViewInMeeting = (record) => {
-    console.log('View clicked for view meetings:', record);
-    // setSelectedRecord(record);
-    // setModalVisible(true);
-  };
-
+  // const VisuallyHiddenInput = styled('input')({
+  //   clip: 'rect(0 0 0 0)',
+  //   clipPath: 'inset(50%)',
+  //   height: 1,
+  //   overflow: 'hidden',
+  //   position: 'absolute',
+  //   bottom: 0,
+  //   left: 0,
+  //   whiteSpace: 'nowrap',
+  //   width: 1,
+  // });
 
   const handleTasksAddInMeeting = (record) => {
-    navigate('/add-tasks')
-  };
-  
-  const handleEditClick = (record) => {
-    navigate('/edit-meeting')
+    const encodedMeetingId = window.btoa(record?.meetingId);
+    const encodedMeetingTopic = window.btoa(record?.meetingTopic);
+    navigate(`/add-tasks?meetingId=${encodeURIComponent(encodedMeetingId)}&meetingTopic=${encodeURIComponent(encodedMeetingTopic)}`);
   };
 
+  const handleEditmeeting = (row) => {
+    // Check if row and row.meetings are defined
+    if (row && row.meetingId) {
+      navigate(`/edit-meeting/${row.meetingId}`);
+    } else {
+      // Log an error if any property is undefined
+      console.error('Invalid row data:', row);
+      // Optionally, handle the error or provide feedback to the user
+    }
+  };
 
+  const findMeetingRows = (meetingId) => {
+    return allTaskListsData.filter(row => row.meetingId && row.meetingId === meetingId);
+  };
 
+  const handleTasksViewInMeeting = (data) => {
+    toast.dismiss();
+    const meetingRows = findMeetingRows(data?.meetingId);
+
+    setTaskDataView(meetingRows);
+
+    if (meetingRows.length === 0) {
+      toast.warning("Task not found.", {
+        autoClose: 2000,
+      });
+    } else {
+      setMeetingData(data);
+      setModalVisible(true);
+    }
+  };
 
   const handleOutput = (open) => {
     toggleDrawer();
@@ -137,10 +135,6 @@ export default function Meetings() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
-
-  // const profilePic = "../assets/user/user1.png"
-
-
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -162,7 +156,7 @@ export default function Meetings() {
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
               {/* Recent Orders */}
               <Grid item xs={12}>
@@ -204,7 +198,7 @@ export default function Meetings() {
                         }}
                       >
                         <Typography variant="body1" sx={{ fontWeight: 600 }}>Meetings</Typography>
-                        { currentRoleType === 'admin' && (<Button variant="contained" sx={{
+                        {currentRoleType === 'admin' && (<Button variant="contained" sx={{
                           backgroundColor: 'green',
                           '&:hover': {
                             backgroundColor: 'darkgreen',
@@ -215,11 +209,18 @@ export default function Meetings() {
                       </Box>
                       <CardContent>
                         <TableNew
-                          data={data}
+                          data={allDepartmentListData}
                           column={column}
                           handleTasksAddInMeeting={handleTasksAddInMeeting}
                           handleTasksViewInMeeting={handleTasksViewInMeeting}
-                          handleEditClick={handleEditClick}
+                          handleEditmeeting={handleEditmeeting}
+                        />
+                        {/* Task view dialog */}
+                        <TaskViewDialog
+                          open={modalVisible}
+                          onClose={closeModal}
+                          taskDataView={taskDataView}
+                          meetingData={meetingData}
                         />
                       </CardContent>
                     </Card>

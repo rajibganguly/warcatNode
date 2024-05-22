@@ -25,7 +25,7 @@ import Sidebar from "../components/Sidebar";
 import { toast } from "react-toastify";
 import { CloseOutlined } from '@mui/icons-material';
 import TableNew from "../components/TableNew";
-import { TextField, Dialog, DialogContent, DialogContentText} from "@mui/material";
+import { TextField, Dialog, DialogContent, DialogContentText } from "@mui/material";
 import CardActions from "@mui/material/CardActions";
 import ApiConfig from '../config/ApiConfig'
 
@@ -35,7 +35,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
-import {TaskChartData} from '../constant/taskChartData';
+import { TaskChartData } from '../constant/taskChartData';
 import { useNavigate } from "react-router-dom";
 
 
@@ -180,16 +180,16 @@ export default function Tasks() {
       };
       const tasksChartData = await ApiConfig.requestData('get', '/task-status-percentages', params, null);
       const updateTaskCahrtValues = chartData;
-      if(updateTaskCahrtValues[0]['label'] === 'Total Assigned') {
+      if (updateTaskCahrtValues[0]['label'] === 'Total Assigned') {
         updateTaskCahrtValues[0].percentage = tasksChartData.totalAssigned
       }
-      if(updateTaskCahrtValues[1]['label'] === 'Not Initiated') {
+      if (updateTaskCahrtValues[1]['label'] === 'Not Initiated') {
         updateTaskCahrtValues[1].percentage = tasksChartData.initiated.percentage
       }
-      if(updateTaskCahrtValues[2]['label'] === 'In Progress') {
+      if (updateTaskCahrtValues[2]['label'] === 'In Progress') {
         updateTaskCahrtValues[2].percentage = tasksChartData.inProgress.percentage
       }
-      if(updateTaskCahrtValues[3]['label'] === 'Completed') {
+      if (updateTaskCahrtValues[3]['label'] === 'Completed') {
         updateTaskCahrtValues[3].percentage = tasksChartData.completed.percentage
       }
       setChartData(updateTaskCahrtValues)
@@ -210,7 +210,8 @@ export default function Tasks() {
   };
 
   const handleEditOperationTask = (row) => {
-    // setModalVisible1(true);
+     const encodedTaskId = window.btoa(row?.task_id);
+     navigate(`/edit-tasks?taskId=${encodeURIComponent(encodedTaskId)}`);
 
   };
 
@@ -544,7 +545,7 @@ export default function Tasks() {
                                   <Button size="small" variant="contained" color="primary" >
                                     Enter Subtask Title
                                   </Button>
-                                  
+
                                 </CardActions>
                               </Card>
                             </DialogContentText>
