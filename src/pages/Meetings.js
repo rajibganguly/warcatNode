@@ -273,7 +273,11 @@ export default function Meetings() {
                                       attachment.png
                                     </MuiLink>
                                     <Box gap={2} display={'flex'} justifyContent={'right'}>
-                                      <Chip label={task.status} className="taskStatusBtn"  sx={{background:'#ffbb44'}} />
+                                      <Chip
+                                        label={task.status}
+                                        className="taskStatusBtn" 
+                                        sx={{background: task.status === 'initiated' ? '#ffbb44' : task.status === 'completed' ? '#6fd088' : '#0f9cf3'}}
+                                      />
                                       <Button variant="contained" style={{ backgroundColor: '#0a1832', color: '#ffffff'}}>Edit</Button>
                                     </Box>
                                     {index < taskDataView.length - 1 && <Divider sx={{my:2}} />}
