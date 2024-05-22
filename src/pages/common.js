@@ -88,3 +88,14 @@ import ApiConfig from '../config/ApiConfig';
   } catch (error) {
   }
 };
+
+/**
+   * @description Private function for add Task
+   */
+export const addTaskPost = async (body) => {
+  try {
+    const addMeeting = await ApiConfig.requestData('post', '/add-task', null, body);
+    return addMeeting;
+  } catch (error) {
+  }
+};

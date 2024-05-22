@@ -29,6 +29,8 @@ import InputLabel from '@mui/material/InputLabel';
 import Sidebar from "../components/Sidebar";
 import { DepartmentContext } from './../context/DepartmentContext'
 import { TaskContext } from "../context/TaskContext";
+import axios from "axios";
+import { addTaskPost } from "./common";
 
 
 // function Label({ componentName, valueType }) {
@@ -85,6 +87,7 @@ export default function AddTasks() {
     const [open, setOpen] = React.useState(true);
     const location = useLocation();
     const [personName, setPersonName] = React.useState([]);
+    const [deptId, setDeptId] = useState('');
     const [meetingId, setMeetingId] = useState('');
     const [taskId, setTaskId] = useState();
     const [meetingTopic, setMeetingTopic] = useState('');
@@ -122,6 +125,8 @@ export default function AddTasks() {
                 });
                 const departmentNames = selectedDepartments.filter(dep => dep !== null).map(dep => dep.department_name);
                 setPersonName(departmentNames);
+                const departmentId = selectedDepartments.filter(dep => dep !== null).map(dep => dep._id);
+                setDeptId(departmentId);
                 // Flatten the tags array and remove duplicates
                 const tags = [...new Set(filteredObject?.department?.flatMap(obj => obj.tag) || [])];
                 // console.log(tags)
@@ -144,6 +149,7 @@ export default function AddTasks() {
         const selectedDept = allDepartmentData.find(dept => dept._id === value);
         // If a matching department is found, add its name to the personName array
         if (selectedDept) {
+            setDeptId(prevPersonName => [selectedDept._id]);
             setPersonName(prevPersonName => [selectedDept.department_name]);
         }
     };
@@ -237,14 +243,74 @@ export default function AddTasks() {
         setInputGroups(newInputGroups);
     }
 
+    const convertToDepartmentFormat = (deptid, deptName, tags, task) => {
+        return {
+            meetingId: meetingId,
+            meetingTopic: meetingTopic,
+            department: deptid.map((id, index) => ({
+                dep_id: id,
+                dep_name: deptName[index],
+                tag: tags,
+                tasks: task.tasks
+            }))
+        };
+    };
+
     function handleSubmit() {
         console.log(inputGroups);
-        const transformedData = transformData(inputGroups);
-        console.log(transformedData);
-        if (taskId) {
-            console.log(taskId)
+        console.log(tagName, 'tags');
+        console.log(deptId, 'dept id');
+        console.log(personName, 'dept name');
+        const taskData = transformData(inputGroups);
+        console.log(taskData, 'task');
+        
+        const transformedData = convertToDepartmentFormat(deptId, personName, tagName, taskData);
+        handleAddTask(transformedData);
+        // if (taskId) {
+        //     console.log(taskId)
+        // }
+    }
 
+    const handleAddTask = async (transformedData) => {
+        console.log(transformedData)
+        try {
+            // addTaskPost(transformedData);
+            //const addPostTasks = await addTaskPost(transformedData);
+            //console.log(addPostTasks)
+
+            console.log(transformedData, 'transformed data');
+            // const formDataSend = new FormData();
+            // formDataSend.append('departmentData', JSON.stringify(transformedData));
+            // console.log(formDataSend, 'formdataSend');
+            // formDataSend.append('departmentIds', departmentIds);
+            // formDataSend.append('tag', tag);
+
+            // const token = localStorage.getItem('token');
+            // const response = await axios.post('https://warcat2024-qy2v.onrender.com/api/add-task', transformedData, {
+            //     headers: {
+            //         'Content-Type': 'multipart/form-data',
+            //         Authorization: `Bearer ${token}`,
+            //     },
+            // });
+
+            //console.log(response.data);
+        } catch (error) {
+            console.error('Error occurred:', error);
         }
+
+    };
+
+    const getDateValue = (e) => {
+        console.log(e.target.name, e.target.value)
+    }
+
+    const dateTimeStyle = {
+        width: "100%",
+        padding: "15px 10px",
+        border: "1px solid #ccc",
+        borderRadius: "6px",
+        fontFamily: 'Roboto,sans-serif',
+        fontSize: "1em"
     }
 
 
@@ -428,22 +494,32 @@ export default function AddTasks() {
                                                     </Grid>
                                                 ) : input.type === 'date' ? (
                                                     <Grid item xs={12} md={6}>
-                                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                            <DatePicker
-                                                                label="Select Date"
-                                                                selectedDate={input.value}
-                                                                handleDateChange={(date) => handleInputChange(group[0].id, input.id, date)}
-                                                                renderInput={(params) => (
-                                                                    <TextField
-                                                                        {...params}
-                                                                        fullWidth
-                                                                        size="small"
-                                                                        sx={{ minWidth: '100%', width: '100%' }}
-                                                                    />
-                                                                )}
-                                                            />
-                                                        </LocalizationProvider>
-                                                    </Grid>
+                            <label>Date</label>
+                            <input
+                              type="date"
+                              style={dateTimeStyle}
+                              name="date"
+                              // onChange={getDateValue}
+                              onChange={(e) => handleInputChange(group[0].id, input.id, e)}
+                            />
+                          </Grid>
+                                                    // <Grid item xs={12} md={6}>
+                                                    //     <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                    //         <DatePicker
+                                                    //             label="Select Date"
+                                                    //             selectedDate={input.value}
+                                                    //             handleDateChange={(date) => handleInputChange(group[0].id, input.id, date)}
+                                                    //             renderInput={(params) => (
+                                                    //                 <TextField
+                                                    //                     {...params}
+                                                    //                     fullWidth
+                                                    //                     size="small"
+                                                    //                     sx={{ minWidth: '100%', width: '100%' }}
+                                                    //                 />
+                                                    //             )}
+                                                    //         />
+                                                    //     </LocalizationProvider>
+                                                    // </Grid>
                                                 ) : (
                                                     <Grid item xs={12} md={12}>
                                                         <TextField
@@ -451,7 +527,7 @@ export default function AddTasks() {
                                                             label="Enter Task Title"
                                                             variant="outlined"
                                                             type={input.type}
-                                                            value={taskTitle}
+                                                            value={input.value}
                                                             onChange={(e) => handleInputChange(group[0].id, input.id, e)}
                                                             fullWidth
                                                             size="small"
