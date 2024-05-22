@@ -43,7 +43,7 @@ import ApiConfig from '../config/ApiConfig';
   };
 
 
-      /**
+  /**
    * @description Private function for fetch Task data
    */
  export const fetchTaskData = async () => {
@@ -76,3 +76,15 @@ import ApiConfig from '../config/ApiConfig';
       year: 'numeric'
     }).replace(/ /g, ' ');
   };
+
+
+  /**
+   * @description Private function for fetch Task data
+   */
+ export const addMeetings = async (body) => {
+  try {
+    const addMeeting = await ApiConfig.requestData('post', '/add-meeting', null, body);
+    return addMeeting;
+  } catch (error) {
+  }
+};
