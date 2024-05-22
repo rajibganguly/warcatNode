@@ -17,7 +17,7 @@ import Header from "../components/header";
 import { useNavigate } from "react-router-dom";
 //import axiosInstance from "../apiConfig/axoisSetup";
 import ApiConfig from "../config/ApiConfig";
-import { Button, Divider } from "@mui/material";
+import { Button, Chip, Divider } from "@mui/material";
 import TableNew from "../components/TableNew";
 import { toast } from "react-toastify";
 import Sidebar from "../components/Sidebar";
@@ -43,7 +43,6 @@ const column = [
   { text: 'Operation', dataField: 'meetingoperation' },
 ];
 
-
 const drawerWidth = 240;
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -63,13 +62,8 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-
-
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
-
-
-
 
 export default function Meetings() {
   const [open, setOpen] = React.useState(true);
@@ -82,7 +76,6 @@ export default function Meetings() {
     setModalVisible(false);
     setTaskDataView([]);
   };
-
 
   const localUser = JSON.parse(localStorage.getItem('user'));
   const currentRoleType = localUser.role_type;
@@ -122,7 +115,6 @@ export default function Meetings() {
     }
   };
 
-
   const findMeetingRows = (meetingId) => {
     return allTaskListsData.filter(row => row.meetingId && row.meetingId === meetingId);
   };
@@ -134,19 +126,12 @@ export default function Meetings() {
 
   };
 
-
-
-
   const handleOutput = (open) => {
     toggleDrawer();
   };
   const toggleDrawer = () => {
     setOpen(!open);
   };
-
-  // const profilePic = "../assets/user/user1.png"
-
-
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -239,6 +224,7 @@ export default function Meetings() {
                               <Box
                                 p={2}
                                 display={'flex'}
+                                alignItems={'center'}
                                 justifyContent={'space-between'}
                               >
                                 <Box>
@@ -265,7 +251,7 @@ export default function Meetings() {
                                   <Typography variant="h6" color="text.primary" className="text-underline">
                                     Tasks
                                   </Typography>
-                                  <Button variant="contained" color="primary" sx={{fontSize:'12px'}}>Add New Subtask</Button>
+                                  <Button variant="contained" color="primary" className="fs-12">Add New Subtask</Button>
                                 </Box>
                                 {taskDataView.map((task, index) => (
                                   <Box key={index}>
@@ -283,12 +269,13 @@ export default function Meetings() {
                                         {formatDateWithmonth(task.target_date)}
                                       </Typography>
                                     </Box>
-                                    <Typography color="text.secondary">
-                                      {task.status}
-                                    </Typography>
                                     <MuiLink component="a" href={task.task_image} download="attachment.png">
                                       attachment.png
                                     </MuiLink>
+                                    <Box gap={2} display={'flex'} justifyContent={'right'}>
+                                      <Chip label={task.status} className="taskStatusBtn"  sx={{background:'#ffbb44'}} />
+                                      <Button variant="contained" style={{ backgroundColor: '#0a1832', color: '#ffffff'}}>Edit</Button>
+                                    </Box>
                                     {index < taskDataView.length - 1 && <Divider sx={{my:2}} />}
                                   </Box>
                                 ))}
