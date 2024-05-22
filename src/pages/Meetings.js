@@ -103,19 +103,11 @@ export default function Meetings() {
     width: 1,
   });
 
-
-
-  /**
-   * @description DEFINED CLICK EVENTS:
-   * @click to view details about the meeting
-   */
-  const handleTasksViewInMeeting = (record) => {
-    console.log('View clicked for view meetings:', record);
-  };
-
-
   const handleTasksAddInMeeting = (record) => {
-    navigate('/add-tasks')
+    console.log(record,'record')
+    const encodedMeetingId = window.btoa(record?.meetingId);
+    const encodedMeetingTopic = window.btoa(record?.meetingTopic);
+    navigate(`/add-tasks?meetingId=${encodeURIComponent(encodedMeetingId)}&meetingTopic=${encodeURIComponent(encodedMeetingTopic)}`);
   };
 
   const handleEditmeeting = (row) => {
@@ -135,9 +127,7 @@ export default function Meetings() {
     return allTaskListsData.filter(row => row.meetingId && row.meetingId === meetingId);
   };
 
-  const handleTaskView = (data) => {
-    console.log(allTaskListsData)
-    console.log(data)
+  const handleTasksViewInMeeting = (data) => {
     setMeetingData(data);
     setTaskDataView(findMeetingRows(data?.meetingId))
     setModalVisible(true);
@@ -236,7 +226,6 @@ export default function Meetings() {
                           handleTasksAddInMeeting={handleTasksAddInMeeting}
                           handleTasksViewInMeeting={handleTasksViewInMeeting}
                           handleEditmeeting={handleEditmeeting}
-                          handleTaskView={handleTaskView}
                         />
                         <Dialog
                           fullWidth
