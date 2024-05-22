@@ -1,42 +1,32 @@
 import React, { useContext } from "react";
-import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import Box from "@mui/material/Box";
-import MuiAppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
-import { Link } from "react-router-dom";
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { mainListItems, secondaryListItems } from "../components/listitems";
-import LogoBlack from "../components/logoblack";
-import ProfileSidePane from "../components/profileSidepane";
-import MuiDrawer from "@mui/material/Drawer";
-import { Button, TextField } from "@mui/material";
-import Sidebar from "../components/Sidebar";
-import SearchIcon from "@mui/icons-material/Search";
+import {
+  Box,
+  Grid,
+  Card,
+  Stack,
+  styled,
+  Button,
+  Toolbar,
+  TextField,
+  Container,
+  Typography,
+  createTheme,
+  CssBaseline,
+  Breadcrumbs,
+  CardContent,
+  ThemeProvider,
+} from "@mui/material";
 import { toast } from "react-toastify";
-
-//import Orders from "../components/orders";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
+import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
 import Header from "../components/header";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Stack from "@mui/material/Stack";
-import { useNavigate } from "react-router-dom";
-import axiosInstance from "../apiConfig/axoisSetup";
+import Sidebar from "../components/Sidebar";
+import MuiAppBar from "@mui/material/AppBar";
 import { fetchDepartmentData } from "./common";
+import { useNavigate } from "react-router-dom";
 import { DepartmentContext } from "../context/DepartmentContext";
 
-
-
 const drawerWidth = 240;
-
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
@@ -54,7 +44,6 @@ const AppBar = styled(MuiAppBar, {
     }),
   }),
 }));
-
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
@@ -148,7 +137,6 @@ export default function AddDepartment() {
     }
   };
 
-
   /**
    * Post call on submit
    */
@@ -188,7 +176,6 @@ export default function AddDepartment() {
 
     }
   };
-
 
   return (
     <ThemeProvider theme={defaultTheme}>

@@ -4,23 +4,18 @@ import {
   Box,
   Grid,
   Card,
-  Chip,
   styled,
-  Dialog,
   Button,
-  Divider,
   Toolbar,
   Container,
-  IconButton,
   Typography,
   createTheme,
   CssBaseline,
   Breadcrumbs,
   CardContent,
   ThemeProvider,
-  DialogContent,
-  Link as MuiLink
 } from "@mui/material";
+import { toast } from "react-toastify";
 import { Link } from 'react-router-dom';
 import Footer from "../components/Footer";
 import Header from "../components/header";
@@ -28,11 +23,9 @@ import Sidebar from "../components/Sidebar";
 import MuiAppBar from "@mui/material/AppBar";
 import TableNew from "../components/TableNew";
 import { useNavigate } from "react-router-dom";
-import { CloseOutlined } from '@mui/icons-material';
-import { MeetingContext } from './../context/MeetingContext'
 import { TaskContext } from "../context/TaskContext";
-import { formatDate, formatDateWithmonth } from "./common";
-// import TaskViewDialog from "../dialog/TaskViewDialog";
+import TaskViewDialog from "../dialog/TaskViewDialog";
+import { MeetingContext } from './../context/MeetingContext'
 
 const column = [
   { text: 'Meeting Id', dataField: 'meetingId' },
@@ -87,27 +80,25 @@ export default function Meetings() {
   const { allTaskLists } = React.useContext(TaskContext);
   const allTaskListsData = allTaskLists?.tasks;
 
-  const VisuallyHiddenInput = styled('input')({
-    clip: 'rect(0 0 0 0)',
-    clipPath: 'inset(50%)',
-    height: 1,
-    overflow: 'hidden',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    whiteSpace: 'nowrap',
-    width: 1,
-  });
+  // const VisuallyHiddenInput = styled('input')({
+  //   clip: 'rect(0 0 0 0)',
+  //   clipPath: 'inset(50%)',
+  //   height: 1,
+  //   overflow: 'hidden',
+  //   position: 'absolute',
+  //   bottom: 0,
+  //   left: 0,
+  //   whiteSpace: 'nowrap',
+  //   width: 1,
+  // });
 
   const handleTasksAddInMeeting = (record) => {
-    console.log(record,'record')
     const encodedMeetingId = window.btoa(record?.meetingId);
     const encodedMeetingTopic = window.btoa(record?.meetingTopic);
     navigate(`/add-tasks?meetingId=${encodeURIComponent(encodedMeetingId)}&meetingTopic=${encodeURIComponent(encodedMeetingTopic)}`);
   };
 
   const handleEditmeeting = (row) => {
-    console.log('Edit clicked for:', row);
     // Check if row and row.meetings are defined
     if (row && row.meetingId) {
       navigate(`/edit-meeting/${row.meetingId}`);
@@ -123,9 +114,19 @@ export default function Meetings() {
   };
 
   const handleTasksViewInMeeting = (data) => {
-    setMeetingData(data);
-    setTaskDataView(findMeetingRows(data?.meetingId))
-    setModalVisible(true);
+    toast.dismiss();
+    const meetingRows = findMeetingRows(data?.meetingId);
+
+    setTaskDataView(meetingRows);
+
+    if (meetingRows.length === 0) {
+      toast.warning("Task not found.", {
+        autoClose: 2000,
+      });
+    } else {
+      setMeetingData(data);
+      setModalVisible(true);
+    }
   };
 
   const handleOutput = (open) => {
@@ -155,7 +156,7 @@ export default function Meetings() {
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
               {/* Recent Orders */}
               <Grid item xs={12}>
@@ -214,91 +215,13 @@ export default function Meetings() {
                           handleTasksViewInMeeting={handleTasksViewInMeeting}
                           handleEditmeeting={handleEditmeeting}
                         />
-                        {/* <TaskViewDialog
+                        {/* Task view dialog */}
+                        <TaskViewDialog
                           open={modalVisible}
                           onClose={closeModal}
-                          task={taskDataView}
+                          taskDataView={taskDataView}
                           meetingData={meetingData}
-                        /> */}
-                        <Dialog
-                          fullWidth
-                          open={modalVisible}
-                          onClose={closeModal}
-                          aria-labelledby="modal-title"
-                          aria-describedby="modal-description"
-                        >
-                          {taskDataView && taskDataView.length > 0 ? (
-                            <>
-                              <Box
-                                p={2}
-                                display={'flex'}
-                                alignItems={'center'}
-                                justifyContent={'space-between'}
-                              >
-                                <Box>
-                                  <Typography variant="h6" color="text.primary">{meetingData?.meetingTopic}</Typography>
-                                  <Box
-                                    display={'flex'}
-                                    gap={2}
-                                  >
-                                    <Typography color="text.secondary">{formatDate(meetingData?.selectDate)}</Typography>
-                                    <Typography color="text.secondary">{meetingData?.selectTime}</Typography>
-                                  </Box>
-                                </Box>
-                                <IconButton
-                                  size="small"
-                                  aria-label="close"
-                                  onClick={closeModal}
-                                >
-                                  <CloseOutlined />
-                                </IconButton>
-                              </Box>
-                              <Divider/>
-                              <DialogContent>
-                                <Box mb={2} display={'flex'} gap={4} alignItems={'center'}>
-                                  <Typography variant="h6" color="text.primary" className="text-underline">
-                                    Tasks
-                                  </Typography>
-                                  <Button variant="contained" color="primary" className="fs-12">Add New Subtask</Button>
-                                </Box>
-                                {taskDataView.map((task, index) => (
-                                  <Box key={index}>
-                                    <Typography fontSize={'12px'} color="text.secondary">
-                                      {formatDateWithmonth(task.timestamp)}
-                                    </Typography>
-                                    <Typography color="text.primary" variant="h6" mb={.5}>
-                                      {task.task_title}
-                                    </Typography>
-                                    <Box display={'flex'} gap={1} alignItems={'center'}>
-                                      <Typography color="text.secondary">
-                                        Target Date:
-                                      </Typography>
-                                      <Typography color="error">
-                                        {formatDateWithmonth(task.target_date)}
-                                      </Typography>
-                                    </Box>
-                                    <MuiLink component="a" href={task.task_image} download="attachment.png">
-                                      attachment.png
-                                    </MuiLink>
-                                    <Box gap={2} display={'flex'} justifyContent={'right'}>
-                                      <Chip
-                                        label={task.status}
-                                        className="taskStatusBtn" 
-                                        sx={{background: task.status === 'initiated' ? '#ffbb44' : task.status === 'completed' ? '#6fd088' : '#0f9cf3'}}
-                                      />
-                                      <Button variant="contained" style={{ backgroundColor: '#0a1832', color: '#ffffff'}}>Edit</Button>
-                                    </Box>
-                                    {index < taskDataView.length - 1 && <Divider sx={{my:2}} />}
-                                  </Box>
-                                ))}
-                              </DialogContent>
-                            </>
-                          ) : (
-                            <DialogContent id="modal-description">
-                              Task not found.
-                            </DialogContent>
-                          )}
-                        </Dialog>
+                        />
                       </CardContent>
                     </Card>
                   </Grid>
