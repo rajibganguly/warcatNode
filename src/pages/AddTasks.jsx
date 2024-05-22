@@ -30,10 +30,6 @@ import Sidebar from "../components/Sidebar";
 import { DepartmentContext } from './../context/DepartmentContext'
 import { TaskContext } from "../context/TaskContext";
 
-
-// function Label({ componentName, valueType }) {
-
-// }
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -479,9 +475,41 @@ export default function AddTasks() {
                                     </Grid>
                                 ))}
 
+                                <Grid container spacing={2}> 
+                                    <Grid item xs={12}>
+                                        <InputLabel sx={{mb:1}}>Task Title</InputLabel>
+                                        <TextField
+                                            variant="outlined"
+                                            fullWidth
+                                            placeholder="Enter task title"
+                                            name="dep_name"
+                                            size="small"
+                                        />
+                                    </Grid>
 
-
-
+                                    <Grid item xs={6}>
+                                        <InputLabel sx={{mb:1}}>Upload Image</InputLabel>
+                                        <TextField
+                                            variant="outlined"
+                                            fullWidth
+                                            placeholder="Enter task title"
+                                            name="dep_name"
+                                            size="small"
+                                            type="file"
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <InputLabel sx={{mb:1}}>Target Date</InputLabel>
+                                        <TextField
+                                            variant="outlined"
+                                            fullWidth
+                                            placeholder="dd-mm-yyyy"
+                                            name=""
+                                            type="date"
+                                            size="small"
+                                        />
+                                    </Grid>
+                                </Grid>
 
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'start' }}>
