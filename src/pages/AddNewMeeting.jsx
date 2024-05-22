@@ -226,7 +226,6 @@ export default function AddNewMeeting() {
         const reader = new FileReader();
         reader.onload = () => {
             setBase64Image(reader.result);
-            console.log(reader.result, base64Image)
         };
         reader.readAsDataURL(file);
         }
