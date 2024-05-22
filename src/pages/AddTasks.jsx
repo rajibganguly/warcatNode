@@ -94,7 +94,7 @@ export default function AddTasks() {
     const { allTaskLists } = React.useContext(TaskContext);
     const allTaskListsData = allTaskLists?.tasks;
     const [tagName, setTagName] = useState([]); // Tags Store
-    const availableTags = [{ id: 1, value: "secretary", text: "Secretary" }, { id: 2, value: "head_of_office", text: "Head of Office" }]
+    //const availableTags = [{ id: 1, value: "secretary", text: "Secretary" }, { id: 2, value: "head_of_office", text: "Head of Office" }]
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
@@ -121,7 +121,7 @@ export default function AddTasks() {
             const departmentNames = selectedDepartments.filter(dep => dep !== null).map(dep => dep.department_name);
             setPersonName(departmentNames);
             const tags = filteredObject?.department?.map(obj => obj.tag);
-            console.log(tags); 
+            console.log(depIds); 
 
         }
 
@@ -357,16 +357,18 @@ export default function AddTasks() {
                                             fullWidth
                                             name="tag"
                                             value={tagName}
-                                            m
                                             onChange={handleTagChange}
                                             size="small"
-                                            MenuProps={MenuProps}
+                                            multiple
+                                    
                                         >
-                                            {availableTags.map((value) => (
+                                            <MenuItem value="seratary">Seratary</MenuItem>
+                                            <MenuItem value="head_of_office">Head Office</MenuItem>
+                                            {/* {availableTags.map((value) => (
                                                 <MenuItem key={value.id} value={value.value}>
                                                     {value.text}
                                                 </MenuItem>
-                                            ))}
+                                            ))} */}
                                         </Select>
                                     </Grid>
                                     {meetingId && (
