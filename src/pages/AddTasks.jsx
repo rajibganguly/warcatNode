@@ -91,9 +91,9 @@ export default function AddTasks() {
     const theme = useTheme();
     const { allDepartmentList } = React.useContext(DepartmentContext);
     const allDepartmentData = allDepartmentList.map((dept) => dept.department);
-    // const { allTaskLists } = React.useContext(TaskContext);
-    // const allTaskListsData = allTaskLists?.tasks;
-    const [tagName, setTagName] = useState(''); // Tags Store
+    const { allTaskLists } = React.useContext(TaskContext);
+    const allTaskListsData = allTaskLists?.tasks;
+    const [tagName, setTagName] = useState([]); // Tags Store
     const availableTags = [{ id: 1, value: "secretary", text: "Secretary" }, { id: 2, value: "head_of_office", text: "Head of Office" }]
 
     useEffect(() => {
@@ -112,14 +112,27 @@ export default function AddTasks() {
         if (encodedTaskId) {
             const decodedTaskId = window.atob(encodedTaskId);
             setTaskId(decodedTaskId);
+            const filteredObject = allTaskListsData?.find(task => task.task_id === decodedTaskId);
+            const depIds = filteredObject?.department?.map(obj => obj.dep_id);
+            const selectedDepartments = depIds.map(id => {
+                const department = allDepartmentData.find(dept => dept._id === id);
+                return department ? department : null;
+            });
+            const departmentNames = selectedDepartments.filter(dep => dep !== null).map(dep => dep.department_name);
+            setPersonName(departmentNames);
+            const tags = filteredObject?.department?.map(obj => obj.tag);
+            console.log(tags); 
+
         }
-    }, [location.search]);
-console.log(taskId)
+
+    }, [location.search, allTaskListsData, allTaskListsData]);
+
+
     const handleChange = (event) => {
         const {
             target: { value },
         } = event;
-        console.log(value,'valuevaluevalue')
+        console.log(value, 'valuevaluevalue')
         // Find the department object with the matching _id
         const selectedDept = allDepartmentData.find(dept => dept._id === value);
         // If a matching department is found, add its name to the personName array
@@ -128,7 +141,7 @@ console.log(taskId)
         }
     };
 
-    const handleTagChange = (event) =>{
+    const handleTagChange = (event) => {
         setTagName(event.target.value);
     }
 
@@ -188,7 +201,7 @@ console.log(taskId)
                 const taskTitle = group.find(item => item.type === 'text')?.value || '';
                 const uploadImage = group.find(item => item.type === 'file')?.value || '';
                 const targetDate = group.find(item => item.type === 'date')?.value || '';
-    
+
                 return {
                     taskTitle,
                     uploadImage,
@@ -222,7 +235,7 @@ console.log(taskId)
         const transformedData = transformData(inputGroups);
         console.log(transformedData);
         if (taskId) {
-            
+            console.log(taskId)
 
         }
     }
@@ -344,6 +357,7 @@ console.log(taskId)
                                             fullWidth
                                             name="tag"
                                             value={tagName}
+                                            m
                                             onChange={handleTagChange}
                                             size="small"
                                             MenuProps={MenuProps}
@@ -461,7 +475,7 @@ console.log(taskId)
 
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'start' }}>
-                                        {!taskId && ( 
+                                        {!taskId && (
                                             <Button
                                                 variant="contained"
                                                 color="success"
