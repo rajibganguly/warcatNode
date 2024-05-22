@@ -246,7 +246,6 @@ export default function EditMeeting() {
                                     </div>
                                 </div>
                                 <Card sx={{ width: 100 + "%", padding: 2 }}>
-
                                     <CardContent>
                                         <Box
                                             sx={{
