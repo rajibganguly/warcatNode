@@ -30,12 +30,12 @@ import Sidebar from "../components/Sidebar";
 import { DepartmentContext } from './../context/DepartmentContext'
 import { TaskContext } from "../context/TaskContext";
 import axios from "axios";
-import { addTaskPost } from "./common";
-import { dateSelected } from "./common";
+import { dateSelected, parentTaskEdit, addTaskPost } from "./common";
 import {
     useForm,
     Controller,
 } from 'react-hook-form';
+import { toast } from "react-toastify";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -375,7 +375,13 @@ export default function AddTasks() {
 
     async function updateData(data) {
 
-        console.log(data)
+        // console.log(data)
+        const updateData = await parentTaskEdit(data);
+        if(updateData){
+            toast.success("Task Edit Successfully", {
+                autoClose: 2000,
+              });
+        }
 
     }
     const {
