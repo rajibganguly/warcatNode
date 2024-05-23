@@ -29,11 +29,12 @@ import InputLabel from '@mui/material/InputLabel';
 import Sidebar from "../components/Sidebar";
 import { DepartmentContext } from './../context/DepartmentContext'
 import { TaskContext } from "../context/TaskContext";
-import { dateSelected } from "./common";
+import { dateSelected, parentTaskEdit } from "./common";
 import {
     useForm,
     Controller,
 } from 'react-hook-form';
+import { toast } from "react-toastify";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -273,7 +274,6 @@ export default function AddTasks() {
         const transformedData = transformData(inputGroups);
         console.log(transformedData);
         if (taskId) {
-
             const data = {
                 meeting_id: meetingId,
                 department: departmentData,
@@ -282,18 +282,19 @@ export default function AddTasks() {
                 target_date: updateSelectedDate,
                 task_image: null
             };
-
-
             await updateData(data);
-
-
-
         }
     }
 
     async function updateData(data) {
 
-        console.log(data)
+        // console.log(data)
+        const updateData = await parentTaskEdit(data);
+        if(updateData){
+            toast.success("Task Edit Successfully", {
+                autoClose: 2000,
+              });
+        }
 
     }
     const {
