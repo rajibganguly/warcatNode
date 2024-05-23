@@ -131,7 +131,7 @@ export default function AddTasks() {
                     const department = allDepartmentData.find(dept => dept._id === id);
                     return department ? department : null;
                 });
-                console.log(selectedDepartments, 'setSelectedDeparmentObj')
+                //console.log(selectedDepartments, 'setSelectedDeparmentObj')
                 setSelectedDeparmentObj(selectedDepartments)
                 const departmentNames = selectedDepartments.filter(dep => dep !== null).map(dep => dep.department_name);
                 setPersonName(departmentNames);
@@ -180,21 +180,15 @@ export default function AddTasks() {
             setPersonName(prevPersonName => [selectedDept.department_name]);
         }
     };
-    let departmentData = [];
 
-    // Check if selectedDeparmentobj is an array before using map
-    if (Array.isArray(selectedDeparmentobj)) {
-        departmentData = selectedDeparmentobj.map(item => ({
-            dep_id: item._id,
-            dep_name: item.department_name,
-            tag: tagName // Assuming tagName is defined somewhere in your code
-        }));
-    } else {
-        console.error('selectedDeparmentobj is not an array.');
-    }
+    let departmentData = selectedDeparmentobj ? [
+        {
+            dep_id: selectedDeparmentobj._id,
+            dep_name: selectedDeparmentobj.department_name,
+            tag: tagName
+        }
+    ] : [];
     
-
-
     const handleTagChange = (event) => {
         setTagName(event.target.value);
     }
@@ -289,14 +283,14 @@ export default function AddTasks() {
         handleAddTask(transformedData);
         if (taskId) {
             const data = {
-                meeting_id: meetingId,
                 department: departmentData,
                 task_id: taskId,
                 task_title: updateTaskTitle,
                 target_date: updateSelectedDate,
                 task_image: updateTaskFile
             };
-            await updateData(data);
+            console.log(data)
+             await updateData(data);
         }
     }
 
@@ -525,7 +519,7 @@ export default function AddTasks() {
                                                 </Box>
                                             )}
                                         >
-                                            <MenuItem value="seratary">Seratary</MenuItem>
+                                            <MenuItem value="secretary">Secretary</MenuItem>
                                             <MenuItem value="head_of_office">Head Office</MenuItem>
                                         </Select>
                                     </Grid>
