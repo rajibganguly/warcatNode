@@ -29,6 +29,7 @@ import InputLabel from '@mui/material/InputLabel';
 import Sidebar from "../components/Sidebar";
 import { DepartmentContext } from './../context/DepartmentContext'
 import { TaskContext } from "../context/TaskContext";
+import { dateSelected } from "./common";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -83,14 +84,18 @@ export default function AddTasks() {
     const [personName, setPersonName] = React.useState([]);
     const [meetingId, setMeetingId] = useState('');
     const [taskId, setTaskId] = useState();
+    const [updateTaskTitle, setUpdateTaskTitle] = useState('');
     const [meetingTopic, setMeetingTopic] = useState('');
-    const [taskTitle, setTaskTitle] = useState('');
+    const [updateTaskFile, setupdateTaskFile] = useState(null);
+    const [updateSelectedDate, setUpdateSelectedDate] = useState('');
     const theme = useTheme();
     const { allDepartmentList } = React.useContext(DepartmentContext);
     const allDepartmentData = allDepartmentList.map((dept) => dept.department);
     const { allTaskLists } = React.useContext(TaskContext);
     const allTaskListsData = allTaskLists?.tasks;
-    const [tagName, setTagName] = useState(["seratary", "head_of_office"]); // Tags Store
+    const [tagName, setTagName] = useState([]);
+    const [selectedDeparmentobj, setSelectedDeparmentObj] = useState([])
+    // const [departmentData, setDepartmenData] = useState([]);
     //const availableTags = [{ id: 1, value: "secretary", text: "Secretary" }, { id: 2, value: "head_of_office", text: "Head of Office" }]
 
     useEffect(() => {
@@ -116,21 +121,32 @@ export default function AddTasks() {
                     const department = allDepartmentData.find(dept => dept._id === id);
                     return department ? department : null;
                 });
+                console.log(selectedDepartments, 'setSelectedDeparmentObj')
+                setSelectedDeparmentObj(selectedDepartments)
                 const departmentNames = selectedDepartments.filter(dep => dep !== null).map(dep => dep.department_name);
                 setPersonName(departmentNames);
                 // Flatten the tags array and remove duplicates
                 const tags = [...new Set(filteredObject?.department?.flatMap(obj => obj.tag) || [])];
-                // console.log(tags)
+                console.log(filteredObject?.target_date)
                 setTagName(tags);
-                setTaskTitle(filteredObject?.task_title);
+                setUpdateTaskTitle(filteredObject?.task_title);
+                setUpdateSelectedDate(dateSelected(filteredObject?.target_date))
+                // setupdateTaskFile(filteredObject?.task_image)
 
             }
+
+
 
         }
 
     }, [location.search, allTaskListsData, allTaskListsData]);
 
-    console.log(tagName, 'tagNametagName')
+
+
+    const handleUpdateFileChange = (event) => {
+        const file = event.target.files[0];
+        setupdateTaskFile(file);
+    };
     const handleChange = (event) => {
         const {
             target: { value },
@@ -138,11 +154,21 @@ export default function AddTasks() {
         console.log(value, 'valuevaluevalue')
         // Find the department object with the matching _id
         const selectedDept = allDepartmentData.find(dept => dept._id === value);
+        setSelectedDeparmentObj(selectedDept);
+
         // If a matching department is found, add its name to the personName array
         if (selectedDept) {
             setPersonName(prevPersonName => [selectedDept.department_name]);
         }
     };
+
+    const departmentData = selectedDeparmentobj
+        .flat()
+        .map(item => ({
+            dep_id: item._id,
+            dep_name: item.department_name,
+            tag: tagName
+        }));
 
     const handleTagChange = (event) => {
         setTagName(event.target.value);
@@ -233,16 +259,43 @@ export default function AddTasks() {
         setInputGroups(newInputGroups);
     }
 
-    function handleSubmit() {
+    async function handleSubmit() {
         console.log(inputGroups);
         const transformedData = transformData(inputGroups);
         console.log(transformedData);
         if (taskId) {
-            console.log(taskId)
+
+            const data = {
+                meeting_id: meetingId,
+                department: departmentData,
+                task_id: taskId,
+                task_title: updateTaskTitle,
+                target_date: updateSelectedDate,
+                task_image: null
+            };
+
+            // If there's a file to upload, convert it to base64
+            if (updateTaskFile) {
+                const reader = new FileReader();
+                reader.onloadend = async function () {
+                    data.upload_image = reader.result.split(',')[1]; // Extract base64 part only
+                    await updateData(data);
+                };
+                reader.readAsDataURL(updateTaskFile);
+            } else {
+                await updateData(data);
+            }
+
+
 
         }
     }
 
+    async function updateData(data) {
+
+        console.log(data)
+
+    }
 
     return (
         <ThemeProvider theme={defaultTheme}>
@@ -407,7 +460,8 @@ export default function AddTasks() {
                                     )}
                                 </Grid>
 
-                                {inputGroups.map((group, index) => (
+
+                                {!taskId && inputGroups.map((group, index) => (
                                     <Grid container key={group[0].id} spacing={2} sx={{ marginBottom: '20px' }}>
                                         {group.map((input) => (
                                             <Grid item xs={12} md={12} key={input.id}>
@@ -447,7 +501,7 @@ export default function AddTasks() {
                                                             label="Enter Task Title"
                                                             variant="outlined"
                                                             type={input.type}
-                                                            value={taskTitle}
+                                                            //value={}
                                                             onChange={(e) => handleInputChange(group[0].id, input.id, e)}
                                                             fullWidth
                                                             size="small"
@@ -474,42 +528,55 @@ export default function AddTasks() {
                                         )}
                                     </Grid>
                                 ))}
+                                {taskId && (
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={12}>
+                                            <InputLabel sx={{ mb: 1 }}>Task Title</InputLabel>
+                                            <TextField
+                                                variant="outlined"
+                                                fullWidth
+                                                placeholder="Enter task title"
+                                                name="taskTitle"
+                                                size="small"
+                                                value={updateTaskTitle}
+                                                onChange={(e) => setUpdateTaskTitle(e.target.value)}
+                                            />
+                                        </Grid>
 
-                                <Grid container spacing={2}> 
-                                    <Grid item xs={12}>
-                                        <InputLabel sx={{mb:1}}>Task Title</InputLabel>
-                                        <TextField
-                                            variant="outlined"
-                                            fullWidth
-                                            placeholder="Enter task title"
-                                            name="dep_name"
-                                            size="small"
-                                        />
-                                    </Grid>
+                                        <Grid item xs={6}>
+                                            <InputLabel sx={{ mb: 1 }}>Upload Image</InputLabel>
+                                            <TextField
+                                                variant="outlined"
+                                                fullWidth
+                                                placeholder="Enter task title"
+                                                name="uploadImage"
+                                                size="small"
+                                                type="file"
+                                                // value={updateTaskFile}
+                                                onChange={handleUpdateFileChange}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <InputLabel sx={{ mb: 1 }}>Target Date</InputLabel>
+                                            {/* <TextField
+                                                variant="outlined"
+                                                fullWidth
+                                                placeholder="dd-mm-yyyy"
+                                                name=""
+                                                type="date"
+                                                size="small"
+                                              //  value={updateSelectedDate}
+                                                onChange={setUpdateSelectedDate}
+                                            /> */}
+                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+      {/* <DemoContainer components={['DatePicker', 'DatePicker']}> */}
+        <DatePicker label="Uncontrolled picker" defaultValue={dayjs('2022-04-17')} />
 
-                                    <Grid item xs={6}>
-                                        <InputLabel sx={{mb:1}}>Upload Image</InputLabel>
-                                        <TextField
-                                            variant="outlined"
-                                            fullWidth
-                                            placeholder="Enter task title"
-                                            name="dep_name"
-                                            size="small"
-                                            type="file"
-                                        />
+      </DemoContainer>
+    </LocalizationProvider>
+                                        </Grid>
                                     </Grid>
-                                    <Grid item xs={6}>
-                                        <InputLabel sx={{mb:1}}>Target Date</InputLabel>
-                                        <TextField
-                                            variant="outlined"
-                                            fullWidth
-                                            placeholder="dd-mm-yyyy"
-                                            name=""
-                                            type="date"
-                                            size="small"
-                                        />
-                                    </Grid>
-                                </Grid>
+                                )}
 
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'start' }}>
