@@ -401,7 +401,7 @@ export default function EditMeeting() {
                                                         <DemoContainer
                                                             components={['DatePicker', 'TimePicker']}
                                                         >
-                                                            <Grid xs={4}>
+                                                            <Grid item xs={4}>
                                                                
                                                                     <DatePicker
                                                                         value={formData.selectDate}
@@ -409,7 +409,7 @@ export default function EditMeeting() {
                                                                         renderInput={(params) => <TextField {...params} />} />
                                                                
                                                             </Grid>
-                                                            <Grid xs={4}>
+                                                            <Grid item xs={4}>
                                                                 
                                                                     <TimePicker
                                                                         value={formData.selectTime}
@@ -417,7 +417,7 @@ export default function EditMeeting() {
                                                                         renderInput={(params) => <TextField {...params} />} />
                                                                
                                                             </Grid>
-                                                            <Grid xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                                            <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                                                 <Button
                                                                     component="label"
                                                                     role={undefined}
