@@ -24,6 +24,7 @@ import { Input as BaseInput } from "@mui/base/Input";
 import { height, styled } from "@mui/system";
 import { handleCompletionReport } from "./common";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Input = React.forwardRef(function CustomInput(props, ref) {
   return (
@@ -131,6 +132,7 @@ export default function TaskUpload() {
   const [reportDescription, setReportDescription] = useState('');
   const [personName, setPersonName] = React.useState([]);
   const theme = useTheme();
+  const navigate = useNavigate();
   const [base64Image, setBase64Image] = useState("");
   const handleChange = (event) => {
     const {
@@ -186,7 +188,7 @@ export default function TaskUpload() {
             toast.success("Report submitted Successfully", {
                 autoClose: 2000,
             });
-            Navigate("/tasks");
+            navigate("/tasks");
         }
     }
 }

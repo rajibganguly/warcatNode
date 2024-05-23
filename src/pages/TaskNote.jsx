@@ -26,6 +26,7 @@ import { Input as BaseInput } from '@mui/base/Input';
 import { styled } from '@mui/system';
 import { toast } from "react-toastify";
 import { handleAddNote } from "./common";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -141,6 +142,7 @@ export default function TaskNote() {
     const [open, setOpen] = React.useState(true);
     const [personName, setPersonName] = React.useState([]);
     const theme = useTheme();
+    const navigate = useNavigate();
     const [taskNote, setTaskNote] = useState('');
     const handleChange = (event) => {
         const {
@@ -174,11 +176,12 @@ export default function TaskNote() {
         if (taskId) {
             console.log(data, 'dip')
             const saveData = await handleAddNote(data, taskId);
+            console.log(saveData, 'savedata');
             if (saveData) {
                 toast.success("Note added Successfully", {
                     autoClose: 2000,
                 });
-                Navigate("/tasks");
+                navigate("/tasks");
             }
         }
     }
