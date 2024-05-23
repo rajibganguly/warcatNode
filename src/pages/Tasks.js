@@ -202,9 +202,14 @@ export default function Tasks() {
 
 
   const handleViewParentOperationTask = (row) => {
-    console.log([row], '6666666666');
-    setParentTaskView([row]);
-    setParentModalVisible(true);
+    if (row && row?.length > 0) {
+      setParentTaskView([row]);
+      setParentModalVisible(true);
+    } else {
+      toast.warning("Task not found.", {
+        autoClose: 2000,
+      });
+    }
   };
 
   const handleEditOperationTask = (row) => {
@@ -240,10 +245,16 @@ export default function Tasks() {
 
   const handleViewSubTask = (record) => {
     console.log(record?.sub_task)
-    setSubTaskView(record?.sub_task);
-    setSubModalVisible(true);
-  };
+    if (record?.sub_task && record?.sub_task?.length > 0) {
+      setSubTaskView(record?.sub_task);
+      setSubModalVisible(true);
+    } else {
+      toast.warning("Task not found.", {
+        autoClose: 2000,
+      });
+    }
 
+  };
 
   const handleAddSubTaskClick = (record) => {
     const handleFormSubmit = (formValues) => {
