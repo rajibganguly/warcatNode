@@ -155,3 +155,19 @@ export const handleAddTask = async (transformedData) => {
   }
 
 };
+
+export const handleAddNote = async (body, taskId) => {
+  try {
+    const sendNote = await ApiConfig.requestData('post', '/tasks/' + taskId + '/add-note', null, body);
+    return sendNote;
+  } catch (error) {
+  }
+};
+
+export const handleCompletionReport = async (body, taskId) => {
+  try {
+    const completionReport = await ApiConfig.requestData('post', '/tasks/' + taskId + '/upload-completion-details', null, body);
+    return completionReport;
+  } catch (error) {
+  }
+};
