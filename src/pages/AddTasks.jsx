@@ -171,6 +171,7 @@ export default function AddTasks() {
         console.log(value, 'valuevaluevalue')
         // Find the department object with the matching _id
         const selectedDept = allDepartmentData.find(dept => dept._id === value);
+        console.log(selectedDept, 'selectedDeptselectedDept')
         setSelectedDeparmentObj(selectedDept);
 
         // If a matching department is found, add its name to the personName array
@@ -179,14 +180,20 @@ export default function AddTasks() {
             setPersonName(prevPersonName => [selectedDept.department_name]);
         }
     };
+    let departmentData = [];
 
-    const departmentData = selectedDeparmentobj
-        .flat()
-        .map(item => ({
+    // Check if selectedDeparmentobj is an array before using map
+    if (Array.isArray(selectedDeparmentobj)) {
+        departmentData = selectedDeparmentobj.map(item => ({
             dep_id: item._id,
             dep_name: item.department_name,
-            tag: tagName
+            tag: tagName // Assuming tagName is defined somewhere in your code
         }));
+    } else {
+        console.error('selectedDeparmentobj is not an array.');
+    }
+    
+
 
     const handleTagChange = (event) => {
         setTagName(event.target.value);
@@ -287,7 +294,7 @@ export default function AddTasks() {
                 task_id: taskId,
                 task_title: updateTaskTitle,
                 target_date: updateSelectedDate,
-                task_image: null
+                task_image: updateTaskFile
             };
             await updateData(data);
         }
@@ -377,10 +384,10 @@ export default function AddTasks() {
 
         // console.log(data)
         const updateData = await parentTaskEdit(data);
-        if(updateData){
+        if (updateData) {
             toast.success("Task Edit Successfully", {
                 autoClose: 2000,
-              });
+            });
         }
 
     }
