@@ -29,7 +29,7 @@ import { TextField, Dialog, DialogContent, DialogContentText } from "@mui/materi
 import CardActions from "@mui/material/CardActions";
 import ApiConfig from '../config/ApiConfig'
 import SubTaskViewDialog from "../dialog/SubTaskViewDialog"; 
-
+import {mapKeysToValues} from '../pages/common.js'
 import { TaskChartData } from '../constant/taskChartData';
 import { useNavigate } from "react-router-dom";
 import SubTaskForm from "../components/SubTaskForm";
@@ -107,7 +107,7 @@ export default function Tasks() {
     { text: "Status", dataField: 'status' },
     { text: "Sub Task", dataField: 'subtask' },
     { text: "Operations", dataField: 'taskoperation' },
-    { text: "Varified Status", dataField: '' },
+    { text: "Varified Status", dataField: 'verifiedstatus' },
     { text: "Action", dataField: 'action' },
   ];
   const icons = {
