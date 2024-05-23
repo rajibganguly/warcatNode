@@ -54,11 +54,28 @@ function TableNew({
     if (column.dataField === "subtask") {
       return (
         <div style={{ display: "flex" }}>
-          <Button onClick={() => handleAddSubTaskClick(row)}>
+          <Button
+            style={{ backgroundColor: '#fb4', color: 'black', marginRight: '2px' }}>
             <EyeOutlined />
           </Button>
-          <Button onClick={() => handleViewSubTask(row)}>
+          <Button onClick={() => handleAddSubTaskClick(row)}
+            style={{ backgroundColor: 'rgb(10, 24, 50)', color: '#ffffff' }}>
             <AddIcon />
+          </Button>
+        </div>
+      );
+    }
+
+    if (column.dataField === "taskoperation") {
+      return (
+        <div style={{ display: "flex" }}>
+          <Button onClick={() => handleEditOperationTask(row)}
+           style={{ backgroundColor: '#0097a7', color: '#ffffff', marginRight: '2px' }}>
+            <EditOutlined />
+          </Button>
+          <Button onClick={() => handleViewOperationTask(row)}
+           style={{ backgroundColor: '#fb4', color: 'black' }}>
+            <EyeOutlined />
           </Button>
         </div>
       );
@@ -66,10 +83,11 @@ function TableNew({
 
     if (column.dataField === "tasks") {
       return (
-        <div style={{ display: "flex" }}>
+        <div style={{ display: "flex", justifyContent: 'center', alignItems: 'center' }}>
           <Button onClick={() => handleTasksAddInMeeting(row)}
             style={{ backgroundColor: '#0a1832', color: '#ffffff', marginRight: '2px' }}>
             <AddIcon />
+
           </Button>
           <Button onClick={() => handleTasksViewInMeeting(row)}
             style={{ backgroundColor: '#fb4', color: 'black' }}>
@@ -79,18 +97,7 @@ function TableNew({
       );
     }
 
-    if (column.dataField === "taskoperation") {
-      return (
-        <div style={{ display: "flex" }}>
-          <Button onClick={() => handleEditOperationTask(row)}>
-            <EditOutlined />
-          </Button>
-          <Button onClick={() => handleViewOperationTask(row)}>
-            <EyeOutlined />
-          </Button>
-        </div>
-      );
-    }
+  
 
     if (column.dataField === "action") {
       return (

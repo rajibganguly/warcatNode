@@ -15,6 +15,7 @@ import { formatDate, formatDateWithmonth } from "../pages/common";
 
 export default function TaskViewDialog({ open, onClose, meetingData, taskDataView }) {
     return (
+
         <Dialog
             fullWidth
             open={open}
@@ -22,6 +23,7 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
             aria-labelledby="modal-title"
             aria-describedby="modal-description"
         >
+
             <Box
                 p={2}
                 display="flex"
@@ -41,6 +43,8 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                         </Typography>
                     </Box>
                 </Box>
+
+
                 <IconButton
                     size="small"
                     aria-label="close"
@@ -49,7 +53,9 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                     <CloseOutlined />
                 </IconButton>
             </Box>
+
             <Divider />
+
             <DialogContent>
                 <Box mb={2} display="flex" gap={4} alignItems="center">
                     <Typography variant="h6" color="text.primary" className="text-underline">
@@ -57,32 +63,34 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                     </Typography>
                     <Button variant="contained" color="primary" className="fs-12">Add New Subtask</Button>
                 </Box>
-                {taskDataView.map((task, index) => (
+
+
+                {taskDataView?.map((task, index) => (
                     <Box key={index}>
                         <Typography fontSize="12px" color="text.secondary">
-                            {formatDateWithmonth(task.timestamp)}
+                            {formatDateWithmonth(task?.timestamp)}
                         </Typography>
                         <Typography color="text.primary" variant="h6" mb={0.5}>
-                            {task.task_title}
+                            {task?.task_title}
                         </Typography>
                         <Box display="flex" gap={1} alignItems="center">
                             <Typography color="text.secondary">
                                 Target Date:
                             </Typography>
                             <Typography color="error">
-                                {formatDateWithmonth(task.target_date)}
+                                {formatDateWithmonth(task?.target_date)}
                             </Typography>
                         </Box>
-                        <MuiLink component="a" href={task.task_image} download="attachment.png">
+                        <MuiLink component="a" href={task?.task_image} download="attachment.png">
                             attachment.png
                         </MuiLink>
                         <Box gap={2} display="flex" justifyContent="right">
                             <Chip
-                                label={task.status}
+                                label={task?.status}
                                 className="taskStatusBtn"
                                 sx={{
-                                    background: task.status === 'initiated' ? '#ffbb44' :
-                                        task.status === 'completed' ? '#6fd088' : '#0f9cf3'
+                                    background: task?.status === 'initiated' ? '#ffbb44' :
+                                        task?.status === 'completed' ? '#6fd088' : '#0f9cf3'
                                 }}
                             />
                             <Button variant="contained" style={{ backgroundColor: '#0a1832', color: '#ffffff' }}>

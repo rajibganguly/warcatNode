@@ -28,29 +28,14 @@ import TableNew from "../components/TableNew";
 import { TextField, Dialog, DialogContent, DialogContentText } from "@mui/material";
 import CardActions from "@mui/material/CardActions";
 import ApiConfig from '../config/ApiConfig'
-
-import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import SubTaskViewDialog from "../dialog/SubTaskViewDialog"; 
 
 import { TaskChartData } from '../constant/taskChartData';
 import { useNavigate } from "react-router-dom";
-
+import SubTaskForm from "../components/SubTaskForm";
 
 const drawerWidth = 240;
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1,
-});
+
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -205,13 +190,13 @@ export default function Tasks() {
 
 
   const handleViewOperationTask = (row) => {
-    // setModalContent(row);
-    // setModalVisible(true);
+    setModalContent(row);
+    setModalVisible(true);
   };
 
   const handleEditOperationTask = (row) => {
-     const encodedTaskId = window.btoa(row?.task_id);
-     navigate(`/edit-tasks?taskId=${encodeURIComponent(encodedTaskId)}`);
+    const encodedTaskId = window.btoa(row?.task_id);
+    navigate(`/edit-tasks?taskId=${encodeURIComponent(encodedTaskId)}`);
 
   };
 
@@ -237,15 +222,30 @@ export default function Tasks() {
     // Implement logic for editing
   };
 
-  const handleAddSubTaskClick = (record) => {
-    console.info("Edit clicked for:", record);
-    // Implement logic for editing
-  };
+
 
   const handleViewSubTask = (record) => {
-    console.info("Delete clicked for:", record);
-    // Implement logic for deleting
+    if (typeof record === 'object' && record !== null) {
+        setModalContent(record); 
+        setModalVisible(true);   
+    } else {
+        console.error("Invalid modal content: ", record);
+    }
+};
+
+
+  const handleAddSubTaskClick = (record) => {
+    const handleFormSubmit = (formValues) => {
+      console.log('Form Submitted with values: ', formValues);
+      setModalVisible(false);
+    };
+
+    setModalContent(
+      <SubTaskForm onSubmit={handleFormSubmit} onClose={() => setModalVisible(false)} />
+    );
+    setModalVisible(true);
   };
+
 
 
   const handleOutput = (open) => {
@@ -412,145 +412,11 @@ export default function Tasks() {
                           handleAddNoteClick={handleAddNoteClick}
                           handleUploadClick={handleUploadClick}
                         />
-
-                        <Dialog
+                        <SubTaskViewDialog
                           open={modalVisible}
                           onClose={closeModal}
-                          aria-labelledby="modal-title"
-                          aria-describedby="modal-description"
-                          sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}
-                        >
-                          <DialogContent sx={{ p: 2, width: '600px' }}>
-                            {modalContent && (
-                              <DialogContentText id="modal-description">
-                                <Typography variant="h4" id="modal-title">
-                                  Website Issue
-                                </Typography>
-                                <Card sx={{ width: '100%', maxWidth: 900, maxHeight: 600, overflowY: 'auto' }}>
-                                  <IconButton
-                                    aria-label="close"
-                                    onClick={closeModal}
-                                    sx={{ position: 'absolute', right: '5px', top: '0', color: 'gray' }}
-                                  >
-                                    <CloseOutlined />
-                                  </IconButton>
-                                  <CardContent>
-                                    <Typography variant="h5" color="text.secondary">
-                                      Subtask
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      {modalContent.task_title}
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      Target Date:  {modalContent.target_date}
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      Attachment.png
-                                    </Typography>
-
-                                  </CardContent>
-                                  <CardActions sx={{ justifyContent: 'flex-end' }}>
-                                    <Button size="small" variant="contained" color="primary" >
-                                      Email
-                                    </Button>
-                                    <Button size="small" variant="contained" color="primary" onClick={() => console.log('Share clicked')}>
-                                      Sms
-                                    </Button>
-                                  </CardActions>
-                                </Card>
-                              </DialogContentText>
-                            )}
-                          </DialogContent>
-                        </Dialog>
-
-                        <Dialog
-                          open={modalVisible1}
-                          onClose={closeModal1}
-                          aria-labelledby="modal-title"
-                          aria-describedby="modal-description"
-                          sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}
-                        >
-                          <DialogContent sx={{ p: 2, width: '600px' }}>
-                            <DialogContentText id="modal-description">
-                              <Typography variant="h4" id="modal-title">
-                                Task Title: Website Issue
-                              </Typography>
-                              <Card sx={{ width: '100%', maxWidth: 900, maxHeight: 600, overflowY: 'auto' }}>
-                                <IconButton
-                                  aria-label="close"
-                                  onClick={closeModal1}
-                                  sx={{ position: 'absolute', right: '5px', top: '0', color: 'gray' }}
-                                >
-                                  <CloseOutlined />
-                                </IconButton>
-                                <CardContent>
-                                  <Grid container spacing={2}>
-                                    <Grid item xs={12}>
-                                      <TextField
-                                        id="outlined-basic"
-                                        name="subtasktitle"
-                                        label="Enter Subtask Title"
-                                        variant="outlined"
-                                        fullWidth
-                                        value={null}
-                                        onChange={null}
-                                      />
-                                    </Grid>
-
-                                    <Grid item xs={12}>
-                                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                        <DemoContainer
-                                          components={['DatePicker', 'TimePicker']}
-                                        >
-                                          <Grid item xs={4}>
-                                            <DemoItem label="">
-                                              <DatePicker
-                                                value={null}
-                                                onChange={null}
-                                              />
-                                            </DemoItem>
-                                          </Grid>
-
-
-
-                                          <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                            <Button
-                                              component="label"
-                                              variant="contained"
-                                              startIcon={<CloudUploadIcon />}
-                                              sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}
-                                            >
-                                              Upload file
-                                              <VisuallyHiddenInput
-                                                type="file"
-                                                onChange={(e) => setFile(e.target.files[0])}
-                                              />
-                                            </Button>
-                                          </Grid>
-                                        </DemoContainer>
-                                      </LocalizationProvider>
-                                    </Grid>
-                                  </Grid>
-
-                                </CardContent>
-                                <CardActions sx={{ justifyContent: 'flex-start' }}>
-                                  <Button size="small" variant="contained" color="primary" >
-                                    Enter Subtask Title
-                                  </Button>
-
-                                </CardActions>
-                              </Card>
-                            </DialogContentText>
-                          </DialogContent>
-                        </Dialog>
+                          modalContent={modalContent}
+                        />
                       </CardContent>
                     </Card>
                   </Grid>
