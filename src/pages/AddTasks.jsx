@@ -29,11 +29,12 @@ import InputLabel from '@mui/material/InputLabel';
 import Sidebar from "../components/Sidebar";
 import { DepartmentContext } from './../context/DepartmentContext'
 import { TaskContext } from "../context/TaskContext";
-import { dateSelected } from "./common";
+import { dateSelected, parentTaskEdit } from "./common";
 import {
     useForm,
     Controller,
 } from 'react-hook-form';
+import { toast } from "react-toastify";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -125,7 +126,7 @@ export default function AddTasks() {
                     const department = allDepartmentData.find(dept => dept._id === id);
                     return department ? department : null;
                 });
-                console.log(selectedDepartments, 'setSelectedDeparmentObj')
+                //console.log(selectedDepartments, 'setSelectedDeparmentObj')
                 setSelectedDeparmentObj(selectedDepartments)
                 const departmentNames = selectedDepartments.filter(dep => dep !== null).map(dep => dep.department_name);
                 setPersonName(departmentNames);
@@ -135,22 +136,27 @@ export default function AddTasks() {
                 setTagName(tags);
                 setUpdateTaskTitle(filteredObject?.task_title);
                 setUpdateSelectedDate(dateSelected(filteredObject?.target_date))
-                // setupdateTaskFile(filteredObject?.task_image)
+                setupdateTaskFile(filteredObject?.task_image)
 
             }
-
-
 
         }
 
     }, [location.search, allTaskListsData, allTaskListsData]);
 
 
-
     const handleUpdateFileChange = (event) => {
-        const file = event.target.files[0];
-        setupdateTaskFile(file);
+        let file = event.target.files[0];
+
+        const reader = new FileReader();
+        reader.onloadend = async function () {
+            file = reader.result.split(',')[1];
+            setupdateTaskFile(file);
+        };
+        reader.readAsDataURL(file);
     };
+
+
     const handleChange = (event) => {
         const {
             target: { value },
@@ -158,6 +164,7 @@ export default function AddTasks() {
         console.log(value, 'valuevaluevalue')
         // Find the department object with the matching _id
         const selectedDept = allDepartmentData.find(dept => dept._id === value);
+        console.log(selectedDept, 'selectedDeptselectedDept')
         setSelectedDeparmentObj(selectedDept);
 
         // If a matching department is found, add its name to the personName array
@@ -166,14 +173,14 @@ export default function AddTasks() {
         }
     };
 
-    const departmentData = selectedDeparmentobj
-        .flat()
-        .map(item => ({
-            dep_id: item._id,
-            dep_name: item.department_name,
+    let departmentData = selectedDeparmentobj ? [
+        {
+            dep_id: selectedDeparmentobj._id,
+            dep_name: selectedDeparmentobj.department_name,
             tag: tagName
-        }));
-
+        }
+    ] : [];
+    
     const handleTagChange = (event) => {
         setTagName(event.target.value);
     }
@@ -268,36 +275,27 @@ export default function AddTasks() {
         const transformedData = transformData(inputGroups);
         console.log(transformedData);
         if (taskId) {
-
             const data = {
-                meeting_id: meetingId,
                 department: departmentData,
                 task_id: taskId,
                 task_title: updateTaskTitle,
                 target_date: updateSelectedDate,
-                task_image: null
+                task_image: updateTaskFile
             };
-
-            // If there's a file to upload, convert it to base64
-            if (updateTaskFile) {
-                const reader = new FileReader();
-                reader.onloadend = async function () {
-                    data.upload_image = reader.result.split(',')[1]; // Extract base64 part only
-                    await updateData(data);
-                };
-                reader.readAsDataURL(updateTaskFile);
-            } else {
-                await updateData(data);
-            }
-
-
-
+            console.log(data)
+             await updateData(data);
         }
     }
 
     async function updateData(data) {
 
-        console.log(data)
+        // console.log(data)
+        const updateData = await parentTaskEdit(data);
+        if (updateData) {
+            toast.success("Task Edit Successfully", {
+                autoClose: 2000,
+            });
+        }
 
     }
     const {
@@ -434,7 +432,7 @@ export default function AddTasks() {
                                                 </Box>
                                             )}
                                         >
-                                            <MenuItem value="seratary">Seratary</MenuItem>
+                                            <MenuItem value="secretary">Secretary</MenuItem>
                                             <MenuItem value="head_of_office">Head Office</MenuItem>
                                         </Select>
                                     </Grid>
@@ -566,7 +564,9 @@ export default function AddTasks() {
                                                 onChange={handleUpdateFileChange}
                                             />
                                             <Box>
-                                                <img src={'http://localhost:3000/static/media/user1.230ccea789fb69e95389.png'} alt="" width={50} height={50} />
+                                                {updateTaskFile && (
+                                                    <img src={`data:image/jpeg;base64,${updateTaskFile}`} alt="" width={50} height={50} />
+                                                )}
                                             </Box>
                                         </Grid>
                                         <Grid item xs={6}>
