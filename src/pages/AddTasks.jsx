@@ -8,7 +8,7 @@ import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import InputFileUpload from "../components/InputFileUpload";
 import { Button, TextField } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -29,7 +29,8 @@ import InputLabel from '@mui/material/InputLabel';
 import Sidebar from "../components/Sidebar";
 import { DepartmentContext } from './../context/DepartmentContext'
 import { TaskContext } from "../context/TaskContext";
-import { dateSelected, parentTaskEdit } from "./common";
+import axios from "axios";
+import { dateSelected, parentTaskEdit, addTaskPost, handleAddTask } from "./common";
 import {
     useForm,
     Controller,
@@ -87,10 +88,14 @@ export default function AddTasks() {
     const [open, setOpen] = React.useState(true);
     const location = useLocation();
     const [personName, setPersonName] = React.useState([]);
+    const [deptId, setDeptId] = useState('');
     const [meetingId, setMeetingId] = useState('');
     const [taskId, setTaskId] = useState();
     const [updateTaskTitle, setUpdateTaskTitle] = useState('');
     const [meetingTopic, setMeetingTopic] = useState('');
+    const [taskTitle, setTaskTitle] = useState('');
+
+    const [base64Image, setBase64Image] = React.useState("");
     const [updateTaskFile, setupdateTaskFile] = useState(null);
     const [updateSelectedDate, setUpdateSelectedDate] = useState('');
     const theme = useTheme();
@@ -100,6 +105,7 @@ export default function AddTasks() {
     const allTaskListsData = allTaskLists?.tasks;
     const [tagName, setTagName] = useState([]);
     const [selectedDeparmentobj, setSelectedDeparmentObj] = useState([])
+    const navigate = useNavigate();
     // const [departmentData, setDepartmenData] = useState([]);
     //const availableTags = [{ id: 1, value: "secretary", text: "Secretary" }, { id: 2, value: "head_of_office", text: "Head of Office" }]
 
@@ -129,6 +135,8 @@ export default function AddTasks() {
                 setSelectedDeparmentObj(selectedDepartments[0])
                 const departmentNames = selectedDepartments.filter(dep => dep !== null).map(dep => dep.department_name);
                 setPersonName(departmentNames);
+                const departmentId = selectedDepartments.filter(dep => dep !== null).map(dep => dep._id);
+                setDeptId(departmentId);
                 // Flatten the tags array and remove duplicates
                 const tags = [...new Set(filteredObject?.department?.flatMap(obj => obj.tag) || [])];
                 console.log(filteredObject?.target_date)
@@ -168,6 +176,7 @@ export default function AddTasks() {
 
         // If a matching department is found, add its name to the personName array
         if (selectedDept) {
+            setDeptId(prevPersonName => [selectedDept._id]);
             setPersonName(prevPersonName => [selectedDept.department_name]);
         }
     };
@@ -179,7 +188,7 @@ export default function AddTasks() {
             tag: tagName
         }
     ] : [];
-    
+
     const handleTagChange = (event) => {
         setTagName(event.target.value);
     }
@@ -213,22 +222,6 @@ export default function AddTasks() {
             );
             if (inputIndex !== -1) {
                 newInputGroups[groupIndex][inputIndex].value = e.target.value;
-                setInputGroups(newInputGroups);
-            }
-        }
-    }
-
-    function handleFileInputChange(groupId, id, e) {
-        const newInputGroups = [...inputGroups];
-        const groupIndex = newInputGroups.findIndex(
-            (group) => group[0].id === groupId
-        );
-        if (groupIndex !== -1) {
-            const inputIndex = newInputGroups[groupIndex].findIndex(
-                (input) => input.id === id
-            );
-            if (inputIndex !== -1) {
-                newInputGroups[groupIndex][inputIndex].value = e.target.files[0];
                 setInputGroups(newInputGroups);
             }
         }
@@ -269,10 +262,21 @@ export default function AddTasks() {
         setInputGroups(newInputGroups);
     }
 
+    const convertToDepartmentFormat = (deptid, deptName, tags, task) => {
+        return {
+            meetingId: meetingId,
+            meetingTopic: meetingTopic,
+            department: deptid.map((id, index) => ({
+                dep_id: id,
+                dep_name: deptName[index],
+                tag: tags,
+                tasks: task.tasks
+            }))
+        };
+    };
+
+
     async function handleSubmit() {
-        console.log(inputGroups);
-        const transformedData = transformData(inputGroups);
-        console.log(transformedData);
         if (taskId) {
             const data = {
                 department: departmentData,
@@ -282,8 +286,65 @@ export default function AddTasks() {
                 task_image: updateTaskFile
             };
             console.log(data)
-             await updateData(data);
+            await updateData(data);
+        } else {
+            // console.log(inputGroups);
+            const taskData = transformData(inputGroups);
+            // console.log(taskData);
+            const transformedData = convertToDepartmentFormat(deptId, personName, tagName, taskData);
+            console.log(transformedData, 'final data');
+            const saveData = await handleAddTask(transformedData);
+            if (saveData) {
+                toast.success("Task Added Successfully", {
+                    autoClose: 2000,
+                });
+                navigate("/tasks");
+            }
         }
+    }
+
+    /**
+     * 
+     * All Handle change for image 
+     */
+    const convertToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+        });
+    };
+
+    async function handleChangeForImage(groupId, id, e) {
+        const file = e.target.files[0];
+        let imageValue = '';
+        if (file) {
+            imageValue = await convertToBase64(file);
+            const newInputGroups = [...inputGroups];
+            const groupIndex = newInputGroups.findIndex(
+                (group) => group[0].id === groupId
+            );
+            if (groupIndex !== -1) {
+                const inputIndex = newInputGroups[groupIndex].findIndex(
+                    (input) => input.id === id
+                );
+                if (inputIndex !== -1) {
+                    console.log(4);
+                    newInputGroups[groupIndex][inputIndex].value = imageValue;
+                    setInputGroups(newInputGroups);
+                }
+            }
+        }
+    }
+
+    const dateTimeStyle = {
+        width: "100%",
+        padding: "15px 10px",
+        border: "1px solid #ccc",
+        borderRadius: "6px",
+        fontFamily: 'Roboto,sans-serif',
+        fontSize: "1em"
     }
 
     async function updateData(data) {
@@ -294,6 +355,7 @@ export default function AddTasks() {
             toast.success("Task Edit Successfully", {
                 autoClose: 2000,
             });
+            navigate("/tasks");
         }
 
     }
@@ -461,6 +523,7 @@ export default function AddTasks() {
                                                 name="dep_name"
                                                 size="small"
                                                 value={meetingTopic}
+                                                onChange={(e) => setMeetingTopic(e.target.value)}
                                                 disabled
                                             />
                                         </Grid>
@@ -473,34 +536,64 @@ export default function AddTasks() {
                                         {group.map((input) => (
                                             <Grid item xs={12} md={12} key={input.id}>
                                                 {input.type === 'file' ? (
-                                                    <Grid item xs={12} md={6}>
-                                                        <InputFileUpload
-                                                            groupId={group[0].id}
-                                                            inputId={input.id}
-                                                            handleFileInputChange={handleFileInputChange}
-                                                            sx={{ minWidth: '100%', width: '100%' }}
-                                                            fullWidth
-                                                            size="small"
-                                                        />
+                                                    <Grid
+                                                        item
+                                                        xs={12}
+                                                        md={12}
+                                                        sx={{
+                                                            display: "flex",
+                                                            justifyContent: "center",
+                                                            alignItems: "center",
+                                                        }}
+                                                    >
+                                                        <Box sx={{ maxWidth: '200px' }}>
+                                                            <input type="file" onChange={(e) => handleChangeForImage(group[0].id, input.id, e)} />
+                                                        </Box>
+                                                        <Box sx={{ maxWidth: '200px', padding: '10px' }}>
+                                                            {base64Image && (
+                                                                <img src={input.value} alt="Uploaded" style={{ maxWidth: '100%' }} />
+                                                            )}
+                                                        </Box>
+
                                                     </Grid>
+                                                    // <Grid item xs={12} md={6}>
+                                                    //     <InputFileUpload
+                                                    //         groupId={group[0].id}
+                                                    //         inputId={input.id}
+                                                    //         handleFileInputChange={handleFileInputChange}
+                                                    //         sx={{ minWidth: '100%', width: '100%' }}
+                                                    //         fullWidth
+                                                    //         size="small"
+                                                    //     />
+                                                    // </Grid>
                                                 ) : input.type === 'date' ? (
                                                     <Grid item xs={12} md={6}>
-                                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                            <DatePicker
-                                                                label="Select Date"
-                                                                selectedDate={input.value}
-                                                                handleDateChange={(date) => handleInputChange(group[0].id, input.id, date)}
-                                                                renderInput={(params) => (
-                                                                    <TextField
-                                                                        {...params}
-                                                                        fullWidth
-                                                                        size="small"
-                                                                        sx={{ minWidth: '100%', width: '100%' }}
-                                                                    />
-                                                                )}
-                                                            />
-                                                        </LocalizationProvider>
+                                                        <label>Date</label>
+                                                        <input
+                                                            type="date"
+                                                            style={dateTimeStyle}
+                                                            name="date"
+                                                            // onChange={getDateValue}
+                                                            onChange={(e) => handleInputChange(group[0].id, input.id, e)}
+                                                        />
                                                     </Grid>
+                                                    // <Grid item xs={12} md={6}>
+                                                    //     <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                    //         <DatePicker
+                                                    //             label="Select Date"
+                                                    //             selectedDate={input.value}
+                                                    //             handleDateChange={(date) => handleInputChange(group[0].id, input.id, date)}
+                                                    //             renderInput={(params) => (
+                                                    //                 <TextField
+                                                    //                     {...params}
+                                                    //                     fullWidth
+                                                    //                     size="small"
+                                                    //                     sx={{ minWidth: '100%', width: '100%' }}
+                                                    //                 />
+                                                    //             )}
+                                                    //         />
+                                                    //     </LocalizationProvider>
+                                                    // </Grid>
                                                 ) : (
                                                     <Grid item xs={12} md={12}>
                                                         <TextField
@@ -508,6 +601,7 @@ export default function AddTasks() {
                                                             label="Enter Task Title"
                                                             variant="outlined"
                                                             type={input.type}
+                                                            value={input.value}
                                                             //value={}
                                                             onChange={(e) => handleInputChange(group[0].id, input.id, e)}
                                                             fullWidth
