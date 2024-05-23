@@ -8,7 +8,7 @@ import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import InputFileUpload from "../components/InputFileUpload";
 import { Button, TextField } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -30,7 +30,7 @@ import Sidebar from "../components/Sidebar";
 import { DepartmentContext } from './../context/DepartmentContext'
 import { TaskContext } from "../context/TaskContext";
 import axios from "axios";
-import { dateSelected, parentTaskEdit, addTaskPost } from "./common";
+import { dateSelected, parentTaskEdit, addTaskPost, handleAddTask } from "./common";
 import {
     useForm,
     Controller,
@@ -94,7 +94,7 @@ export default function AddTasks() {
     const [updateTaskTitle, setUpdateTaskTitle] = useState('');
     const [meetingTopic, setMeetingTopic] = useState('');
     const [taskTitle, setTaskTitle] = useState('');
-    
+
     const [base64Image, setBase64Image] = React.useState("");
     const [updateTaskFile, setupdateTaskFile] = useState(null);
     const [updateSelectedDate, setUpdateSelectedDate] = useState('');
@@ -105,6 +105,7 @@ export default function AddTasks() {
     const allTaskListsData = allTaskLists?.tasks;
     const [tagName, setTagName] = useState([]);
     const [selectedDeparmentobj, setSelectedDeparmentObj] = useState([])
+    const navigate = useNavigate();
     // const [departmentData, setDepartmenData] = useState([]);
     //const availableTags = [{ id: 1, value: "secretary", text: "Secretary" }, { id: 2, value: "head_of_office", text: "Head of Office" }]
 
@@ -187,7 +188,7 @@ export default function AddTasks() {
             tag: tagName
         }
     ] : [];
-    
+
     const handleTagChange = (event) => {
         setTagName(event.target.value);
     }
@@ -274,13 +275,8 @@ export default function AddTasks() {
         };
     };
 
+
     async function handleSubmit() {
-        // console.log(inputGroups);
-        const taskData = transformData(inputGroups);
-        // console.log(taskData);
-        const transformedData = convertToDepartmentFormat(deptId, personName, tagName, taskData);
-        console.log(transformedData, 'final data');
-        handleAddTask(transformedData);
         if (taskId) {
             const data = {
                 department: departmentData,
@@ -291,36 +287,21 @@ export default function AddTasks() {
             };
             console.log(data)
             await updateData(data);
+        } else {
+            // console.log(inputGroups);
+            const taskData = transformData(inputGroups);
+            // console.log(taskData);
+            const transformedData = convertToDepartmentFormat(deptId, personName, tagName, taskData);
+            console.log(transformedData, 'final data');
+            const saveData = await handleAddTask(transformedData);
+            if (saveData) {
+                toast.success("Task Added Successfully", {
+                    autoClose: 2000,
+                });
+                navigate("/tasks");
+            }
         }
     }
-
-
-
-    const handleAddTask = async (transformedData) => {
-        console.log(transformedData, base64Image)
-        try {
-            // addTaskPost(transformedData);
-            //const addPostTasks = await addTaskPost(transformedData);
-            //console.log(addPostTasks)
-
-            console.log(transformedData, 'transformed data');
-            const formDataSend = new FormData();
-            formDataSend.append('departmentData', JSON.stringify(transformedData));
-
-            const token = localStorage.getItem('token');
-            const response = await axios.post('https://warcat2024-qy2v.onrender.com/api/add-task', transformedData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            console.log(response.data);
-        } catch (error) {
-            console.error('Error occurred:', error);
-        }
-
-    };
 
     /**
      * 
@@ -374,6 +355,7 @@ export default function AddTasks() {
             toast.success("Task Edit Successfully", {
                 autoClose: 2000,
             });
+            navigate("/tasks");
         }
 
     }
@@ -530,7 +512,7 @@ export default function AddTasks() {
                                             />
                                         </Grid>
                                     )}
-                                    {meetingTopic && ( 
+                                    {meetingTopic && (
                                         <Grid item xs={12} md={6}>
                                             <label>Meeting Topic</label>
                                             <TextField
@@ -541,7 +523,7 @@ export default function AddTasks() {
                                                 name="dep_name"
                                                 size="small"
                                                 value={meetingTopic}
-                                                onChange={(e)=>setMeetingTopic(e.target.value)}
+                                                onChange={(e) => setMeetingTopic(e.target.value)}
                                                 disabled
                                             />
                                         </Grid>
@@ -555,25 +537,25 @@ export default function AddTasks() {
                                             <Grid item xs={12} md={12} key={input.id}>
                                                 {input.type === 'file' ? (
                                                     <Grid
-                                                    item
-                                                    xs={12}
-                                                    md={12}
-                                                    sx={{
-                                                      display: "flex",
-                                                      justifyContent: "center",
-                                                      alignItems: "center",
-                                                    }}
-                                                  >
-                                                    <Box sx={{ maxWidth: '200px'}}>
-                                                    <input type="file" onChange={(e) => handleChangeForImage(group[0].id, input.id, e)} />
-                                                    </Box>
-                                                    <Box sx={{ maxWidth: '200px', padding: '10px'}}>
-                                                        {base64Image && (
-                                                            <img src={input.value} alt="Uploaded" style={{ maxWidth: '100%' }} />
-                                                        )}
-                                                    </Box>
-                                                    
-                                                  </Grid>
+                                                        item
+                                                        xs={12}
+                                                        md={12}
+                                                        sx={{
+                                                            display: "flex",
+                                                            justifyContent: "center",
+                                                            alignItems: "center",
+                                                        }}
+                                                    >
+                                                        <Box sx={{ maxWidth: '200px' }}>
+                                                            <input type="file" onChange={(e) => handleChangeForImage(group[0].id, input.id, e)} />
+                                                        </Box>
+                                                        <Box sx={{ maxWidth: '200px', padding: '10px' }}>
+                                                            {base64Image && (
+                                                                <img src={input.value} alt="Uploaded" style={{ maxWidth: '100%' }} />
+                                                            )}
+                                                        </Box>
+
+                                                    </Grid>
                                                     // <Grid item xs={12} md={6}>
                                                     //     <InputFileUpload
                                                     //         groupId={group[0].id}
@@ -586,15 +568,15 @@ export default function AddTasks() {
                                                     // </Grid>
                                                 ) : input.type === 'date' ? (
                                                     <Grid item xs={12} md={6}>
-                            <label>Date</label>
-                            <input
-                              type="date"
-                              style={dateTimeStyle}
-                              name="date"
-                              // onChange={getDateValue}
-                              onChange={(e) => handleInputChange(group[0].id, input.id, e)}
-                            />
-                          </Grid>
+                                                        <label>Date</label>
+                                                        <input
+                                                            type="date"
+                                                            style={dateTimeStyle}
+                                                            name="date"
+                                                            // onChange={getDateValue}
+                                                            onChange={(e) => handleInputChange(group[0].id, input.id, e)}
+                                                        />
+                                                    </Grid>
                                                     // <Grid item xs={12} md={6}>
                                                     //     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                                     //         <DatePicker

@@ -5,48 +5,48 @@ import ApiConfig from '../config/ApiConfig';
 
 
 
-  /**
-   * @description Private function for fetch department data
-   */
- export const fetchDepartmentData = async () => {
-    const localData = localStorage.getItem("user");
-    const userObj = JSON.parse(localData)
-    try {
-      const params = {
-        userId: userObj._id,
-        role_type: userObj.role_type
-      };
-      const departmentsAll = await ApiConfig.requestData('get', '/departments', params, null);
-      return departmentsAll ;
-     // setAllDepartmentList(departmentsAll)
-    } catch (error) {
-    }
-  };
+/**
+ * @description Private function for fetch department data
+ */
+export const fetchDepartmentData = async () => {
+  const localData = localStorage.getItem("user");
+  const userObj = JSON.parse(localData)
+  try {
+    const params = {
+      userId: userObj._id,
+      role_type: userObj.role_type
+    };
+    const departmentsAll = await ApiConfig.requestData('get', '/departments', params, null);
+    return departmentsAll;
+    // setAllDepartmentList(departmentsAll)
+  } catch (error) {
+  }
+};
 
 
-    /**
-   * @description Private function for fetch meeting data
-   */
- export const fetchMeetingData = async () => {
-    const localData = localStorage.getItem("user");
-    const userObj = JSON.parse(localData)
-    try {
-      const params = {
-        userId: userObj._id,
-        role_type: userObj.role_type
-      };
-      const allMeetings = await ApiConfig.requestData('get', '/meetings', params, null);
-      return allMeetings ;
-     // setAllDepartmentList(departmentsAll)
-    } catch (error) {
-    }
-  };
+/**
+* @description Private function for fetch meeting data
+*/
+export const fetchMeetingData = async () => {
+  const localData = localStorage.getItem("user");
+  const userObj = JSON.parse(localData)
+  try {
+    const params = {
+      userId: userObj._id,
+      role_type: userObj.role_type
+    };
+    const allMeetings = await ApiConfig.requestData('get', '/meetings', params, null);
+    return allMeetings;
+    // setAllDepartmentList(departmentsAll)
+  } catch (error) {
+  }
+};
 
 
-  /**
-   * @description Private function for fetch Task data
-   */
- export const fetchTaskData = async () => {
+/**
+ * @description Private function for fetch Task data
+ */
+export const fetchTaskData = async () => {
   const localData = localStorage.getItem("user");
   const userObj = JSON.parse(localData)
   try {
@@ -61,35 +61,35 @@ import ApiConfig from '../config/ApiConfig';
 };
 
 
-  // Function to format the date
-  export const formatDate = (isoString) => {
-    const date = new Date(isoString);
-    return date.toLocaleDateString('en-GB');
-  };
-
-
-  export const formatDateWithmonth = (isoString) => {
-    const date = new Date(isoString);
-    return date.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    }).replace(/ /g, ' ');
-  };
-
-  export const dateSelected = (dateString) => {
-    const dateObject = new Date(dateString);
-    const year = dateObject.getFullYear();
-    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
-    const day = String(dateObject.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+// Function to format the date
+export const formatDate = (isoString) => {
+  const date = new Date(isoString);
+  return date.toLocaleDateString('en-GB');
 };
 
 
-  /**
-   * @description Private function for fetch Task data
-   */
- export const addMeetings = async (body) => {
+export const formatDateWithmonth = (isoString) => {
+  const date = new Date(isoString);
+  return date.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
+  }).replace(/ /g, ' ');
+};
+
+export const dateSelected = (dateString) => {
+  const dateObject = new Date(dateString);
+  const year = dateObject.getFullYear();
+  const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+  const day = String(dateObject.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+
+/**
+ * @description Private function for fetch Task data
+ */
+export const addMeetings = async (body) => {
   try {
     const addMeeting = await ApiConfig.requestData('post', '/add-meeting', null, body);
     return addMeeting;
@@ -108,13 +108,31 @@ export const addTaskPost = async (body) => {
   }
 };
 
-  /**
-   * @description Private function for parent Task edit
-   */
-  export const parentTaskEdit = async (body) => {
-    try {
-      const editTask = await ApiConfig.requestData('post', '/edit-task', null, body);
-      return editTask;
-    } catch (error) {
-    }
-  };
+/**
+ * @description Private function for parent Task edit
+ */
+export const parentTaskEdit = async (body) => {
+  try {
+    const editTask = await ApiConfig.requestData('post', '/edit-task', null, body);
+    return editTask;
+  } catch (error) {
+  }
+};
+
+/**
+* @description Private function for Add Task 
+*/
+
+export const handleAddTask = async (transformedData) => {
+  try {
+    console.log(transformedData, 'transformed data');
+    const formDataSend = new FormData();
+    formDataSend.append('departmentData', JSON.stringify(transformedData));
+    const saveData = await ApiConfig.requestData('post', '/add-task', null, transformedData);
+    return saveData;
+    console.log(saveData);
+  } catch (error) {
+    console.error('Error occurred:', error);
+  }
+
+};
