@@ -76,7 +76,7 @@ export default function Meetings() {
   const localUser = JSON.parse(localStorage.getItem('user'));
   const currentRoleType = localUser.role_type;
   const { allMeetingLists } = React.useContext(MeetingContext);
-  const allDepartmentListData = allMeetingLists?.meetings;
+  const allmeetingData = allMeetingLists?.meetings;
   const { allTaskLists } = React.useContext(TaskContext);
   const allTaskListsData = allTaskLists?.tasks;
 
@@ -103,9 +103,8 @@ export default function Meetings() {
     if (row && row.meetingId) {
       navigate(`/edit-meeting/${row.meetingId}`);
     } else {
-      // Log an error if any property is undefined
       console.error('Invalid row data:', row);
-      // Optionally, handle the error or provide feedback to the user
+
     }
   };
 
@@ -209,7 +208,7 @@ export default function Meetings() {
                       </Box>
                       <CardContent>
                         <TableNew
-                          data={allDepartmentListData}
+                          data={allmeetingData}
                           column={column}
                           handleTasksAddInMeeting={handleTasksAddInMeeting}
                           handleTasksViewInMeeting={handleTasksViewInMeeting}
