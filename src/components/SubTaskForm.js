@@ -1,25 +1,11 @@
 import React, { useState } from 'react';
 import { Box, Button, TextField } from '@mui/material';
-import { styled } from "@mui/material/styles";
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import Grid from "@mui/material/Grid";
-
-
-
-const VisuallyHiddenInput = styled('input')({
-    clip: 'rect(0 0 0 0)',
-    clipPath: 'inset(50%)',
-    height: 1,
-    overflow: 'hidden',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    whiteSpace: 'nowrap',
-    width: 1,
-});
+import ApiConfig from '../config/ApiConfig';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -30,43 +16,48 @@ const convertToBase64 = (file) => {
     });
 };
 
-
-
-const SubTaskForm = ({ onSubmit, onClose }) => {
-    const [formData, setFormData] = useState([]);
-
+const SubTaskForm = ({ onSubmit, onClose, parentTaskId }) => {
     const [formValues, setFormValues] = useState({
         subTaskTitle: '',
-        targetDate: '',
-        status: ''
+        targetDate: null, 
+        imageUrl: '' 
     });
-
-    const handleFileChange = async (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const base64 = await convertToBase64(file);
-            setFormData(prevState => ({
-                ...prevState,
-                imageUrl: base64
-            }));
-
-        }
-    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormValues({ ...formValues, [name]: value });
     };
+
     const handleDateChange = (newDate) => {
-        setFormData(prevState => ({
-            ...prevState,
-            selectDate: newDate
-        }));
+        setFormValues({ ...formValues, targetDate: newDate });
     };
 
-    const handleSubmit = (e) => {
+
+    const handleFileChange = async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const base64 = await convertToBase64(file);
+            setFormValues({ ...formValues, imageUrl: base64 });
+        }
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        onSubmit(formValues);
+        try {
+            const payload = {
+                parent_task_id: parentTaskId,
+                subtask_title: formValues.subTaskTitle,
+                subtask_target_date: formValues.targetDate.toISOString(), 
+                subtask_image: formValues.imageUrl
+            };
+            // Make API POST request to add subtask
+            const response = await ApiConfig.requestData('post', '/add-sub-task', null, payload);
+            // Call onSubmit callback with response data
+            onSubmit(response);
+        } catch (error) {
+            console.error("Error adding subtask:", error);
+            // Handle error
+        }
     };
 
     return (
@@ -83,27 +74,17 @@ const SubTaskForm = ({ onSubmit, onClose }) => {
             </Box>
             <Box mb={2}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-
-
                     <Grid item xs={12}>
-
                         <DatePicker
-                            value={formData.selectDate}
+                            value={formValues.targetDate}
                             onChange={handleDateChange}
                             renderInput={(params) => <TextField {...params} />}
                             fullWidth
-                            sx={{ width: 100 + '%' }}
+                            sx={{ width: '100%' }}
                         />
-
-
                     </Grid>
-
-
-
                 </LocalizationProvider>
             </Box>
-
-
             <Box mb={2}>
                 <Button
                     component="label"
@@ -114,7 +95,7 @@ const SubTaskForm = ({ onSubmit, onClose }) => {
                     sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}
                 >
                     Upload file
-                    <VisuallyHiddenInput type="file" onChange={handleFileChange} />
+                    <input type="file" onChange={handleFileChange} style={{ display: 'none' }} />
                 </Button>
             </Box>
             <Box display="flex" justifyContent="flex-end" gap={2}>

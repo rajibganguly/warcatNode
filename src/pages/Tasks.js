@@ -20,16 +20,11 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
 import { EyeOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import IconButton from "@mui/material/IconButton";
 import Sidebar from "../components/Sidebar";
 import { toast } from "react-toastify";
-import { CloseOutlined } from '@mui/icons-material';
 import TableNew from "../components/TableNew";
-import { TextField, Dialog, DialogContent, DialogContentText } from "@mui/material";
-import CardActions from "@mui/material/CardActions";
 import ApiConfig from '../config/ApiConfig'
-import SubTaskViewDialog from "../dialog/SubTaskViewDialog"; 
-
+import SubTaskViewDialog from "../dialog/SubTaskViewDialog";
 import { TaskChartData } from '../constant/taskChartData';
 import { useNavigate } from "react-router-dom";
 import SubTaskForm from "../components/SubTaskForm";
@@ -226,12 +221,12 @@ export default function Tasks() {
 
   const handleViewSubTask = (record) => {
     if (typeof record === 'object' && record !== null) {
-        setModalContent(record); 
-        setModalVisible(true);   
+      setModalContent(record);
+      setModalVisible(true);
     } else {
-        console.error("Invalid modal content: ", record);
+      console.error("Invalid modal content: ", record);
     }
-};
+  };
 
 
   const handleAddSubTaskClick = (record) => {
@@ -241,7 +236,11 @@ export default function Tasks() {
     };
 
     setModalContent(
-      <SubTaskForm onSubmit={handleFormSubmit} onClose={() => setModalVisible(false)} />
+      <SubTaskForm
+                onSubmit={handleFormSubmit}
+                onClose={() => setModalVisible(false)}
+                parentTaskId={record.task_id}
+            />
     );
     setModalVisible(true);
   };
@@ -416,6 +415,7 @@ export default function Tasks() {
                           open={modalVisible}
                           onClose={closeModal}
                           modalContent={modalContent}
+                          parentTaskId={null}
                         />
                       </CardContent>
                     </Card>
