@@ -126,8 +126,7 @@ export default function AddTasks() {
                     const department = allDepartmentData.find(dept => dept._id === id);
                     return department ? department : null;
                 });
-                //console.log(selectedDepartments, 'setSelectedDeparmentObj')
-                setSelectedDeparmentObj(selectedDepartments)
+                setSelectedDeparmentObj(selectedDepartments[0])
                 const departmentNames = selectedDepartments.filter(dep => dep !== null).map(dep => dep.department_name);
                 setPersonName(departmentNames);
                 // Flatten the tags array and remove duplicates
