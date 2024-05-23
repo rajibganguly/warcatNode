@@ -31,11 +31,12 @@ import { DepartmentContext } from './../context/DepartmentContext'
 import { TaskContext } from "../context/TaskContext";
 import axios from "axios";
 import { addTaskPost } from "./common";
+import { dateSelected } from "./common";
+import {
+    useForm,
+    Controller,
+} from 'react-hook-form';
 
-
-// function Label({ componentName, valueType }) {
-
-// }
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -90,16 +91,21 @@ export default function AddTasks() {
     const [deptId, setDeptId] = useState('');
     const [meetingId, setMeetingId] = useState('');
     const [taskId, setTaskId] = useState();
+    const [updateTaskTitle, setUpdateTaskTitle] = useState('');
     const [meetingTopic, setMeetingTopic] = useState('');
     const [taskTitle, setTaskTitle] = useState('');
     
     const [base64Image, setBase64Image] = React.useState("");
+    const [updateTaskFile, setupdateTaskFile] = useState(null);
+    const [updateSelectedDate, setUpdateSelectedDate] = useState('');
     const theme = useTheme();
     const { allDepartmentList } = React.useContext(DepartmentContext);
     const allDepartmentData = allDepartmentList.map((dept) => dept.department);
     const { allTaskLists } = React.useContext(TaskContext);
     const allTaskListsData = allTaskLists?.tasks;
-    const [tagName, setTagName] = useState(["seratary", "head_of_office"]); // Tags Store
+    const [tagName, setTagName] = useState([]);
+    const [selectedDeparmentobj, setSelectedDeparmentObj] = useState([])
+    // const [departmentData, setDepartmenData] = useState([]);
     //const availableTags = [{ id: 1, value: "secretary", text: "Secretary" }, { id: 2, value: "head_of_office", text: "Head of Office" }]
 
     useEffect(() => {
@@ -125,23 +131,34 @@ export default function AddTasks() {
                     const department = allDepartmentData.find(dept => dept._id === id);
                     return department ? department : null;
                 });
+                console.log(selectedDepartments, 'setSelectedDeparmentObj')
+                setSelectedDeparmentObj(selectedDepartments)
                 const departmentNames = selectedDepartments.filter(dep => dep !== null).map(dep => dep.department_name);
                 setPersonName(departmentNames);
                 const departmentId = selectedDepartments.filter(dep => dep !== null).map(dep => dep._id);
                 setDeptId(departmentId);
                 // Flatten the tags array and remove duplicates
                 const tags = [...new Set(filteredObject?.department?.flatMap(obj => obj.tag) || [])];
-                // console.log(tags)
+                console.log(filteredObject?.target_date)
                 setTagName(tags);
-                setTaskTitle(filteredObject?.task_title);
+                setUpdateTaskTitle(filteredObject?.task_title);
+                setUpdateSelectedDate(dateSelected(filteredObject?.target_date))
+                // setupdateTaskFile(filteredObject?.task_image)
 
             }
+
+
 
         }
 
     }, [location.search, allTaskListsData, allTaskListsData]);
 
-    console.log(tagName, 'tagNametagName')
+
+
+    const handleUpdateFileChange = (event) => {
+        const file = event.target.files[0];
+        setupdateTaskFile(file);
+    };
     const handleChange = (event) => {
         const {
             target: { value },
@@ -149,12 +166,22 @@ export default function AddTasks() {
         console.log(value, 'valuevaluevalue')
         // Find the department object with the matching _id
         const selectedDept = allDepartmentData.find(dept => dept._id === value);
+        setSelectedDeparmentObj(selectedDept);
+
         // If a matching department is found, add its name to the personName array
         if (selectedDept) {
             setDeptId(prevPersonName => [selectedDept._id]);
             setPersonName(prevPersonName => [selectedDept.department_name]);
         }
     };
+
+    const departmentData = selectedDeparmentobj
+        .flat()
+        .map(item => ({
+            dep_id: item._id,
+            dep_name: item.department_name,
+            tag: tagName
+        }));
 
     const handleTagChange = (event) => {
         setTagName(event.target.value);
@@ -229,33 +256,32 @@ export default function AddTasks() {
         setInputGroups(newInputGroups);
     }
 
-    const convertToDepartmentFormat = (deptid, deptName, tags, task) => {
-        return {
-            meetingId: meetingId,
-            meetingTopic: meetingTopic,
-            department: deptid.map((id, index) => ({
-                dep_id: id,
-                dep_name: deptName[index],
-                tag: tags,
-                tasks: task.tasks
-            }))
-        };
-    };
-
-    function handleSubmit() {
+    async function handleSubmit() {
         console.log(inputGroups);
-        console.log(tagName, 'tags');
-        console.log(deptId, 'dept id');
-        console.log(personName, 'dept name');
-        const taskData = transformData(inputGroups);
-        console.log(taskData, 'task');
-        
-        const transformedData = convertToDepartmentFormat(deptId, personName, tagName, taskData);
-        handleAddTask(transformedData);
-        // if (taskId) {
-        //     console.log(taskId)
-        // }
-    }
+        const transformedData = transformData(inputGroups);
+        console.log(transformedData);
+        if (taskId) {
+            const data = {
+                meeting_id: meetingId,
+                department: departmentData,
+                task_id: taskId,
+                task_title: updateTaskTitle,
+                target_date: updateSelectedDate,
+                task_image: null
+            };
+            // If there's a file to upload, convert it to base64
+            if (updateTaskFile) {
+                const reader = new FileReader();
+                reader.onloadend = async function () {
+                    data.upload_image = reader.result.split(',')[1]; // Extract base64 part only
+                    await updateData(data);
+                };
+                reader.readAsDataURL(updateTaskFile);
+            } else {
+                await updateData(data);
+            }
+
+
 
     const handleAddTask = async (transformedData) => {
         console.log(transformedData, base64Image)
@@ -335,7 +361,18 @@ export default function AddTasks() {
         fontSize: "1em"
     }
 
+    async function updateData(data) {
 
+        console.log(data)
+
+    }
+    const {
+        control,
+
+        // handleSubmit
+    } = useForm({
+        // resolver: yupResolver(yupFieldRequirements)
+    });
     return (
         <ThemeProvider theme={defaultTheme}>
             <Box sx={{ display: "flex" }}>
@@ -499,7 +536,8 @@ export default function AddTasks() {
                                     )}
                                 </Grid>
 
-                                {inputGroups.map((group, index) => (
+
+                                {!taskId && inputGroups.map((group, index) => (
                                     <Grid container key={group[0].id} spacing={2} sx={{ marginBottom: '20px' }}>
                                         {group.map((input) => (
                                             <Grid item xs={12} md={12} key={input.id}>
@@ -570,6 +608,7 @@ export default function AddTasks() {
                                                             variant="outlined"
                                                             type={input.type}
                                                             value={input.value}
+                                                            //value={}
                                                             onChange={(e) => handleInputChange(group[0].id, input.id, e)}
                                                             fullWidth
                                                             size="small"
@@ -596,10 +635,65 @@ export default function AddTasks() {
                                         )}
                                     </Grid>
                                 ))}
+                                {taskId && (
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={12}>
+                                            <InputLabel sx={{ mb: 1 }}>Task Title</InputLabel>
+                                            <TextField
+                                                variant="outlined"
+                                                fullWidth
+                                                placeholder="Enter task title"
+                                                name="taskTitle"
+                                                size="small"
+                                                value={updateTaskTitle}
+                                                onChange={(e) => setUpdateTaskTitle(e.target.value)}
+                                            />
+                                        </Grid>
 
+                                        <Grid item xs={6}>
+                                            <InputLabel sx={{ mb: 1 }}>Upload Image</InputLabel>
+                                            <TextField
+                                                variant="outlined"
+                                                fullWidth
+                                                placeholder="Enter task title"
+                                                name="uploadImage"
+                                                size="small"
+                                                type="file"
+                                                // value={updateTaskFile}
+                                                onChange={handleUpdateFileChange}
+                                            />
+                                            <Box>
+                                                <img src={'http://localhost:3000/static/media/user1.230ccea789fb69e95389.png'} alt="" width={50} height={50} />
+                                            </Box>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <InputLabel sx={{ mb: 1 }}>Target Date</InputLabel>
+                                            <Controller
+                                                name="task_date"
+                                                control={control}
+                                                render={({ field: { onChange, value } }) => (
+                                                    <TextField
+                                                        type="date"
+                                                        name="task_date"
+                                                        fullWidth
+                                                        size="small"
+                                                        placeholder="dd-mm-yyyy"
+                                                        onChange={(e) => {
+                                                            setUpdateSelectedDate(e.target.value);
+                                                        }}
 
-
-
+                                                        value={updateSelectedDate || ''}
+                                                        id="task_date"
+                                                        variant="outlined"
+                                                        InputLabelProps={{
+                                                            shrink: true
+                                                        }}
+                                                    />
+                                                )}
+                                            />
+                                        </Grid>
+                                    </Grid>
+                                )}
 
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'start' }}>
