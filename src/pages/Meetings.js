@@ -1,33 +1,31 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
-import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import Box from "@mui/material/Box";
-import MuiAppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
+import { useState } from "react";
+import {
+  Box,
+  Grid,
+  Card,
+  styled,
+  Button,
+  Toolbar,
+  Container,
+  Typography,
+  createTheme,
+  CssBaseline,
+  Breadcrumbs,
+  CardContent,
+  ThemeProvider,
+} from "@mui/material";
+import { toast } from "react-toastify";
 import { Link } from 'react-router-dom';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
-import { useNavigate } from "react-router-dom";
-//import axiosInstance from "../apiConfig/axoisSetup";
-import ApiConfig from "../config/ApiConfig";
-import { Button } from "@mui/material";
-import TableNew from "../components/TableNew";
-import { toast } from "react-toastify";
 import Sidebar from "../components/Sidebar";
-import { TextField, Dialog, DialogContent, DialogContentText } from "@mui/material";
-import CardActions from "@mui/material/CardActions";
-// import ApiConfig from '../config/ApiConfig'
-import IconButton from "@mui/material/IconButton";
-import { CloseOutlined } from '@mui/icons-material';
-import { MeetingContext } from './../context/MeetingContext'
+import MuiAppBar from "@mui/material/AppBar";
+import TableNew from "../components/TableNew";
+import { useNavigate } from "react-router-dom";
 import { TaskContext } from "../context/TaskContext";
+import TaskViewDialog from "../dialog/TaskViewDialog";
+import { MeetingContext } from './../context/MeetingContext'
 
 const column = [
   { text: 'Meeting Id', dataField: 'meetingId' },
@@ -40,7 +38,6 @@ const column = [
   { text: 'Tasks', dataField: 'tasks' },
   { text: 'Operation', dataField: 'meetingoperation' },
 ];
-
 
 const drawerWidth = 240;
 const AppBar = styled(MuiAppBar, {
@@ -61,29 +58,19 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-
-
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
-
-
-
 export default function Meetings() {
   const [open, setOpen] = React.useState(true);
-  const [data, setData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [modalVisible1, setModalVisible1] = useState(false);
-  const [modalContent, setModalContent] = useState([]);
-  const [file, setFile] = useState();
+  const [taskDataView, setTaskDataView] = useState([]);
+  const [meetingData, setMeetingData] = useState([]);
   const navigate = useNavigate();
 
   const closeModal = () => {
     setModalVisible(false);
-    setModalContent(null);
-  };
-  const closeModal1 = () => {
-    setModalVisible1(false);
+    setTaskDataView([]);
   };
 
   const localUser = JSON.parse(localStorage.getItem('user'));
@@ -93,37 +80,26 @@ export default function Meetings() {
   const { allTaskLists } = React.useContext(TaskContext);
   const allTaskListsData = allTaskLists?.tasks;
 
-  
-
-  const VisuallyHiddenInput = styled('input')({
-    clip: 'rect(0 0 0 0)',
-    clipPath: 'inset(50%)',
-    height: 1,
-    overflow: 'hidden',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    whiteSpace: 'nowrap',
-    width: 1,
-  });
-
-
-
-  /**
-   * @description DEFINED CLICK EVENTS:
-   * @click to view details about the meeting
-   */
-  const handleTasksViewInMeeting = (record) => {
-    console.log('View clicked for view meetings:', record);
-  };
-
+  // const VisuallyHiddenInput = styled('input')({
+  //   clip: 'rect(0 0 0 0)',
+  //   clipPath: 'inset(50%)',
+  //   height: 1,
+  //   overflow: 'hidden',
+  //   position: 'absolute',
+  //   bottom: 0,
+  //   left: 0,
+  //   whiteSpace: 'nowrap',
+  //   width: 1,
+  // });
 
   const handleTasksAddInMeeting = (record) => {
-    navigate('/add-tasks')
+    const encodedMeetingId = window.btoa(record?.meetingId);
+    const encodedMeetingTopic = window.btoa(record?.meetingTopic);
+    navigate(`/add-tasks?meetingId=${encodeURIComponent(encodedMeetingId)}&meetingTopic=${encodeURIComponent(encodedMeetingTopic)}`);
   };
 
   const handleEditmeeting = (row) => {
-    console.log('Edit clicked for:', row);
+    // Check if row and row.meetings are defined
     if (row && row.meetingId) {
       navigate(`/edit-meeting/${row.meetingId}`);
     } else {
@@ -132,20 +108,25 @@ export default function Meetings() {
     }
   };
 
-
   const findMeetingRows = (meetingId) => {
     return allTaskListsData.filter(row => row.meetingId && row.meetingId === meetingId);
   };
 
-  const handleTaskView = (data) => {
-    setModalContent(findMeetingRows(data?.meetingId))
-    setModalVisible1(true);
+  const handleTasksViewInMeeting = (data) => {
+    toast.dismiss();
+    const meetingRows = findMeetingRows(data?.meetingId);
 
+    setTaskDataView(meetingRows);
+
+    if (meetingRows.length === 0) {
+      toast.warning("Task not found.", {
+        autoClose: 2000,
+      });
+    } else {
+      setMeetingData(data);
+      setModalVisible(true);
+    }
   };
-
-
-
-
 
   const handleOutput = (open) => {
     toggleDrawer();
@@ -153,10 +134,6 @@ export default function Meetings() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
-
-  // const profilePic = "../assets/user/user1.png"
-
-
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -178,7 +155,7 @@ export default function Meetings() {
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
               {/* Recent Orders */}
               <Grid item xs={12}>
@@ -236,68 +213,14 @@ export default function Meetings() {
                           handleTasksAddInMeeting={handleTasksAddInMeeting}
                           handleTasksViewInMeeting={handleTasksViewInMeeting}
                           handleEditmeeting={handleEditmeeting}
-                          handleTaskView={handleTaskView}
                         />
-                        <Dialog
+                        {/* Task view dialog */}
+                        <TaskViewDialog
                           open={modalVisible}
                           onClose={closeModal}
-                          aria-labelledby="modal-title"
-                          aria-describedby="modal-description"
-                          sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}
-                        >
-                          <DialogContent sx={{ p: 2, width: '600px' }}>
-                            {modalContent ? (
-                              <DialogContentText id="modal-description">
-                                <Typography variant="h4" id="modal-title">
-                                  Website Issue
-                                </Typography>
-                                <Card sx={{ width: '100%', maxWidth: 900, maxHeight: 600, overflowY: 'auto' }}>
-                                  <IconButton
-                                    aria-label="close"
-                                    onClick={closeModal}
-                                    sx={{ position: 'absolute', right: '5px', top: '0', color: 'gray' }}
-                                  >
-                                    <CloseOutlined />
-                                  </IconButton>
-                                  <CardContent style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <div>
-                                      <Typography variant="h5" color="text.secondary">
-                                        Subtask
-                                      </Typography>
-                                      <Typography variant="body2" color="text.secondary">
-                                        {modalContent.task_title}
-                                      </Typography>
-                                      <Typography variant="body2" color="text.secondary">
-                                        Target Date: {modalContent.target_date}
-                                      </Typography>
-                                      <Typography variant="body2" color="text.secondary">
-                                        Attachment.png
-                                      </Typography>
-                                    </div>
-                                    <Button variant="contained" color="primary">Add Subtask</Button>
-                                  </CardContent>
-
-                                  <CardActions sx={{ justifyContent: 'flex-end' }}>
-                                    <Button size="small" variant="contained" color="primary" >
-                                      Email
-                                    </Button>
-                                    <Button size="small" variant="contained" color="primary" onClick={() => console.log('Share clicked')}>
-                                      Sms
-                                    </Button>
-                                  </CardActions>
-                                </Card>
-                              </DialogContentText>
-                            ) : (
-                              <DialogContentText id="modal-description">
-                                No record found.
-                              </DialogContentText>
-                            )}
-                          </DialogContent>
-                        </Dialog>
+                          taskDataView={taskDataView}
+                          meetingData={meetingData}
+                        />
                       </CardContent>
                     </Card>
                   </Grid>

@@ -54,10 +54,12 @@ function TableNew({
     if (column.dataField === "subtask") {
       return (
         <div style={{ display: "flex" }}>
-          <Button onClick={() => handleAddSubTaskClick(row)}>
+          <Button onClick={() => handleAddSubTaskClick(row)}
+           style={{ backgroundColor: '#fb4', color: 'black', marginRight:'2px' }}>
             <EyeOutlined />
           </Button>
-          <Button onClick={() => handleViewSubTask(row)}>
+          <Button onClick={() => handleViewSubTask(row)}
+           style={{ backgroundColor: 'rgb(10, 24, 50)', color: 'black',color:'#ffffff' }}>
             <AddIcon />
           </Button>
         </div>
@@ -66,12 +68,12 @@ function TableNew({
 
     if (column.dataField === "tasks") {
       return (
-        <div style={{ display: "flex" }}>
+        <div style={{ display: "flex", justifyContent:'center', alignItems:'center' }}>
           <Button onClick={() => handleTasksAddInMeeting(row)}
             style={{ backgroundColor: '#0a1832', color: '#ffffff', marginRight: '2px' }}>
             <AddIcon />
           </Button>
-          <Button onClick={() => handleTaskView(row)}
+          <Button onClick={() => handleTasksViewInMeeting(row)}
             style={{ backgroundColor: '#fb4', color: 'black' }}>
             <EyeOutlined />
           </Button>
@@ -81,12 +83,14 @@ function TableNew({
 
     if (column.dataField === "taskoperation") {
       return (
-        <div style={{ display: "flex" }}>
-          <Button onClick={() => handleEditOperationTask(row)}>
+        <div style={{ display: "flex", justifyContent:'center', alignItems:'center' }}>
+          <Button onClick={() => handleEditOperationTask(row)}
+          style={{ backgroundColor: 'rgb(0, 151, 167)', color: '#ffffff', marginRight: '2px' }}>
             <EditOutlined />
           </Button>
-          <Button onClick={() => handleViewOperationTask(row)}>
-            <EyeOutlined />
+          <Button onClick={() => handleViewOperationTask(row)}
+           style={{ backgroundColor: '#fb4', color: 'black' }}>
+            <EyeOutlined  />
           </Button>
         </div>
       );

@@ -42,7 +42,8 @@ import { toast } from "react-toastify";
 import ApiConfig from "../config/ApiConfig";
 import { MeetingContext } from './../context/MeetingContext';
 import { useParams } from "react-router-dom";
-
+import { format } from 'date-fns';
+import dayjs from 'dayjs';
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -67,7 +68,7 @@ const MenuProps = {
 };
 
 const names = [
-    'Head Of office',
+    'head_of_office',
     'Secretary',
 ];
 function getStyles(name, personName, theme) {
@@ -100,6 +101,15 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 const defaultTheme = createTheme();
+const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+    });
+};
+
 
 export default function EditMeeting() {
     const [open, setOpen] = useState(true);
@@ -110,23 +120,23 @@ export default function EditMeeting() {
 
     const [formData, setFormData] = useState({
         departmentNames: [],
+        tag: [],
         imageUrl: "",
         meetingTopic: "",
-        selectDate: "",
-        selectTime: "",
-        tag: []
+        selectDate: dayjs(), // Default to current date using dayjs
+        selectTime: dayjs(),
+
     });
 
     useEffect(() => {
         if (Array.isArray(allMeetingLists?.meetings)) {
             const filteredMeetings = allMeetingLists?.meetings.filter(meeting => meeting.meetingId === id);
             setFilteredMeeting(filteredMeetings);
+            console.log(filteredMeetings)
         } else {
             console.error("Error getting Data");
         }
     }, [allMeetingLists, id]);
-
-    
 
     useEffect(() => {
         if (filteredMeeting.length > 0) {
@@ -135,16 +145,12 @@ export default function EditMeeting() {
                 departmentNames: meetingData.departmentNames,
                 imageUrl: meetingData.imageUrl,
                 meetingTopic: meetingData.meetingTopic,
-                selectDate: meetingData.selectDate,
-                selectTime: meetingData.selectTime,
+                selectDate: dayjs(meetingData.selectDate),
+                selectTime: dayjs(meetingData.selectTime, 'hh:mm'), // Time only, parse with dummy date
                 tag: meetingData.tag
             });
         }
     }, [filteredMeeting]);
-
-
-    const [personName, setPersonName] = useState([]);
-    const theme = useTheme();
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -154,15 +160,40 @@ export default function EditMeeting() {
         }));
     };
 
+    const handleFileChange = async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const base64 = await convertToBase64(file);
+            setFormData(prevState => ({
+                ...prevState,
+                imageUrl: base64
+            }));
+        }
+    };
+
+
+    const handleDateChange = (newDate) => {
+        setFormData(prevState => ({
+            ...prevState,
+            selectDate: newDate
+        }));
+    };
+
+    const handleTimeChange = (newTime) => {
+        setFormData(prevState => ({
+            ...prevState,
+            selectTime: newTime
+        }));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const updatedData = {};
-            Object.keys(formData).forEach(key => {
-                if (formData[key] !== filteredMeeting[0][key]) {
-                    updatedData[key] = formData[key];
-                }
-            });
+            const updatedData = {
+                ...formData,
+                selectDate: formData.selectDate.toISOString(),
+                selectTime: formData.selectTime.format('hh:mm')
+            };
             console.log(updatedData)
 
             const response = await fetch(`https://warcat2024-qy2v.onrender.com/api/edit-meeting?meetingId=${id}`, {
@@ -180,27 +211,22 @@ export default function EditMeeting() {
         } catch (error) {
             console.error('Error updating meeting:', error);
         }
-
-
     };
 
     useEffect(() => {
         fetchDepartmentData();
     }, []);
 
-    const departmentNames = data.map((dept) => dept.department.department_name);
-
     const fetchDepartmentData = async () => {
         if (!toast.isActive("loading")) {
-            toast.loading("Loading departments data...", { autoClose: false, toastId: "loading" });
+            toast.loading("Loading Meetings data...", { autoClose: false, toastId: "loading" });
         }
         const localData = localStorage.getItem("user");
         const userObj = JSON.parse(localData);
         try {
-            const localObj = { userId: userObj._id, role_type: userObj.role_type };
             const params = {
-                userId: localObj.userId,
-                role_type: localObj.role_type
+                userId: userObj._id,
+                role_type: userObj.role_type
             };
             const departmentsAll = await ApiConfig.requestData('get', '/departments', params, null);
             setData(departmentsAll);
@@ -215,9 +241,12 @@ export default function EditMeeting() {
     const handleOutput = (open) => {
         toggleDrawer();
     };
+
     const toggleDrawer = () => {
         setOpen(!open);
     };
+
+    const departmentNames = data.map((dept) => dept.department.department_name);
 
     return (
         <ThemeProvider theme={defaultTheme}>
@@ -338,9 +367,9 @@ export default function EditMeeting() {
                                                             id="demo-multiple-chip"
                                                             fullWidth
                                                             multiple
-                                                            value={personName}
+                                                            value={formData.tag}
                                                             onChange={handleChange}
-                                                            input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                                                            input={<OutlinedInput id="select-multiple-chip" label="Chip" name="tag" />}
                                                             renderValue={(selected) => (
                                                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                                                     {selected.map((value) => (
@@ -352,10 +381,7 @@ export default function EditMeeting() {
                                                         >
                                                             {names.map((name) => (
                                                                 <MenuItem
-                                                                    key={name}
-                                                                    value={name}
-                                                                    style={getStyles(name, personName, theme)}
-                                                                >
+                                                                    key={name} value={name}>
                                                                     {name}
                                                                 </MenuItem>
                                                             ))}
@@ -363,22 +389,33 @@ export default function EditMeeting() {
                                                     </FormControl>
                                                 </Grid>
                                                 <Grid item xs={12}>
-                                                    <TextField id="outlined-basic"  value={formData.meetingTopic} variant="outlined" fullWidth disabled />
+                                                    <TextField id="outlined-basic" label="Meeting Topic"
+                                                        name='meetingTopic'
+                                                        value={formData.meetingTopic}
+                                                        onChange={handleChange}
+                                                        variant="outlined" fullWidth disabled/>
+                                                        
                                                 </Grid>
                                                 <Grid item xs={12}>
                                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                                         <DemoContainer
                                                             components={['DatePicker', 'TimePicker']}
                                                         >
-                                                            <Grid item xs={4}>
-                                                                <DemoItem label="DatePicker">
-                                                                    <DatePicker value={formData.selectDate} />
-                                                                </DemoItem>
+                                                            <Grid xs={4}>
+                                                               
+                                                                    <DatePicker
+                                                                        value={formData.selectDate}
+                                                                        onChange={handleDateChange}
+                                                                        renderInput={(params) => <TextField {...params} />} />
+                                                               
                                                             </Grid>
-                                                            <Grid item xs={4}>
-                                                                <DemoItem label="TimePicker">
-                                                                    <TimePicker />
-                                                                </DemoItem>
+                                                            <Grid xs={4}>
+                                                                
+                                                                    <TimePicker
+                                                                        value={formData.selectTime}
+                                                                        onChange={handleTimeChange}
+                                                                        renderInput={(params) => <TextField {...params} />} />
+                                                               
                                                             </Grid>
                                                             <Grid xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                                                 <Button
@@ -390,8 +427,9 @@ export default function EditMeeting() {
                                                                     sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}
                                                                 >
                                                                     Upload file
-                                                                    <VisuallyHiddenInput type="file" />
+                                                                    <VisuallyHiddenInput type="file" onChange={handleFileChange} />
                                                                 </Button>
+
                                                             </Grid>
                                                         </DemoContainer>
                                                     </LocalizationProvider>
