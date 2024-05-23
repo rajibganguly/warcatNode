@@ -5,6 +5,7 @@ import ApiConfig from '../config/ApiConfig';
 
 
 
+
 /**
  * @description Private function for fetch department data
  */
@@ -59,6 +60,24 @@ export const fetchTaskData = async () => {
   } catch (error) {
   }
 };
+
+export const getStatusText = (status) => {
+  switch (status) {
+    case 'totalassigned':
+      return 'TOTAL ASSIGNED';
+    case 'initiated':
+      return 'INITIATED';
+    case 'inprogress':
+      return 'IN PROGRESS';
+    case 'completed':
+      return 'COMPLETED';
+    default:
+      return 'Unknown';
+  }
+};
+
+
+
 
 
 // Function to format the date

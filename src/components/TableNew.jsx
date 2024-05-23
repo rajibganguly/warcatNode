@@ -7,6 +7,7 @@ import { Box } from "@mui/system";
 import SearchIcon from "@mui/icons-material/Search";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
+import {getStatusText} from "../pages/common.js";
 
 function TableNew({
   column,
@@ -24,6 +25,8 @@ function TableNew({
   handleTaskView,
   handleEditmeeting
 }) {
+
+  
   const getNestedValue = (obj, path) => {
     const keys = path.split(".");
     let value = obj;
@@ -64,6 +67,14 @@ function TableNew({
           </Button>
         </div>
       );
+    }
+
+  
+
+    if(column.dataField === "verifiedstatus"){
+      return (
+        getStatusText(row.status)
+      )
     }
 
     if (column.dataField === "taskoperation") {
