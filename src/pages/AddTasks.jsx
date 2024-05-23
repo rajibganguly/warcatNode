@@ -143,22 +143,27 @@ export default function AddTasks() {
                 setTagName(tags);
                 setUpdateTaskTitle(filteredObject?.task_title);
                 setUpdateSelectedDate(dateSelected(filteredObject?.target_date))
-                // setupdateTaskFile(filteredObject?.task_image)
+                setupdateTaskFile(filteredObject?.task_image)
 
             }
-
-
 
         }
 
     }, [location.search, allTaskListsData, allTaskListsData]);
 
 
-
     const handleUpdateFileChange = (event) => {
-        const file = event.target.files[0];
-        setupdateTaskFile(file);
+        let file = event.target.files[0];
+
+        const reader = new FileReader();
+        reader.onloadend = async function () {
+            file = reader.result.split(',')[1];
+            setupdateTaskFile(file);
+        };
+        reader.readAsDataURL(file);
     };
+
+
     const handleChange = (event) => {
         const {
             target: { value },
@@ -256,10 +261,25 @@ export default function AddTasks() {
         setInputGroups(newInputGroups);
     }
 
+    const convertToDepartmentFormat = (deptid, deptName, tags, task) => {
+        return {
+            meetingId: meetingId,
+            meetingTopic: meetingTopic,
+            department: deptid.map((id, index) => ({
+                dep_id: id,
+                dep_name: deptName[index],
+                tag: tags,
+                tasks: task.tasks
+            }))
+        };
+    };
+
     async function handleSubmit() {
         console.log(inputGroups);
-        const transformedData = transformData(inputGroups);
-        console.log(transformedData);
+        const taskData = transformData(inputGroups);
+        console.log(taskData);
+        const transformedData = convertToDepartmentFormat(deptId, personName, tagName, taskData);
+        handleAddTask(transformedData);
         if (taskId) {
             const data = {
                 meeting_id: meetingId,
@@ -269,17 +289,9 @@ export default function AddTasks() {
                 target_date: updateSelectedDate,
                 task_image: null
             };
-            // If there's a file to upload, convert it to base64
-            if (updateTaskFile) {
-                const reader = new FileReader();
-                reader.onloadend = async function () {
-                    data.upload_image = reader.result.split(',')[1]; // Extract base64 part only
-                    await updateData(data);
-                };
-                reader.readAsDataURL(updateTaskFile);
-            } else {
-                await updateData(data);
-            }
+            await updateData(data);
+        }
+    }
 
 
 
@@ -663,7 +675,9 @@ export default function AddTasks() {
                                                 onChange={handleUpdateFileChange}
                                             />
                                             <Box>
-                                                <img src={'http://localhost:3000/static/media/user1.230ccea789fb69e95389.png'} alt="" width={50} height={50} />
+                                                {updateTaskFile && (
+                                                    <img src={`data:image/jpeg;base64,${updateTaskFile}`} alt="" width={50} height={50} />
+                                                )}
                                             </Box>
                                         </Grid>
                                         <Grid item xs={6}>
