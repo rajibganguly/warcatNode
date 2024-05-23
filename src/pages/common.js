@@ -77,6 +77,14 @@ import ApiConfig from '../config/ApiConfig';
     }).replace(/ /g, ' ');
   };
 
+  export const dateSelected = (dateString) => {
+    const dateObject = new Date(dateString);
+    const year = dateObject.getFullYear();
+    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObject.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
+
 
   /**
    * @description Private function for fetch Task data
@@ -88,3 +96,15 @@ import ApiConfig from '../config/ApiConfig';
   } catch (error) {
   }
 };
+
+
+  /**
+   * @description Private function for parent Task edit
+   */
+  export const parentTaskEdit = async (body) => {
+    try {
+      const editTask = await ApiConfig.requestData('post', '/edit-task', null, body);
+      return editTask;
+    } catch (error) {
+    }
+  };

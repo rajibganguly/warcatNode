@@ -391,7 +391,7 @@ export default function AddNewMeeting() {
                                 </Box>
                               )}
                             >
-                              <MenuItem value="seratary">Seratary</MenuItem>
+                              <MenuItem value="secretary">Secretary</MenuItem>
                               <MenuItem value="head_of_office">Head Office</MenuItem>
                             </Select>
                           </FormControl>
