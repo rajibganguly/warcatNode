@@ -565,6 +565,9 @@ export default function AddTasks() {
                                                 // value={updateTaskFile}
                                                 onChange={handleUpdateFileChange}
                                             />
+                                            <Box>
+                                                <img src={'http://localhost:3000/static/media/user1.230ccea789fb69e95389.png'} alt="" width={50} height={50} />
+                                            </Box>
                                         </Grid>
                                         <Grid item xs={6}>
                                             <InputLabel sx={{ mb: 1 }}>Target Date</InputLabel>
