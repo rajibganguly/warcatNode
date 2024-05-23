@@ -28,12 +28,13 @@ import TableNew from "../components/TableNew";
 import { TextField, Dialog, DialogContent, DialogContentText } from "@mui/material";
 import CardActions from "@mui/material/CardActions";
 import ApiConfig from '../config/ApiConfig'
-import SubTaskViewDialog from "../dialog/SubTaskViewDialog";
-
+import SubTaskViewDialog from "../dialog/SubTaskViewDialog"; 
+import {mapKeysToValues} from '../pages/common.js'
 import { TaskChartData } from '../constant/taskChartData';
 import { useNavigate } from "react-router-dom";
 import SubTaskForm from "../components/SubTaskForm";
 import TaskViewDialog from "../dialog/TaskViewDialog";
+import SubTaskDialog from "../dialog/SubTaskViewDialog";
 
 const drawerWidth = 240;
 
@@ -112,7 +113,7 @@ export default function Tasks() {
     { text: "Status", dataField: 'statuss' },
     { text: "Sub Task", dataField: 'subtask' },
     { text: "Operations", dataField: 'taskoperation' },
-    { text: "Varified Status", dataField: '' },
+    { text: "Varified Status", dataField: 'verifiedstatus' },
     { text: "Action", dataField: 'action' },
   ];
   const icons = {
@@ -434,6 +435,14 @@ export default function Tasks() {
                           />
                         )}
 
+                        {modalVisible && (
+                          <SubTaskDialog
+                            open={modalVisible}
+                            onClose={closeModal}
+                            modalContent={modalContent}
+                          // meetingData={meetingData}
+                          />
+                        )}
 
                       </CardContent>
                     </Card>

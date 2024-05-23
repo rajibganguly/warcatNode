@@ -7,6 +7,7 @@ import { Box } from "@mui/system";
 import SearchIcon from "@mui/icons-material/Search";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
+import {getStatusText} from "../pages/common.js";
 
 function TableNew({
   column,
@@ -24,6 +25,8 @@ function TableNew({
   handleTaskView,
   handleEditmeeting
 }) {
+
+  
   const getNestedValue = (obj, path) => {
     const keys = path.split(".");
     let value = obj;
@@ -66,15 +69,23 @@ function TableNew({
       );
     }
 
+  
+
+    if(column.dataField === "verifiedstatus"){
+      return (
+        getStatusText(row.status)
+      )
+    }
+
     if (column.dataField === "taskoperation") {
       return (
         <div style={{ display: "flex" }}>
           <Button onClick={() => handleEditOperationTask(row)}
-           style={{ backgroundColor: '#0097a7', color: '#ffffff', marginRight: '2px' }}>
+            style={{ backgroundColor: '#0097a7', color: '#ffffff', marginRight: '2px' }}>
             <EditOutlined />
           </Button>
           <Button onClick={() => handleViewParentOperationTask(row)}
-           style={{ backgroundColor: '#fb4', color: 'black' }}>
+            style={{ backgroundColor: '#fb4', color: 'black' }}>
             <EyeOutlined />
           </Button>
         </div>
@@ -97,7 +108,7 @@ function TableNew({
       );
     }
 
-  
+
 
     if (column.dataField === "action") {
       return (
