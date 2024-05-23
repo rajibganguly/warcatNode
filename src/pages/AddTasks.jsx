@@ -92,6 +92,8 @@ export default function AddTasks() {
     const [taskId, setTaskId] = useState();
     const [meetingTopic, setMeetingTopic] = useState('');
     const [taskTitle, setTaskTitle] = useState('');
+    
+    const [base64Image, setBase64Image] = React.useState("");
     const theme = useTheme();
     const { allDepartmentList } = React.useContext(DepartmentContext);
     const allDepartmentData = allDepartmentList.map((dept) => dept.department);
@@ -192,22 +194,6 @@ export default function AddTasks() {
         }
     }
 
-    function handleFileInputChange(groupId, id, e) {
-        const newInputGroups = [...inputGroups];
-        const groupIndex = newInputGroups.findIndex(
-            (group) => group[0].id === groupId
-        );
-        if (groupIndex !== -1) {
-            const inputIndex = newInputGroups[groupIndex].findIndex(
-                (input) => input.id === id
-            );
-            if (inputIndex !== -1) {
-                newInputGroups[groupIndex][inputIndex].value = e.target.files[0];
-                setInputGroups(newInputGroups);
-            }
-        }
-    }
-
     const transformData = (data) => {
         return {
             tasks: data.map(group => {
@@ -272,7 +258,7 @@ export default function AddTasks() {
     }
 
     const handleAddTask = async (transformedData) => {
-        console.log(transformedData)
+        console.log(transformedData, base64Image)
         try {
             // addTaskPost(transformedData);
             //const addPostTasks = await addTaskPost(transformedData);
@@ -299,6 +285,42 @@ export default function AddTasks() {
         }
 
     };
+
+    /**
+     * 
+     * All Handle change for image 
+     */
+
+    function handleChangeForImage(groupId, id, e) {
+        const file = e.target.files[0];
+        let imageValue = '';
+        if (file) {
+            console.log(1);
+            const reader = new FileReader();
+            reader.onloadend = async function () {
+                imageValue = reader.result.split(',')[1]; // Extract base64 part only
+                // await updateData(data);
+            };
+            // reader.readAsDataURL(file);
+            //
+            console.log(imageValue, '3');
+            const newInputGroups = [...inputGroups];
+            const groupIndex = newInputGroups.findIndex(
+                (group) => group[0].id === groupId
+            );
+            if (groupIndex !== -1) {
+                const inputIndex = newInputGroups[groupIndex].findIndex(
+                    (input) => input.id === id
+                );
+                if (inputIndex !== -1) {
+                    console.log(4);
+                    newInputGroups[groupIndex][inputIndex].value = imageValue;
+                    setInputGroups(newInputGroups);
+                }
+            }
+        }
+    }
+
 
     const getDateValue = (e) => {
         console.log(e.target.name, e.target.value)
@@ -482,16 +504,36 @@ export default function AddTasks() {
                                         {group.map((input) => (
                                             <Grid item xs={12} md={12} key={input.id}>
                                                 {input.type === 'file' ? (
-                                                    <Grid item xs={12} md={6}>
-                                                        <InputFileUpload
-                                                            groupId={group[0].id}
-                                                            inputId={input.id}
-                                                            handleFileInputChange={handleFileInputChange}
-                                                            sx={{ minWidth: '100%', width: '100%' }}
-                                                            fullWidth
-                                                            size="small"
-                                                        />
-                                                    </Grid>
+                                                    <Grid
+                                                    item
+                                                    xs={12}
+                                                    md={12}
+                                                    sx={{
+                                                      display: "flex",
+                                                      justifyContent: "center",
+                                                      alignItems: "center",
+                                                    }}
+                                                  >
+                                                    <Box sx={{ maxWidth: '200px'}}>
+                                                    <input type="file" onChange={(e) => handleChangeForImage(group[0].id, input.id, e)} />
+                                                    </Box>
+                                                    <Box sx={{ maxWidth: '200px', padding: '10px'}}>
+                                                        {base64Image && (
+                                                            <img src={input.value} alt="Uploaded" style={{ maxWidth: '100%' }} />
+                                                        )}
+                                                    </Box>
+                                                    
+                                                  </Grid>
+                                                    // <Grid item xs={12} md={6}>
+                                                    //     <InputFileUpload
+                                                    //         groupId={group[0].id}
+                                                    //         inputId={input.id}
+                                                    //         handleFileInputChange={handleFileInputChange}
+                                                    //         sx={{ minWidth: '100%', width: '100%' }}
+                                                    //         fullWidth
+                                                    //         size="small"
+                                                    //     />
+                                                    // </Grid>
                                                 ) : input.type === 'date' ? (
                                                     <Grid item xs={12} md={6}>
                             <label>Date</label>
