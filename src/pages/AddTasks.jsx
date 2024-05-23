@@ -552,20 +552,25 @@ export default function AddTasks() {
 
                                         <Grid item xs={6}>
                                             <InputLabel sx={{ mb: 1 }}>Upload Image</InputLabel>
-                                            <TextField
-                                                variant="outlined"
-                                                fullWidth
-                                                placeholder="Enter task title"
-                                                name="uploadImage"
-                                                size="small"
-                                                type="file"
-                                                // value={updateTaskFile}
-                                                onChange={handleUpdateFileChange}
-                                            />
-                                            <Box>
-                                                {updateTaskFile && (
-                                                    <img src={`data:image/jpeg;base64,${updateTaskFile}`} alt="" width={50} height={50} />
-                                                )}
+                                            <Box display={'flex'} gap={2}>
+                                                <TextField
+                                                    variant="outlined"
+                                                    fullWidth
+                                                    placeholder="Enter task title"
+                                                    name="uploadImage"
+                                                    size="small"
+                                                    type="file"
+                                                    // value={updateTaskFile || ''}
+                                                    onChange={handleUpdateFileChange}
+                                                />
+                                                <Box width={'40px'} height={'40px'} minWidth={'40px'} borderRadius={'6px'} backgroundColor='#ebebeb'>
+                                                    {updateTaskFile && (
+                                                        <img
+                                                            alt="" width={'100%'} height={'100%'} className="smallImageInTask"
+                                                            src={`data:image/jpeg;base64,${updateTaskFile}`}
+                                                        />
+                                                    )}
+                                                </Box>
                                             </Box>
                                         </Grid>
                                         <Grid item xs={6}>
