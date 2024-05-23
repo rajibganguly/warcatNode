@@ -316,7 +316,7 @@ export default function AddTasks() {
         });
     };
 
-    async function handleChangeForImage(groupId, id, e) {
+    const handleChangeForImage = async (groupId, id, e) => {
         const file = e.target.files[0];
         let imageValue = '';
         if (file) {
@@ -330,13 +330,14 @@ export default function AddTasks() {
                     (input) => input.id === id
                 );
                 if (inputIndex !== -1) {
-                    console.log(4);
                     newInputGroups[groupIndex][inputIndex].value = imageValue;
                     setInputGroups(newInputGroups);
                 }
             }
+            setBase64Image(imageValue);
         }
-    }
+    };
+
 
     const dateTimeStyle = {
         width: "100%",
@@ -535,57 +536,55 @@ export default function AddTasks() {
                                                     <Grid item xs={6} md={6}>
                                                         <InputLabel sx={{ mb: 1 }}>Upload Images</InputLabel>
                                                         <Box display={'flex'} gap={2}>
-                                                            <TextField
-                                                                variant="outlined"
-                                                                fullWidth
-                                                                placeholder="Enter task title"
-                                                                name="uploadImage"
-                                                                size="small"
-                                                                type="file"
-                                                                onChange={(e) => handleChangeForImage(group[0].id, input.id, e)}
-                                                            />
-                                                            <Box width={'40px'} height={'40px'} minWidth={'40px'} borderRadius={'6px'} backgroundColor='#ebebeb'>
-                                                                {base64Image && (
-                                                                    <img
-                                                                        alt="" width={'100%'} height={'100%'} className="smallImageInTask"
-                                                                        src={input.value}
-                                                                    />
-                                                                )}
-                                                            </Box>
-                                                        </Box>
+            <TextField
+                variant="outlined"
+                fullWidth
+                placeholder="Enter task title"
+                name="uploadImage"
+                size="small"
+                type="file"
+                onChange={(e) => handleChangeForImage(group[0].id, input.id, e)}
+            />
+            <Box width={'40px'} height={'40px'} minWidth={'40px'} borderRadius={'6px'} backgroundColor='#ebebeb'>
+                {base64Image && (
+                    <img
+                        alt=""
+                        width={'100%'}
+                        height={'100%'}
+                        className="smallImageInTask"
+                        src={input.value}
+                    />
+                )}
+            </Box>
+        </Box>
                                                     </Grid>
                                                 ) : input.type === 'date' ? (
                                                     <Grid item xs={6} md={6}>
                                                         <InputLabel sx={{ mb: 1 }}>Date</InputLabel>
-                                                        <input
-                                                            type="date"
-                                                            style={dateTimeStyle}
+                                                        <Controller
                                                             name="date"
-                                                            // onChange={getDateValue}
-                                                            onChange={(e) => handleInputChange(group[0].id, input.id, e)}
-                                                        />
-                                                        
-                                                        {/* <Controller
-                                                            name="task_date"
                                                             control={control}
                                                             render={({ field: { onChange, value } }) => (
                                                                 <TextField
                                                                     type="date"
-                                                                    name="task_date"
+                                                                    name="date"
                                                                     fullWidth
                                                                     size="small"
+                                                                    value={input.value} // Ensuring the initial value is used
                                                                     placeholder="dd-mm-yyyy"
-                                                                    onChange={(e) => handleInputChange(group[0].id, input.id, e)}
-
-                                                                    value={updateSelectedDate || ''}
-                                                                    id="task_date"
+                                                                    onChange={(e) => {
+                                                                        onChange(e);
+                                                                        handleInputChange(group[0].id, input.id, e);
+                                                                    }}
+                                                                    id="date"
                                                                     variant="outlined"
                                                                     InputLabelProps={{
                                                                         shrink: true
                                                                     }}
                                                                 />
                                                             )}
-                                                        /> */}
+                                                        />
+
                                                     </Grid>
                                                 ) : (
                                                     <Grid item xs={12} md={12}>
