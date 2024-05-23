@@ -30,6 +30,10 @@ import Sidebar from "../components/Sidebar";
 import { DepartmentContext } from './../context/DepartmentContext'
 import { TaskContext } from "../context/TaskContext";
 import { dateSelected } from "./common";
+import {
+    useForm,
+    Controller,
+} from 'react-hook-form';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -296,7 +300,13 @@ export default function AddTasks() {
         console.log(data)
 
     }
+    const {
+        control,
 
+        // handleSubmit
+    } = useForm({
+        // resolver: yupResolver(yupFieldRequirements)
+    });
     return (
         <ThemeProvider theme={defaultTheme}>
             <Box sx={{ display: "flex" }}>
@@ -555,25 +565,35 @@ export default function AddTasks() {
                                                 // value={updateTaskFile}
                                                 onChange={handleUpdateFileChange}
                                             />
+                                            <Box>
+                                                <img src={'http://localhost:3000/static/media/user1.230ccea789fb69e95389.png'} alt="" width={50} height={50} />
+                                            </Box>
                                         </Grid>
                                         <Grid item xs={6}>
                                             <InputLabel sx={{ mb: 1 }}>Target Date</InputLabel>
-                                            {/* <TextField
-                                                variant="outlined"
-                                                fullWidth
-                                                placeholder="dd-mm-yyyy"
-                                                name=""
-                                                type="date"
-                                                size="small"
-                                              //  value={updateSelectedDate}
-                                                onChange={setUpdateSelectedDate}
-                                            /> */}
-                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-      {/* <DemoContainer components={['DatePicker', 'DatePicker']}> */}
-        <DatePicker label="Uncontrolled picker" defaultValue={dayjs('2022-04-17')} />
+                                            <Controller
+                                                name="task_date"
+                                                control={control}
+                                                render={({ field: { onChange, value } }) => (
+                                                    <TextField
+                                                        type="date"
+                                                        name="task_date"
+                                                        fullWidth
+                                                        size="small"
+                                                        placeholder="dd-mm-yyyy"
+                                                        onChange={(e) => {
+                                                            setUpdateSelectedDate(e.target.value);
+                                                        }}
 
-      </DemoContainer>
-    </LocalizationProvider>
+                                                        value={updateSelectedDate || ''}
+                                                        id="task_date"
+                                                        variant="outlined"
+                                                        InputLabelProps={{
+                                                            shrink: true
+                                                        }}
+                                                    />
+                                                )}
+                                            />
                                         </Grid>
                                     </Grid>
                                 )}
