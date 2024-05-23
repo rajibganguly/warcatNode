@@ -24,6 +24,16 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
             aria-labelledby="modal-title"
             aria-describedby="modal-description"
         >
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <IconButton
+                    size="small"
+                    aria-label="close"
+                    onClick={onClose}
+                >
+                    <CloseOutlined />
+                </IconButton>
+            </div>
             {meetingData && meetingData.length > 0 && (
                 <>
                     <Box
@@ -45,14 +55,6 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                                 </Typography>
                             </Box>
                         </Box>
-
-                        <IconButton
-                            size="small"
-                            aria-label="close"
-                            onClick={onClose}
-                        >
-                            <CloseOutlined />
-                        </IconButton>
                     </Box>
 
                     <Divider />
@@ -72,7 +74,7 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                 {taskDataView?.map((task, index) => (
                     <Box key={index}>
                         <Typography fontSize="12px" color="text.secondary">
-                        {formatDateWithmonth(task?.timestamp)}
+                            {formatDateWithmonth(task?.timestamp)}
                         </Typography>
                         <Typography color="text.primary" variant="h6" mb={0.5}>
                             {task?.task_title}
@@ -82,7 +84,7 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                                 Target Date:
                             </Typography>
                             <Typography color="error">
-                            {formatDateWithmonth(task?.target_date)}
+                                {formatDateWithmonth(task?.target_date)}
                             </Typography>
                         </Box>
                         <MuiLink component="a" href={task?.task_image} download="attachment.png">

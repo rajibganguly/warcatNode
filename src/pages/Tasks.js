@@ -109,7 +109,7 @@ export default function Tasks() {
     { text: "Department", dataField: 'department[0].dep_name' },
     { text: "Tag", dataField: 'department[0].tag' },
     { text: "Target Date", dataField: 'target_date' },
-    { text: "Status", dataField: 'status' },
+    { text: "Status", dataField: 'statuss' },
     { text: "Sub Task", dataField: 'subtask' },
     { text: "Operations", dataField: 'taskoperation' },
     { text: "Varified Status", dataField: '' },
