@@ -135,11 +135,9 @@ export default function AddTasks() {
                 setTagName(tags);
                 setUpdateTaskTitle(filteredObject?.task_title);
                 setUpdateSelectedDate(dateSelected(filteredObject?.target_date))
-                // setupdateTaskFile(filteredObject?.task_image)
+                setupdateTaskFile(filteredObject?.task_image)
 
             }
-
-
 
         }
 
