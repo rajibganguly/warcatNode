@@ -207,12 +207,21 @@ export default function AddNewMeeting() {
   function getMeetingValue(e) {
     if (e.target.name === 'date') {
       setMeetingDate(e.target.value);
+    const handleChangeForImage = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+            setBase64Image(reader.result);
+        };
+        reader.readAsDataURL(file);
+        }
     }
     if (e.target.name === 'time') {
       setMeetingTime(e.target.value);
     }
   }
-
+  }
 
 
 
