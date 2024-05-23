@@ -178,8 +178,8 @@ export default function TaskUpload() {
     const data = {
       upload_report : base64Image, // base64
       description : reportDescription,
-      role_type : "secretary"
-      // role_type : currentRoleType
+      // role_type : "secretary"
+      role_type : currentRoleType
     };
     if (taskId) {
         console.log(data, 'dip')
