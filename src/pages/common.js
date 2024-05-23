@@ -5,6 +5,7 @@ import ApiConfig from '../config/ApiConfig';
 
 
 
+
 /**
  * @description Private function for fetch department data
  */
@@ -59,6 +60,24 @@ export const fetchTaskData = async () => {
   } catch (error) {
   }
 };
+
+export const getStatusText = (status) => {
+  switch (status) {
+    case 'totalassigned':
+      return 'TOTAL ASSIGNED';
+    case 'initiated':
+      return 'INITIATED';
+    case 'inprogress':
+      return 'IN PROGRESS';
+    case 'completed':
+      return 'COMPLETED';
+    default:
+      return 'Unknown';
+  }
+};
+
+
+
 
 
 // Function to format the date
@@ -135,4 +154,20 @@ export const handleAddTask = async (transformedData) => {
     console.error('Error occurred:', error);
   }
 
+};
+
+export const handleAddNote = async (body, taskId) => {
+  try {
+    const sendNote = await ApiConfig.requestData('post', '/tasks/' + taskId + '/add-note', null, body);
+    return sendNote;
+  } catch (error) {
+  }
+};
+
+export const handleCompletionReport = async (body, taskId) => {
+  try {
+    const completionReport = await ApiConfig.requestData('post', '/tasks/' + taskId + '/upload-completion-details', null, body);
+    return completionReport;
+  } catch (error) {
+  }
 };

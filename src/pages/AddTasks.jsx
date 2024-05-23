@@ -316,7 +316,7 @@ export default function AddTasks() {
         });
     };
 
-    async function handleChangeForImage(groupId, id, e) {
+    const handleChangeForImage = async (groupId, id, e) => {
         const file = e.target.files[0];
         let imageValue = '';
         if (file) {
@@ -330,13 +330,14 @@ export default function AddTasks() {
                     (input) => input.id === id
                 );
                 if (inputIndex !== -1) {
-                    console.log(4);
                     newInputGroups[groupIndex][inputIndex].value = imageValue;
                     setInputGroups(newInputGroups);
                 }
             }
+            setBase64Image(imageValue);
         }
-    }
+    };
+
 
     const dateTimeStyle = {
         width: "100%",
@@ -443,16 +444,13 @@ export default function AddTasks() {
 
                                 <Grid container spacing={2} sx={{ mb: 4, borderBottom: '1px solid #eff2f7', pb: 2 }}>
                                     <Grid item xs={12} md={6}>
-                                        <InputLabel id="demo-multiple-chip-label1">Department / Government Organisation</InputLabel>
+                                        <InputLabel>Department / Government Organisation</InputLabel>
                                         <Select
-                                            labelId="demo-multiple-chip-label2"
-                                            id="demo-multiple-chip"
                                             fullWidth
                                             value={personName}
                                             onChange={handleChange}
-
                                             size="small"
-                                            input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                                            input={<OutlinedInput />}
                                             renderValue={(selected) => (
                                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                                     {selected.map((value) => (
@@ -530,86 +528,79 @@ export default function AddTasks() {
                                     )}
                                 </Grid>
 
-
                                 {!taskId && inputGroups.map((group, index) => (
                                     <Grid container key={group[0].id} spacing={2} sx={{ marginBottom: '20px' }}>
                                         {group.map((input) => (
-                                            <Grid item xs={12} md={12} key={input.id}>
+                                            <React.Fragment key={input.id}>
                                                 {input.type === 'file' ? (
-                                                    <Grid
-                                                        item
-                                                        xs={12}
-                                                        md={12}
-                                                        sx={{
-                                                            display: "flex",
-                                                            justifyContent: "center",
-                                                            alignItems: "center",
-                                                        }}
-                                                    >
-                                                        <Box sx={{ maxWidth: '200px' }}>
-                                                            <input type="file" onChange={(e) => handleChangeForImage(group[0].id, input.id, e)} />
-                                                        </Box>
-                                                        <Box sx={{ maxWidth: '200px', padding: '10px' }}>
-                                                            {base64Image && (
-                                                                <img src={input.value} alt="Uploaded" style={{ maxWidth: '100%' }} />
+                                                    <Grid item xs={6} md={6}>
+                                                        <InputLabel sx={{ mb: 1 }}>Upload Images</InputLabel>
+                                                        <Box display={'flex'} gap={2}>
+            <TextField
+                variant="outlined"
+                fullWidth
+                placeholder="Enter task title"
+                name="uploadImage"
+                size="small"
+                type="file"
+                onChange={(e) => handleChangeForImage(group[0].id, input.id, e)}
+            />
+            <Box width={'40px'} height={'40px'} minWidth={'40px'} borderRadius={'6px'} backgroundColor='#ebebeb'>
+                {base64Image && (
+                    <img
+                        alt=""
+                        width={'100%'}
+                        height={'100%'}
+                        className="smallImageInTask"
+                        src={input.value}
+                    />
+                )}
+            </Box>
+        </Box>
+                                                    </Grid>
+                                                ) : input.type === 'date' ? (
+                                                    <Grid item xs={6} md={6}>
+                                                        <InputLabel sx={{ mb: 1 }}>Date</InputLabel>
+                                                        <Controller
+                                                            name="date"
+                                                            control={control}
+                                                            render={({ field: { onChange, value } }) => (
+                                                                <TextField
+                                                                    type="date"
+                                                                    name="date"
+                                                                    fullWidth
+                                                                    size="small"
+                                                                    value={input.value} // Ensuring the initial value is used
+                                                                    placeholder="dd-mm-yyyy"
+                                                                    onChange={(e) => {
+                                                                        onChange(e);
+                                                                        handleInputChange(group[0].id, input.id, e);
+                                                                    }}
+                                                                    id="date"
+                                                                    variant="outlined"
+                                                                    InputLabelProps={{
+                                                                        shrink: true
+                                                                    }}
+                                                                />
                                                             )}
-                                                        </Box>
+                                                        />
 
                                                     </Grid>
-                                                    // <Grid item xs={12} md={6}>
-                                                    //     <InputFileUpload
-                                                    //         groupId={group[0].id}
-                                                    //         inputId={input.id}
-                                                    //         handleFileInputChange={handleFileInputChange}
-                                                    //         sx={{ minWidth: '100%', width: '100%' }}
-                                                    //         fullWidth
-                                                    //         size="small"
-                                                    //     />
-                                                    // </Grid>
-                                                ) : input.type === 'date' ? (
-                                                    <Grid item xs={12} md={6}>
-                                                        <label>Date</label>
-                                                        <input
-                                                            type="date"
-                                                            style={dateTimeStyle}
-                                                            name="date"
-                                                            // onChange={getDateValue}
-                                                            onChange={(e) => handleInputChange(group[0].id, input.id, e)}
-                                                        />
-                                                    </Grid>
-                                                    // <Grid item xs={12} md={6}>
-                                                    //     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                    //         <DatePicker
-                                                    //             label="Select Date"
-                                                    //             selectedDate={input.value}
-                                                    //             handleDateChange={(date) => handleInputChange(group[0].id, input.id, date)}
-                                                    //             renderInput={(params) => (
-                                                    //                 <TextField
-                                                    //                     {...params}
-                                                    //                     fullWidth
-                                                    //                     size="small"
-                                                    //                     sx={{ minWidth: '100%', width: '100%' }}
-                                                    //                 />
-                                                    //             )}
-                                                    //         />
-                                                    //     </LocalizationProvider>
-                                                    // </Grid>
                                                 ) : (
                                                     <Grid item xs={12} md={12}>
+                                                        <InputLabel sx={{ mb: 1 }}>Task Title</InputLabel>
                                                         <TextField
-                                                            id="outlined-basic"
-                                                            label="Enter Task Title"
                                                             variant="outlined"
+                                                            placeholder="Enter task title"
                                                             type={input.type}
                                                             value={input.value}
-                                                            //value={}
                                                             onChange={(e) => handleInputChange(group[0].id, input.id, e)}
                                                             fullWidth
                                                             size="small"
                                                         />
                                                     </Grid>
                                                 )}
-                                            </Grid>
+                                            </React.Fragment>
                                         ))}
                                         {index >= 1 && (
                                             <Grid item xs={12}>
@@ -629,6 +620,7 @@ export default function AddTasks() {
                                         )}
                                     </Grid>
                                 ))}
+
                                 {taskId && (
                                     <Grid container spacing={2}>
                                         <Grid item xs={12}>

@@ -12,12 +12,10 @@ import {
 } from "@mui/material";
 import { CloseOutlined } from '@mui/icons-material';
 
-export default function SubTaskForm({ open, onClose, modalContent }) {
+export default function SubTaskDialog({ open, onClose, modalContent }) {
 
     
     return (
-       
-        
             <Dialog
                 fullWidth
                 open={open}
