@@ -146,11 +146,18 @@ export default function AddTasks() {
     }, [location.search, allTaskListsData, allTaskListsData]);
 
 
-
     const handleUpdateFileChange = (event) => {
-        const file = event.target.files[0];
-        setupdateTaskFile(file);
+        let file = event.target.files[0];
+
+        const reader = new FileReader();
+        reader.onloadend = async function () {
+            file = reader.result.split(',')[1];
+            setupdateTaskFile(file);
+        };
+        reader.readAsDataURL(file);
     };
+
+
     const handleChange = (event) => {
         const {
             target: { value },
@@ -278,17 +285,8 @@ export default function AddTasks() {
                 task_image: null
             };
 
-            // If there's a file to upload, convert it to base64
-            if (updateTaskFile) {
-                const reader = new FileReader();
-                reader.onloadend = async function () {
-                    data.upload_image = reader.result.split(',')[1]; // Extract base64 part only
-                    await updateData(data);
-                };
-                reader.readAsDataURL(updateTaskFile);
-            } else {
-                await updateData(data);
-            }
+
+            await updateData(data);
 
 
 
@@ -566,7 +564,9 @@ export default function AddTasks() {
                                                 onChange={handleUpdateFileChange}
                                             />
                                             <Box>
-                                                <img src={'http://localhost:3000/static/media/user1.230ccea789fb69e95389.png'} alt="" width={50} height={50} />
+                                                {updateTaskFile && (
+                                                    <img src={`data:image/jpeg;base64,${updateTaskFile}`} alt="" width={50} height={50} />
+                                                )}
                                             </Box>
                                         </Grid>
                                         <Grid item xs={6}>
