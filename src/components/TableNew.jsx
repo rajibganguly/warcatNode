@@ -70,11 +70,11 @@ function TableNew({
       return (
         <div style={{ display: "flex" }}>
           <Button onClick={() => handleEditOperationTask(row)}
-           style={{ backgroundColor: '#0097a7', color: '#ffffff', marginRight: '2px' }}>
+            style={{ backgroundColor: '#0097a7', color: '#ffffff', marginRight: '2px' }}>
             <EditOutlined />
           </Button>
           <Button onClick={() => handleViewParentOperationTask(row)}
-           style={{ backgroundColor: '#fb4', color: 'black' }}>
+            style={{ backgroundColor: '#fb4', color: 'black' }}>
             <EyeOutlined />
           </Button>
         </div>
@@ -97,7 +97,7 @@ function TableNew({
       );
     }
 
-  
+
 
     if (column.dataField === "action") {
       return (
