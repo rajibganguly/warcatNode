@@ -14,6 +14,7 @@ import { CloseOutlined } from '@mui/icons-material';
 import { formatDate, formatDateWithmonth } from "../pages/common";
 
 export default function TaskViewDialog({ open, onClose, meetingData, taskDataView }) {
+    console.log(taskDataView);
     return (
 
         <Dialog
@@ -24,27 +25,7 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
             aria-describedby="modal-description"
         >
 
-            <Box
-                p={2}
-                display="flex"
-                alignItems="center"
-                justifyContent="space-between"
-            >
-                <Box>
-                    <Typography variant="h6" color="text.primary">
-                        {meetingData?.meetingTopic}
-                    </Typography>
-                    <Box display="flex" gap={2}>
-                        <Typography color="text.secondary">
-                            {formatDate(meetingData?.selectDate)}
-                        </Typography>
-                        <Typography color="text.secondary">
-                            {meetingData?.selectTime}
-                        </Typography>
-                    </Box>
-                </Box>
-
-
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <IconButton
                     size="small"
                     aria-label="close"
@@ -52,9 +33,34 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                 >
                     <CloseOutlined />
                 </IconButton>
-            </Box>
+            </div>
+            {meetingData && meetingData.length > 0 && (
+                <>
+                    <Box
+                        p={2}
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="space-between"
+                    >
+                        <Box>
+                            <Typography variant="h6" color="text.primary">
+                                {meetingData?.meetingTopic}
+                            </Typography>
+                            <Box display="flex" gap={2}>
+                                <Typography color="text.secondary">
+                                    {formatDate(meetingData?.selectDate)}
+                                </Typography>
+                                <Typography color="text.secondary">
+                                    {meetingData?.selectTime}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    </Box>
 
-            <Divider />
+                    <Divider />
+                </>
+            )}
+
 
             <DialogContent>
                 <Box mb={2} display="flex" gap={4} alignItems="center">
