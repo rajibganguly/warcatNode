@@ -405,6 +405,7 @@ export default function Tasks() {
                           data={data}
                           column={column}
                           icons={icons}
+                          tableHeading={'Task list'}
                           handleAddSubTaskClick={handleAddSubTaskClick}
                           handleViewSubTask={handleViewSubTask}
                           handleViewOperationTask={handleViewOperationTask}

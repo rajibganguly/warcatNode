@@ -15,6 +15,7 @@ import { saveAs } from 'file-saver';
 function TableNew({
   column,
   data,
+  tableHeading,
   handleSeeClick,
   handleEditClick,
   handleTasksAddInMeeting,
@@ -155,44 +156,115 @@ function TableNew({
     }
   };
 
+  let filename = `WARCAT - War-room Assistant for Report Compilation & Task tracking | ${tableHeading}`;
   /** 23/05/24  */
   const generatePDF = () => {
     const doc = new jsPDF();
     const tableColumn = column.map(col => col.text);
     const tableRows = [];
-
+  
     data.forEach(row => {
       const rowData = column.map(col => row[col.dataField]);
       tableRows.push(rowData);
     });
-
-    // Add title to PDF
-    doc.text('My Data Table', 14, 15);
-
-    // Add the table to PDF
+  
+    const title = filename;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    let textWidth = doc.getTextWidth(title);
+    let textX = (pageWidth - textWidth) / 2;
+    let fontSize = 16; // Starting font size
+  
+    // Adjust font size if the title is too wide
+    while (textWidth > pageWidth - 20 && fontSize > 8) {
+      fontSize -= 1;
+      doc.setFontSize(fontSize);
+      textWidth = doc.getTextWidth(title);
+      textX = (pageWidth - textWidth) / 2;
+    }
+  
+    // Set heading color
+    doc.setTextColor(0, 0, 0); // Table title color
+    doc.text(title, textX, 15); // Table title
+  
+    // Add the table to PDF with body text color
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
       startY: 20,
+      styles: {
+        textColor: [0, 0, 0], // For body text
+      },
+      headStyles: {
+        textColor: [255, 255, 255], // For header text
+        fillColor: [44, 64, 83], // For header background
+      },
     });
-
-    doc.save('table.pdf');
+  
+    doc.save(`${filename}.pdf`);
   };
-
+  
   const generateExcel = () => {
-    console.log('hello');
-    const worksheet = XLSX.utils.json_to_sheet(data.map(row =>
+    // Create the filename row
+    const filenameRow = [filename];
+  
+    // Create the header row
+    const headers = column.map(col => col.text);
+    const rows = data.map(row =>
       column.reduce((acc, col) => {
         acc[col.text] = row[col.dataField];
         return acc;
       }, {})
-    ));
+    );
+  
+    // Create worksheet with filename, headers, and data
+    const worksheetData = [filenameRow, headers, ...rows.map(row => headers.map(header => row[header]))];
+    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+  
+    // Set column width for all columns
+    const columnWidth = 20; // You can adjust the width as needed
+    const wscols = headers.map(() => ({ width: columnWidth }));
+    worksheet['!cols'] = wscols;
+  
+    // Apply styles to the header row
+    const headerStyle = {
+      font: { bold: true, color: { rgb: "FFFFFF" } }, // White font color
+      fill: { fgColor: { rgb: "0000FF" } }, // Blue background color
+      alignment: { horizontal: "center" } // Center alignment
+    };
+  
+    // Set the header row styles
+    headers.forEach((header, index) => {
+      const cellAddress = XLSX.utils.encode_cell({ c: index, r: 1 }); // Offset by 1 row due to the filename row
+      if (!worksheet[cellAddress]) return;
+      worksheet[cellAddress].s = headerStyle;
+    });
+  
+    // Merge cells A1 to J1 for the filename row
+    const filenameMerge = { s: { r: 0, c: 0 }, e: { r: 0, c: headers.length - 1 } };
+    worksheet['!merges'] = [filenameMerge];
+  
+    // Set center alignment for the filename row
+    const filenameStyle = {
+      alignment: { horizontal: "center" }
+    };
+    
+    for (let c = 0; c < headers.length; c++) {
+      const cellAddress = XLSX.utils.encode_cell({ c: c, r: 0 });
+      if (worksheet[cellAddress]) {
+        worksheet[cellAddress].s = filenameStyle;
+      }
+    }
+  
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const dataBlob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-    saveAs(dataBlob, 'table.xlsx');
+    saveAs(dataBlob, `${filename}.xlsx`);
   };
+  
+  
+  
+  
 
   return (
     <>
