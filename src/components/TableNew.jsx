@@ -7,6 +7,10 @@ import { Box } from "@mui/system";
 import SearchIcon from "@mui/icons-material/Search";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 function TableNew({
   column,
@@ -151,6 +155,45 @@ function TableNew({
     }
   };
 
+  /** 23/05/24  */
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    const tableColumn = column.map(col => col.text);
+    const tableRows = [];
+
+    data.forEach(row => {
+      const rowData = column.map(col => row[col.dataField]);
+      tableRows.push(rowData);
+    });
+
+    // Add title to PDF
+    doc.text('My Data Table', 14, 15);
+
+    // Add the table to PDF
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+    });
+
+    doc.save('table.pdf');
+  };
+
+  const generateExcel = () => {
+    console.log('hello');
+    const worksheet = XLSX.utils.json_to_sheet(data.map(row =>
+      column.reduce((acc, col) => {
+        acc[col.text] = row[col.dataField];
+        return acc;
+      }, {})
+    ));
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const dataBlob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(dataBlob, 'table.xlsx');
+  };
+
   return (
     <>
       <Box
@@ -165,43 +208,46 @@ function TableNew({
           <Button
             sx={{
               backgroundColor: "#6c757d",
-              borderColor: "1px solid #6c757d",
+              borderRight: "1px solid #6c757d !important",
+              
               "&:hover": {
                 backgroundColor: "#5c636a",
                 borderColor: "#5c636a",
               },
             }}
+            onClick={()=>{}}
           >
             Copy
           </Button>
           <Button
             sx={{
               backgroundColor: "#6c757d",
-              borderColor: "1px solid #6c757d",
+              borderRight: "1px solid #6c757d !important",
               "&:hover": {
                 backgroundColor: "#5c636a",
                 borderColor: "#5c636a",
               },
             }}
+            onClick={generateExcel}
           >
             Excel
           </Button>
           <Button
             sx={{
               backgroundColor: "#6c757d",
-              borderColor: "#6c757d",
+              borderRight: "1px solid #6c757d !important",
               "&:hover": {
                 backgroundColor: "#5c636a",
                 borderColor: "#5c636a",
               },
             }}
+            onClick={generatePDF}
           >
             PDF
           </Button>
           <Button
             sx={{
               backgroundColor: "#6c757d",
-              borderColor: "#6c757d",
               "&:hover": {
                 backgroundColor: "#5c636a",
                 borderColor: "#5c636a",
