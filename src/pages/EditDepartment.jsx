@@ -114,12 +114,10 @@ export default function EditDepartment() {
         }
       }
     }
-    return true; // All fields are not empty
+    return true; 
   };
 
-  /**
-   * Collect form values
-   */
+  
   const handleChange = (event) => {
     const { name, value } = event.target;
 
