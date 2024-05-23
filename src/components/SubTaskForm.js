@@ -84,7 +84,7 @@ const SubTaskForm = ({ onSubmit, onClose }) => {
             <Box mb={2}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
 
-                    
+
                     <Grid item xs={12}>
 
                         <DatePicker
@@ -92,9 +92,9 @@ const SubTaskForm = ({ onSubmit, onClose }) => {
                             onChange={handleDateChange}
                             renderInput={(params) => <TextField {...params} />}
                             fullWidth
-                            sx={{width: 100 + '%'}}
-                            />
-                            
+                            sx={{ width: 100 + '%' }}
+                        />
+
 
                     </Grid>
 
