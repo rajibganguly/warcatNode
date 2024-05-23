@@ -33,6 +33,7 @@ import {mapKeysToValues} from '../pages/common.js'
 import { TaskChartData } from '../constant/taskChartData';
 import { useNavigate } from "react-router-dom";
 import SubTaskForm from "../components/SubTaskForm";
+import TaskViewDialog from "../dialog/TaskViewDialog";
 
 const drawerWidth = 240;
 
@@ -89,8 +90,12 @@ const progressData = TaskChartData;
 export default function Tasks() {
   const [open, setOpen] = React.useState(true);
   const [modalVisible, setModalVisible] = useState(false);
+  const [parentModalVisible, setParentModalVisible] = useState(false);
   const [modalVisible1, setModalVisible1] = useState(false);
   const [modalContent, setModalContent] = useState(null);
+  const [parentTaskView, setParentTaskView] = useState([]);
+  const [subTaskView, setSubTaskView] = useState([]);
+  const [subModalVisible, setSubModalVisible] = useState(false);
   const [data, setData] = useState([]);
   const localSt = JSON.parse(localStorage.getItem("user"));
   const currentRoleType = localSt.role_type;
@@ -104,7 +109,7 @@ export default function Tasks() {
     { text: "Department", dataField: 'department[0].dep_name' },
     { text: "Tag", dataField: 'department[0].tag' },
     { text: "Target Date", dataField: 'target_date' },
-    { text: "Status", dataField: 'status' },
+    { text: "Status", dataField: 'statuss' },
     { text: "Sub Task", dataField: 'subtask' },
     { text: "Operations", dataField: 'taskoperation' },
     { text: "Varified Status", dataField: 'verifiedstatus' },
@@ -189,9 +194,10 @@ export default function Tasks() {
 
 
 
-  const handleViewOperationTask = (row) => {
-    setModalContent(row);
-    setModalVisible(true);
+  const handleViewParentOperationTask = (row) => {
+    console.log([row], '6666666666');
+    setParentTaskView([row]);
+    setParentModalVisible(true);
   };
 
   const handleEditOperationTask = (row) => {
@@ -206,7 +212,8 @@ export default function Tasks() {
 
   const closeModal = () => {
     setModalVisible(false);
-    setModalContent(null);
+    setParentModalVisible(false);
+    setSubModalVisible(false);
   };
 
 
@@ -225,13 +232,10 @@ export default function Tasks() {
 
 
   const handleViewSubTask = (record) => {
-    if (typeof record === 'object' && record !== null) {
-        setModalContent(record); 
-        setModalVisible(true);   
-    } else {
-        console.error("Invalid modal content: ", record);
-    }
-};
+    console.log(record?.sub_task)
+    setSubTaskView(record?.sub_task);
+    setSubModalVisible(true);
+  };
 
 
   const handleAddSubTaskClick = (record) => {
@@ -407,16 +411,30 @@ export default function Tasks() {
                           icons={icons}
                           handleAddSubTaskClick={handleAddSubTaskClick}
                           handleViewSubTask={handleViewSubTask}
-                          handleViewOperationTask={handleViewOperationTask}
+                          handleViewParentOperationTask={handleViewParentOperationTask}
                           handleEditOperationTask={handleEditOperationTask}
                           handleAddNoteClick={handleAddNoteClick}
                           handleUploadClick={handleUploadClick}
                         />
-                        <SubTaskViewDialog
-                          open={modalVisible}
-                          onClose={closeModal}
-                          modalContent={modalContent}
-                        />
+                        {parentTaskView && parentModalVisible && (
+                          <TaskViewDialog
+                            open={parentModalVisible}
+                            onClose={closeModal}
+                            taskDataView={parentTaskView}
+                          // meetingData={meetingData}
+                          />
+                        )}
+
+                        {subTaskView && subModalVisible && (
+                          <TaskViewDialog
+                            open={subModalVisible}
+                            onClose={closeModal}
+                            taskDataView={subTaskView}
+                          // meetingData={meetingData}
+                          />
+                        )}
+
+
                       </CardContent>
                     </Card>
                   </Grid>
