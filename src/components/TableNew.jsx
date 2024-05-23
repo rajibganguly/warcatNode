@@ -54,7 +54,7 @@ function TableNew({
     if (column.dataField === "subtask") {
       return (
         <div style={{ display: "flex" }}>
-          <Button>
+          <Button
             style={{ backgroundColor: '#fb4', color: 'black', marginRight: '2px' }}>
             <EyeOutlined />
           </Button>
