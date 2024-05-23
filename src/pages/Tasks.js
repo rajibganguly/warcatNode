@@ -98,6 +98,8 @@ export default function Tasks() {
   const [chartData, setChartData] = useState(progressData);
   const navigate = useNavigate();
 
+  const includeActionColumn = currentRoleType === 'admin' || currentRoleType === 'headOffice' ? true : false;
+
   const column = [
     { text: 'Assigned Date', dataField: 'timestamp' },
     { text: "Assigned Title", dataField: 'task_title' },
@@ -107,9 +109,13 @@ export default function Tasks() {
     { text: "Status", dataField: 'status' },
     { text: "Sub Task", dataField: 'subtask' },
     { text: "Operations", dataField: 'taskoperation' },
-    { text: "Varified Status", dataField: '' },
-    { text: "Action", dataField: 'action' },
+    { text: "Varified Status", dataField: '' }
   ];
+
+  if (includeActionColumn) {
+    column.push({ text: "Action", dataField: 'action' });
+  }
+
   const icons = {
     see: <EyeOutlined />,
     edit: <EditOutlined />,
@@ -212,13 +218,13 @@ export default function Tasks() {
 
   const handleAddNoteClick = (record) => {
     console.info("Edit clicked for:", record);
-    navigate('/task-note')
+    navigate('/task-note?taskId='+record?.task_id);
     // Implement logic for editing
   };
 
   const handleUploadClick = (record) => {
     console.info("Edit clicked for:", record);
-    navigate('/task-upload')
+    navigate('/task-upload?taskId='+record?.task_id)
     // Implement logic for editing
   };
 

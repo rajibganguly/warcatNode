@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -6,7 +7,7 @@ import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import InputFileUpload from "../components/InputFileUpload";
 
 import { Button } from "@mui/material";
@@ -21,6 +22,8 @@ import Sidebar from "../components/Sidebar";
 
 import { Input as BaseInput } from "@mui/base/Input";
 import { height, styled } from "@mui/system";
+import { handleCompletionReport } from "./common";
+import { toast } from "react-toastify";
 
 const Input = React.forwardRef(function CustomInput(props, ref) {
   return (
@@ -125,8 +128,10 @@ const defaultTheme = createTheme();
 
 export default function TaskUpload() {
   const [open, setOpen] = React.useState(true);
+  const [reportDescription, setReportDescription] = useState('');
   const [personName, setPersonName] = React.useState([]);
   const theme = useTheme();
+  const [base64Image, setBase64Image] = useState("");
   const handleChange = (event) => {
     const {
       target: { value },
@@ -142,6 +147,49 @@ export default function TaskUpload() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
+  const localSt = JSON.parse(localStorage.getItem("user"));
+  const currentRoleType = localSt.role_type;
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const taskId = queryParams.get('taskId');
+
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+    });
+  };
+
+  async function handleChangeForImage(e) {
+    const file = e.target.files[0];
+    console.log(file, 'file');
+    let imageValue = '';
+    if (file) {
+        imageValue = await convertToBase64(file);
+        setBase64Image(imageValue);
+    }
+  }
+
+  async function handleSubmit() {
+    const data = {
+      upload_report : base64Image, // base64
+      description : reportDescription,
+      role_type : "secretary"
+      // role_type : currentRoleType
+    };
+    if (taskId) {
+        console.log(data, 'dip')
+        const saveData = await handleCompletionReport(data, taskId);
+        if (saveData) {
+            toast.success("Report submitted Successfully", {
+                autoClose: 2000,
+            });
+            Navigate("/tasks");
+        }
+    }
+}
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -208,20 +256,22 @@ export default function TaskUpload() {
                     <InputLabel sx={{ marginBottom: "1%" }}>
                       Upload Report
                     </InputLabel>
-                    <InputFileUpload fullWidth title="Upload Report" />
+                    <input type="file" fullWidth title="Upload Report"
+                    onChange={(e) => handleChangeForImage(e)} />
                     <Input
                       sx={{ pt: 2 }}
                       fullWidth
                       aria-label="Demo input"
                       multiline
                       placeholder="Description"
+                      onChange={(e)=>setReportDescription(e.target.value)}
                     />
 
                     <Button
                       variant="contained"
                       color="success"
                       sx={{ color: "white", marginTop: "2%" }}
-                      onClick={null}
+                      onClick={handleSubmit}
                     >
                       Submit
                     </Button>

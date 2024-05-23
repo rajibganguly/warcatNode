@@ -8,7 +8,7 @@ import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import InputFileUpload from "../components/InputFileUpload";
 
 import MuiDrawer from "@mui/material/Drawer";
@@ -24,6 +24,8 @@ import Sidebar from "../components/Sidebar";
 
 import { Input as BaseInput } from '@mui/base/Input';
 import { styled } from '@mui/system';
+import { toast } from "react-toastify";
+import { handleAddNote } from "./common";
 
 
 
@@ -139,6 +141,7 @@ export default function TaskNote() {
     const [open, setOpen] = React.useState(true);
     const [personName, setPersonName] = React.useState([]);
     const theme = useTheme();
+    const [taskNote, setTaskNote] = useState('');
     const handleChange = (event) => {
         const {
             target: { value },
@@ -148,6 +151,8 @@ export default function TaskNote() {
             typeof value === 'string' ? value.split(',') : value,
         );
     }
+    const localSt = JSON.parse(localStorage.getItem("user"));
+    const currentRoleType = localSt.role_type;
     const handleOutput = (open) => {
         toggleDrawer();
     };
@@ -155,14 +160,28 @@ export default function TaskNote() {
         setOpen(!open);
     };
 
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const taskId = queryParams.get('taskId');
 
-
-
-
-
-
-
-
+    async function handleSubmit() {
+        const data = {
+            note_description: taskNote,
+            note_written_by: 'User',
+            role_type: 'secretary'
+            // role_type: currentRoleType
+        };
+        if (taskId) {
+            console.log(data, 'dip')
+            const saveData = await handleAddNote(data, taskId);
+            if (saveData) {
+                toast.success("Note added Successfully", {
+                    autoClose: 2000,
+                });
+                Navigate("/tasks");
+            }
+        }
+    }
 
     return (
         <ThemeProvider theme={defaultTheme}>
@@ -230,12 +249,13 @@ export default function TaskNote() {
                                     
                                     <Grid item xs={12} sx={{borderBottom: '1px solid #eff2f7', pb: 2 }}>
                                     <InputLabel id="demo-multiple-chip-label1"  sx={{  marginBottom: '1%' }}>Add Note</InputLabel>
-                                    <Input fullWidth rows={4} aria-label="Demo input"  multiline placeholder="Write Note…" />
+                                    <Input fullWidth rows={4} aria-label="Demo input"  multiline placeholder="Write Note…"
+                                    onChange={(e)=>setTaskNote(e.target.value)} />
                                     <Button
                                         variant="contained"
                                         color="success"
                                         sx={{ color: 'white', marginTop: '2%' }}
-                                        onClick={null}
+                                        onClick={handleSubmit}
                                     >
                                         Add Now
                                     </Button>
