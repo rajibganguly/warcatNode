@@ -212,7 +212,8 @@ export default function Tasks() {
 
   const closeModal = () => {
     setModalVisible(false);
-    setParentModalVisible(true);
+    setParentModalVisible(false);
+    setSubModalVisible(false);
   };
 
 
