@@ -34,6 +34,7 @@ import { TaskChartData } from '../constant/taskChartData';
 import { useNavigate } from "react-router-dom";
 import SubTaskForm from "../components/SubTaskForm";
 import TaskViewDialog from "../dialog/TaskViewDialog";
+import SubTaskDialog from "../dialog/SubTaskViewDialog";
 
 const drawerWidth = 240;
 
@@ -434,6 +435,14 @@ export default function Tasks() {
                           />
                         )}
 
+                        {modalVisible && (
+                          <SubTaskDialog
+                            open={modalVisible}
+                            onClose={closeModal}
+                            modalContent={modalContent}
+                          // meetingData={meetingData}
+                          />
+                        )}
 
                       </CardContent>
                     </Card>
