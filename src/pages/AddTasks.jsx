@@ -276,10 +276,11 @@ export default function AddTasks() {
     };
 
     async function handleSubmit() {
-        console.log(inputGroups);
+        // console.log(inputGroups);
         const taskData = transformData(inputGroups);
-        console.log(taskData);
+        // console.log(taskData);
         const transformedData = convertToDepartmentFormat(deptId, personName, tagName, taskData);
+        console.log(transformedData, 'final data');
         handleAddTask(transformedData);
         if (taskId) {
             const data = {
@@ -290,7 +291,7 @@ export default function AddTasks() {
                 task_image: updateTaskFile
             };
             console.log(data)
-             await updateData(data);
+            await updateData(data);
         }
     }
 
@@ -304,21 +305,18 @@ export default function AddTasks() {
             //console.log(addPostTasks)
 
             console.log(transformedData, 'transformed data');
-            // const formDataSend = new FormData();
-            // formDataSend.append('departmentData', JSON.stringify(transformedData));
-            // console.log(formDataSend, 'formdataSend');
-            // formDataSend.append('departmentIds', departmentIds);
-            // formDataSend.append('tag', tag);
+            const formDataSend = new FormData();
+            formDataSend.append('departmentData', JSON.stringify(transformedData));
 
-            // const token = localStorage.getItem('token');
-            // const response = await axios.post('https://warcat2024-qy2v.onrender.com/api/add-task', transformedData, {
-            //     headers: {
-            //         'Content-Type': 'multipart/form-data',
-            //         Authorization: `Bearer ${token}`,
-            //     },
-            // });
+            const token = localStorage.getItem('token');
+            const response = await axios.post('https://warcat2024-qy2v.onrender.com/api/add-task', transformedData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${token}`,
+                },
+            });
 
-            //console.log(response.data);
+            console.log(response.data);
         } catch (error) {
             console.error('Error occurred:', error);
         }
@@ -329,20 +327,20 @@ export default function AddTasks() {
      * 
      * All Handle change for image 
      */
+    const convertToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+        });
+    };
 
-    function handleChangeForImage(groupId, id, e) {
+    async function handleChangeForImage(groupId, id, e) {
         const file = e.target.files[0];
         let imageValue = '';
         if (file) {
-            console.log(1);
-            const reader = new FileReader();
-            reader.onloadend = async function () {
-                imageValue = reader.result.split(',')[1]; // Extract base64 part only
-                // await updateData(data);
-            };
-            // reader.readAsDataURL(file);
-            //
-            console.log(imageValue, '3');
+            imageValue = await convertToBase64(file);
             const newInputGroups = [...inputGroups];
             const groupIndex = newInputGroups.findIndex(
                 (group) => group[0].id === groupId
@@ -358,11 +356,6 @@ export default function AddTasks() {
                 }
             }
         }
-    }
-
-
-    const getDateValue = (e) => {
-        console.log(e.target.name, e.target.value)
     }
 
     const dateTimeStyle = {
@@ -538,7 +531,7 @@ export default function AddTasks() {
                                             />
                                         </Grid>
                                     )}
-                                    {meetingTopic && (
+                                    {meetingTopic && ( 
                                         <Grid item xs={12} md={6}>
                                             <label>Meeting Topic</label>
                                             <TextField
@@ -549,6 +542,7 @@ export default function AddTasks() {
                                                 name="dep_name"
                                                 size="small"
                                                 value={meetingTopic}
+                                                onChange={(e)=>setMeetingTopic(e.target.value)}
                                                 disabled
                                             />
                                         </Grid>
