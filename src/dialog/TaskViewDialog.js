@@ -14,6 +14,7 @@ import { CloseOutlined } from '@mui/icons-material';
 import { formatDate, formatDateWithmonth } from "../pages/common";
 
 export default function TaskViewDialog({ open, onClose, meetingData, taskDataView }) {
+    console.log(taskDataView);
     return (
 
         <Dialog
@@ -23,38 +24,41 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
             aria-labelledby="modal-title"
             aria-describedby="modal-description"
         >
+            {meetingData && meetingData.length > 0 && (
+                <>
+                    <Box
+                        p={2}
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="space-between"
+                    >
+                        <Box>
+                            <Typography variant="h6" color="text.primary">
+                                {meetingData?.meetingTopic}
+                            </Typography>
+                            <Box display="flex" gap={2}>
+                                <Typography color="text.secondary">
+                                    {formatDate(meetingData?.selectDate)}
+                                </Typography>
+                                <Typography color="text.secondary">
+                                    {meetingData?.selectTime}
+                                </Typography>
+                            </Box>
+                        </Box>
 
-            <Box
-                p={2}
-                display="flex"
-                alignItems="center"
-                justifyContent="space-between"
-            >
-                <Box>
-                    <Typography variant="h6" color="text.primary">
-                        {meetingData?.meetingTopic}
-                    </Typography>
-                    <Box display="flex" gap={2}>
-                        <Typography color="text.secondary">
-                            {formatDate(meetingData?.selectDate)}
-                        </Typography>
-                        <Typography color="text.secondary">
-                            {meetingData?.selectTime}
-                        </Typography>
+                        <IconButton
+                            size="small"
+                            aria-label="close"
+                            onClick={onClose}
+                        >
+                            <CloseOutlined />
+                        </IconButton>
                     </Box>
-                </Box>
 
+                    <Divider />
+                </>
+            )}
 
-                <IconButton
-                    size="small"
-                    aria-label="close"
-                    onClick={onClose}
-                >
-                    <CloseOutlined />
-                </IconButton>
-            </Box>
-
-            <Divider />
 
             <DialogContent>
                 <Box mb={2} display="flex" gap={4} alignItems="center">
@@ -68,7 +72,7 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                 {taskDataView?.map((task, index) => (
                     <Box key={index}>
                         <Typography fontSize="12px" color="text.secondary">
-                            {formatDateWithmonth(task?.timestamp)}
+                        {formatDateWithmonth(task?.timestamp)}
                         </Typography>
                         <Typography color="text.primary" variant="h6" mb={0.5}>
                             {task?.task_title}
@@ -78,7 +82,7 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                                 Target Date:
                             </Typography>
                             <Typography color="error">
-                                {formatDateWithmonth(task?.target_date)}
+                            {formatDateWithmonth(task?.target_date)}
                             </Typography>
                         </Box>
                         <MuiLink component="a" href={task?.task_image} download="attachment.png">

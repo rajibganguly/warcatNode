@@ -20,7 +20,7 @@ function TableNew({
   handleAddNoteClick,
   handleUploadClick,
   handleEditOperationTask,
-  handleViewOperationTask,
+  handleViewParentOperationTask,
   handleTaskView,
   handleEditmeeting
 }) {
@@ -54,7 +54,7 @@ function TableNew({
     if (column.dataField === "subtask") {
       return (
         <div style={{ display: "flex" }}>
-          <Button
+          <Button onClick={() => handleViewSubTask(row)}
             style={{ backgroundColor: '#fb4', color: 'black', marginRight: '2px' }}>
             <EyeOutlined />
           </Button>
@@ -73,7 +73,7 @@ function TableNew({
            style={{ backgroundColor: '#0097a7', color: '#ffffff', marginRight: '2px' }}>
             <EditOutlined />
           </Button>
-          <Button onClick={() => handleViewOperationTask(row)}
+          <Button onClick={() => handleViewParentOperationTask(row)}
            style={{ backgroundColor: '#fb4', color: 'black' }}>
             <EyeOutlined />
           </Button>
