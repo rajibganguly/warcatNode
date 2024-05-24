@@ -179,16 +179,16 @@ export default function Tasks() {
       console.log(tasksChartData, 'dipan');
       const updateTaskCahrtValues = chartData;
       if (updateTaskCahrtValues[0]['label'] === 'Total Assigned') {
-        updateTaskCahrtValues[0].percentage = tasksChartData?.totalAssigned ?? 0
+        updateTaskCahrtValues[0].percentage = tasksChartData?.totalAssigned ? tasksChartData?.totalAssigned: 0
       }
       if (updateTaskCahrtValues[1]['label'] === 'Not Initiated') {
-        updateTaskCahrtValues[1].percentage = tasksChartData?.initiated?.percentage ?? 0
+        updateTaskCahrtValues[1].percentage = tasksChartData?.initiated?.percentage ? tasksChartData?.initiated?.percentage: 0
       }
       if (updateTaskCahrtValues[2]['label'] === 'In Progress') {
-        updateTaskCahrtValues[2].percentage = tasksChartData?.inProgress?.percentage ?? 0
+        updateTaskCahrtValues[2].percentage = tasksChartData?.inProgress?.percentage ?tasksChartData?.inProgress?.percentage: 0
       }
       if (updateTaskCahrtValues[3]['label'] === 'Completed') {
-        updateTaskCahrtValues[3].percentage = tasksChartData?.completed?.percentage ?? 0
+        updateTaskCahrtValues[3].percentage = tasksChartData?.completed?.percentage ?tasksChartData?.completed?.percentage: 0
       }
       setChartData(updateTaskCahrtValues)
       //setData(tasksData.tasks);

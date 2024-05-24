@@ -24,12 +24,13 @@ import {
   ThemeProvider,
 } from "@mui/material";
 import { addMeetings } from './common'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import Header from "../components/header";
 import Sidebar from "../components/Sidebar";
 import MuiAppBar from "@mui/material/AppBar";
 import { DepartmentContext } from '../context/DepartmentContext';
+import { toast } from "react-toastify";
 
 const defaultTheme = createTheme();
 
@@ -151,6 +152,8 @@ export default function AddNewMeeting() {
     }));
   };
 
+  const navigate = useNavigate();
+
   /**
    * handleAddMeeting POST call
    */
@@ -165,7 +168,12 @@ export default function AddNewMeeting() {
     }
     try {
       const setAllTaskListsData = await addMeetings(formDataSend);
-      console.log(setAllTaskListsData)
+      if (setAllTaskListsData) {
+        toast.success("Meeting Added Successfully", {
+          autoClose: 2000,
+        });
+        navigate('/meetings');
+      }
     } catch (error) {
       console.error('Error occurred:', error);
     }
@@ -358,7 +366,7 @@ export default function AddNewMeeting() {
                             </Select>
                           </FormControl>
                         </Grid>
-                        <Grid item xs={12} md={6}>
+                        {/* <Grid item xs={12} md={6}>
                           <InputLabel sx={{ mb: 1 }}>Meeting Id</InputLabel>
                           <TextField
                             id="outlined-basic"
@@ -373,8 +381,8 @@ export default function AddNewMeeting() {
                             size="small"
                             aria-readonly
                           />
-                        </Grid>
-                        <Grid item xs={12} md={6}>
+                        </Grid> */}
+                        <Grid item xs={12} md={12}>
                           <InputLabel sx={{ mb: 1 }}>Meeting Topic</InputLabel>
                           <TextField
                             id="outlined-basic"
