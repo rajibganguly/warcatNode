@@ -28,16 +28,17 @@ import TableNew from "../components/TableNew";
 import { TextField, Dialog, DialogContent, DialogContentText } from "@mui/material";
 import CardActions from "@mui/material/CardActions";
 import ApiConfig from '../config/ApiConfig'
-import SubTaskViewDialog from "../dialog/SubTaskViewDialog"; 
-import {mapKeysToValues} from '../pages/common.js'
+import SubTaskViewDialog from "../dialog/SubTaskViewDialog";
+import { fetchTaskData, mapKeysToValues } from '../pages/common.js'
 import { TaskChartData } from '../constant/taskChartData';
 import { useNavigate } from "react-router-dom";
 import SubTaskForm from "../components/SubTaskForm";
 import TaskViewDialog from "../dialog/TaskViewDialog";
 import SubTaskDialog from "../dialog/SubTaskViewDialog";
+import { TaskContext } from "../context/TaskContext.js";
+import LoadingIndicator from "../components/loadingIndicator.js";
 
 const drawerWidth = 240;
-
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -86,8 +87,6 @@ const handleDropdownChange = (value) => {
 
 const progressData = TaskChartData;
 
-
-
 export default function Tasks() {
   const [open, setOpen] = React.useState(true);
   const [modalVisible, setModalVisible] = useState(false);
@@ -103,6 +102,20 @@ export default function Tasks() {
   const [file, setFile] = useState();
   const [chartData, setChartData] = useState(progressData);
   const navigate = useNavigate();
+  const { allTaskLists } = React.useContext(TaskContext);
+  const allTaskListsData = allTaskLists?.tasks;
+  const [isLoading, setIsLoading] = useState(false);
+  const { setAllTaskLists } = React.useContext(TaskContext);
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true)
+      const setAllTaskListsData = await fetchTaskData();
+      setAllTaskLists(setAllTaskListsData)
+      setIsLoading(false)
+    };
+    fetchData();
+  }, []);
 
   const includeActionColumn = currentRoleType !== 'admin' ? true : false;
   console.log(data, 'dataaa');
@@ -130,42 +143,14 @@ export default function Tasks() {
 
   React.useEffect(() => {
     fetchTasksChart()
-    fetchTasksData();
+    // fetchTasksData();
   }, []);
-
-  /**
-   * @description Private function for fetch Task data
-   */
-  const fetchTasksData = async () => {
-    if (!toast.isActive("loading")) {
-      toast.loading("Loading Tasks data...", { autoClose: false, toastId: "loading" });
-    }
-    const localData = localStorage.getItem("user");
-    const userObj = JSON.parse(localData)
-    try {
-      const localObj = { userId: userObj._id, role_type: userObj.role_type };
-
-      const params = {
-        userId: localObj.userId,
-        role_type: localObj.role_type
-      };
-      const tasksData = await ApiConfig.requestData('get', '/tasks', params, null);
-      setData(tasksData.tasks);
-      toast.dismiss("loading");
-    } catch (error) {
-      console.error("Error fetching Tasks data:", error);
-      toast.dismiss("loading");
-      toast.error("Failed to fetch Tasks data");
-    }
-  };
 
   /**
    * @description Private function for fetch Task Chart
    */
   const fetchTasksChart = async () => {
-    if (!toast.isActive("loading")) {
-      toast.loading("Loading Tasks Chart data...", { autoClose: false, toastId: "loading" });
-    }
+    // setIsLoading(true)
     const localData = localStorage.getItem("user");
     const userObj = JSON.parse(localData)
     try {
@@ -191,19 +176,20 @@ export default function Tasks() {
         updateTaskCahrtValues[3].percentage = tasksChartData?.completed?.percentage ?tasksChartData?.completed?.percentage: 0
       }
       setChartData(updateTaskCahrtValues)
-      //setData(tasksData.tasks);
+      // setIsLoading(false)
       toast.dismiss("loading");
     } catch (error) {
       console.error("Error fetching Tasks Chart data:", error);
-      toast.dismiss("loading");
+      //toast.dismiss("loading");
+      //setIsLoading(false)
       toast.error("Failed to fetch Tasks data");
     }
   };
 
-
-
   const handleViewParentOperationTask = (row) => {
-    if (row && row?.length > 0) {
+    console.log(row)
+    if (row) {
+      console.log(row)
       setParentTaskView([row]);
       setParentModalVisible(true);
     } else {
@@ -216,11 +202,6 @@ export default function Tasks() {
   const handleEditOperationTask = (row) => {
     const encodedTaskId = window.btoa(row?.task_id);
     navigate(`/edit-tasks?taskId=${encodeURIComponent(encodedTaskId)}`);
-
-  };
-
-  const closeModal1 = () => {
-    setModalVisible1(false);
   };
 
   const closeModal = () => {
@@ -229,23 +210,19 @@ export default function Tasks() {
     setSubModalVisible(false);
   };
 
-
   const handleAddNoteClick = (record) => {
     console.info("Edit clicked for:", record);
-    navigate('/task-note?taskId='+record?.task_id);
+    navigate('/task-note?taskId=' + record?.task_id);
     // Implement logic for editing
   };
 
   const handleUploadClick = (record) => {
     console.info("Edit clicked for:", record);
-    navigate('/task-upload?taskId='+record?.task_id)
+    navigate('/task-upload?taskId=' + record?.task_id)
     // Implement logic for editing
   };
 
-
-
   const handleViewSubTask = (record) => {
-    console.log(record?.sub_task)
     if (record?.sub_task && record?.sub_task?.length > 0) {
       setSubTaskView(record?.sub_task);
       setSubModalVisible(true);
@@ -254,7 +231,6 @@ export default function Tasks() {
         autoClose: 2000,
       });
     }
-
   };
 
   const handleAddSubTaskClick = (record) => {
@@ -264,12 +240,10 @@ export default function Tasks() {
     };
 
     setModalContent(
-      <SubTaskForm onSubmit={handleFormSubmit} onClose={() => setModalVisible(false)} />
+      <SubTaskForm onSubmit={handleFormSubmit} onClose={() => setModalVisible(false)} parentTaskId={record.task_id} />
     );
     setModalVisible(true);
   };
-
-
 
   const handleOutput = (open) => {
     toggleDrawer();
@@ -277,10 +251,12 @@ export default function Tasks() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
-
-
+  
   return (
     <ThemeProvider theme={defaultTheme}>
+      {/* For Loader */}
+      <LoadingIndicator isLoading={isLoading} />
+
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>
@@ -425,7 +401,7 @@ export default function Tasks() {
                       </Grid>
                       <CardContent>
                         <TableNew
-                          data={data}
+                          data={allTaskListsData}
                           column={column}
                           icons={icons}
                           exportButton={true}

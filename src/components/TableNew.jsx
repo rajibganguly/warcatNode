@@ -116,7 +116,7 @@ function TableNew({
 
   
 
-    if(column.dataField === "verifiedstatus"){
+    if(column.dataField === "status"){
       return (
         getStatusText(row.status)
       )
@@ -164,6 +164,8 @@ function TableNew({
         </div>
       );
     }
+
+   
 
     if (column.dataField === "meetingoperation") {
       return (

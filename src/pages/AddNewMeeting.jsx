@@ -23,14 +23,28 @@ import {
   OutlinedInput,
   ThemeProvider,
 } from "@mui/material";
-import { addMeetings } from './common'
 import { Link, useNavigate } from "react-router-dom";
+import { addMeetings, fetchTaskData } from './common'
+import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
 import Header from "../components/header";
 import Sidebar from "../components/Sidebar";
 import MuiAppBar from "@mui/material/AppBar";
 import { DepartmentContext } from '../context/DepartmentContext';
 import { toast } from "react-toastify";
+import LoadingIndicator from "../components/loadingIndicator";
+
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
 
 const defaultTheme = createTheme();
 
@@ -76,6 +90,7 @@ function getStyles(name, personName, theme) {
 export default function AddNewMeeting() {
   const [open, setOpen] = React.useState(true);
   const [file, setFile] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     departmentIds: '',
     tag: '',
@@ -94,7 +109,7 @@ export default function AddNewMeeting() {
 
   const theme = useTheme();
   const { allDepartmentList } = React.useContext(DepartmentContext);
-  const allDepartmentData = allDepartmentList.map((dept) => dept.department);
+  const allDepartmentData = allDepartmentList?.map((dept) => dept.department);
 
   /**
    * 
@@ -167,7 +182,11 @@ export default function AddNewMeeting() {
       imageUrl: base64Image
     }
     try {
+      setIsLoading(true);
       const setAllTaskListsData = await addMeetings(formDataSend);
+      await fetchTaskData();
+      console.log(setAllTaskListsData)
+      setIsLoading(false);
       if (setAllTaskListsData) {
         toast.success("Meeting Added Successfully", {
           autoClose: 2000,
@@ -176,6 +195,7 @@ export default function AddNewMeeting() {
       }
     } catch (error) {
       console.error('Error occurred:', error);
+      setIsLoading(false);
     }
   };
 
@@ -212,17 +232,11 @@ export default function AddNewMeeting() {
     }
   }
 
-  const dateTimeStyle = {
-    width: "100%",
-    padding: "11px 10px",
-    border: "1px solid #ccc",
-    borderRadius: "6px",
-    fontFamily: 'Roboto,sans-serif',
-    fontSize: "1em"
-  }
-
   return (
     <ThemeProvider theme={defaultTheme}>
+      {/* For Loader */}
+      <LoadingIndicator isLoading={isLoading} />
+      
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>

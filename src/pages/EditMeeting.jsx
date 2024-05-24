@@ -34,6 +34,8 @@ import { MeetingContext } from './../context/MeetingContext';
 import { useParams } from "react-router-dom";
 import { format } from 'date-fns';
 import dayjs from 'dayjs';
+import LoadingIndicator from "../components/loadingIndicator";
+import { fetchTaskData } from "./common";
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -106,9 +108,11 @@ export default function EditMeeting() {
     const [data, setData] = useState([]);
     const [filteredMeeting, setFilteredMeeting] = useState([]);
     const [fileName, setFileName] = useState('');
-
+    const [isLoading, setIsLoading] = useState(false);
     const { id } = useParams();
     const { allMeetingLists } = useContext(MeetingContext);
+
+
 
     const [formData, setFormData] = useState({
         departmentNames: [],
@@ -183,6 +187,7 @@ export default function EditMeeting() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            setIsLoading(true);
             const updatedData = {
                 ...formData,
                 selectDate: formData.selectDate.toISOString(),
@@ -197,13 +202,17 @@ export default function EditMeeting() {
                 },
                 body: JSON.stringify(updatedData)
             });
+            await fetchTaskData();
             if (response.ok) {
                 toast.success('Meeting updated successfully');
+                setIsLoading(false);
             } else {
                 console.error('Failed to update meeting');
+                setIsLoading(false);
             }
         } catch (error) {
             console.error('Error updating meeting:', error);
+            setIsLoading(false);
         }
     };
 
@@ -212,9 +221,10 @@ export default function EditMeeting() {
     }, []);
 
     const fetchDepartmentData = async () => {
-        if (!toast.isActive("loading")) {
-            toast.loading("Loading Meetings data...", { autoClose: false, toastId: "loading" });
-        }
+        // if (!toast.isActive("loading")) {
+        //     toast.loading("Loading Meetings data...", { autoClose: false, toastId: "loading" });
+        // }
+        setIsLoading(true);
         const localData = localStorage.getItem("user");
         const userObj = JSON.parse(localData);
         try {
@@ -224,11 +234,13 @@ export default function EditMeeting() {
             };
             const departmentsAll = await ApiConfig.requestData('get', '/departments', params, null);
             setData(departmentsAll);
-            toast.dismiss("loading");
+            // toast.dismiss("loading");
+            setIsLoading(false);
         } catch (error) {
             console.error("Error fetching department data:", error);
-            toast.dismiss("loading");
-            toast.error("Failed to fetch department data");
+            setIsLoading(false);
+            // toast.dismiss("loading");
+            //toast.error("Failed to fetch department data");
         }
     };
 
@@ -242,15 +254,18 @@ export default function EditMeeting() {
 
     const departmentNames = data.map((dept) => dept.department.department_name);
 
-    const getDepartmentIds = (departmentNames) => {
+    // const getDepartmentIds = (departmentNames) => {
 
-        const departmentMap = new Map(data.map(dep => [dep.name, dep.id]));
+    //     const departmentMap = new Map(data.map(dep => [dep.name, dep.id]));
 
-        return departmentNames.map(name => departmentMap.get(name)).filter(id => id !== undefined);
-    };
+    //     return departmentNames.map(name => departmentMap.get(name)).filter(id => id !== undefined);
+    // };
 
     return (
         <ThemeProvider theme={defaultTheme}>
+            {/* For Loader */}
+            <LoadingIndicator isLoading={isLoading} />
+            {/*  */}
             <Box sx={{ display: "flex" }}>
                 <CssBaseline />
                 <AppBar position="absolute" open={open}>

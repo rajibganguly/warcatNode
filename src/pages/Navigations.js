@@ -23,32 +23,17 @@ import TaskList from "./TaskList";
 import TaskNote from "./TaskNote";
 import TaskUpload from "./TaskUpload";
 import TaskApproval from "./TaskApproval";
-import { useContext, useEffect } from "react";
-import { fetchDepartmentData, fetchMeetingData, fetchRoleType, fetchTaskData } from "./common";
-import { DepartmentContext } from "../context/DepartmentContext";
-import { MeetingContext } from "../context/MeetingContext";
-import { TaskContext } from "../context/TaskContext";
+import { fetchRoleType } from "./common";
+
 import Logout from "./Logout";
 
 
 const Navigations = () => {
   const { authToken } = useAuth();
-  const { setAllDepartmentList } = useContext(DepartmentContext);
-  const { setAllMeetingLists } = useContext(MeetingContext);
-  const { setAllTaskLists } = useContext(TaskContext);
   const userRoleType = fetchRoleType();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const fetchDepdata = await fetchDepartmentData();
-      setAllDepartmentList(fetchDepdata);
-      const fetchMeetingsData = await fetchMeetingData();
-      setAllMeetingLists(fetchMeetingsData);
-      const setAllTaskListsData = await fetchTaskData();
-      setAllTaskLists(setAllTaskListsData)
-    };
-    fetchData();
-  }, [setAllDepartmentList,setAllMeetingLists,setAllTaskLists]);
+  
+
   return (
     <Router>
       <Routes>
@@ -108,6 +93,7 @@ const Navigations = () => {
           path="/edit-meeting/:id"
           element={authToken && userRoleType === 'admin' ? <EditMeeting /> : <Navigate to="/" />}
         />
+
         <Route
           path="/task-note"
           element={authToken && userRoleType === 'admin' ? <TaskNote /> : <Navigate to="/" />}

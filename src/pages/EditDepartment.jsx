@@ -23,6 +23,7 @@ import Sidebar from "../components/Sidebar";
 
 import { DepartmentContext } from './../context/DepartmentContext'
 import { fetchDepartmentData } from "./common";
+import LoadingIndicator from "../components/loadingIndicator";
 const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
@@ -51,6 +52,7 @@ const defaultTheme = createTheme();
 export default function EditDepartment() {
   const [open, setOpen] = React.useState(true);
   const [submitDisable, setSubmitDisable] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
   const [formData, setFormData] = React.useState({
     secretary: {
       email: "",
@@ -155,6 +157,7 @@ export default function EditDepartment() {
   const handleAddDepartment = async () => {
     const reactAppHostname = process.env.REACT_APP_HOSTNAME;
     setSubmitDisable(true);
+    setIsLoading(true);
     const setDataPropMap = {
       department_id: formData.department_id,
       dep_name: formData.department.department_name,
@@ -179,16 +182,20 @@ export default function EditDepartment() {
         
         await fetchDepartmentDataList();
         navigate("/departments");
-      } else {
-        alert("Login Failed");
-      }
+        setIsLoading(false);
+      } 
+      setIsLoading(false);
     } catch (error) {
       console.error("Error occurred:", error);
+      setIsLoading(false);
     }
   };
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      {/* For Loader */}
+      <LoadingIndicator isLoading={isLoading} />
+      {/*  */}
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>
