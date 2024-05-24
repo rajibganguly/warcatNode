@@ -30,8 +30,6 @@ import Header from "../components/header";
 import Sidebar from "../components/Sidebar";
 import MuiAppBar from "@mui/material/AppBar";
 import { DepartmentContext } from '../context/DepartmentContext';
-import axios from 'axios';
-import MenuItem from '@mui/material/MenuItem';
 import LoadingIndicator from "../components/loadingIndicator";
 
 const VisuallyHiddenInput = styled('input')({
