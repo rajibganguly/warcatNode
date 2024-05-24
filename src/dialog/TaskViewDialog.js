@@ -65,7 +65,8 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                             </Typography>
                             <Box display="flex" gap={2}>
                                 <Typography color="text.secondary">
-                                    {formatDate(meetingData?.selectDate)}
+                                    {
+                                    (meetingData?.selectDate)}
                                 </Typography>
                                 <Typography color="text.secondary">
                                     {meetingData?.selectTime}

@@ -94,14 +94,14 @@ export default function Meetings() {
 
   const handleTasksAddInMeeting = (record) => {
     const encodedMeetingId = window.btoa(record?.meetingId);
-    navigate(`/add-meeting?meetingId=${encodeURIComponent(encodedMeetingId)}`);
+    const encodedMeetingTopic = window.btoa(record?.meetingTopic);
+    navigate(`/add-tasks?meetingId=${encodeURIComponent(encodedMeetingId)}&meetingTopic=${encodeURIComponent(encodedMeetingTopic)}`);
   };
 
   const handleEditmeeting = (row) => {
     // Check if row and row.meetings are defined
     if (row && row.meetingId){
-      const encodedMeetingId = window.btoa(row?.meetingId);
-      navigate(`/edit-meeting/${encodedMeetingId}`);
+      navigate(`/edit-meeting/${row.meetingId}`);
     } else {
       console.error('Invalid row data:', row);
     }

@@ -6,7 +6,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import ApiConfig from '../config/ApiConfig';
 import { toast } from "react-toastify";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { fetchTaskData } from '../pages/common';
+import { dateSelected, fetchTaskData,formatDate } from '../pages/common';
+
 
 const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -18,8 +19,9 @@ const convertToBase64 = (file) => {
 };
 
 const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
+    const formatdate = dateSelected(forTaskDataView?.subtask_target_date)
     const editSubTaskTitle = forTaskDataView ? forTaskDataView?.subtask_title : '';
-    const editSubTaskDate = forTaskDataView ? forTaskDataView?.subtask_target_date : null;
+    const editSubTaskDate = forTaskDataView ? formatdate : null;
     const editSubTaskImageUrl = forTaskDataView ? forTaskDataView?.subtask_image : '';
 
     const [formValues, setFormValues] = useState({

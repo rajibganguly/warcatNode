@@ -112,8 +112,6 @@ export default function EditMeeting() {
     const { id } = useParams();
     const { allMeetingLists } = useContext(MeetingContext);
 
-
-
     const [formData, setFormData] = useState({
         departmentNames: [],
         tag: [],
@@ -133,6 +131,7 @@ export default function EditMeeting() {
             console.error("Error getting Data");
         }
     }, [allMeetingLists, id]);
+    
 
     useEffect(() => {
         if (filteredMeeting.length > 0) {
@@ -142,7 +141,7 @@ export default function EditMeeting() {
                 imageUrl: meetingData.imageUrl,
                 meetingTopic: meetingData.meetingTopic,
                 selectDate: dayjs(meetingData.selectDate),
-                selectTime: dayjs(meetingData.selectTime, 'hh:mm'), // Time only, parse with dummy date
+                selectTime: dayjs(meetingData.selectTime, 'hh:mm'),
                 tag: meetingData.tag
             });
         }
@@ -234,12 +233,12 @@ export default function EditMeeting() {
             };
             const departmentsAll = await ApiConfig.requestData('get', '/departments', params, null);
             setData(departmentsAll);
-            // toast.dismiss("loading");
-            setIsLoading(false);
+           // toast.dismiss("loading");
+           setIsLoading(false);
         } catch (error) {
             console.error("Error fetching department data:", error);
             setIsLoading(false);
-            // toast.dismiss("loading");
+           // toast.dismiss("loading");
             //toast.error("Failed to fetch department data");
         }
     };
@@ -260,9 +259,6 @@ export default function EditMeeting() {
 
     //     return departmentNames.map(name => departmentMap.get(name)).filter(id => id !== undefined);
     // };
-
-
-   
 
     if (isLoading) {
         return (<LoadingIndicator isLoading={isLoading} />);

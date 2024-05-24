@@ -108,6 +108,7 @@ export default function Tasks() {
   const { allTaskLists } = React.useContext(TaskContext);
   const allTaskListsData = allTaskLists?.tasks;
   const [isLoading, setIsLoading] = useState(false);
+  
   // console.log(data[0].department[0]);
   // console.log(data[0].department[0].dep_name);
   //   const departmentNames = data.flatMap(item => item.department.map(dept => dept.dep_name));
