@@ -7,6 +7,7 @@ import ApiConfig from '../config/ApiConfig';
 import { toast } from "react-toastify";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { fetchTaskData } from '../pages/common';
+import { useNavigate } from 'react-router-dom';
 
 const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -50,6 +51,7 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
             reader.readAsDataURL(file);
         }
     };
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -65,7 +67,7 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
             onSubmit(response);
             await fetchTaskData();
             toast.success("Sub Task added successfully");
-           
+            navigate('/tasks');
 
         } catch (error) {
             console.error("Error adding subtask:", error);
