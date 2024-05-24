@@ -281,7 +281,7 @@ function TableNew({
     const dataBlob = new Blob([excelBuffer], { type: 'application/octet-stream' });
     saveAs(dataBlob, `${filename}.xlsx`);
   };
-  
+  console.log('exportButton', exportButton);
   return (
     <>
       {/* Table header */}
