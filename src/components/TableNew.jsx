@@ -12,7 +12,7 @@ import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import AddIcon from "@mui/icons-material/Add";
-import {fetchRoleType, formatStatus, getCommaSeparatedRoles, getStatusText} from "../pages/common.js";
+import { fetchRoleType, formatStatus, getCommaSeparatedRoles, getStatusText } from "../pages/common.js";
 import SearchIcon from "@mui/icons-material/Search";
 
 function TableNew({
@@ -55,32 +55,32 @@ function TableNew({
             <EyeOutlined />
           </Button>
           {userRoleType === 'admin' &&
-          (<Button onClick={() => handleEditClick(row)}
-            style={{ backgroundColor: '#0097a7', color: '#ffffff', marginRight: '2px' }}>
-            <EditOutlined />
-          </Button>
-          )}
+            (<Button onClick={() => handleEditClick(row)}
+              style={{ backgroundColor: '#0097a7', color: '#ffffff', marginRight: '2px' }}>
+              <EditOutlined />
+            </Button>
+            )}
         </>
       );
     }
 
     if (column.dataField === "tasks_dept") {
-        if (row?.department?.length > 0) {
-            return row?.department?.[0]?.dep_name ?? '-';
-        }
-        return '-';
+      if (row?.department?.length > 0) {
+        return row?.department?.[0]?.dep_name ?? '-';
+      }
+      return '-';
     }
 
     if (column.dataField === "meeting_dept") {
       if (row?.departmentNames?.length > 0) {
-          return row?.departmentNames?.[0] ?? '-';
+        return row?.departmentNames?.[0] ?? '-';
       }
       return '-';
-  }
+    }
 
     if (column.dataField === "department_dept") {
       if (row?.department) {
-          return row?.department?.department_name ?? '-';
+        return row?.department?.department_name ?? '-';
       }
       return '-';
     }
@@ -105,18 +105,18 @@ function TableNew({
             <EyeOutlined />
           </Button>
           {userRoleType === 'admin' &&
-          (<Button onClick={() => handleAddSubTaskClick(row)}
-            style={{ backgroundColor: 'rgb(10, 24, 50)', color: '#ffffff' }}>
-            <AddIcon />
-          </Button>
-          )}
+            (<Button onClick={() => handleAddSubTaskClick(row)}
+              style={{ backgroundColor: 'rgb(10, 24, 50)', color: '#ffffff' }}>
+              <AddIcon />
+            </Button>
+            )}
         </div>
       );
     }
 
-  
 
-    if(column.dataField === "status"){
+
+    if (column.dataField === "status") {
       return (
         getStatusText(row.status)
       )
@@ -126,11 +126,11 @@ function TableNew({
       return (
         <div style={{ display: "flex" }}>
           {userRoleType === 'admin' &&
-          (<Button onClick={() => handleEditOperationTask(row)}
-            style={{ backgroundColor: '#0097a7', color: '#ffffff', marginRight: '2px' }}>
-            <EditOutlined />
-          </Button>
-          )}
+            (<Button onClick={() => handleEditOperationTask(row)}
+              style={{ backgroundColor: '#0097a7', color: '#ffffff', marginRight: '2px' }}>
+              <EditOutlined />
+            </Button>
+            )}
           <Button onClick={() => handleViewParentOperationTask(row)}
             style={{ backgroundColor: '#fb4', color: 'black' }}>
             <EyeOutlined />
@@ -143,11 +143,11 @@ function TableNew({
       return (
         <div style={{ display: "flex", justifyContent: 'center', alignItems: 'center' }}>
           {userRoleType === 'admin' &&
-          (<Button onClick={() => handleTasksAddInMeeting(row)}
-            style={{ backgroundColor: '#0a1832', color: '#ffffff', marginRight: '2px' }}>
-            <AddIcon />
-          </Button>
-          )}
+            (<Button onClick={() => handleTasksAddInMeeting(row)}
+              style={{ backgroundColor: '#0a1832', color: '#ffffff', marginRight: '2px' }}>
+              <AddIcon />
+            </Button>
+            )}
           <Button onClick={() => handleTasksViewInMeeting(row)}
             style={{ backgroundColor: '#fb4', color: 'black' }}>
             <EyeOutlined />
@@ -165,17 +165,17 @@ function TableNew({
       );
     }
 
-   
+
 
     if (column.dataField === "meetingoperation") {
       return (
         <div style={{ display: "flex" }}>
           {userRoleType === 'admin' &&
-          (<Button onClick={() => handleEditmeeting(row)}
-            style={{ backgroundColor: '#0097a7', color: '#ffffff' }}>
-            <EditOutlined />
-          </Button>
-          )}
+            (<Button onClick={() => handleEditmeeting(row)}
+              style={{ backgroundColor: '#0097a7', color: '#ffffff' }}>
+              <EditOutlined />
+            </Button>
+            )}
         </div>
       );
     }
@@ -226,18 +226,18 @@ function TableNew({
     const doc = new jsPDF();
     const tableColumn = column.map(col => col.text);
     const tableRows = [];
-  
+
     data.forEach(row => {
       const rowData = column.map(col => row[col.dataField]);
       tableRows.push(rowData);
     });
-  
+
     const title = filename;
     const pageWidth = doc.internal.pageSize.getWidth();
     let textWidth = doc.getTextWidth(title);
     let textX = (pageWidth - textWidth) / 2;
     let fontSize = 16; // Starting font size
-  
+
     // Adjust font size if the title is too wide
     while (textWidth > pageWidth - 20 && fontSize > 8) {
       fontSize -= 1;
@@ -245,11 +245,11 @@ function TableNew({
       textWidth = doc.getTextWidth(title);
       textX = (pageWidth - textWidth) / 2;
     }
-  
+
     // Set heading color
     doc.setTextColor(0, 0, 0); // Table title color
     doc.text(title, textX, 15); // Table title
-  
+
     // Add the table to PDF with body text color
     doc.autoTable({
       head: [tableColumn],
@@ -263,7 +263,7 @@ function TableNew({
         fillColor: [44, 64, 83], // For header background
       },
     });
-  
+
     doc.save(`${filename}.pdf`);
   };
 
@@ -271,7 +271,7 @@ function TableNew({
   const generateExcel = () => {
     // Create the filename row
     const filenameRow = [filename];
-  
+
     // Create the header row
     const headers = column.map(col => col.text);
     const rows = data.map(row =>
@@ -280,46 +280,46 @@ function TableNew({
         return acc;
       }, {})
     );
-  
+
     // Create worksheet with filename, headers, and data
     const worksheetData = [filenameRow, headers, ...rows.map(row => headers.map(header => row[header]))];
     const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
-  
+
     // Set column width for all columns
     const columnWidth = 20; // You can adjust the width as needed
     const wscols = headers.map(() => ({ width: columnWidth }));
     worksheet['!cols'] = wscols;
-  
+
     // Apply styles to the header row
     const headerStyle = {
       font: { bold: true, color: { rgb: "FFFFFF" } }, // White font color
       fill: { fgColor: { rgb: "0000FF" } }, // Blue background color
       alignment: { horizontal: "center" } // Center alignment
     };
-  
+
     // Set the header row styles
     headers.forEach((header, index) => {
       const cellAddress = XLSX.utils.encode_cell({ c: index, r: 1 }); // Offset by 1 row due to the filename row
       if (!worksheet[cellAddress]) return;
       worksheet[cellAddress].s = headerStyle;
     });
-  
+
     // Merge cells A1 to J1 for the filename row
     const filenameMerge = { s: { r: 0, c: 0 }, e: { r: 0, c: headers.length - 1 } };
     worksheet['!merges'] = [filenameMerge];
-  
+
     // Set center alignment for the filename row
     const filenameStyle = {
       alignment: { horizontal: "center" }
     };
-    
+
     for (let c = 0; c < headers.length; c++) {
       const cellAddress = XLSX.utils.encode_cell({ c: c, r: 0 });
       if (worksheet[cellAddress]) {
         worksheet[cellAddress].s = filenameStyle;
       }
     }
-  
+
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
@@ -335,7 +335,7 @@ function TableNew({
           pb={2}
           display={'flex'}
           alignItems={"center"}
-          justifyContent={"space-between"}  
+          justifyContent={"space-between"}
         >
           {/* Export Button */}
           {exportButton &&
@@ -344,13 +344,13 @@ function TableNew({
                 sx={{
                   backgroundColor: "#6c757d",
                   borderRight: "1px solid #6c757d !important",
-                  
+
                   "&:hover": {
                     backgroundColor: "#5c636a",
                     borderColor: "#5c636a",
                   },
                 }}
-                onClick={()=>{}}
+                onClick={() => { }}
               >
                 Copy
               </Button>
@@ -427,13 +427,21 @@ function TableNew({
             </thead>
             {/* Your table body */}
             <tbody>
-              {data?.map((row, index) => (
-                <tr key={index}>
-                  {column?.map((col) => (
-                    <td key={col.dataField}>{renderCellValue(row, col)}</td>
-                  ))}
+              {data && data.length > 0 ? (
+                data.map((row, index) => (
+                  <tr key={index}>
+                    {column?.map((col) => (
+                      <td key={col.dataField}>{renderCellValue(row, col)}</td>
+                    ))}
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={column.length} style={{ textAlign: "center" }}>
+                    No records found
+                  </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

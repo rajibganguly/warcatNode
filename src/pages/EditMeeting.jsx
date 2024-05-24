@@ -8,7 +8,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, TextField } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
@@ -111,6 +111,7 @@ export default function EditMeeting() {
     const [isLoading, setIsLoading] = useState(false);
     const { id } = useParams();
     const { allMeetingLists } = useContext(MeetingContext);
+    const navigate = useNavigate()
 
 
 
@@ -206,6 +207,7 @@ export default function EditMeeting() {
             if (response.ok) {
                 toast.success('Meeting updated successfully');
                 setIsLoading(false);
+                navigate('/meetings')
             } else {
                 console.error('Failed to update meeting');
                 setIsLoading(false);
