@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Box,
     Chip,
@@ -13,16 +13,24 @@ import {
 import { CloseOutlined } from '@mui/icons-material';
 import { formatDate, formatDateWithmonth } from "../pages/common";
 import { useNavigate } from 'react-router-dom';
+import SubTaskForm from '../components/SubTaskForm';
 export default function TaskViewDialog({ open, onClose, meetingData, taskDataView }) {
 
 
     const navigate = useNavigate()
 
+    const [addTaskForm, setAddTaskForm] = useState(true);
+    const [selectedSubTask, setSelectedSubTask] = useState(null);
 
     const handleEditClick = (taskId) => {
         const encodedTaskId = window.btoa(taskId);
         navigate(`/edit-tasks?taskId=${encodeURIComponent(encodedTaskId)}`);
+    };
 
+    /** Sub task edit */
+    const handleSubTaskEditClick = (subTaskRow) => {
+        setSelectedSubTask(subTaskRow);
+        setAddTaskForm(false);
     };
 
     return (
@@ -70,8 +78,9 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                 </>
             )}
 
-
             <DialogContent>
+                {addTaskForm ? (
+                <>
                 <Box mb={2} display="flex" gap={4} alignItems="center">
                     <Typography variant="h6" color="text.primary" className="text-underline">
                         Tasks
@@ -118,9 +127,9 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                                 onClick={() => {
                                     if (!task?.subtask_title) {
                                         handleEditClick(task?.task_id);
+                                    } else {
+                                        handleSubTaskEditClick(task);
                                     }
-                                    
-                                    
                                 }}
                             >
                                 Edit
@@ -131,6 +140,10 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                         {index < taskDataView.length - 1 && <Divider sx={{ my: 2 }} />}
                     </Box>
                 ))}
+                </>
+                ):(
+                    <SubTaskForm forTaskDataView={selectedSubTask} />
+                )}
             </DialogContent>
         </Dialog>
     );
