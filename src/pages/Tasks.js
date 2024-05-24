@@ -106,13 +106,22 @@ export default function Tasks() {
 
   const includeActionColumn = currentRoleType === 'admin' || currentRoleType === 'headOffice' ? true : false;
 
+  // console.log(data[0].department[0]);
+  // console.log(data[0].department[0].dep_name);
+//   const departmentNames = data.flatMap(item => item.department.map(dept => dept.dep_name));
+// console.log(departmentNames);
+
+
+
+
+
   const column = [
     { text: 'Assigned Date', dataField: 'timestamp' },
     { text: "Assigned Title", dataField: 'task_title' },
-    { text: "Department", dataField: 'department[0].dep_name' },
+    { text: "Department", dataField: 'dep_name' },
     { text: "Tag", dataField: 'department[0].tag' },
     { text: "Target Date", dataField: 'target_date' },
-    { text: "Status", dataField: 'statuss' },
+    { text: "Status", dataField: 'status' },
     { text: "Sub Task", dataField: 'subtask' },
     { text: "Operations", dataField: 'taskoperation' },
     { text: "Varified Status", dataField: '' }
@@ -265,7 +274,7 @@ export default function Tasks() {
     };
 
     setModalContent(
-      <SubTaskForm onSubmit={handleFormSubmit} onClose={() => setModalVisible(false)} />
+      <SubTaskForm onSubmit={handleFormSubmit} onClose={() => setModalVisible(false)} parentTaskId={record.task_id} />
     );
     setModalVisible(true);
   };

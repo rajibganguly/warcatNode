@@ -71,7 +71,7 @@ function TableNew({
 
   
 
-    if(column.dataField === "verifiedstatus"){
+    if(column.dataField === "status"){
       return (
         getStatusText(row.status)
       )
