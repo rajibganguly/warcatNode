@@ -107,7 +107,7 @@ export default function AddNewMeeting() {
 
   const theme = useTheme();
   const { allDepartmentList } = React.useContext(DepartmentContext);
-  const allDepartmentData = allDepartmentList.map((dept) => dept.department);
+  const allDepartmentData = allDepartmentList?.map((dept) => dept.department);
 
   /**
    * 
