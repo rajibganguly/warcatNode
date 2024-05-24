@@ -78,13 +78,13 @@ export default function Departments() {
   const [modalVisible, setModalVisible] = React.useState(false);
   const [modalContent, setModalContent] = React.useState(null);
   //const [loadingData, setLoadingData] = React.useState(false);
- 
+
   const { allDepartmentList } = React.useContext(DepartmentContext);
   const { setSelectedDepartmentData } = React.useContext(DepartmentContext);
   const localUser = JSON.parse(localStorage.getItem('user'));
   const currentRoleType = localUser.role_type;
 
-  
+
   const handleSeeClick = (row) => {
     setModalContent(row);
     setModalVisible(true);
@@ -96,14 +96,9 @@ export default function Departments() {
   };
 
   const handleEditClick = (record) => {
-    console.log(record)
     setSelectedDepartmentData(record)
     navigate(`/edit-departments/${record.department._id}`);
   };
-
-
-
-
 
   const icons = {
     see: <EyeOutlined />,
@@ -125,7 +120,7 @@ export default function Departments() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-       <LoadingIndicator isLoading={isLoading} />
+      <LoadingIndicator isLoading={isLoading} />
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>
@@ -273,7 +268,7 @@ export default function Departments() {
                                 >
                                   Secretary Phone number:{" "}
                                   <strong>
-                                    {modalContent.secretary.phone}
+                                    {modalContent.secretary.phone_number}
                                   </strong>
                                 </Typography>
                                 <Typography
