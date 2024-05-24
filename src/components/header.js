@@ -12,6 +12,7 @@ import Stack from "@mui/material/Stack";
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import AccountCircle from '@mui/icons-material/AccountCircle';
+import { useNavigate } from "react-router-dom";
 
 const Header = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -25,6 +26,13 @@ const Header = (props) => {
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    handleClose(); // Assuming handleClose is defined somewhere in your component
+    navigate('/logout');
   };
 
   const toggleDrawer = () => {
@@ -87,7 +95,7 @@ const Header = (props) => {
           }}
         >
           <Stack sx={{ minWidth: 150 }}>
-            <MenuItem onClick={handleClose} sx={{ color: 'red' }}>
+            <MenuItem onClick={handleLogout} sx={{ color: 'red' }}>
               <LogoutIcon sx={{ marginRight: '10px', color: 'red' }} />
               Logout
             </MenuItem>

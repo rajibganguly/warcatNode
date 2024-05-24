@@ -171,3 +171,9 @@ export const handleCompletionReport = async (body, taskId) => {
   } catch (error) {
   }
 };
+
+export const fetchRoleType = () => {
+  const localSt = JSON.parse(localStorage.getItem("user"));
+  const currentRoleType = localSt?.role_type ?? '';
+  return currentRoleType;
+};

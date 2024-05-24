@@ -107,7 +107,6 @@ export default function Tasks() {
   const navigate = useNavigate();
   const { allTaskLists } = React.useContext(TaskContext);
   const allTaskListsData = allTaskLists?.tasks;
-  const includeActionColumn = currentRoleType === 'admin' || currentRoleType === 'headOffice' ? true : false;
   const [isLoading, setIsLoading] = useState(false);
   // console.log(data[0].department[0]);
   // console.log(data[0].department[0].dep_name);
@@ -117,6 +116,8 @@ export default function Tasks() {
 
 
 
+
+  const includeActionColumn = currentRoleType !== 'admin' ? true : false;
 
   const column = [
     { text: 'Assigned Date', dataField: 'timestamp' },
