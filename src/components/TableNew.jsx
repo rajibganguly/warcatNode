@@ -1,21 +1,25 @@
-import React, { useState } from "react";
+import React from "react";
 import { EyeOutlined, EditOutlined } from "@ant-design/icons";
-import { Button } from "@mui/material";
-import TextField from "@mui/material/TextField";
-import ButtonGroup from "@mui/material/ButtonGroup";
-import { Box } from "@mui/system";
-import SearchIcon from "@mui/icons-material/Search";
-import IconButton from "@mui/material/IconButton";
-import AddIcon from "@mui/icons-material/Add";
-import jsPDF from 'jspdf';
+import {
+  Box,
+  Button,
+  TextField,
+  IconButton,
+  ButtonGroup
+} from "@mui/material";
 import 'jspdf-autotable';
+import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import AddIcon from "@mui/icons-material/Add";
 import {getStatusText} from "../pages/common.js";
+import SearchIcon from "@mui/icons-material/Search";
 
 function TableNew({
   column,
   data,
+  searchBar,
+  exportButton,
   tableHeading,
   handleSeeClick,
   handleEditClick,
@@ -111,8 +115,6 @@ function TableNew({
       );
     }
 
-
-
     if (column.dataField === "action") {
       return (
         <div style={{ display: "flex" }}>
@@ -173,7 +175,8 @@ function TableNew({
   };
 
   let filename = `WARCAT - War-room Assistant for Report Compilation & Task tracking | ${tableHeading}`;
-  /** 23/05/24  */
+
+  /** PDF generate  */
   const generatePDF = () => {
     const doc = new jsPDF();
     const tableColumn = column.map(col => col.text);
@@ -218,7 +221,8 @@ function TableNew({
   
     doc.save(`${filename}.pdf`);
   };
-  
+
+  /** Excel generate  */
   const generateExcel = () => {
     // Create the filename row
     const filenameRow = [filename];
@@ -278,88 +282,93 @@ function TableNew({
     saveAs(dataBlob, `${filename}.xlsx`);
   };
   
-  
-  
-  
-
   return (
     <>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          pb: 2,
-        }}
-      >
-        <ButtonGroup variant="contained" aria-label="Basic button group">
-          <Button
-            sx={{
-              backgroundColor: "#6c757d",
-              borderRight: "1px solid #6c757d !important",
-              
-              "&:hover": {
-                backgroundColor: "#5c636a",
-                borderColor: "#5c636a",
-              },
-            }}
-            onClick={()=>{}}
-          >
-            Copy
-          </Button>
-          <Button
-            sx={{
-              backgroundColor: "#6c757d",
-              borderRight: "1px solid #6c757d !important",
-              "&:hover": {
-                backgroundColor: "#5c636a",
-                borderColor: "#5c636a",
-              },
-            }}
-            onClick={generateExcel}
-          >
-            Excel
-          </Button>
-          <Button
-            sx={{
-              backgroundColor: "#6c757d",
-              borderRight: "1px solid #6c757d !important",
-              "&:hover": {
-                backgroundColor: "#5c636a",
-                borderColor: "#5c636a",
-              },
-            }}
-            onClick={generatePDF}
-          >
-            PDF
-          </Button>
-          <Button
-            sx={{
-              backgroundColor: "#6c757d",
-              "&:hover": {
-                backgroundColor: "#5c636a",
-                borderColor: "#5c636a",
-              },
-            }}
-          >
-            Column Visibility
-          </Button>
-        </ButtonGroup>
-        <TextField
-          id="outlined-textarea"
-          label="Search"
-          variant="outlined"
-          placeholder="Enter search"
-          size="small"
-          InputProps={{
-            endAdornment: (
-              <IconButton>
-                <SearchIcon />
-              </IconButton>
-            ),
-          }}
-        />
-      </Box>
+      {/* Table header */}
+      {(exportButton || searchBar) &&
+        <Box
+          pb={2}
+          display={'flex'}
+          alignItems={"center"}
+          justifyContent={"space-between"}  
+        >
+          {/* Export Button */}
+          {exportButton &&
+            <ButtonGroup variant="contained" aria-label="Basic button group">
+              <Button
+                sx={{
+                  backgroundColor: "#6c757d",
+                  borderRight: "1px solid #6c757d !important",
+                  
+                  "&:hover": {
+                    backgroundColor: "#5c636a",
+                    borderColor: "#5c636a",
+                  },
+                }}
+                onClick={()=>{}}
+              >
+                Copy
+              </Button>
+              <Button
+                sx={{
+                  backgroundColor: "#6c757d",
+                  borderRight: "1px solid #6c757d !important",
+                  "&:hover": {
+                    backgroundColor: "#5c636a",
+                    borderColor: "#5c636a",
+                  },
+                }}
+                onClick={generateExcel}
+              >
+                Excel
+              </Button>
+              <Button
+                sx={{
+                  backgroundColor: "#6c757d",
+                  borderRight: "1px solid #6c757d !important",
+                  "&:hover": {
+                    backgroundColor: "#5c636a",
+                    borderColor: "#5c636a",
+                  },
+                }}
+                onClick={generatePDF}
+              >
+                PDF
+              </Button>
+              <Button
+                sx={{
+                  backgroundColor: "#6c757d",
+                  "&:hover": {
+                    backgroundColor: "#5c636a",
+                    borderColor: "#5c636a",
+                  },
+                }}
+              >
+                Column Visibility
+              </Button>
+            </ButtonGroup>
+          }
+
+          {/* Search field */}
+          {searchBar &&
+            <TextField
+              id="outlined-textarea"
+              label="Search"
+              variant="outlined"
+              placeholder="Enter search"
+              size="small"
+              InputProps={{
+                endAdornment: (
+                  <IconButton>
+                    <SearchIcon />
+                  </IconButton>
+                ),
+              }}
+            />
+          }
+        </Box>
+      }
+      {/* Table */}
       <Box>
         <div className="table-container">
           <table className="bordered-table">

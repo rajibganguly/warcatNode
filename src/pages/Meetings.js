@@ -212,6 +212,8 @@ export default function Meetings() {
                         <TableNew
                           data={allmeetingData}
                           column={column}
+                          exportButton={true}
+                          searchBar={true}
                           handleTasksAddInMeeting={handleTasksAddInMeeting}
                           handleTasksViewInMeeting={handleTasksViewInMeeting}
                           handleEditmeeting={handleEditmeeting}
