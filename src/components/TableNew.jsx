@@ -7,7 +7,7 @@ import { Box } from "@mui/system";
 import SearchIcon from "@mui/icons-material/Search";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
-import {getStatusText} from "../pages/common.js";
+import {fetchRoleType, getStatusText} from "../pages/common.js";
 
 function TableNew({
   column,
@@ -36,6 +36,7 @@ function TableNew({
 
   const renderCellValue = (row, column) => {
     const value = getNestedValue(row, column.dataField);
+    const userRoleType = fetchRoleType();
 
     if (column.dataField === "Operations") {
       return (
@@ -44,10 +45,12 @@ function TableNew({
             style={{ backgroundColor: '#fb4', color: '#000', marginRight: '2px' }}>
             <EyeOutlined />
           </Button>
-          <Button onClick={() => handleEditClick(row)}
+          {userRoleType === 'admin' &&
+          (<Button onClick={() => handleEditClick(row)}
             style={{ backgroundColor: '#0097a7', color: '#ffffff', marginRight: '2px' }}>
             <EditOutlined />
           </Button>
+          )}
         </>
       );
     }
@@ -59,10 +62,12 @@ function TableNew({
             style={{ backgroundColor: '#fb4', color: 'black', marginRight: '2px' }}>
             <EyeOutlined />
           </Button>
-          <Button onClick={() => handleAddSubTaskClick(row)}
+          {userRoleType === 'admin' &&
+          (<Button onClick={() => handleAddSubTaskClick(row)}
             style={{ backgroundColor: 'rgb(10, 24, 50)', color: '#ffffff' }}>
             <AddIcon />
           </Button>
+          )}
         </div>
       );
     }
@@ -78,10 +83,12 @@ function TableNew({
     if (column.dataField === "taskoperation") {
       return (
         <div style={{ display: "flex" }}>
-          <Button onClick={() => handleEditOperationTask(row)}
+          {userRoleType === 'admin' &&
+          (<Button onClick={() => handleEditOperationTask(row)}
             style={{ backgroundColor: '#0097a7', color: '#ffffff', marginRight: '2px' }}>
             <EditOutlined />
           </Button>
+          )}
           <Button onClick={() => handleViewParentOperationTask(row)}
             style={{ backgroundColor: '#fb4', color: 'black' }}>
             <EyeOutlined />
@@ -93,11 +100,12 @@ function TableNew({
     if (column.dataField === "tasks") {
       return (
         <div style={{ display: "flex", justifyContent: 'center', alignItems: 'center' }}>
-          <Button onClick={() => handleTasksAddInMeeting(row)}
+          {userRoleType === 'admin' &&
+          (<Button onClick={() => handleTasksAddInMeeting(row)}
             style={{ backgroundColor: '#0a1832', color: '#ffffff', marginRight: '2px' }}>
             <AddIcon />
-
           </Button>
+          )}
           <Button onClick={() => handleTasksViewInMeeting(row)}
             style={{ backgroundColor: '#fb4', color: 'black' }}>
             <EyeOutlined />
@@ -120,10 +128,12 @@ function TableNew({
     if (column.dataField === "meetingoperation") {
       return (
         <div style={{ display: "flex" }}>
-          <Button onClick={() => handleEditmeeting(row)}
+          {userRoleType === 'admin' &&
+          (<Button onClick={() => handleEditmeeting(row)}
             style={{ backgroundColor: '#0097a7', color: '#ffffff' }}>
             <EditOutlined />
           </Button>
+          )}
         </div>
       );
     }
