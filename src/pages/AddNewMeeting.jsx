@@ -24,8 +24,7 @@ import {
   ThemeProvider,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import { addMeetings, fetchTaskData } from './common'
-import { Link } from "react-router-dom";
+import { addMeetings, fetchTaskData } from './common';
 import Footer from "../components/Footer";
 import Header from "../components/header";
 import Sidebar from "../components/Sidebar";
