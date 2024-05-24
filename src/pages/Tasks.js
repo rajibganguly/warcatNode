@@ -161,7 +161,7 @@ export default function Tasks() {
         role_type: localObj.role_type
       };
       const tasksChartData = await ApiConfig.requestData('get', '/task-status-percentages', params, null);
-      console.log(tasksChartData, 'dipan');
+      // console.log(tasksChartData, 'dipan');
       const updateTaskCahrtValues = chartData;
       if (updateTaskCahrtValues[0]['label'] === 'Total Assigned') {
         updateTaskCahrtValues[0].percentage = tasksChartData?.totalAssigned ? formatPercentage(tasksChartData?.totalAssigned): 0
