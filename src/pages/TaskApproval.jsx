@@ -273,7 +273,7 @@ export default function TaskApproval() {
                                                     <h5 style={{marginBottom: '0px'}}>Date</h5>
                                                     <p style={{marginTop: '0px'}}>15-12-2023</p>
                                                     
-                                                </Grid>
+                                                </Grid> 
 
                                                 <Grid item xs={12} sm={4}>
                                                     <InputLabel id="demo-multiple-chip-label1" sx={{ marginBottom: '1%' }}>Note</InputLabel>
