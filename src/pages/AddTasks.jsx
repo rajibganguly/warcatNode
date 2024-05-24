@@ -1,41 +1,45 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import React, { useState, useEffect } from "react";
-import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import Box from "@mui/material/Box";
-import MuiAppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import InputFileUpload from "../components/InputFileUpload";
-import { Button, TextField } from "@mui/material";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
-import Footer from "../components/Footer";
-import Header from "../components/header";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { PlusCircleOutlined } from '@ant-design/icons';
-import { useTheme } from '@mui/material/styles';
-import Select from '@mui/material/Select';
-import Chip from '@mui/material/Chip';
-import MenuItem from '@mui/material/MenuItem';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import Sidebar from "../components/Sidebar";
-import { DepartmentContext } from './../context/DepartmentContext'
-import { TaskContext } from "../context/TaskContext";
-import axios from "axios";
-import { dateSelected, parentTaskEdit, addTaskPost, handleAddTask } from "./common";
 import {
-    useForm,
-    Controller,
+    Box,
+    Grid,
+    Card,
+    Chip,
+    Select,
+    styled,
+    Button,
+    Toolbar,
+    useTheme,
+    MenuItem,
+    TextField,
+    InputLabel,
+    Typography,
+    createTheme,
+    CssBaseline,
+    Breadcrumbs,
+    CardContent,
+    OutlinedInput,
+    ThemeProvider,
+} from "@mui/material";
+import {
+    dateSelected,
+    handleAddTask,
+    parentTaskEdit,
+} from "./common";
+import {
+useForm,
+Controller,
 } from 'react-hook-form';
 import { toast } from "react-toastify";
+import Footer from "../components/Footer";
+import Header from "../components/header";
+import Sidebar from "../components/Sidebar";
+import MuiAppBar from "@mui/material/AppBar";
+import { TaskContext } from "../context/TaskContext";
+import { PlusCircleOutlined } from '@ant-design/icons';
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { DepartmentContext } from './../context/DepartmentContext'
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -47,7 +51,6 @@ const MenuProps = {
         },
     },
 };
-
 
 function getStyles(name, personName, theme) {
     return {
@@ -78,34 +81,30 @@ const AppBar = styled(MuiAppBar, {
     }),
 }));
 
-
-
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 export default function AddTasks() {
-
-    const [open, setOpen] = React.useState(true);
+    const theme = useTheme();
+    const navigate = useNavigate();
     const location = useLocation();
+    const [open, setOpen] = React.useState(true);
     const [personName, setPersonName] = React.useState([]);
     const [deptId, setDeptId] = useState('');
     const [meetingId, setMeetingId] = useState('');
     const [taskId, setTaskId] = useState();
     const [updateTaskTitle, setUpdateTaskTitle] = useState('');
     const [meetingTopic, setMeetingTopic] = useState('');
-    const [taskTitle, setTaskTitle] = useState('');
-
+    const { control } = useForm({});
     const [base64Image, setBase64Image] = React.useState("");
     const [updateTaskFile, setupdateTaskFile] = useState(null);
     const [updateSelectedDate, setUpdateSelectedDate] = useState('');
-    const theme = useTheme();
     const { allDepartmentList } = React.useContext(DepartmentContext);
     const allDepartmentData = allDepartmentList.map((dept) => dept.department);
     const { allTaskLists } = React.useContext(TaskContext);
     const allTaskListsData = allTaskLists?.tasks;
     const [tagName, setTagName] = useState([]);
     const [selectedDeparmentobj, setSelectedDeparmentObj] = useState([])
-    const navigate = useNavigate();
     // const [departmentData, setDepartmenData] = useState([]);
     //const availableTags = [{ id: 1, value: "secretary", text: "Secretary" }, { id: 2, value: "head_of_office", text: "Head of Office" }]
 
@@ -151,7 +150,6 @@ export default function AddTasks() {
 
     }, [location.search, allTaskListsData, allTaskListsData]);
 
-
     const handleUpdateFileChange = (event) => {
         let file = event.target.files[0];
 
@@ -162,7 +160,6 @@ export default function AddTasks() {
         };
         reader.readAsDataURL(file);
     };
-
 
     const handleChange = (event) => {
         const {
@@ -193,15 +190,12 @@ export default function AddTasks() {
         setTagName(event.target.value);
     }
 
-
     const handleOutput = (open) => {
         toggleDrawer();
     };
     const toggleDrawer = () => {
         setOpen(!open);
     };
-
-
 
     const [inputGroups, setInputGroups] = useState([
         [
@@ -275,7 +269,6 @@ export default function AddTasks() {
         };
     };
 
-
     async function handleSubmit() {
         if (taskId) {
             const data = {
@@ -338,19 +331,7 @@ export default function AddTasks() {
         }
     };
 
-
-    const dateTimeStyle = {
-        width: "100%",
-        padding: "15px 10px",
-        border: "1px solid #ccc",
-        borderRadius: "6px",
-        fontFamily: 'Roboto,sans-serif',
-        fontSize: "1em"
-    }
-
     async function updateData(data) {
-
-        // console.log(data)
         const updateData = await parentTaskEdit(data);
         if (updateData) {
             toast.success("Task Edit Successfully", {
@@ -358,15 +339,8 @@ export default function AddTasks() {
             });
             navigate("/tasks");
         }
-
     }
-    const {
-        control,
 
-        // handleSubmit
-    } = useForm({
-        // resolver: yupResolver(yupFieldRequirements)
-    });
     return (
         <ThemeProvider theme={defaultTheme}>
             <Box sx={{ display: "flex" }}>
@@ -441,7 +415,6 @@ export default function AddTasks() {
 
                             </Box>
                             <CardContent>
-
                                 <Grid container spacing={2} sx={{ mb: 4, borderBottom: '1px solid #eff2f7', pb: 2 }}>
                                     <Grid item xs={12} md={6}>
                                         <InputLabel>Department / Government Organisation</InputLabel>
@@ -458,7 +431,6 @@ export default function AddTasks() {
                                                     ))}
                                                 </Box>
                                             )}
-
                                             MenuProps={MenuProps}
                                         >
                                             {allDepartmentData.map((value) => (
@@ -536,27 +508,27 @@ export default function AddTasks() {
                                                     <Grid item xs={6} md={6}>
                                                         <InputLabel sx={{ mb: 1 }}>Upload Images</InputLabel>
                                                         <Box display={'flex'} gap={2}>
-            <TextField
-                variant="outlined"
-                fullWidth
-                placeholder="Enter task title"
-                name="uploadImage"
-                size="small"
-                type="file"
-                onChange={(e) => handleChangeForImage(group[0].id, input.id, e)}
-            />
-            <Box width={'40px'} height={'40px'} minWidth={'40px'} borderRadius={'6px'} backgroundColor='#ebebeb'>
-                {base64Image && (
-                    <img
-                        alt=""
-                        width={'100%'}
-                        height={'100%'}
-                        className="smallImageInTask"
-                        src={input.value}
-                    />
-                )}
-            </Box>
-        </Box>
+                                                            <TextField
+                                                                variant="outlined"
+                                                                fullWidth
+                                                                placeholder="Enter task title"
+                                                                name="uploadImage"
+                                                                size="small"
+                                                                type="file"
+                                                                onChange={(e) => handleChangeForImage(group[0].id, input.id, e)}
+                                                            />
+                                                            <Box width={'40px'} height={'40px'} minWidth={'40px'} borderRadius={'6px'} backgroundColor='#ebebeb'>
+                                                                {base64Image && (
+                                                                    <img
+                                                                        alt=""
+                                                                        width={'100%'}
+                                                                        height={'100%'}
+                                                                        className="smallImageInTask"
+                                                                        src={input.value}
+                                                                    />
+                                                                )}
+                                                            </Box>
+                                                        </Box>
                                                     </Grid>
                                                 ) : input.type === 'date' ? (
                                                     <Grid item xs={6} md={6}>
@@ -715,10 +687,8 @@ export default function AddTasks() {
                     </Box>
                     <Box
                         component="footer"
-                        sx={{
-                            width: "100%",
-                            paddingBottom: "20px",
-                        }}
+                        pb={'20px'}
+                        width={'100%'}
                     >
                         <Footer />
                     </Box>

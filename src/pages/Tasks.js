@@ -427,6 +427,9 @@ export default function Tasks() {
                           data={data}
                           column={column}
                           icons={icons}
+                          exportButton={true}
+                          searchBar={true}
+                          tableHeading={'Tasks list'}
                           handleAddSubTaskClick={handleAddSubTaskClick}
                           handleViewSubTask={handleViewSubTask}
                           handleViewParentOperationTask={handleViewParentOperationTask}
