@@ -25,8 +25,6 @@ function TableNew({
   handleTaskView,
   handleEditmeeting
 }) {
-
-  
   const getNestedValue = (obj, path) => {
     const keys = path.split(".");
     let value = obj;
@@ -114,7 +112,7 @@ function TableNew({
       return (
         <div style={{ display: "flex" }}>
           <Button onClick={() => handleAddNoteClick(row)}>Note+</Button>
-          <Button onClick={() => handleUploadClick(row)}>Upload</Button>
+          <Button disabled={!row?.note_details?.length} onClick={() => handleUploadClick(row)}>Upload</Button>
         </div>
       );
     }

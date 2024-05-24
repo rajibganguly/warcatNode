@@ -104,7 +104,7 @@ export default function Tasks() {
   const [chartData, setChartData] = useState(progressData);
   const navigate = useNavigate();
 
-  const includeActionColumn = currentRoleType === 'admin' || currentRoleType === 'headOffice' ? true : false;
+  const includeActionColumn = currentRoleType !== 'admin' ? true : false;
 
   const column = [
     { text: 'Assigned Date', dataField: 'timestamp' },
