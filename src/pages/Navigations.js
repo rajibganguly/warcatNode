@@ -93,6 +93,7 @@ const Navigations = () => {
           path="/edit-meeting/:id"
           element={authToken && userRoleType === 'admin' ? <EditMeeting /> : <Navigate to="/" />}
         />
+
         <Route
           path="/task-note"
           element={authToken && userRoleType === 'admin' ? <TaskNote /> : <Navigate to="/" />}
