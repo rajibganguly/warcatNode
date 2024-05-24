@@ -10,7 +10,7 @@ const LoaderText = () => {
         height: '100%',
         top: '0',
         left: '0',
-        zIndex: '999'
+        zIndex: '9999'
     }
 
     return (

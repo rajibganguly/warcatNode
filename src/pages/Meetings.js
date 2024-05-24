@@ -26,6 +26,7 @@ import { useNavigate } from "react-router-dom";
 import { TaskContext } from "../context/TaskContext";
 import TaskViewDialog from "../dialog/TaskViewDialog";
 import { MeetingContext } from './../context/MeetingContext'
+import { fetchMeetingData, fetchTaskData } from "./common";
 
 const column = [
   { text: 'Meeting Id', dataField: 'meetingId' },
@@ -67,7 +68,21 @@ export default function Meetings() {
   const [taskDataView, setTaskDataView] = useState([]);
   const [meetingData, setMeetingData] = useState([]);
   const navigate = useNavigate();
+  const { setAllMeetingLists } = React.useContext(MeetingContext);
+  const { setAllTaskLists } = React.useContext(TaskContext);
+  const [isLoading, setIsLoading] = React.useState(false);
 
+  React.useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true)
+      const fetchMeetingsData = await fetchMeetingData();
+      setAllMeetingLists(fetchMeetingsData);
+      const setAllTaskListsData = await fetchTaskData();
+      setAllTaskLists(setAllTaskListsData)
+      setIsLoading(false)
+    };
+    fetchData();
+  }, []);
   const closeModal = () => {
     setModalVisible(false);
     setTaskDataView([]);
