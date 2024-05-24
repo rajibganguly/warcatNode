@@ -40,7 +40,6 @@ import LoadingIndicator from "../components/loadingIndicator.js";
 
 const drawerWidth = 240;
 
-
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
@@ -88,8 +87,6 @@ const handleDropdownChange = (value) => {
 
 const progressData = TaskChartData;
 
-
-
 export default function Tasks() {
   const [open, setOpen] = React.useState(true);
   const [modalVisible, setModalVisible] = useState(false);
@@ -120,8 +117,6 @@ export default function Tasks() {
     fetchData();
   }, []);
 
-
-
   const includeActionColumn = currentRoleType !== 'admin' ? true : false;
 
   const column = [
@@ -150,8 +145,6 @@ export default function Tasks() {
     fetchTasksChart()
     // fetchTasksData();
   }, []);
-
-
 
   /**
    * @description Private function for fetch Task Chart
@@ -192,8 +185,6 @@ export default function Tasks() {
     }
   };
 
-
-
   const handleViewParentOperationTask = (row) => {
     console.log(row)
     if (row) {
@@ -212,13 +203,11 @@ export default function Tasks() {
     navigate(`/edit-tasks?taskId=${encodeURIComponent(encodedTaskId)}`);
   };
 
-
   const closeModal = () => {
     setModalVisible(false);
     setParentModalVisible(false);
     setSubModalVisible(false);
   };
-
 
   const handleAddNoteClick = (record) => {
     console.info("Edit clicked for:", record);
@@ -232,10 +221,7 @@ export default function Tasks() {
     // Implement logic for editing
   };
 
-
-
   const handleViewSubTask = (record) => {
-
     if (record?.sub_task && record?.sub_task?.length > 0) {
       setSubTaskView(record?.sub_task);
       setSubModalVisible(true);
@@ -244,7 +230,6 @@ export default function Tasks() {
         autoClose: 2000,
       });
     }
-
   };
 
   const handleAddSubTaskClick = (record) => {
@@ -259,20 +244,18 @@ export default function Tasks() {
     setModalVisible(true);
   };
 
-
-
   const handleOutput = (open) => {
     toggleDrawer();
   };
   const toggleDrawer = () => {
     setOpen(!open);
   };
-  // if (isLoading) {
-  //   return (<LoadingIndicator isLoading={isLoading} />);
-  // }
-
+  
   return (
     <ThemeProvider theme={defaultTheme}>
+      {/* For Loader */}
+      <LoadingIndicator isLoading={isLoading} />
+
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>

@@ -4,7 +4,7 @@ import LoaderText from './loaderText';
 const LoadingIndicator = ({isLoading}) => {
   return (
     <>
-    {isLoading && <LoaderText />}
+      {isLoading && <LoaderText />}
     </>
     
   );

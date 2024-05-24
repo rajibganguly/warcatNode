@@ -222,20 +222,11 @@ export default function AddNewMeeting() {
     }
   }
 
-  const dateTimeStyle = {
-    width: "100%",
-    padding: "11px 10px",
-    border: "1px solid #ccc",
-    borderRadius: "6px",
-    fontFamily: 'Roboto,sans-serif',
-    fontSize: "1em"
-  }
-
-  if (isLoading) {
-    return (<LoadingIndicator isLoading={isLoading} />);
-  }
   return (
     <ThemeProvider theme={defaultTheme}>
+      {/* For Loader */}
+      <LoadingIndicator isLoading={isLoading} />
+      
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>

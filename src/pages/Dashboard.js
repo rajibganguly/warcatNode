@@ -183,7 +183,9 @@ export default function Dashboard() {
 
   return (
     <>
-      <LoadingIndicator isLoading={true} />
+      {/* For Loader */}
+      <LoadingIndicator isLoading={isLoading} />
+      {/*  */}
       <ThemeProvider theme={defaultTheme}>
         <Box sx={{ display: "flex" }}>
           <CssBaseline />

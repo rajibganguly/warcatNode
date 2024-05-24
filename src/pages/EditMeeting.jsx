@@ -261,14 +261,11 @@ export default function EditMeeting() {
     //     return departmentNames.map(name => departmentMap.get(name)).filter(id => id !== undefined);
     // };
 
-
-   
-
-    if (isLoading) {
-        return (<LoadingIndicator isLoading={isLoading} />);
-    }
     return (
         <ThemeProvider theme={defaultTheme}>
+            {/* For Loader */}
+            <LoadingIndicator isLoading={isLoading} />
+            {/*  */}
             <Box sx={{ display: "flex" }}>
                 <CssBaseline />
                 <AppBar position="absolute" open={open}>
