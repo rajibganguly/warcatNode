@@ -1,7 +1,7 @@
 export const TaskChartData = [
     {
       id: 1,
-      percentage: 66,
+      percentage: 0,
       label: "Total Assigned",
       styles: {
         root: {},
@@ -26,7 +26,7 @@ export const TaskChartData = [
     },
     {
       id: 2,
-      percentage: 45,
+      percentage: 0,
       label: "Not Initiated",
       styles: {
         root: {},
@@ -51,7 +51,7 @@ export const TaskChartData = [
     },
     {
       id: 3,
-      percentage: 80,
+      percentage: 0,
       label: "In Progress",
       styles: {
         root: {},
@@ -76,7 +76,7 @@ export const TaskChartData = [
     },
     {
       id: 4,
-      percentage: 80,
+      percentage: 0,
       label: "Completed",
       styles: {
         root: {},

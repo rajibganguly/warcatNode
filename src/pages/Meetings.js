@@ -30,8 +30,8 @@ import { MeetingContext } from './../context/MeetingContext'
 const column = [
   { text: 'Meeting Id', dataField: 'meetingId' },
   { text: 'Meeting Topic', dataField: 'meetingTopic' },
-  { text: 'Departments', dataField: 'department_name' },
-  { text: 'Tag', dataField: 'tag' },
+  { text: 'Departments', dataField: 'meeting_dept' },
+  { text: 'Tag', dataField: 'meeting_tag' },
   { text: 'Date', dataField: 'selectDate' },
   { text: 'Time', dataField: 'selectTime' },
   { text: 'Attachment', dataField: 'imageUrl' },

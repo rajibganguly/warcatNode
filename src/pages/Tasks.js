@@ -105,17 +105,17 @@ export default function Tasks() {
   const navigate = useNavigate();
 
   const includeActionColumn = currentRoleType !== 'admin' ? true : false;
-
+  console.log(data, 'dataaa');
   const column = [
     { text: 'Assigned Date', dataField: 'timestamp' },
     { text: "Assigned Title", dataField: 'task_title' },
-    { text: "Department", dataField: 'department[0].dep_name' },
-    { text: "Tag", dataField: 'department[0].tag' },
+    { text: "Department", dataField: 'tasks_dept' },
+    { text: "Tag", dataField: 'tasks_tag' },
     { text: "Target Date", dataField: 'target_date' },
-    { text: "Status", dataField: 'statuss' },
+    { text: "Status", dataField: 'status' },
     { text: "Sub Task", dataField: 'subtask' },
     { text: "Operations", dataField: 'taskoperation' },
-    { text: "Varified Status", dataField: '' }
+    { text: "Verified Status", dataField: '' }
   ];
 
   if (includeActionColumn) {
@@ -176,18 +176,19 @@ export default function Tasks() {
         role_type: localObj.role_type
       };
       const tasksChartData = await ApiConfig.requestData('get', '/task-status-percentages', params, null);
+      console.log(tasksChartData, 'dipan');
       const updateTaskCahrtValues = chartData;
       if (updateTaskCahrtValues[0]['label'] === 'Total Assigned') {
-        updateTaskCahrtValues[0].percentage = tasksChartData.totalAssigned
+        updateTaskCahrtValues[0].percentage = tasksChartData?.totalAssigned ?? 0
       }
       if (updateTaskCahrtValues[1]['label'] === 'Not Initiated') {
-        updateTaskCahrtValues[1].percentage = tasksChartData.initiated.percentage
+        updateTaskCahrtValues[1].percentage = tasksChartData?.initiated?.percentage ?? 0
       }
       if (updateTaskCahrtValues[2]['label'] === 'In Progress') {
-        updateTaskCahrtValues[2].percentage = tasksChartData.inProgress.percentage
+        updateTaskCahrtValues[2].percentage = tasksChartData?.inProgress?.percentage ?? 0
       }
       if (updateTaskCahrtValues[3]['label'] === 'Completed') {
-        updateTaskCahrtValues[3].percentage = tasksChartData.completed.percentage
+        updateTaskCahrtValues[3].percentage = tasksChartData?.completed?.percentage ?? 0
       }
       setChartData(updateTaskCahrtValues)
       //setData(tasksData.tasks);

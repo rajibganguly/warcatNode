@@ -27,7 +27,7 @@ import Sidebar from "../components/Sidebar";
 import { CardActions } from '@mui/material';
 
 const column = [
-  { text: 'Department', dataField: 'department.department_name' },
+  { text: 'Department', dataField: 'department_dept' },
   { text: "Secretary", dataField: 'secretary.name' },
   { text: "Head Of Office", dataField: 'headOffice.name' },
   { text: "Operations", dataField: 'Operations' },

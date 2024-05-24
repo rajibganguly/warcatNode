@@ -177,3 +177,21 @@ export const fetchRoleType = () => {
   const currentRoleType = localSt?.role_type ?? '';
   return currentRoleType;
 };
+
+const formatRole = (role) => {
+  return role.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+};
+
+export const formatStatus = (status) => {
+  if(status === 1){
+    return 'Accepted';
+  }
+  if(status === 2){
+    return 'Rejected';
+  }
+  return 'Pending';
+}
+
+export const getCommaSeparatedRoles = (tagArray) => {
+  return tagArray.map(role => formatRole(role)).join(', ');
+};
