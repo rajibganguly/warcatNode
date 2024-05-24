@@ -23,40 +23,17 @@ import TaskList from "./TaskList";
 import TaskNote from "./TaskNote";
 import TaskUpload from "./TaskUpload";
 import TaskApproval from "./TaskApproval";
-import { useContext, useEffect, useState } from "react";
-import { fetchDepartmentData, fetchMeetingData, fetchTaskData, fetchRoleType } from "./common";
-import { DepartmentContext } from "../context/DepartmentContext";
-import { MeetingContext } from "../context/MeetingContext";
-import { TaskContext } from "../context/TaskContext";
-import LoadingIndicator from "../components/loadingIndicator";
+import { fetchRoleType } from "./common";
+
 import Logout from "./Logout";
 
 
 const Navigations = () => {
   const { authToken } = useAuth();
-  const { setAllDepartmentList } = useContext(DepartmentContext);
-  const { setAllMeetingLists } = useContext(MeetingContext);
-  const { setAllTaskLists } = useContext(TaskContext);
-  const [isLoading, setIsLoading] = useState(false);
   const userRoleType = fetchRoleType();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true)
-      const fetchDepdata = await fetchDepartmentData();
-      setAllDepartmentList(fetchDepdata);
-      const fetchMeetingsData = await fetchMeetingData();
-      setAllMeetingLists(fetchMeetingsData);
-      const setAllTaskListsData = await fetchTaskData();
-      setAllTaskLists(setAllTaskListsData)
-      setIsLoading(false)
-    };
-    fetchData();
-  }, []);
+  
 
-  if (isLoading) {
-    return (<LoadingIndicator isLoading={isLoading} />);
-  }
   return (
     <Router>
       <Routes>

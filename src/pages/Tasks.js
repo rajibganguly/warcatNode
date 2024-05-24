@@ -29,7 +29,7 @@ import { TextField, Dialog, DialogContent, DialogContentText } from "@mui/materi
 import CardActions from "@mui/material/CardActions";
 import ApiConfig from '../config/ApiConfig'
 import SubTaskViewDialog from "../dialog/SubTaskViewDialog";
-import { mapKeysToValues } from '../pages/common.js'
+import { fetchTaskData, mapKeysToValues } from '../pages/common.js'
 import { TaskChartData } from '../constant/taskChartData';
 import { useNavigate } from "react-router-dom";
 import SubTaskForm from "../components/SubTaskForm";
@@ -108,12 +108,17 @@ export default function Tasks() {
   const { allTaskLists } = React.useContext(TaskContext);
   const allTaskListsData = allTaskLists?.tasks;
   const [isLoading, setIsLoading] = useState(false);
-  // console.log(data[0].department[0]);
-  // console.log(data[0].department[0].dep_name);
-  //   const departmentNames = data.flatMap(item => item.department.map(dept => dept.dep_name));
-  // console.log(departmentNames);
+  const { setAllTaskLists } = React.useContext(TaskContext);
 
-
+  React.useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true)
+      const setAllTaskListsData = await fetchTaskData();
+      setAllTaskLists(setAllTaskListsData)
+      setIsLoading(false)
+    };
+    fetchData();
+  }, []);
 
 
 

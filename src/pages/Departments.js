@@ -25,6 +25,7 @@ import TableNew from "../components/TableNew";
 import Sidebar from "../components/Sidebar";
 
 import { CardActions } from '@mui/material';
+import { fetchDepartmentData } from './common';
 
 const column = [
   { text: 'Department', dataField: 'department.department_name' },
@@ -61,6 +62,17 @@ const defaultTheme = createTheme();
 
 export default function Departments() {
   const [open, setOpen] = useState(true);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const { setAllDepartmentList } = React.useContext(DepartmentContext);
+  React.useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true)
+      const fetchDepdata = await fetchDepartmentData();
+      setAllDepartmentList(fetchDepdata);
+      setIsLoading(false)
+    };
+    fetchData();
+  }, []);
   const navigate = useNavigate();
   const [modalVisible, setModalVisible] = React.useState(false);
   const [modalContent, setModalContent] = React.useState(null);

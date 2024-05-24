@@ -23,6 +23,11 @@ import Sidebar from "../components/Sidebar";
 import { toast } from "react-toastify";
 import ApiConfig from "../config/ApiConfig";
 import { BarChart } from '@mui/x-charts/BarChart';
+import { fetchDepartmentData, fetchMeetingData, fetchTaskData } from "./common";
+import { DepartmentContext } from "../context/DepartmentContext";
+import { MeetingContext } from "../context/MeetingContext";
+import { TaskContext } from "../context/TaskContext";
+import LoadingIndicator from "../components/loadingIndicator";
 
 
 const drawerWidth = 240;
@@ -57,7 +62,10 @@ export default function Dashboard() {
   const [data, setData] = React.useState([]);
   const [currUser, setCurrUser] = React.useState({});
   const [statistics, setStatistics] = React.useState({});
-  
+  const [isLoading, setIsLoading] = React.useState(false);
+  const { setAllDepartmentList } = React.useContext(DepartmentContext);
+  const { setAllMeetingLists } = React.useContext(MeetingContext);
+  const { setAllTaskLists } = React.useContext(TaskContext);
   const [cardDataState, setCardDataState] = React.useState([
     { id: 1, title: 'Total Department', value: 5, icon: <AccountBalanceIcon /> },
     { id: 2, title: 'Completed Tasks', value: 1, icon: <PeopleIcon /> },
@@ -65,6 +73,21 @@ export default function Dashboard() {
     { id: 4, title: 'Assigned Task', value: 0, icon: <MonetizationOnIcon /> },
   ]);
 
+  React.useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true)
+      const fetchDepdata = await fetchDepartmentData();
+      setAllDepartmentList(fetchDepdata);
+      const fetchMeetingsData = await fetchMeetingData();
+      setAllMeetingLists(fetchMeetingsData);
+      const setAllTaskListsData = await fetchTaskData();
+      setAllTaskLists(setAllTaskListsData)
+      setIsLoading(false)
+    };
+    fetchData();
+  }, []);
+
+  
   const token = useAuth()
   const handleOutput = (open) => {
     toggleDrawer();
@@ -157,7 +180,9 @@ export default function Dashboard() {
     });
     setCardDataState(updatedCardData);
   };
-
+  if (isLoading) {
+    return (<LoadingIndicator isLoading={isLoading} />);
+  }
   return (
     <ThemeProvider theme={defaultTheme}>
       <Box sx={{ display: "flex" }}>
