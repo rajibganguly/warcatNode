@@ -1,12 +1,15 @@
 // Logout.jsx
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../providers/AuthProvider';
 
 const Logout = () => {
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     // Clear local storage
+    logout();
     localStorage.removeItem('token');
 
     // Optionally, you can clear other storage types as well

@@ -24,7 +24,7 @@ import TaskNote from "./TaskNote";
 import TaskUpload from "./TaskUpload";
 import TaskApproval from "./TaskApproval";
 import { useContext, useEffect } from "react";
-import { fetchDepartmentData, fetchMeetingData, fetchTaskData } from "./common";
+import { fetchDepartmentData, fetchMeetingData, fetchRoleType, fetchTaskData } from "./common";
 import { DepartmentContext } from "../context/DepartmentContext";
 import { MeetingContext } from "../context/MeetingContext";
 import { TaskContext } from "../context/TaskContext";
@@ -36,6 +36,7 @@ const Navigations = () => {
   const { setAllDepartmentList } = useContext(DepartmentContext);
   const { setAllMeetingLists } = useContext(MeetingContext);
   const { setAllTaskLists } = useContext(TaskContext);
+  const userRoleType = fetchRoleType();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,7 +52,10 @@ const Navigations = () => {
   return (
     <Router>
       <Routes>
-        <Route exact path="/" element={<LogIn />} />
+        <Route exact
+          path="/"
+          element={!authToken ? <LogIn /> : <Navigate to="/dashboard" />}
+        />
         <Route
           path="/logout"
           element={!authToken ? <Navigate to="/" /> : <Logout />}
@@ -86,11 +90,11 @@ const Navigations = () => {
         />
         <Route
           path="/add-tasks"
-          element={!authToken ? <Navigate to="/" /> : <AddTask />}
+          element={authToken && userRoleType === 'admin' ? <AddTask /> : <Navigate to="/" />}
         />
         <Route
           path="/edit-tasks"
-          element={!authToken ? <Navigate to="/" /> : <AddTask />}
+          element={authToken && userRoleType === 'admin' ? <AddTask /> : <Navigate to="/" />}
         />
         <Route
           path="/tasks-list"
@@ -98,19 +102,19 @@ const Navigations = () => {
         />
         <Route
           path="/edit-departments/:id"
-          element={!authToken ? <Navigate to="/" /> : <EditDepartment />}
+          element={authToken && userRoleType === 'admin' ? <EditDepartment /> : <Navigate to="/" />}
         />
         <Route
           path="/edit-meeting/:id"
-          element={!authToken ? <Navigate to="/" /> : <EditMeeting />}
+          element={authToken && userRoleType === 'admin' ? <EditMeeting /> : <Navigate to="/" />}
         />
         <Route
           path="/task-note"
-          element={!authToken ? <Navigate to="/" /> : <TaskNote />}
+          element={authToken && userRoleType === 'admin' ? <TaskNote /> : <Navigate to="/" />}
         />
         <Route
           path="/task-upload"
-          element={!authToken ? <Navigate to="/" /> : <TaskUpload />}
+          element={authToken && userRoleType === 'admin' ? <TaskUpload /> : <Navigate to="/" />}
         />
         <Route
           path="/task-approval"
