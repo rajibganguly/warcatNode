@@ -23,7 +23,7 @@ import {
   OutlinedInput,
   ThemeProvider,
 } from "@mui/material";
-import { addMeetings } from './common'
+import { addMeetings, fetchTaskData } from './common'
 import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
 import Header from "../components/header";
@@ -180,6 +180,7 @@ export default function AddNewMeeting() {
     try {
       setIsLoading(true);
       const setAllTaskListsData = await addMeetings(formDataSend);
+      await fetchTaskData();
       console.log(setAllTaskListsData)
       setIsLoading(false);
     } catch (error) {

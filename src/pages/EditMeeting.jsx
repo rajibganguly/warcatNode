@@ -35,6 +35,7 @@ import { useParams } from "react-router-dom";
 import { format } from 'date-fns';
 import dayjs from 'dayjs';
 import LoadingIndicator from "../components/loadingIndicator";
+import { fetchTaskData } from "./common";
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -199,6 +200,7 @@ export default function EditMeeting() {
                 },
                 body: JSON.stringify(updatedData)
             });
+            await fetchTaskData();
             if (response.ok) {
                 toast.success('Meeting updated successfully');
                 setIsLoading(false);
