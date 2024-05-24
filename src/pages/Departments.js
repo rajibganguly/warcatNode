@@ -192,6 +192,9 @@ export default function Departments() {
                       data={allDepartmentList}
                       column={column}
                       icons={icons}
+                      exportButton={true}
+                      searchBar={true}
+                      tableHeading={''}
                       handleSeeClick={handleSeeClick}
                       handleEditClick={handleEditClick}
                     />
