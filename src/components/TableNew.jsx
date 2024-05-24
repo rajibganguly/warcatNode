@@ -11,6 +11,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import {getStatusText} from "../pages/common.js";
 
 function TableNew({
   column,
@@ -25,10 +26,12 @@ function TableNew({
   handleAddNoteClick,
   handleUploadClick,
   handleEditOperationTask,
-  handleViewOperationTask,
+  handleViewParentOperationTask,
   handleTaskView,
   handleEditmeeting
 }) {
+
+  
   const getNestedValue = (obj, path) => {
     const keys = path.split(".");
     let value = obj;
@@ -59,7 +62,7 @@ function TableNew({
     if (column.dataField === "subtask") {
       return (
         <div style={{ display: "flex" }}>
-          <Button
+          <Button onClick={() => handleViewSubTask(row)}
             style={{ backgroundColor: '#fb4', color: 'black', marginRight: '2px' }}>
             <EyeOutlined />
           </Button>
@@ -71,15 +74,23 @@ function TableNew({
       );
     }
 
+  
+
+    if(column.dataField === "verifiedstatus"){
+      return (
+        getStatusText(row.status)
+      )
+    }
+
     if (column.dataField === "taskoperation") {
       return (
         <div style={{ display: "flex" }}>
           <Button onClick={() => handleEditOperationTask(row)}
-           style={{ backgroundColor: '#0097a7', color: '#ffffff', marginRight: '2px' }}>
+            style={{ backgroundColor: '#0097a7', color: '#ffffff', marginRight: '2px' }}>
             <EditOutlined />
           </Button>
-          <Button onClick={() => handleViewOperationTask(row)}
-           style={{ backgroundColor: '#fb4', color: 'black' }}>
+          <Button onClick={() => handleViewParentOperationTask(row)}
+            style={{ backgroundColor: '#fb4', color: 'black' }}>
             <EyeOutlined />
           </Button>
         </div>
@@ -102,7 +113,7 @@ function TableNew({
       );
     }
 
-  
+
 
     if (column.dataField === "action") {
       return (

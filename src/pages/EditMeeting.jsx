@@ -115,7 +115,7 @@ export default function EditMeeting() {
         tag: [],
         imageUrl: "",
         meetingTopic: "",
-        selectDate: dayjs(), 
+        selectDate: dayjs(),
         selectTime: dayjs(),
 
     });
@@ -160,7 +160,7 @@ export default function EditMeeting() {
                 ...prevState,
                 imageUrl: base64
             }));
-            setFileName(file.name); 
+            setFileName(file.name);
         }
     };
 
@@ -241,6 +241,13 @@ export default function EditMeeting() {
     };
 
     const departmentNames = data.map((dept) => dept.department.department_name);
+
+    const getDepartmentIds = (departmentNames) => {
+
+        const departmentMap = new Map(data.map(dep => [dep.name, dep.id]));
+
+        return departmentNames.map(name => departmentMap.get(name)).filter(id => id !== undefined);
+    };
 
     return (
         <ThemeProvider theme={defaultTheme}>
@@ -396,20 +403,20 @@ export default function EditMeeting() {
                                                             components={['DatePicker', 'TimePicker']}
                                                         >
                                                             <Grid item xs={4}>
-                                                               
-                                                                    <DatePicker
-                                                                        value={formData.selectDate}
-                                                                        onChange={handleDateChange}
-                                                                        renderInput={(params) => <TextField {...params} />} />
-                                                               
+
+                                                                <DatePicker
+                                                                    value={formData.selectDate}
+                                                                    onChange={handleDateChange}
+                                                                    renderInput={(params) => <TextField {...params} />} />
+
                                                             </Grid>
                                                             <Grid item xs={4}>
-                                                                
-                                                                    <TimePicker
-                                                                        value={formData.selectTime}
-                                                                        onChange={handleTimeChange}
-                                                                        renderInput={(params) => <TextField {...params} />} />
-                                                               
+
+                                                                <TimePicker
+                                                                    value={formData.selectTime}
+                                                                    onChange={handleTimeChange}
+                                                                    renderInput={(params) => <TextField {...params} />} />
+
                                                             </Grid>
                                                             <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                                                 <Button

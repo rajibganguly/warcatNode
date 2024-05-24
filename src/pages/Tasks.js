@@ -29,10 +29,12 @@ import { TextField, Dialog, DialogContent, DialogContentText } from "@mui/materi
 import CardActions from "@mui/material/CardActions";
 import ApiConfig from '../config/ApiConfig'
 import SubTaskViewDialog from "../dialog/SubTaskViewDialog"; 
-
+import {mapKeysToValues} from '../pages/common.js'
 import { TaskChartData } from '../constant/taskChartData';
 import { useNavigate } from "react-router-dom";
 import SubTaskForm from "../components/SubTaskForm";
+import TaskViewDialog from "../dialog/TaskViewDialog";
+import SubTaskDialog from "../dialog/SubTaskViewDialog";
 
 const drawerWidth = 240;
 
@@ -89,8 +91,12 @@ const progressData = TaskChartData;
 export default function Tasks() {
   const [open, setOpen] = React.useState(true);
   const [modalVisible, setModalVisible] = useState(false);
+  const [parentModalVisible, setParentModalVisible] = useState(false);
   const [modalVisible1, setModalVisible1] = useState(false);
   const [modalContent, setModalContent] = useState(null);
+  const [parentTaskView, setParentTaskView] = useState([]);
+  const [subTaskView, setSubTaskView] = useState([]);
+  const [subModalVisible, setSubModalVisible] = useState(false);
   const [data, setData] = useState([]);
   const localSt = JSON.parse(localStorage.getItem("user"));
   const currentRoleType = localSt.role_type;
@@ -98,18 +104,24 @@ export default function Tasks() {
   const [chartData, setChartData] = useState(progressData);
   const navigate = useNavigate();
 
+  const includeActionColumn = currentRoleType === 'admin' || currentRoleType === 'headOffice' ? true : false;
+
   const column = [
     { text: 'Assigned Date', dataField: 'timestamp' },
     { text: "Assigned Title", dataField: 'task_title' },
     { text: "Department", dataField: 'department[0].dep_name' },
     { text: "Tag", dataField: 'department[0].tag' },
     { text: "Target Date", dataField: 'target_date' },
-    { text: "Status", dataField: 'status' },
+    { text: "Status", dataField: 'statuss' },
     { text: "Sub Task", dataField: 'subtask' },
     { text: "Operations", dataField: 'taskoperation' },
-    { text: "Varified Status", dataField: '' },
-    { text: "Action", dataField: 'action' },
+    { text: "Varified Status", dataField: '' }
   ];
+
+  if (includeActionColumn) {
+    column.push({ text: "Action", dataField: 'action' });
+  }
+
   const icons = {
     see: <EyeOutlined />,
     edit: <EditOutlined />,
@@ -189,9 +201,15 @@ export default function Tasks() {
 
 
 
-  const handleViewOperationTask = (row) => {
-    setModalContent(row);
-    setModalVisible(true);
+  const handleViewParentOperationTask = (row) => {
+    if (row && row?.length > 0) {
+      setParentTaskView([row]);
+      setParentModalVisible(true);
+    } else {
+      toast.warning("Task not found.", {
+        autoClose: 2000,
+      });
+    }
   };
 
   const handleEditOperationTask = (row) => {
@@ -206,33 +224,37 @@ export default function Tasks() {
 
   const closeModal = () => {
     setModalVisible(false);
-    setModalContent(null);
+    setParentModalVisible(false);
+    setSubModalVisible(false);
   };
 
 
   const handleAddNoteClick = (record) => {
     console.info("Edit clicked for:", record);
-    navigate('/task-note')
+    navigate('/task-note?taskId='+record?.task_id);
     // Implement logic for editing
   };
 
   const handleUploadClick = (record) => {
     console.info("Edit clicked for:", record);
-    navigate('/task-upload')
+    navigate('/task-upload?taskId='+record?.task_id)
     // Implement logic for editing
   };
 
 
 
   const handleViewSubTask = (record) => {
-    if (typeof record === 'object' && record !== null) {
-        setModalContent(record); 
-        setModalVisible(true);   
+    console.log(record?.sub_task)
+    if (record?.sub_task && record?.sub_task?.length > 0) {
+      setSubTaskView(record?.sub_task);
+      setSubModalVisible(true);
     } else {
-        console.error("Invalid modal content: ", record);
+      toast.warning("Task not found.", {
+        autoClose: 2000,
+      });
     }
-};
 
+  };
 
   const handleAddSubTaskClick = (record) => {
     const handleFormSubmit = (formValues) => {
@@ -408,16 +430,38 @@ export default function Tasks() {
                           tableHeading={'Task list'}
                           handleAddSubTaskClick={handleAddSubTaskClick}
                           handleViewSubTask={handleViewSubTask}
-                          handleViewOperationTask={handleViewOperationTask}
+                          handleViewParentOperationTask={handleViewParentOperationTask}
                           handleEditOperationTask={handleEditOperationTask}
                           handleAddNoteClick={handleAddNoteClick}
                           handleUploadClick={handleUploadClick}
                         />
-                        <SubTaskViewDialog
-                          open={modalVisible}
-                          onClose={closeModal}
-                          modalContent={modalContent}
-                        />
+                        {parentTaskView && parentModalVisible && (
+                          <TaskViewDialog
+                            open={parentModalVisible}
+                            onClose={closeModal}
+                            taskDataView={parentTaskView}
+                          // meetingData={meetingData}
+                          />
+                        )}
+
+                        {subTaskView && subModalVisible && (
+                          <TaskViewDialog
+                            open={subModalVisible}
+                            onClose={closeModal}
+                            taskDataView={subTaskView}
+                          // meetingData={meetingData}
+                          />
+                        )}
+
+                        {modalVisible && (
+                          <SubTaskDialog
+                            open={modalVisible}
+                            onClose={closeModal}
+                            modalContent={modalContent}
+                          // meetingData={meetingData}
+                          />
+                        )}
+
                       </CardContent>
                     </Card>
                   </Grid>
