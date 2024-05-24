@@ -31,6 +31,7 @@ import { addMeetings } from './common'
 import { DepartmentContext } from '../context/DepartmentContext';
 import axios from 'axios';
 import MenuItem from '@mui/material/MenuItem';
+import LoadingIndicator from "../components/loadingIndicator";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -95,6 +96,7 @@ function getStyles(name, personName, theme) {
 export default function AddNewMeeting() {
   const [open, setOpen] = React.useState(true);
   const [file, setFile] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     departmentIds: '',
     tag: '',
@@ -189,10 +191,13 @@ export default function AddNewMeeting() {
       imageUrl: base64Image
     }
     try {
+      setIsLoading(true);
       const setAllTaskListsData = await addMeetings(formDataSend);
       console.log(setAllTaskListsData)
+      setIsLoading(false);
     } catch (error) {
       console.error('Error occurred:', error);
+      setIsLoading(false);
     }
 
   };
@@ -242,6 +247,9 @@ export default function AddNewMeeting() {
     fontSize: "1em"
   }
 
+  if (isLoading) {
+    return (<LoadingIndicator isLoading={isLoading} />);
+  }
   return (
     <ThemeProvider theme={defaultTheme}>
       <Box sx={{ display: "flex" }}>

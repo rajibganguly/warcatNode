@@ -25,6 +25,7 @@ import MuiAppBar from "@mui/material/AppBar";
 import { fetchDepartmentData } from "./common";
 import { useNavigate } from "react-router-dom";
 import { DepartmentContext } from "../context/DepartmentContext";
+import LoadingIndicator from "../components/loadingIndicator";
 
 const drawerWidth = 240;
 const AppBar = styled(MuiAppBar, {
@@ -70,6 +71,7 @@ export default function AddDepartment() {
 
   const { setAllDepartmentList } = useContext(DepartmentContext);
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const handleOutput = (open) => {
     toggleDrawer();
   };
@@ -142,6 +144,7 @@ export default function AddDepartment() {
    */
   const handleAddDepartment = async () => {
     setSubmitDisable(true);
+    setIsLoading(true);
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -164,18 +167,23 @@ export default function AddDepartment() {
           autoClose: 2000,
         });
         await fetchDepartmentDataList();
+        setIsLoading(false);
         navigate("/departments");
       } else {
         toast.error(responseData.message || "Something went wrong", {
           autoClose: 2000,
         });
-
+        setIsLoading(false);
       }
     } catch (error) {
       console.error("Error occurred:", error);
+      setIsLoading(false);
 
     }
   };
+  if (isLoading) {
+    return (<LoadingIndicator isLoading={isLoading} />);
+  }
 
   return (
     <ThemeProvider theme={defaultTheme}>
