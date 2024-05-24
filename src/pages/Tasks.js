@@ -107,14 +107,25 @@ export default function Tasks() {
   const [isLoading, setIsLoading] = useState(false);
   const { setAllTaskLists } = React.useContext(TaskContext);
 
+
   React.useEffect(() => {
     const fetchData = async () => {
-      setIsLoading(true)
-      const setAllTaskListsData = await fetchTaskData();
-      setAllTaskLists(setAllTaskListsData)
-      setIsLoading(false)
+      setIsLoading(true);
+      try {
+        const setAllTaskListsData = await fetchTaskData();
+        setAllTaskLists(setAllTaskListsData);
+      } catch (error) {
+        console.error('Error fetching task data:', error);
+      } finally {
+        setIsLoading(false);
+      }
     };
+
     fetchData();
+    // Fetch tasks chart data separately
+    fetchTasksChart().catch((error) => {
+      console.error('Error fetching tasks chart:', error);
+    });
   }, []);
 
   const includeActionColumn = currentRoleType !== 'admin' ? true : false;
@@ -141,10 +152,7 @@ export default function Tasks() {
     delete: <DeleteOutlined />,
   };
 
-  React.useEffect(() => {
-    fetchTasksChart()
-    // fetchTasksData();
-  }, []);
+
 
   /**
    * @description Private function for fetch Task Chart
@@ -164,16 +172,16 @@ export default function Tasks() {
       console.log(tasksChartData, 'dipan');
       const updateTaskCahrtValues = chartData;
       if (updateTaskCahrtValues[0]['label'] === 'Total Assigned') {
-        updateTaskCahrtValues[0].percentage = tasksChartData?.totalAssigned ? tasksChartData?.totalAssigned: 0
+        updateTaskCahrtValues[0].percentage = tasksChartData?.totalAssigned ? tasksChartData?.totalAssigned : 0
       }
       if (updateTaskCahrtValues[1]['label'] === 'Not Initiated') {
-        updateTaskCahrtValues[1].percentage = tasksChartData?.initiated?.percentage ? tasksChartData?.initiated?.percentage: 0
+        updateTaskCahrtValues[1].percentage = tasksChartData?.initiated?.percentage ? tasksChartData?.initiated?.percentage : 0
       }
       if (updateTaskCahrtValues[2]['label'] === 'In Progress') {
-        updateTaskCahrtValues[2].percentage = tasksChartData?.inProgress?.percentage ?tasksChartData?.inProgress?.percentage: 0
+        updateTaskCahrtValues[2].percentage = tasksChartData?.inProgress?.percentage ? tasksChartData?.inProgress?.percentage : 0
       }
       if (updateTaskCahrtValues[3]['label'] === 'Completed') {
-        updateTaskCahrtValues[3].percentage = tasksChartData?.completed?.percentage ?tasksChartData?.completed?.percentage: 0
+        updateTaskCahrtValues[3].percentage = tasksChartData?.completed?.percentage ? tasksChartData?.completed?.percentage : 0
       }
       setChartData(updateTaskCahrtValues)
       // setIsLoading(false)
@@ -251,7 +259,9 @@ export default function Tasks() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
-  
+
+
+
   return (
     <ThemeProvider theme={defaultTheme}>
       {/* For Loader */}
@@ -378,11 +388,19 @@ export default function Tasks() {
                                   }}
                                 >
                                   <div style={{ width: 130, height: 130 }}>
-                                    <CircularProgressbar
-                                      value={item.percentage}
-                                      text={`${item.percentage}%`}
-                                      styles={item.styles}
-                                    />
+                                    {item.label === 'Total Assigned' ? (
+                                      <CircularProgressbar
+                                        value={item.percentage} 
+                                        text={`${item.percentage}`}
+                                        styles={item.styles}
+                                      />
+                                    ) : (
+                                      <CircularProgressbar
+                                        value={item.percentage}
+                                        text={`${item.percentage}%`}
+                                        styles={item.styles}
+                                      />
+                                    )}
                                   </div>
                                 </CardContent>
                                 <span
