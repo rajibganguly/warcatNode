@@ -28,6 +28,7 @@ import { fetchDepartmentData, fetchMeetingData, fetchTaskData } from "./common";
 import { DepartmentContext } from "../context/DepartmentContext";
 import { MeetingContext } from "../context/MeetingContext";
 import { TaskContext } from "../context/TaskContext";
+import Logout from "./Logout";
 
 
 const Navigations = () => {
@@ -51,6 +52,10 @@ const Navigations = () => {
     <Router>
       <Routes>
         <Route exact path="/" element={<LogIn />} />
+        <Route
+          path="/logout"
+          element={!authToken ? <Navigate to="/" /> : <Logout />}
+        />
         <Route
           path="/dashboard"
           element={!authToken ? <Navigate to="/" /> : <Dashboard />}
