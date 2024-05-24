@@ -29,7 +29,7 @@ import { TextField, Dialog, DialogContent, DialogContentText } from "@mui/materi
 import CardActions from "@mui/material/CardActions";
 import ApiConfig from '../config/ApiConfig'
 import SubTaskViewDialog from "../dialog/SubTaskViewDialog";
-import { mapKeysToValues } from '../pages/common.js'
+import { fetchTaskData, mapKeysToValues } from '../pages/common.js'
 import { TaskChartData } from '../constant/taskChartData';
 import { useNavigate } from "react-router-dom";
 import SubTaskForm from "../components/SubTaskForm";
@@ -39,7 +39,6 @@ import { TaskContext } from "../context/TaskContext.js";
 import LoadingIndicator from "../components/loadingIndicator.js";
 
 const drawerWidth = 240;
-
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -88,8 +87,6 @@ const handleDropdownChange = (value) => {
 
 const progressData = TaskChartData;
 
-
-
 export default function Tasks() {
   const [open, setOpen] = React.useState(true);
   const [modalVisible, setModalVisible] = useState(false);
@@ -108,28 +105,30 @@ export default function Tasks() {
   const { allTaskLists } = React.useContext(TaskContext);
   const allTaskListsData = allTaskLists?.tasks;
   const [isLoading, setIsLoading] = useState(false);
-  
-  // console.log(data[0].department[0]);
-  // console.log(data[0].department[0].dep_name);
-  //   const departmentNames = data.flatMap(item => item.department.map(dept => dept.dep_name));
-  // console.log(departmentNames);
+  const { setAllTaskLists } = React.useContext(TaskContext);
 
-
-
-
+  React.useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true)
+      const setAllTaskListsData = await fetchTaskData();
+      setAllTaskLists(setAllTaskListsData)
+      setIsLoading(false)
+    };
+    fetchData();
+  }, []);
 
   const includeActionColumn = currentRoleType !== 'admin' ? true : false;
-
+  console.log(data, 'dataaa');
   const column = [
     { text: 'Assigned Date', dataField: 'timestamp' },
     { text: "Assigned Title", dataField: 'task_title' },
-    { text: "Department", dataField: 'dep_name' },
-    { text: "Tag", dataField: 'department[0].tag' },
+    { text: "Department", dataField: 'tasks_dept' },
+    { text: "Tag", dataField: 'tasks_tag' },
     { text: "Target Date", dataField: 'target_date' },
     { text: "Status", dataField: 'status' },
     { text: "Sub Task", dataField: 'subtask' },
     { text: "Operations", dataField: 'taskoperation' },
-    { text: "Varified Status", dataField: '' }
+    { text: "Verified Status", dataField: '' }
   ];
 
   if (includeActionColumn) {
@@ -147,8 +146,6 @@ export default function Tasks() {
     // fetchTasksData();
   }, []);
 
-
-
   /**
    * @description Private function for fetch Task Chart
    */
@@ -164,18 +161,19 @@ export default function Tasks() {
         role_type: localObj.role_type
       };
       const tasksChartData = await ApiConfig.requestData('get', '/task-status-percentages', params, null);
+      console.log(tasksChartData, 'dipan');
       const updateTaskCahrtValues = chartData;
       if (updateTaskCahrtValues[0]['label'] === 'Total Assigned') {
-        updateTaskCahrtValues[0].percentage = tasksChartData.totalAssigned
+        updateTaskCahrtValues[0].percentage = tasksChartData?.totalAssigned ? tasksChartData?.totalAssigned: 0
       }
       if (updateTaskCahrtValues[1]['label'] === 'Not Initiated') {
-        updateTaskCahrtValues[1].percentage = tasksChartData.initiated.percentage
+        updateTaskCahrtValues[1].percentage = tasksChartData?.initiated?.percentage ? tasksChartData?.initiated?.percentage: 0
       }
       if (updateTaskCahrtValues[2]['label'] === 'In Progress') {
-        updateTaskCahrtValues[2].percentage = tasksChartData.inProgress.percentage
+        updateTaskCahrtValues[2].percentage = tasksChartData?.inProgress?.percentage ?tasksChartData?.inProgress?.percentage: 0
       }
       if (updateTaskCahrtValues[3]['label'] === 'Completed') {
-        updateTaskCahrtValues[3].percentage = tasksChartData.completed.percentage
+        updateTaskCahrtValues[3].percentage = tasksChartData?.completed?.percentage ?tasksChartData?.completed?.percentage: 0
       }
       setChartData(updateTaskCahrtValues)
       // setIsLoading(false)
@@ -187,8 +185,6 @@ export default function Tasks() {
       toast.error("Failed to fetch Tasks data");
     }
   };
-
-
 
   const handleViewParentOperationTask = (row) => {
     console.log(row)
@@ -208,13 +204,11 @@ export default function Tasks() {
     navigate(`/edit-tasks?taskId=${encodeURIComponent(encodedTaskId)}`);
   };
 
-
   const closeModal = () => {
     setModalVisible(false);
     setParentModalVisible(false);
     setSubModalVisible(false);
   };
-
 
   const handleAddNoteClick = (record) => {
     console.info("Edit clicked for:", record);
@@ -228,10 +222,7 @@ export default function Tasks() {
     // Implement logic for editing
   };
 
-
-
   const handleViewSubTask = (record) => {
-
     if (record?.sub_task && record?.sub_task?.length > 0) {
       setSubTaskView(record?.sub_task);
       setSubModalVisible(true);
@@ -240,7 +231,6 @@ export default function Tasks() {
         autoClose: 2000,
       });
     }
-
   };
 
   const handleAddSubTaskClick = (record) => {
@@ -255,20 +245,18 @@ export default function Tasks() {
     setModalVisible(true);
   };
 
-
-
   const handleOutput = (open) => {
     toggleDrawer();
   };
   const toggleDrawer = () => {
     setOpen(!open);
   };
-  // if (isLoading) {
-  //   return (<LoadingIndicator isLoading={isLoading} />);
-  // }
-
+  
   return (
     <ThemeProvider theme={defaultTheme}>
+      {/* For Loader */}
+      <LoadingIndicator isLoading={isLoading} />
+
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>

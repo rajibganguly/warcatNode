@@ -12,8 +12,8 @@ import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import AddIcon from "@mui/icons-material/Add";
+import {fetchRoleType, formatStatus, getCommaSeparatedRoles, getStatusText} from "../pages/common.js";
 import SearchIcon from "@mui/icons-material/Search";
-import {fetchRoleType, getStatusText} from "../pages/common.js";
 
 function TableNew({
   column,
@@ -62,6 +62,39 @@ function TableNew({
           )}
         </>
       );
+    }
+
+    if (column.dataField === "tasks_dept") {
+        if (row?.department?.length > 0) {
+            return row?.department?.[0]?.dep_name ?? '-';
+        }
+        return '-';
+    }
+
+    if (column.dataField === "meeting_dept") {
+      if (row?.departmentNames?.length > 0) {
+          return row?.departmentNames?.[0] ?? '-';
+      }
+      return '-';
+  }
+
+    if (column.dataField === "department_dept") {
+      if (row?.department) {
+          return row?.department?.department_name ?? '-';
+      }
+      return '-';
+    }
+
+    if (column.dataField === "tasks_tag") {
+      return getCommaSeparatedRoles(row?.department?.[0]?.tag ?? []);
+    }
+
+    if (column.dataField === "meeting_tag") {
+      return getCommaSeparatedRoles(row?.tag ?? []);
+    }
+
+    if (column.text === "Verified Status") {
+      return formatStatus(row?.admin_verified);
     }
 
     if (column.dataField === "subtask") {

@@ -23,13 +23,14 @@ import {
   OutlinedInput,
   ThemeProvider,
 } from "@mui/material";
-import { addMeetings, fetchTaskData } from './common'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { addMeetings, fetchTaskData } from './common';
 import Footer from "../components/Footer";
 import Header from "../components/header";
 import Sidebar from "../components/Sidebar";
 import MuiAppBar from "@mui/material/AppBar";
 import { DepartmentContext } from '../context/DepartmentContext';
+import { toast } from "react-toastify";
 import LoadingIndicator from "../components/loadingIndicator";
 
 const VisuallyHiddenInput = styled('input')({
@@ -165,6 +166,8 @@ export default function AddNewMeeting() {
     }));
   };
 
+  const navigate = useNavigate();
+
   /**
    * handleAddMeeting POST call
    */
@@ -183,6 +186,12 @@ export default function AddNewMeeting() {
       await fetchTaskData();
       console.log(setAllTaskListsData)
       setIsLoading(false);
+      if (setAllTaskListsData) {
+        toast.success("Meeting Added Successfully", {
+          autoClose: 2000,
+        });
+        navigate('/meetings');
+      }
     } catch (error) {
       console.error('Error occurred:', error);
       setIsLoading(false);
@@ -222,20 +231,11 @@ export default function AddNewMeeting() {
     }
   }
 
-  const dateTimeStyle = {
-    width: "100%",
-    padding: "11px 10px",
-    border: "1px solid #ccc",
-    borderRadius: "6px",
-    fontFamily: 'Roboto,sans-serif',
-    fontSize: "1em"
-  }
-
-  if (isLoading) {
-    return (<LoadingIndicator isLoading={isLoading} />);
-  }
   return (
     <ThemeProvider theme={defaultTheme}>
+      {/* For Loader */}
+      <LoadingIndicator isLoading={isLoading} />
+      
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>
@@ -379,7 +379,7 @@ export default function AddNewMeeting() {
                             </Select>
                           </FormControl>
                         </Grid>
-                        <Grid item xs={12} md={6}>
+                        {/* <Grid item xs={12} md={6}>
                           <InputLabel sx={{ mb: 1 }}>Meeting Id</InputLabel>
                           <TextField
                             id="outlined-basic"
@@ -394,8 +394,8 @@ export default function AddNewMeeting() {
                             size="small"
                             aria-readonly
                           />
-                        </Grid>
-                        <Grid item xs={12} md={6}>
+                        </Grid> */}
+                        <Grid item xs={12} md={12}>
                           <InputLabel sx={{ mb: 1 }}>Meeting Topic</InputLabel>
                           <TextField
                             id="outlined-basic"
