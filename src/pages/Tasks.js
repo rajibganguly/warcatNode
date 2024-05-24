@@ -29,7 +29,7 @@ import { TextField, Dialog, DialogContent, DialogContentText } from "@mui/materi
 import CardActions from "@mui/material/CardActions";
 import ApiConfig from '../config/ApiConfig'
 import SubTaskViewDialog from "../dialog/SubTaskViewDialog";
-import { fetchTaskData, mapKeysToValues } from '../pages/common.js'
+import { fetchTaskData, formatPercentage, mapKeysToValues } from '../pages/common.js'
 import { TaskChartData } from '../constant/taskChartData';
 import { useNavigate } from "react-router-dom";
 import SubTaskForm from "../components/SubTaskForm";
@@ -164,16 +164,16 @@ export default function Tasks() {
       console.log(tasksChartData, 'dipan');
       const updateTaskCahrtValues = chartData;
       if (updateTaskCahrtValues[0]['label'] === 'Total Assigned') {
-        updateTaskCahrtValues[0].percentage = tasksChartData?.totalAssigned ? tasksChartData?.totalAssigned: 0
+        updateTaskCahrtValues[0].percentage = tasksChartData?.totalAssigned ? formatPercentage(tasksChartData?.totalAssigned): 0
       }
       if (updateTaskCahrtValues[1]['label'] === 'Not Initiated') {
-        updateTaskCahrtValues[1].percentage = tasksChartData?.initiated?.percentage ? tasksChartData?.initiated?.percentage: 0
+        updateTaskCahrtValues[1].percentage = tasksChartData?.initiated?.percentage ? formatPercentage(tasksChartData?.initiated?.percentage): 0
       }
       if (updateTaskCahrtValues[2]['label'] === 'In Progress') {
-        updateTaskCahrtValues[2].percentage = tasksChartData?.inProgress?.percentage ?tasksChartData?.inProgress?.percentage: 0
+        updateTaskCahrtValues[2].percentage = tasksChartData?.inProgress?.percentage ? formatPercentage(tasksChartData?.inProgress?.percentage): 0
       }
       if (updateTaskCahrtValues[3]['label'] === 'Completed') {
-        updateTaskCahrtValues[3].percentage = tasksChartData?.completed?.percentage ?tasksChartData?.completed?.percentage: 0
+        updateTaskCahrtValues[3].percentage = tasksChartData?.completed?.percentage ? formatPercentage(tasksChartData?.completed?.percentage): 0
       }
       setChartData(updateTaskCahrtValues)
       // setIsLoading(false)
