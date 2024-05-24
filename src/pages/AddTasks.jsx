@@ -24,12 +24,13 @@ import {
 } from "@mui/material";
 import {
     dateSelected,
+    fetchTaskData,
     handleAddTask,
     parentTaskEdit,
 } from "./common";
 import {
-useForm,
-Controller,
+    useForm,
+    Controller,
 } from 'react-hook-form';
 import { toast } from "react-toastify";
 import Footer from "../components/Footer";
@@ -40,6 +41,7 @@ import { TaskContext } from "../context/TaskContext";
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { DepartmentContext } from './../context/DepartmentContext'
+import LoadingIndicator from "../components/loadingIndicator";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -104,6 +106,7 @@ export default function AddTasks() {
     const { allTaskLists } = React.useContext(TaskContext);
     const allTaskListsData = allTaskLists?.tasks;
     const [tagName, setTagName] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
     const [selectedDeparmentobj, setSelectedDeparmentObj] = useState([])
     // const [departmentData, setDepartmenData] = useState([]);
     //const availableTags = [{ id: 1, value: "secretary", text: "Secretary" }, { id: 2, value: "head_of_office", text: "Head of Office" }]
@@ -279,6 +282,7 @@ export default function AddTasks() {
                 task_image: updateTaskFile
             };
             console.log(data)
+
             await updateData(data);
         } else {
             // console.log(inputGroups);
@@ -286,7 +290,10 @@ export default function AddTasks() {
             // console.log(taskData);
             const transformedData = convertToDepartmentFormat(deptId, personName, tagName, taskData);
             console.log(transformedData, 'final data');
+            setIsLoading(true)
             const saveData = await handleAddTask(transformedData);
+             await fetchTaskData();
+            setIsLoading(false)
             if (saveData) {
                 toast.success("Task Added Successfully", {
                     autoClose: 2000,
@@ -332,7 +339,10 @@ export default function AddTasks() {
     };
 
     async function updateData(data) {
+        setIsLoading(true)
         const updateData = await parentTaskEdit(data);
+        const fetchTaskData = await fetchTaskData();
+        setIsLoading(false)
         if (updateData) {
             toast.success("Task Edit Successfully", {
                 autoClose: 2000,
@@ -340,7 +350,10 @@ export default function AddTasks() {
             navigate("/tasks");
         }
     }
-
+  
+    if (isLoading) {
+        return (<LoadingIndicator isLoading={isLoading} />);
+    }
     return (
         <ThemeProvider theme={defaultTheme}>
             <Box sx={{ display: "flex" }}>

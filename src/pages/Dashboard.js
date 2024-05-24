@@ -100,9 +100,9 @@ export default function Dashboard() {
    * @description Private function for fetch Dashboard data
   */
  const fetchDashboardData = async (usId, type, authTokenId) => {
-   if (!toast.isActive("loading")) {
-     toast.loading("Loading dashbaord data...", { autoClose: false, toastId: "loading" });
-    }  
+  //  if (!toast.isActive("loading")) {
+  //    toast.loading("Loading dashbaord data...", { autoClose: false, toastId: "loading" });
+  //   }  
     
     const reactAppHostname = process.env.REACT_APP_HOSTNAME;
     const response = await fetch(`${reactAppHostname}/api/statistics?userId=${usId}&role_type=${type}`, {
@@ -121,7 +121,7 @@ export default function Dashboard() {
             }
             setStatistics(resData);
 
-            toast.dismiss("loading");
+            //toast.dismiss("loading");
           } else {
             toast.error(`API response error: ${response.status}`, { autoClose: 2000 });
           }

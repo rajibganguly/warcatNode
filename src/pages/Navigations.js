@@ -23,11 +23,12 @@ import TaskList from "./TaskList";
 import TaskNote from "./TaskNote";
 import TaskUpload from "./TaskUpload";
 import TaskApproval from "./TaskApproval";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { fetchDepartmentData, fetchMeetingData, fetchTaskData } from "./common";
 import { DepartmentContext } from "../context/DepartmentContext";
 import { MeetingContext } from "../context/MeetingContext";
 import { TaskContext } from "../context/TaskContext";
+import LoadingIndicator from "../components/loadingIndicator";
 
 
 const Navigations = () => {
@@ -35,18 +36,24 @@ const Navigations = () => {
   const { setAllDepartmentList } = useContext(DepartmentContext);
   const { setAllMeetingLists } = useContext(MeetingContext);
   const { setAllTaskLists } = useContext(TaskContext);
-
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true)
       const fetchDepdata = await fetchDepartmentData();
       setAllDepartmentList(fetchDepdata);
       const fetchMeetingsData = await fetchMeetingData();
       setAllMeetingLists(fetchMeetingsData);
       const setAllTaskListsData = await fetchTaskData();
       setAllTaskLists(setAllTaskListsData)
+      setIsLoading(false)
     };
     fetchData();
-  }, [setAllDepartmentList,setAllMeetingLists,setAllTaskLists]);
+  }, []);
+
+  if (isLoading) {
+    return (<LoadingIndicator isLoading={isLoading} />);
+  }
   return (
     <Router>
       <Routes>

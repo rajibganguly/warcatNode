@@ -28,13 +28,15 @@ import TableNew from "../components/TableNew";
 import { TextField, Dialog, DialogContent, DialogContentText } from "@mui/material";
 import CardActions from "@mui/material/CardActions";
 import ApiConfig from '../config/ApiConfig'
-import SubTaskViewDialog from "../dialog/SubTaskViewDialog"; 
-import {mapKeysToValues} from '../pages/common.js'
+import SubTaskViewDialog from "../dialog/SubTaskViewDialog";
+import { mapKeysToValues } from '../pages/common.js'
 import { TaskChartData } from '../constant/taskChartData';
 import { useNavigate } from "react-router-dom";
 import SubTaskForm from "../components/SubTaskForm";
 import TaskViewDialog from "../dialog/TaskViewDialog";
 import SubTaskDialog from "../dialog/SubTaskViewDialog";
+import { TaskContext } from "../context/TaskContext.js";
+import LoadingIndicator from "../components/loadingIndicator.js";
 
 const drawerWidth = 240;
 
@@ -103,13 +105,14 @@ export default function Tasks() {
   const [file, setFile] = useState();
   const [chartData, setChartData] = useState(progressData);
   const navigate = useNavigate();
-
+  const { allTaskLists } = React.useContext(TaskContext);
+  const allTaskListsData = allTaskLists?.tasks;
   const includeActionColumn = currentRoleType === 'admin' || currentRoleType === 'headOffice' ? true : false;
-
+  const [isLoading, setIsLoading] = useState(false);
   // console.log(data[0].department[0]);
   // console.log(data[0].department[0].dep_name);
-//   const departmentNames = data.flatMap(item => item.department.map(dept => dept.dep_name));
-// console.log(departmentNames);
+  //   const departmentNames = data.flatMap(item => item.department.map(dept => dept.dep_name));
+  // console.log(departmentNames);
 
 
 
@@ -139,42 +142,16 @@ export default function Tasks() {
 
   React.useEffect(() => {
     fetchTasksChart()
-    fetchTasksData();
+    // fetchTasksData();
   }, []);
 
-  /**
-   * @description Private function for fetch Task data
-   */
-  const fetchTasksData = async () => {
-    if (!toast.isActive("loading")) {
-      toast.loading("Loading Tasks data...", { autoClose: false, toastId: "loading" });
-    }
-    const localData = localStorage.getItem("user");
-    const userObj = JSON.parse(localData)
-    try {
-      const localObj = { userId: userObj._id, role_type: userObj.role_type };
 
-      const params = {
-        userId: localObj.userId,
-        role_type: localObj.role_type
-      };
-      const tasksData = await ApiConfig.requestData('get', '/tasks', params, null);
-      setData(tasksData.tasks);
-      toast.dismiss("loading");
-    } catch (error) {
-      console.error("Error fetching Tasks data:", error);
-      toast.dismiss("loading");
-      toast.error("Failed to fetch Tasks data");
-    }
-  };
 
   /**
    * @description Private function for fetch Task Chart
    */
   const fetchTasksChart = async () => {
-    if (!toast.isActive("loading")) {
-      toast.loading("Loading Tasks Chart data...", { autoClose: false, toastId: "loading" });
-    }
+   // setIsLoading(true)
     const localData = localStorage.getItem("user");
     const userObj = JSON.parse(localData)
     try {
@@ -199,11 +176,12 @@ export default function Tasks() {
         updateTaskCahrtValues[3].percentage = tasksChartData.completed.percentage
       }
       setChartData(updateTaskCahrtValues)
-      //setData(tasksData.tasks);
+     // setIsLoading(false)
       toast.dismiss("loading");
     } catch (error) {
       console.error("Error fetching Tasks Chart data:", error);
-      toast.dismiss("loading");
+      //toast.dismiss("loading");
+      //setIsLoading(false)
       toast.error("Failed to fetch Tasks data");
     }
   };
@@ -229,9 +207,6 @@ export default function Tasks() {
 
   };
 
-  const closeModal1 = () => {
-    setModalVisible1(false);
-  };
 
   const closeModal = () => {
     setModalVisible(false);
@@ -242,20 +217,20 @@ export default function Tasks() {
 
   const handleAddNoteClick = (record) => {
     console.info("Edit clicked for:", record);
-    navigate('/task-note?taskId='+record?.task_id);
+    navigate('/task-note?taskId=' + record?.task_id);
     // Implement logic for editing
   };
 
   const handleUploadClick = (record) => {
     console.info("Edit clicked for:", record);
-    navigate('/task-upload?taskId='+record?.task_id)
+    navigate('/task-upload?taskId=' + record?.task_id)
     // Implement logic for editing
   };
 
 
 
   const handleViewSubTask = (record) => {
-   
+
     if (record?.sub_task && record?.sub_task?.length > 0) {
       setSubTaskView(record?.sub_task);
       setSubModalVisible(true);
@@ -287,7 +262,9 @@ export default function Tasks() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
-
+  // if (isLoading) {
+  //   return (<LoadingIndicator isLoading={isLoading} />);
+  // }
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -435,7 +412,7 @@ export default function Tasks() {
                       </Grid>
                       <CardContent>
                         <TableNew
-                          data={data}
+                          data={allTaskListsData}
                           column={column}
                           icons={icons}
                           exportButton={true}
