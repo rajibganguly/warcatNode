@@ -152,7 +152,7 @@ export default function Tasks() {
    * @description Private function for fetch Task Chart
    */
   const fetchTasksChart = async () => {
-   // setIsLoading(true)
+    // setIsLoading(true)
     const localData = localStorage.getItem("user");
     const userObj = JSON.parse(localData)
     try {
@@ -177,7 +177,7 @@ export default function Tasks() {
         updateTaskCahrtValues[3].percentage = tasksChartData.completed.percentage
       }
       setChartData(updateTaskCahrtValues)
-     // setIsLoading(false)
+      // setIsLoading(false)
       toast.dismiss("loading");
     } catch (error) {
       console.error("Error fetching Tasks Chart data:", error);
@@ -205,7 +205,6 @@ export default function Tasks() {
   const handleEditOperationTask = (row) => {
     const encodedTaskId = window.btoa(row?.task_id);
     navigate(`/edit-tasks?taskId=${encodeURIComponent(encodedTaskId)}`);
-
   };
 
 

@@ -42,7 +42,7 @@ const Navigations = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setIsLoading(true)
+      setIsLoading(false);
       const fetchDepdata = await fetchDepartmentData();
       setAllDepartmentList(fetchDepdata);
       const fetchMeetingsData = await fetchMeetingData();
@@ -53,6 +53,8 @@ const Navigations = () => {
     };
     fetchData();
   }, []);
+
+
 
   if (isLoading) {
     return (<LoadingIndicator isLoading={isLoading} />);
@@ -116,6 +118,7 @@ const Navigations = () => {
           path="/edit-meeting/:id"
           element={authToken && userRoleType === 'admin' ? <EditMeeting /> : <Navigate to="/" />}
         />
+
         <Route
           path="/task-note"
           element={authToken && userRoleType === 'admin' ? <TaskNote /> : <Navigate to="/" />}
