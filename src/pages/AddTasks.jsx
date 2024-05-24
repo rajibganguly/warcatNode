@@ -356,7 +356,7 @@ export default function AddTasks() {
     }
     return (
         <ThemeProvider theme={defaultTheme}>
-            <Box sx={{ display: "flex" }}>
+            <Box display={'flex'}>
                 <CssBaseline />
                 <AppBar position="absolute" open={open}>
                     <Header props={open} onOutput={handleOutput} />

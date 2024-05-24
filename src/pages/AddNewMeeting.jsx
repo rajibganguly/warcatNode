@@ -1,33 +1,34 @@
 import React, { useState, useEffect } from "react";
 import '../App.css'
-import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import Box from "@mui/material/Box";
-import MuiAppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
+import {
+  Box,
+  Grid,
+  Card,
+  Chip,
+  Select,
+  styled,
+  Button,
+  Toolbar,
+  useTheme,
+  MenuItem,
+  Container,
+  TextField,
+  InputLabel,
+  Typography,
+  createTheme,
+  FormControl,
+  CssBaseline,
+  Breadcrumbs,
+  CardContent,
+  OutlinedInput,
+  ThemeProvider,
+} from "@mui/material";
+import { addMeetings } from './common'
 import { Link } from "react-router-dom";
-import { Button, Chip, InputLabel, TextField } from "@mui/material";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import { useTheme } from '@mui/material/styles';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import Sidebar from "../components/Sidebar";
-import { addMeetings } from './common'
-
+import MuiAppBar from "@mui/material/AppBar";
 import { DepartmentContext } from '../context/DepartmentContext';
 import axios from 'axios';
 import MenuItem from '@mui/material/MenuItem';
@@ -46,10 +47,6 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 const defaultTheme = createTheme();
-
-function Label({ componentName, valueType }) {
-
-}
 
 const drawerWidth = 240;
 const AppBar = styled(MuiAppBar, {
@@ -80,9 +77,6 @@ const MenuProps = {
     },
   },
 };
-
-
-
 
 function getStyles(name, personName, theme) {
   return {
@@ -116,8 +110,6 @@ export default function AddNewMeeting() {
   const theme = useTheme();
   const { allDepartmentList } = React.useContext(DepartmentContext);
   const allDepartmentData = allDepartmentList.map((dept) => dept.department);
-
-
 
   /**
    * 
@@ -161,9 +153,6 @@ export default function AddNewMeeting() {
     }
   };
 
-
-
-
   const handleDateChange = (date) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -199,7 +188,6 @@ export default function AddNewMeeting() {
       console.error('Error occurred:', error);
       setIsLoading(false);
     }
-
   };
 
   const handleOutput = (open) => {
@@ -211,20 +199,17 @@ export default function AddNewMeeting() {
 
   function getMeetingValue(e) {
     if (e.target.name === 'date') {
-      setMeetingDate(e.target.value);    
+      setMeetingDate(e.target.value);
     }
     if (e.target.name === 'time') {
       setMeetingTime(e.target.value);
     }
   }
-  
 
-
-
-  /**
-   * 
-   * All Handle change for image 
-   */
+/**
+ * 
+ * All Handle change for image 
+ */
 
   const handleChangeForImage = (event) => {
     const file = event.target.files[0];
@@ -305,6 +290,15 @@ export default function AddNewMeeting() {
                 <Card sx={{ width: 100 + "%", padding: 2 }}>
                   <CardContent>
                     <Box
+                      display={'flex'}
+                      justifyContent={"space-between"}
+                      alignItems={"center"}
+                      pb={2}
+                      borderBottom={"1px solid #eff2f7"}
+                    >
+                      <Typography variant="body1">Add Meeting</Typography>
+                    </Box>
+                    <Box
                       component="form"
                       noValidate
                       autoComplete="off"
@@ -320,13 +314,9 @@ export default function AddNewMeeting() {
                         }}
                       >
                         <Grid item xs={12} md={6}>
+                          <InputLabel sx={{ mb: 1 }}>Department / Government Organisation</InputLabel>
                           <FormControl fullWidth>
-                            <label>
-                              Department / Government Organisation{" "}
-                            </label>
                             <Select
-                              labelId="demo-multiple-chip-label2"
-                              id="demo-multiple-chip"
                               fullWidth
                               name="department"
                               value={personName}
@@ -334,10 +324,7 @@ export default function AddNewMeeting() {
                               size="small"
                               multiple
                               input={
-                                <OutlinedInput
-                                  id="select-multiple-chip"
-                                  label="Chip"
-                                />
+                                <OutlinedInput />
                               }
                               renderValue={(selected) => (
                                 <Box
@@ -371,11 +358,9 @@ export default function AddNewMeeting() {
                           </FormControl>
                         </Grid>
                         <Grid item xs={12} md={6}>
+                          <InputLabel sx={{ mb: 1 }}>Tag</InputLabel>
                           <FormControl fullWidth>
-                            <label>Tags</label>
                             <Select
-                              labelId="tag"
-                              id="tag"
                               fullWidth
                               name="tag"
                               multiple
@@ -396,7 +381,7 @@ export default function AddNewMeeting() {
                           </FormControl>
                         </Grid>
                         <Grid item xs={12} md={6}>
-                          <label>Meeting Id</label>
+                          <InputLabel sx={{ mb: 1 }}>Meeting Id</InputLabel>
                           <TextField
                             id="outlined-basic"
 
@@ -412,7 +397,7 @@ export default function AddNewMeeting() {
                           />
                         </Grid>
                         <Grid item xs={12} md={6}>
-                          <label>Meeting Topic</label>
+                          <InputLabel sx={{ mb: 1 }}>Meeting Topic</InputLabel>
                           <TextField
                             id="outlined-basic"
 
@@ -429,72 +414,53 @@ export default function AddNewMeeting() {
                         </Grid>
 
                         <Grid item xs={12} md={6}>
-
-                          <input
+                        <InputLabel sx={{ mb: 1 }}>Select date</InputLabel>
+                          <TextField
                             type="date"
-                          
-                            style={dateTimeStyle}
                             name="date"
+                            fullWidth
+                            size="small"
                             onChange={getMeetingValue}
                           />
                         </Grid>
 
                         <Grid item xs={12} md={6}>
-
-                          <input
+                          <InputLabel sx={{ mb: 1 }}>Select time</InputLabel>
+                          <TextField
                             type="time"
                             name="time"
-                         
-                            style={dateTimeStyle}
+                            fullWidth
+                            size="small"
                             onChange={getMeetingValue}
                           />
                         </Grid>
 
-                        <Grid
-                          item
-                          xs={12}
-                          md={6}
-                          size="small"
-                          sx={{
-                            display: "flex",
-                            justifyContent: "start",
-                            alignItems: "center",
-                            mt: '3',
-                           
-                          }}
-                        >
-
-                          <input type="file" className="inputfile" onChange={handleChangeForImage} />
-
-
-
+                        <Grid item xs={6} md={6}>
+                          <InputLabel sx={{ mb: 1 }}>Upload Images</InputLabel>
+                          <Box display={'flex'} gap={2}>
+                            <TextField
+                              variant="outlined"
+                              fullWidth
+                              placeholder="Enter task title"
+                              name="uploadImage"
+                              size="small"
+                              type="file"
+                              onChange={handleChangeForImage}
+                            />
+                            <Box width={'40px'} height={'40px'} minWidth={'40px'} borderRadius={'6px'} backgroundColor='#ebebeb'>
+                              {base64Image && (
+                                <img
+                                  alt=""
+                                  width={'100%'}
+                                  height={'100%'}
+                                  className="smallImageInTask"
+                                  src={base64Image}
+                                />
+                              )}
+                            </Box>
+                          </Box>
                         </Grid>
-
-
-
-                        <Grid
-                          item
-                          xs={12}
-                          md={6}
-                          sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                        >
-                          {base64Image && (
-                            <img src={base64Image} alt="Uploaded" style={{ maxWidth: '100%' }} />
-                          )}
-
-                        </Grid>
-
-
-
                       </Grid>
-
-
-
-
 
                       <Button
                         variant="contained"
