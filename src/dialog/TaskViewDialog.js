@@ -14,14 +14,18 @@ import { CloseOutlined } from '@mui/icons-material';
 import { formatDate, formatDateWithmonth } from "../pages/common";
 import { useNavigate } from 'react-router-dom';
 export default function TaskViewDialog({ open, onClose, meetingData, taskDataView }) {
+
+
     const navigate = useNavigate()
+
+
     const handleEditClick = (taskId) => {
         const encodedTaskId = window.btoa(taskId);
         navigate(`/edit-tasks?taskId=${encodeURIComponent(encodedTaskId)}`);
+
     };
 
     return (
-
         <Dialog
             fullWidth
             open={open}
@@ -115,6 +119,8 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                                     if (!task?.subtask_title) {
                                         handleEditClick(task?.task_id);
                                     }
+                                    
+                                    
                                 }}
                             >
                                 Edit

@@ -7,6 +7,8 @@ import Grid from "@mui/material/Grid";
 import ApiConfig from '../config/ApiConfig';
 import { toast } from "react-toastify";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { fetchTaskData } from '../pages/common';
+
 
 const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -17,11 +19,11 @@ const convertToBase64 = (file) => {
     });
 };
 
-const SubTaskForm = ({ onSubmit, onClose, parentTaskId }) => {
+const SubTaskForm = ({ onSubmit, onClose, parentTaskId, }) => {
     const [formValues, setFormValues] = useState({
         subTaskTitle: '',
         targetDate: null,
-        imageUrl: '' 
+        imageUrl: ''
     });
 
     const handleChange = (e) => {
@@ -47,17 +49,19 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId }) => {
             const payload = {
                 parent_task_id: parentTaskId,
                 subtask_title: formValues.subTaskTitle,
-                subtask_target_date: formValues.targetDate.toISOString(), 
+                subtask_target_date: formValues.targetDate.toISOString(),
                 subtask_image: formValues.imageUrl
             };
-           
+
             const response = await ApiConfig.requestData('post', '/add-sub-task', null, payload);
             onSubmit(response);
             toast.success("Sub Task added successfully");
+            fetchTaskData();
+
         } catch (error) {
             console.error("Error adding subtask:", error);
             toast.success("Something went wrong");
-           
+
         }
     };
 
