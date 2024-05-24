@@ -24,6 +24,7 @@ import {
 } from "@mui/material";
 import {
     dateSelected,
+    fetchDepartmentData,
     fetchTaskData,
     handleAddTask,
     parentTaskEdit,
@@ -108,10 +109,17 @@ export default function AddTasks() {
     const [tagName, setTagName] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [selectedDeparmentobj, setSelectedDeparmentObj] = useState([])
-    // const [departmentData, setDepartmenData] = useState([]);
-    //const availableTags = [{ id: 1, value: "secretary", text: "Secretary" }, { id: 2, value: "head_of_office", text: "Head of Office" }]
-
+    const { setAllDepartmentList } = React.useContext(DepartmentContext);
+   
     useEffect(() => {
+        const fetchData = async () => {
+            setIsLoading(true)
+            const fetchDepdata = await fetchDepartmentData();
+            console.log(fetchDepdata, 'fetchDepdata')
+            setAllDepartmentList(fetchDepdata);
+            setIsLoading(false)
+        };
+        fetchData();
         const queryParams = new URLSearchParams(location.search);
         const encodedMeetingId = queryParams.get('meetingId');
         const encodedMeetingTopic = queryParams.get('meetingTopic');
@@ -130,8 +138,8 @@ export default function AddTasks() {
             const filteredObject = allTaskListsData?.find(task => task.task_id === decodedTaskId);
             const depIds = filteredObject?.department?.map(obj => obj.dep_id);
             if (depIds) {
-                const selectedDepartments = depIds.map(id => {
-                    const department = allDepartmentData.find(dept => dept._id === id);
+                const selectedDepartments = depIds?.map(id => {
+                    const department = allDepartmentData?.find(dept => dept?._id === id);
                     return department ? department : null;
                 });
                 setSelectedDeparmentObj(selectedDepartments[0])
@@ -292,7 +300,7 @@ export default function AddTasks() {
             console.log(transformedData, 'final data');
             setIsLoading(true)
             const saveData = await handleAddTask(transformedData);
-             await fetchTaskData();
+            await fetchTaskData();
             setIsLoading(false)
             if (saveData) {
                 toast.success("Task Added Successfully", {
