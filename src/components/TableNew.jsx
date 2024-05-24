@@ -30,8 +30,6 @@ function TableNew({
   handleTaskView,
   handleEditmeeting
 }) {
-
-  
   const getNestedValue = (obj, path) => {
     const keys = path.split(".");
     let value = obj;
