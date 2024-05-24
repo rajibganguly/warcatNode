@@ -24,6 +24,7 @@ import Sidebar from "../components/Sidebar";
 import { DepartmentContext } from './../context/DepartmentContext'
 import { fetchDepartmentData } from "./common";
 import LoadingIndicator from "../components/loadingIndicator";
+import { toast } from "react-toastify";
 const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
@@ -181,6 +182,7 @@ export default function EditDepartment() {
       if (response.status === 200) {
         
         await fetchDepartmentDataList();
+        toast.success("Update successfully");
         navigate("/departments");
         setIsLoading(false);
       } 

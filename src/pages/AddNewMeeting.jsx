@@ -379,7 +379,7 @@ export default function AddNewMeeting() {
                             </Select>
                           </FormControl>
                         </Grid>
-                        <Grid item xs={12} md={6}>
+                        {/* <Grid item xs={12} md={6}>
                           <InputLabel sx={{ mb: 1 }}>Meeting Id</InputLabel>
                           <TextField
                             id="outlined-basic"
@@ -394,7 +394,7 @@ export default function AddNewMeeting() {
                             size="small"
                             aria-readonly
                           />
-                        </Grid>
+                        </Grid> */}
                         <Grid item xs={12} md={12}>
                           <InputLabel sx={{ mb: 1 }}>Meeting Topic</InputLabel>
                           <TextField

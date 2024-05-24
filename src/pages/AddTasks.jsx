@@ -110,11 +110,14 @@ export default function AddTasks() {
     const [isLoading, setIsLoading] = useState(false);
     const [selectedDeparmentobj, setSelectedDeparmentObj] = useState([])
     const { setAllDepartmentList } = React.useContext(DepartmentContext);
-   
+    const { setAllTaskLists } = React.useContext(TaskContext);
+
     useEffect(() => {
         const fetchData = async () => {
             setIsLoading(true)
             const fetchDepdata = await fetchDepartmentData();
+            const setAllTaskListsData = await fetchTaskData();
+            setAllTaskLists(setAllTaskListsData);
             console.log(fetchDepdata, 'fetchDepdata')
             setAllDepartmentList(fetchDepdata);
             setIsLoading(false)
@@ -143,9 +146,9 @@ export default function AddTasks() {
                     return department ? department : null;
                 });
                 setSelectedDeparmentObj(selectedDepartments[0])
-                const departmentNames = selectedDepartments.filter(dep => dep !== null).map(dep => dep.department_name);
+                const departmentNames = selectedDepartments?.filter(dep => dep !== null)?.map(dep => dep.department_name);
                 setPersonName(departmentNames);
-                const departmentId = selectedDepartments.filter(dep => dep !== null).map(dep => dep._id);
+                const departmentId = selectedDepartments?.filter(dep => dep !== null)?.map(dep => dep._id);
                 setDeptId(departmentId);
                 // Flatten the tags array and remove duplicates
                 const tags = [...new Set(filteredObject?.department?.flatMap(obj => obj.tag) || [])];
@@ -153,13 +156,14 @@ export default function AddTasks() {
                 setTagName(tags);
                 setUpdateTaskTitle(filteredObject?.task_title);
                 setUpdateSelectedDate(dateSelected(filteredObject?.target_date))
+             
                 setupdateTaskFile(filteredObject?.task_image)
 
             }
 
         }
 
-    }, [location.search, allTaskListsData, allTaskListsData]);
+    }, []);
 
     const handleUpdateFileChange = (event) => {
         let file = event.target.files[0];
@@ -167,7 +171,7 @@ export default function AddTasks() {
         const reader = new FileReader();
         reader.onloadend = async function () {
             file = reader.result.split(',')[1];
-            setupdateTaskFile(file);
+            setupdateTaskFile(`data:image/jpeg;base64,`+file);
         };
         reader.readAsDataURL(file);
     };
@@ -234,7 +238,7 @@ export default function AddTasks() {
 
     const transformData = (data) => {
         return {
-            tasks: data.map(group => {
+            tasks: data?.map(group => {
                 const taskTitle = group.find(item => item.type === 'text')?.value || '';
                 const uploadImage = group.find(item => item.type === 'file')?.value || '';
                 const targetDate = group.find(item => item.type === 'date')?.value || '';
@@ -271,7 +275,7 @@ export default function AddTasks() {
         return {
             meetingId: meetingId,
             meetingTopic: meetingTopic,
-            department: deptid.map((id, index) => ({
+            department: deptid?.map((id, index) => ({
                 dep_id: id,
                 dep_name: deptName[index],
                 tag: tags,
@@ -300,7 +304,7 @@ export default function AddTasks() {
             console.log(transformedData, 'final data');
             setIsLoading(true)
             const saveData = await handleAddTask(transformedData);
-            await fetchTaskData();
+            //await fetchTaskData();
             setIsLoading(false)
             if (saveData) {
                 toast.success("Task Added Successfully", {
@@ -349,9 +353,9 @@ export default function AddTasks() {
     async function updateData(data) {
         setIsLoading(true)
         const updateData = await parentTaskEdit(data);
-        const fetchTaskData = await fetchTaskData();
-        setIsLoading(false)
+       
         if (updateData) {
+            setIsLoading(false)
             toast.success("Task Edit Successfully", {
                 autoClose: 2000,
             });
@@ -432,7 +436,7 @@ export default function AddTasks() {
 
                                 }}
                             >
-                                <Typography variant="body1">Add Tasks</Typography>
+                                <Typography variant="body1"> Tasks</Typography>
 
                             </Box>
                             <CardContent>
@@ -447,14 +451,14 @@ export default function AddTasks() {
                                             input={<OutlinedInput />}
                                             renderValue={(selected) => (
                                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                                    {selected.map((value) => (
+                                                    {selected?.map((value) => (
                                                         <Chip key={value} label={value} />
                                                     ))}
                                                 </Box>
                                             )}
                                             MenuProps={MenuProps}
                                         >
-                                            {allDepartmentData.map((value) => (
+                                            {allDepartmentData?.map((value) => (
                                                 <MenuItem
                                                     key={value?._id}
                                                     value={value?._id}
@@ -478,7 +482,7 @@ export default function AddTasks() {
                                             size="small"
                                             renderValue={(selected) => (
                                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                                    {selected.map((value) => (
+                                                    {selected?.map((value) => (
                                                         <Chip key={value} label={value} />
                                                     ))}
                                                 </Box>
@@ -521,9 +525,9 @@ export default function AddTasks() {
                                     )}
                                 </Grid>
 
-                                {!taskId && inputGroups.map((group, index) => (
+                                {!taskId && inputGroups?.map((group, index) => (
                                     <Grid container key={group[0].id} spacing={2} sx={{ marginBottom: '20px' }}>
-                                        {group.map((input) => (
+                                        {group?.map((input) => (
                                             <React.Fragment key={input.id}>
                                                 {input.type === 'file' ? (
                                                     <Grid item xs={6} md={6}>
@@ -646,7 +650,7 @@ export default function AddTasks() {
                                                     {updateTaskFile && (
                                                         <img
                                                             alt="" width={'100%'} height={'100%'} className="smallImageInTask"
-                                                            src={`data:image/jpeg;base64,${updateTaskFile}`}
+                                                            src={updateTaskFile}
                                                         />
                                                     )}
                                                 </Box>

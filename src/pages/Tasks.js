@@ -29,7 +29,7 @@ import { TextField, Dialog, DialogContent, DialogContentText } from "@mui/materi
 import CardActions from "@mui/material/CardActions";
 import ApiConfig from '../config/ApiConfig'
 import SubTaskViewDialog from "../dialog/SubTaskViewDialog";
-import { fetchTaskData, formatPercentage, mapKeysToValues } from '../pages/common.js'
+import { fetchDepartmentData, fetchTaskData, formatPercentage, mapKeysToValues } from '../pages/common.js'
 import { TaskChartData } from '../constant/taskChartData';
 import { useNavigate } from "react-router-dom";
 import SubTaskForm from "../components/SubTaskForm";
@@ -37,6 +37,7 @@ import TaskViewDialog from "../dialog/TaskViewDialog";
 import SubTaskDialog from "../dialog/SubTaskViewDialog";
 import { TaskContext } from "../context/TaskContext.js";
 import LoadingIndicator from "../components/loadingIndicator.js";
+import { DepartmentContext } from "../context/DepartmentContext.js";
 
 const drawerWidth = 240;
 
@@ -106,7 +107,7 @@ export default function Tasks() {
   const allTaskListsData = allTaskLists?.tasks;
   const [isLoading, setIsLoading] = useState(false);
   const { setAllTaskLists } = React.useContext(TaskContext);
-
+  const { setAllDepartmentList } = React.useContext(DepartmentContext);
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -114,6 +115,8 @@ export default function Tasks() {
       try {
         const setAllTaskListsData = await fetchTaskData();
         setAllTaskLists(setAllTaskListsData);
+        const fetchDepdata = await fetchDepartmentData();
+        setAllDepartmentList(fetchDepdata);
       } catch (error) {
         console.error('Error fetching task data:', error);
       } finally {

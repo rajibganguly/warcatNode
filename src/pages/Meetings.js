@@ -26,8 +26,9 @@ import { useNavigate } from "react-router-dom";
 import { TaskContext } from "../context/TaskContext";
 import TaskViewDialog from "../dialog/TaskViewDialog";
 import { MeetingContext } from './../context/MeetingContext'
-import { fetchMeetingData, fetchTaskData } from "./common";
+import { fetchDepartmentData, fetchMeetingData, fetchTaskData } from "./common";
 import LoadingIndicator from "../components/loadingIndicator";
+import { DepartmentContext } from "../context/DepartmentContext";
 
 const column = [
   { text: 'Meeting Id', dataField: 'meetingId' },
@@ -72,6 +73,7 @@ export default function Meetings() {
   const { setAllMeetingLists } = React.useContext(MeetingContext);
   const { setAllTaskLists } = React.useContext(TaskContext);
   const [isLoading, setIsLoading] = React.useState(false);
+  const { setAllDepartmentList } = React.useContext(DepartmentContext);
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -80,6 +82,8 @@ export default function Meetings() {
       setAllMeetingLists(fetchMeetingsData);
       const setAllTaskListsData = await fetchTaskData();
       setAllTaskLists(setAllTaskListsData)
+      const fetchDepdata = await fetchDepartmentData();
+      setAllDepartmentList(fetchDepdata);
       setIsLoading(false)
     };
     fetchData();

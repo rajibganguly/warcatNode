@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { fetchTaskData } from '../pages/common';
 import { useNavigate } from 'react-router-dom';
+import LoadingIndicator from './loadingIndicator';
 
 const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -22,7 +23,7 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
     const editSubTaskTitle = forTaskDataView ? forTaskDataView?.subtask_title : '';
     const editSubTaskDate = forTaskDataView ? forTaskDataView?.subtask_target_date : null;
     const editSubTaskImageUrl = forTaskDataView ? forTaskDataView?.subtask_image : '';
-
+    const [isLoading, setIsLoading] = React.useState(false);
     const [formValues, setFormValues] = useState({
         subTaskTitle: editSubTaskTitle,
         targetDate: editSubTaskDate,
@@ -62,14 +63,17 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
                 subtask_target_date: formValues.targetDate.toISOString(),
                 subtask_image: formValues.imageUrl
             };
-
+            setIsLoading(true)
             const response = await ApiConfig.requestData('post', '/add-sub-task', null, payload);
             onSubmit(response);
-            await fetchTaskData();
+            window.location.reload();
+            // await fetchTaskData();
+            setIsLoading(false)
             toast.success("Sub Task added successfully");
-            navigate('/tasks');
+
 
         } catch (error) {
+            setIsLoading(false)
             console.error("Error adding subtask:", error);
             toast.success("Something went wrong");
 
@@ -77,21 +81,24 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <Box mb={2}>
-                <InputLabel sx={{ mb: 1 }}>Sub Task Title</InputLabel>
-                <TextField
-                    name="subTaskTitle"
-                    value={formValues.subTaskTitle}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                    size='small'
-                />
-            </Box>
-            <Box mb={2}>
-                <InputLabel sx={{ mb: 1 }}>Date</InputLabel>
-                {/* <TextField
+        <>
+            {/* For Loader */}
+            <LoadingIndicator isLoading={isLoading} />
+            <form onSubmit={handleSubmit}>
+                <Box mb={2}>
+                    <InputLabel sx={{ mb: 1 }}>Sub Task Title</InputLabel>
+                    <TextField
+                        name="subTaskTitle"
+                        value={formValues.subTaskTitle}
+                        onChange={handleChange}
+                        fullWidth
+                        required
+                        size='small'
+                    />
+                </Box>
+                <Box mb={2}>
+                    <InputLabel sx={{ mb: 1 }}>Date</InputLabel>
+                    {/* <TextField
                     name="date"
                     // value={formValues.targetDate}
                     onChange={handleDateChange}
@@ -101,18 +108,18 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
                     type='date'
                     size='small'
                 /> */}
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                        value={formValues.targetDate}
-                        onChange={handleDateChange}
-                        renderInput={(params) => <TextField {...params} fullWidth />}
-                        fullWidth
-                        size='small'
-                        sx={{ width: '100%' }}
-                    />
-                </LocalizationProvider>
-            </Box>
-            {/* <Box mb={2}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker
+                            value={formValues.targetDate}
+                            onChange={handleDateChange}
+                            renderInput={(params) => <TextField {...params} fullWidth />}
+                            fullWidth
+                            size='small'
+                            sx={{ width: '100%' }}
+                        />
+                    </LocalizationProvider>
+                </Box>
+                {/* <Box mb={2}>
                 <Button
                     component="label"
                     role={undefined}
@@ -125,40 +132,42 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
                     <input type="file" onChange={handleFileChange} style={{ display: 'none' }} />
                 </Button>
             </Box> */}
-            <Box mb={2}>
-                <InputLabel sx={{ mb: 1 }}>Upload Images</InputLabel>
-                <Box display={'flex'} gap={2}>
-                    <TextField
-                        variant="outlined"
-                        fullWidth
-                        placeholder="Enter task title"
-                        name="uploadImage"
-                        size="small"
-                        type="file"
-                        onChange={handleFileChange}
-                    />
-                    <Box width={'40px'} height={'40px'} minWidth={'40px'} borderRadius={'6px'} backgroundColor='#ebebeb'>
-                        {base64Image && (
-                            <img
-                                alt=""
-                                width={'100%'}
-                                height={'100%'}
-                                className="smallImageInTask"
-                                src={base64Image}
-                            />
-                        )}
+                <Box mb={2}>
+                    <InputLabel sx={{ mb: 1 }}>Upload Images</InputLabel>
+                    <Box display={'flex'} gap={2}>
+                        <TextField
+                            variant="outlined"
+                            fullWidth
+                            placeholder="Enter task title"
+                            name="uploadImage"
+                            size="small"
+                            type="file"
+                            onChange={handleFileChange}
+                        />
+                        <Box width={'40px'} height={'40px'} minWidth={'40px'} borderRadius={'6px'} backgroundColor='#ebebeb'>
+                            {base64Image && (
+                                <img
+                                    alt=""
+                                    width={'100%'}
+                                    height={'100%'}
+                                    className="smallImageInTask"
+                                    src={base64Image}
+                                />
+                            )}
+                        </Box>
                     </Box>
                 </Box>
-            </Box>
-            <Box display="flex" justifyContent="flex-end" gap={2}>
-                <Button onClick={onClose} variant="contained" color="secondary">
-                    Cancel
-                </Button>
-                <Button type="submit" variant="contained" color="primary">
-                    Save
-                </Button>
-            </Box>
-        </form>
+                <Box display="flex" justifyContent="flex-end" gap={2}>
+                    <Button onClick={onClose} variant="contained" color="secondary">
+                        Cancel
+                    </Button>
+                    <Button type="submit" variant="contained" color="primary">
+                        Save
+                    </Button>
+                </Box>
+            </form>
+        </>
+
     );
 };
 
