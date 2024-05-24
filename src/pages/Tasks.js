@@ -196,7 +196,9 @@ export default function Tasks() {
 
 
   const handleViewParentOperationTask = (row) => {
-    if (row && row?.length > 0) {
+    console.log(row)
+    if (row) {
+      console.log(row)
       setParentTaskView([row]);
       setParentModalVisible(true);
     } else {
@@ -238,7 +240,7 @@ export default function Tasks() {
 
 
   const handleViewSubTask = (record) => {
-    console.log(record?.sub_task)
+   
     if (record?.sub_task && record?.sub_task?.length > 0) {
       setSubTaskView(record?.sub_task);
       setSubModalVisible(true);
