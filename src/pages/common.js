@@ -195,3 +195,8 @@ export const formatStatus = (status) => {
 export const getCommaSeparatedRoles = (tagArray) => {
   return tagArray.map(role => formatRole(role)).join(', ');
 };
+
+export const formatPercentage = (value) => {
+  const num = Number(value);
+  return isNaN(num) ? '0' : num.toFixed(0);
+};
