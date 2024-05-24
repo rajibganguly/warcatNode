@@ -1,5 +1,6 @@
 @import './variables.scss';
 @import './spacing.scss';
+
 /**  */
 .text-underline {
     text-decoration: underline;
@@ -11,6 +12,27 @@
     text-transform: capitalize !important;
     color: white !important;
 }
+
+/* Scrollbar design*/
+::-webkit-scrollbar {
+    width: 7px;
+    height: 8px;
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-track {
+    border-radius: 100px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #CED4DA;
+    border-radius: 3rem;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #ABB5BE;
+}
+
 
 .smallImageInTask {
     object-fit: cover;
