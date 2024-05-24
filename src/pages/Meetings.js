@@ -27,6 +27,7 @@ import { TaskContext } from "../context/TaskContext";
 import TaskViewDialog from "../dialog/TaskViewDialog";
 import { MeetingContext } from './../context/MeetingContext'
 import { fetchMeetingData, fetchTaskData } from "./common";
+import LoadingIndicator from "../components/loadingIndicator";
 
 const column = [
   { text: 'Meeting Id', dataField: 'meetingId' },
@@ -151,6 +152,7 @@ export default function Meetings() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
+       <LoadingIndicator isLoading={isLoading} />
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>

@@ -26,6 +26,7 @@ import Sidebar from "../components/Sidebar";
 
 import { CardActions } from '@mui/material';
 import { fetchDepartmentData } from './common';
+import LoadingIndicator from '../components/loadingIndicator';
 
 const column = [
   { text: 'Department', dataField: 'department_dept' },
@@ -124,6 +125,7 @@ export default function Departments() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
+       <LoadingIndicator isLoading={isLoading} />
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>
