@@ -35,7 +35,7 @@ import { useParams } from "react-router-dom";
 import { format } from 'date-fns';
 import dayjs from 'dayjs';
 import LoadingIndicator from "../components/loadingIndicator";
-import { fetchTaskData } from "./common";
+import { fetchMeetingData, fetchTaskData } from "./common";
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -112,7 +112,17 @@ export default function EditMeeting() {
     const { id } = useParams();
     const { allMeetingLists } = useContext(MeetingContext);
     const navigate = useNavigate()
-
+    const { setAllMeetingLists } = React.useContext(MeetingContext);
+  
+    React.useEffect(() => {
+      const fetchData = async () => {
+        setIsLoading(true)
+        const fetchMeetingsData = await fetchMeetingData();
+        setAllMeetingLists(fetchMeetingsData);
+        setIsLoading(false)
+      };
+      fetchData();
+    }, []);
 
 
     const [formData, setFormData] = useState({
@@ -204,16 +214,16 @@ export default function EditMeeting() {
                 },
                 body: JSON.stringify(updatedData)
             });
-            console.log(response,'handleSubmit')
+            console.log(response, 'handleSubmit')
             await fetchTaskData();
             ////if (response) {
-                toast.success('Meeting updated successfully');
-                setIsLoading(false);
-                navigate('/meetings')
+            toast.success('Meeting updated successfully');
+            setIsLoading(false);
+            navigate('/meetings')
             //} else {
-                console.error('Failed to update meeting');
-                setIsLoading(false);
-           // }
+            console.error('Failed to update meeting');
+            setIsLoading(false);
+            // }
         } catch (error) {
             console.error('Error updating meeting:', error);
             setIsLoading(false);
@@ -381,14 +391,13 @@ export default function EditMeeting() {
                                                 </Grid>
                                                 <Grid item xs={6}>
                                                     <FormControl sx={{ width: '100%' }}>
-                                                        <InputLabel id="demo-multiple-chip-label2">Tag</InputLabel>
                                                         <Select
-                                                            labelId="demo-multiple-chip-label2"
-                                                            id="demo-multiple-chip"
                                                             fullWidth
+                                                            name="tag"
                                                             multiple
                                                             value={formData.tag}
                                                             onChange={handleChange}
+                                                            size="small"
                                                             input={<OutlinedInput id="select-multiple-chip" label="Chip" name="tag" />}
                                                             renderValue={(selected) => (
                                                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
@@ -397,14 +406,9 @@ export default function EditMeeting() {
                                                                     ))}
                                                                 </Box>
                                                             )}
-                                                            MenuProps={MenuProps}
                                                         >
-                                                            {names.map((name) => (
-                                                                <MenuItem
-                                                                    key={name} value={name}>
-                                                                    {name}
-                                                                </MenuItem>
-                                                            ))}
+                                                            <MenuItem value="secretary">Secretary</MenuItem>
+                                                            <MenuItem value="head_of_office">Head Office</MenuItem>
                                                         </Select>
                                                     </FormControl>
                                                 </Grid>
