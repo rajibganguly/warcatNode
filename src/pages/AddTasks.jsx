@@ -103,7 +103,7 @@ export default function AddTasks() {
     const [updateTaskFile, setupdateTaskFile] = useState(null);
     const [updateSelectedDate, setUpdateSelectedDate] = useState('');
     const { allDepartmentList } = React.useContext(DepartmentContext);
-    const allDepartmentData = allDepartmentList.map((dept) => dept.department);
+    const allDepartmentData = allDepartmentList?.map((dept) => dept.department);
     const { allTaskLists } = React.useContext(TaskContext);
     const allTaskListsData = allTaskLists?.tasks;
     const [tagName, setTagName] = useState([]);

@@ -94,13 +94,13 @@ export default function EditDepartment() {
     setOpen(!open);
   };
 
-    /**
-   * Fetch Department Data & set the data
-   */
-    const fetchDepartmentDataList = async () => {
-      const data = await fetchDepartmentData();
-      setAllDepartmentList(data);
-    };
+  /**
+ * Fetch Department Data & set the data
+ */
+  const fetchDepartmentDataList = async () => {
+    const data = await fetchDepartmentData();
+    setAllDepartmentList(data);
+  };
 
   /**
    * Check all fields if not empty
@@ -119,10 +119,10 @@ export default function EditDepartment() {
         }
       }
     }
-    return true; 
+    return true;
   };
 
-  
+
   const handleChange = (event) => {
     const { name, value } = event.target;
 
@@ -145,7 +145,7 @@ export default function EditDepartment() {
           [name]: value,
         };
       }
-    });    
+    });
 
     if (allFieldsMapped(formData)) {
       setSubmitDisable(false);
@@ -162,9 +162,16 @@ export default function EditDepartment() {
     const setDataPropMap = {
       department_id: formData.department_id,
       dep_name: formData.department.department_name,
-      secretary: formData.secretary,
-      headOffice: formData.headOffice
-    }
+      secretary: {
+        ...formData.secretary,
+        role_type: 'secretary'
+      },
+      headOffice: {
+        ...formData.headOffice,
+        role_type: 'head_of_office'
+      }
+    };
+
     const auth_token = localStorage.getItem('token');
     const response = await fetch(
       `${reactAppHostname}/api/edit-register-user-with-department`,
@@ -180,12 +187,12 @@ export default function EditDepartment() {
 
     try {
       if (response.status === 200) {
-        
+
         await fetchDepartmentDataList();
         toast.success("Update successfully");
         navigate("/departments");
         setIsLoading(false);
-      } 
+      }
       setIsLoading(false);
     } catch (error) {
       console.error("Error occurred:", error);
@@ -271,7 +278,7 @@ export default function EditDepartment() {
                         <label>Department / Government Organisation</label>
                         <TextField
                           fullWidth
-                          name="department_name"                          
+                          name="department_name"
                           value={formData?.department?.department_name}
                           onChange={handleChange}
                           aria-readonly
@@ -323,6 +330,14 @@ export default function EditDepartment() {
                               value={formData?.secretary?.email}
                               onChange={handleChange}
                             />
+                            <input
+                              variant="outlined"
+                              sx={{ width: "100%" }}
+                              name="secretary.role_type"
+                              value={formData?.secretary?.role_type}
+                              //onChange={handleChange}
+                              type="hidden"
+                            />
                           </Grid>
                         </Grid>
 
@@ -361,6 +376,12 @@ export default function EditDepartment() {
                                 value={formData?.headOffice?.designation}
                                 onChange={handleChange}
                               />
+                              <input
+                                type="hidden"
+                                name="headOffice.role_type"
+                                value={formData?.headOffice?.role_type}
+                              />
+
                             </Stack>
                           </Grid>
                           <Grid item xs={12} sm={6}>
@@ -397,7 +418,7 @@ export default function EditDepartment() {
                           variant="contained"
                           color="success"
                           sx={{ color: "white", marginTop: "2%" }}
-                          disabled={submitDisable}
+                          // disabled={submitDisable}
                           onClick={handleAddDepartment}
                         >
                           Update Department

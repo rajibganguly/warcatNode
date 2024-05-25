@@ -67,7 +67,8 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
             const response = await ApiConfig.requestData('post', '/add-sub-task', null, payload);
             onSubmit(response);
             window.location.reload();
-            // await fetchTaskData();
+           // navigate('/tasks')
+            await fetchTaskData();
             setIsLoading(false)
             toast.success("Sub Task added successfully");
 

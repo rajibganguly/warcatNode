@@ -186,6 +186,7 @@ export default function EditMeeting() {
     };
 
     const handleSubmit = async (e) => {
+        console.log('handleSubmit')
         e.preventDefault();
         try {
             setIsLoading(true);
@@ -196,22 +197,23 @@ export default function EditMeeting() {
             };
             console.log(updatedData)
 
-            const response = await fetch(`https://warcat2024-qy2v.onrender.com/api/edit-meeting?meetingId=${id}`, {
+            const response = await fetch(`http://localhost:8001/api/edit-meeting?meetingId=${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(updatedData)
             });
+            console.log(response,'handleSubmit')
             await fetchTaskData();
-            if (response.ok) {
+            ////if (response) {
                 toast.success('Meeting updated successfully');
                 setIsLoading(false);
                 navigate('/meetings')
-            } else {
+            //} else {
                 console.error('Failed to update meeting');
                 setIsLoading(false);
-            }
+           // }
         } catch (error) {
             console.error('Error updating meeting:', error);
             setIsLoading(false);

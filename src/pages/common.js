@@ -66,7 +66,7 @@ export const getStatusText = (status) => {
     case 'totalassigned':
       return 'TOTAL ASSIGNED';
     case 'initiated':
-      return 'INITIATED';
+      return 'ASSIGNED';
     case 'inprogress':
       return 'IN PROGRESS';
     case 'completed':

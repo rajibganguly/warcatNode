@@ -151,7 +151,7 @@ export default function AddDepartment() {
         throw new Error("Token not found in localStorage");
       }
 
-      const response = await fetch("https://warcat2024-qy2v.onrender.com/api/register-user-with-department", {
+      const response = await fetch("http://localhost:8001/api/register-user-with-department", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

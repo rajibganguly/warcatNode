@@ -96,11 +96,11 @@ const Navigations = () => {
 
         <Route
           path="/task-note"
-          element={authToken && userRoleType === 'admin' ? <TaskNote /> : <Navigate to="/" />}
+          element={authToken && userRoleType !== 'admin' ? <TaskNote /> : <Navigate to="/" />}
         />
         <Route
           path="/task-upload"
-          element={authToken && userRoleType === 'admin' ? <TaskUpload /> : <Navigate to="/" />}
+          element={authToken && userRoleType !== 'admin' ? <TaskUpload /> : <Navigate to="/" />}
         />
         <Route
           path="/task-approval"

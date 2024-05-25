@@ -220,6 +220,9 @@ export default function Tasks() {
     setParentModalVisible(false);
     setSubModalVisible(false);
   };
+  const openSubTaskFrom = () => {
+    console.log('fd')
+  };
 
   const handleAddNoteClick = (record) => {
     console.info("Edit clicked for:", record);
@@ -458,7 +461,6 @@ export default function Tasks() {
                             open={modalVisible}
                             onClose={closeModal}
                             modalContent={modalContent}
-                          // meetingData={meetingData}
                           />
                         )}
 

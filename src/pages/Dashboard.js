@@ -150,9 +150,9 @@ export default function Dashboard() {
         }
 
       } else {
-        toast.error(`Login Failed! ${response.message}`, {
-          autoClose: 2000,
-        });
+        // toast.error(`Login Failed! ${response.message}`, {
+        //   autoClose: 2000,
+        // });
       }
     } catch (error) {
       console.error("Error occurred:", error);

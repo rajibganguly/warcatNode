@@ -46,7 +46,13 @@ function TableNew({
   const renderCellValue = (row, column) => {
     const value = getNestedValue(row, column.dataField);
     const userRoleType = fetchRoleType();
+    //console.log(row)
+    if (column.dataField === "meetingTopic") {
 
+      return (<>
+        <p>{row?.meetingTopic}</p>
+      </>)
+    }
     if (column.dataField === "Operations") {
       return (
         <>

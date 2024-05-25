@@ -120,8 +120,8 @@ export default function Meetings() {
 
   const handleEditmeeting = (row) => {
     // Check if row and row.meetings are defined
-    if (row && row.meetingId){
-      
+    if (row && row.meetingId) {
+
       navigate(`/edit-meeting/${row.meetingId}`);
     } else {
       console.error('Invalid row data:', row);
@@ -129,7 +129,7 @@ export default function Meetings() {
   };
 
   const findMeetingRows = (meetingId) => {
-    return allTaskListsData.filter(row => row.meetingId && row.meetingId === meetingId);
+    return allTaskListsData?.filter(row => row.meetingId && row.meetingId === meetingId);
   };
 
   const handleTasksViewInMeeting = (data) => {
@@ -138,13 +138,14 @@ export default function Meetings() {
 
     setTaskDataView(meetingRows);
 
-    if (meetingRows.length === 0) {
+    if (meetingRows && meetingRows?.length > 0) {
+      setMeetingData(data);
+      setModalVisible(true);
+
+    } else {
       toast.warning("Task not found.", {
         autoClose: 2000,
       });
-    } else {
-      setMeetingData(data);
-      setModalVisible(true);
     }
   };
 
@@ -157,7 +158,7 @@ export default function Meetings() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-       <LoadingIndicator isLoading={isLoading} />
+      <LoadingIndicator isLoading={isLoading} />
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>

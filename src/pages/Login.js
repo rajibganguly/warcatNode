@@ -144,7 +144,7 @@ export default function LogIn({ setAuthToken }) {
         setIsLoading(false);
         navigate("/dashboard");
       } else {
-        toast.error(`Login Failed! ${response.message}`, {
+        toast.error(`Login Failed`, {
           autoClose: 2000, 
         });
       }
@@ -264,7 +264,7 @@ export default function LogIn({ setAuthToken }) {
                     variant="contained"
                     color="success"
                     sx={{ mt: 3, mb: 2 }}
-                    disabled={disabledLogin}
+                    // disabled={disabledLogin}
                   >
                     LogIn
                   </Button>
