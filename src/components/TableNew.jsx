@@ -77,6 +77,10 @@ function TableNew({
       return '-';
     }
 
+    if (column.dataField === "tasks_title") {
+      return <p>{row?.task_title}</p>
+    }
+
     if (column.dataField === "meeting_dept") {
       if (row?.departmentNames?.length > 0) {
         return row?.departmentNames?.[0] ?? '-';

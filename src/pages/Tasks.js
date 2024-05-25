@@ -135,7 +135,7 @@ export default function Tasks() {
   console.log(data, 'dataaa');
   const column = [
     { text: 'Assigned Date', dataField: 'timestamp' },
-    { text: "Assigned Title", dataField: 'task_title' },
+    { text: "Assigned Title", dataField: 'tasks_title' },
     { text: "Department", dataField: 'tasks_dept' },
     { text: "Tag", dataField: 'tasks_tag' },
     { text: "Target Date", dataField: 'target_date' },
