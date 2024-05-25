@@ -27,7 +27,7 @@ export const TaskChartData = [
     {
       id: 2,
       percentage: 0,
-      label: "Not Initiated",
+      label: "Initiated",
       styles: {
         root: {},
         path: {
