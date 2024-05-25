@@ -61,7 +61,7 @@ const MenuProps = {
 
 const names = [
     'head_of_office',
-    'Secretary',
+    'secretary',
 ];
 function getStyles(name, personName, theme) {
     return {
