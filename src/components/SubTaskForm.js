@@ -5,9 +5,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import ApiConfig from '../config/ApiConfig';
 import { toast } from "react-toastify";
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { dateSelected, fetchTaskData,formatDate } from '../pages/common';
-
+import { dateSelected, fetchTaskData } from '../pages/common';
+import { useNavigate } from 'react-router-dom';
 
 const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -52,6 +51,7 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
             reader.readAsDataURL(file);
         }
     };
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -67,7 +67,7 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
             onSubmit(response);
             await fetchTaskData();
             toast.success("Sub Task added successfully");
-           
+            navigate('/tasks');
 
         } catch (error) {
             console.error("Error adding subtask:", error);
@@ -112,19 +112,6 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
                     />
                 </LocalizationProvider>
             </Box>
-            {/* <Box mb={2}>
-                <Button
-                    component="label"
-                    role={undefined}
-                    variant="contained"
-                    tabIndex={-1}
-                    startIcon={<CloudUploadIcon />}
-                    sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}
-                >
-                    Upload file
-                    <input type="file" onChange={handleFileChange} style={{ display: 'none' }} />
-                </Button>
-            </Box> */}
             <Box mb={2}>
                 <InputLabel sx={{ mb: 1 }}>Upload Images</InputLabel>
                 <Box display={'flex'} gap={2}>

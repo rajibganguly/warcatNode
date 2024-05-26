@@ -350,12 +350,12 @@ export default function AddTasks() {
             navigate("/tasks");
         }
     }
-  
-    if (isLoading) {
-        return (<LoadingIndicator isLoading={isLoading} />);
-    }
+
     return (
         <ThemeProvider theme={defaultTheme}>
+            {/* For Loader */}
+            <LoadingIndicator isLoading={isLoading} />
+            {/*  */}
             <Box display={'flex'}>
                 <CssBaseline />
                 <AppBar position="absolute" open={open}>

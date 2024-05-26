@@ -26,12 +26,13 @@ import { useNavigate } from "react-router-dom";
 import { TaskContext } from "../context/TaskContext";
 import TaskViewDialog from "../dialog/TaskViewDialog";
 import { MeetingContext } from './../context/MeetingContext'
+import { fetchMeetingData, fetchTaskData } from "./common";
 
 const column = [
   { text: 'Meeting Id', dataField: 'meetingId' },
   { text: 'Meeting Topic', dataField: 'meetingTopic' },
-  { text: 'Departments', dataField: 'department_name' },
-  { text: 'Tag', dataField: 'tag' },
+  { text: 'Departments', dataField: 'meeting_dept' },
+  { text: 'Tag', dataField: 'meeting_tag' },
   { text: 'Date', dataField: 'selectDate' },
   { text: 'Time', dataField: 'selectTime' },
   { text: 'Attachment', dataField: 'imageUrl' },
@@ -67,7 +68,21 @@ export default function Meetings() {
   const [taskDataView, setTaskDataView] = useState([]);
   const [meetingData, setMeetingData] = useState([]);
   const navigate = useNavigate();
+  const { setAllMeetingLists } = React.useContext(MeetingContext);
+  const { setAllTaskLists } = React.useContext(TaskContext);
+  const [isLoading, setIsLoading] = React.useState(false);
 
+  React.useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true)
+      const fetchMeetingsData = await fetchMeetingData();
+      setAllMeetingLists(fetchMeetingsData);
+      const setAllTaskListsData = await fetchTaskData();
+      setAllTaskLists(setAllTaskListsData)
+      setIsLoading(false)
+    };
+    fetchData();
+  }, []);
   const closeModal = () => {
     setModalVisible(false);
     setTaskDataView([]);

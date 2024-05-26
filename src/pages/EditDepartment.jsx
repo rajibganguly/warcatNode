@@ -191,11 +191,11 @@ export default function EditDepartment() {
     }
   };
 
-  if (isLoading) {
-    return (<LoadingIndicator isLoading={isLoading} />);
-  }
   return (
     <ThemeProvider theme={defaultTheme}>
+      {/* For Loader */}
+      <LoadingIndicator isLoading={isLoading} />
+      {/*  */}
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>
