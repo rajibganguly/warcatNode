@@ -394,13 +394,21 @@ function TableNew({
             </thead>
             {/* Your table body */}
             <tbody>
-              {data?.map((row, index) => (
-                <tr key={index}>
-                  {column?.map((col) => (
-                    <td key={col.dataField}>{renderCellValue(row, col)}</td>
-                  ))}
+              {data && data.length > 0 ? (
+                data.map((row, index) => (
+                  <tr key={index}>
+                    {column?.map((col) => (
+                      <td key={col.dataField}>{renderCellValue(row, col)}</td>
+                    ))}
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={column.length} style={{ textAlign: "center" }}>
+                    No records found
+                  </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
