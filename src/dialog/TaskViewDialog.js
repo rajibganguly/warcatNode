@@ -115,8 +115,8 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                                 </MuiLink>
                                 {task?.note_details && task.note_details.length > 0 && (
                                     <>
-                                        <Typography variant="h4" component="h1" gutterBottom>
-                                            <b>Note Details</b>
+                                        <Typography variant="h6" component="h1" gutterBottom>
+                                            Note Details
                                         </Typography>
                                         <Box>
                                             {task.note_details.map((note, index) => (
@@ -147,8 +147,8 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                                 )}
                                 {task?.complate_upload_task_details && task.complate_upload_task_details.length > 0 && (
                                     <>
-                                        <Typography variant="h4" component="h1" gutterBottom>
-                                            <b>Upload Report</b>
+                                        <Typography variant="h6" component="h1" gutterBottom>
+                                            Upload Report
                                         </Typography>
                                         <Box>
                                             {task?.complate_upload_task_details.map((note, index) => (
@@ -168,7 +168,7 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                                                                 href={note.upload_report}
                                                                 download={getFileNameFromUrl(note.upload_report)}
                                                             >
-                                                                {getFileNameFromUrl(note.upload_report)}
+                                                              Download Report
                                                             </MuiLink>
                                                         )}
 
