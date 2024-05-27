@@ -285,8 +285,8 @@ export default function Tasks() {
         userId,
         flag: flagValue
       };
-
-      const response = await fetch('https://warcat2024-qy2v.onrender.com/api/admin_verified', {
+      const reactAppHostname = process.env.REACT_APP_HOSTNAME;
+      const response = await fetch(`${reactAppHostname}/api/admin_verified`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
