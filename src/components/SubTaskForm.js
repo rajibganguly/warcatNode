@@ -9,6 +9,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { fetchTaskData } from '../pages/common';
 import { useNavigate } from 'react-router-dom';
 import LoadingIndicator from './loadingIndicator';
+import dayjs from 'dayjs';
 
 const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -20,8 +21,9 @@ const convertToBase64 = (file) => {
 };
 
 const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
+    console.log(forTaskDataView, 'subtask data')
     const editSubTaskTitle = forTaskDataView ? forTaskDataView?.subtask_title : '';
-    const editSubTaskDate = forTaskDataView ? forTaskDataView?.subtask_target_date : null;
+    const editSubTaskDate = forTaskDataView ? dayjs(forTaskDataView?.target_date) : null;
     const editSubTaskImageUrl = forTaskDataView ? forTaskDataView?.subtask_image : '';
     const [isLoading, setIsLoading] = React.useState(false);
     const [formValues, setFormValues] = useState({
