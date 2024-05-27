@@ -63,16 +63,16 @@ export const fetchTaskData = async () => {
 
 export const getStatusText = (status) => {
   switch (status) {
-    // case 'totalassigned':
-    //   return 'TOTAL ASSIGNED';
-    // case 'initiated':
-    //   return 'ASSIGNED';
-    // case 'inprogress':
-    //   return 'IN PROGRESS';
-    // case 'completed':
-    //   return 'COMPLETED';
+    case 'totalassigned':
+      return 'TOTAL ASSIGNED';
+    case 'initiated':
+      return 'ASSIGNED';
+    case 'inprogress':
+      return 'IN PROGRESS';
+    case 'completed':
+      return 'COMPLETED';
     default:
-      return 'Completed';
+      return 'Pending';
   }
 };
 

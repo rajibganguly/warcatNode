@@ -110,26 +110,27 @@ function TableNew({
     }
 
 
-    if (column.text === "Verified Status") {
-      // if (row?.status === "Complete") {
+    if (column.text === "Verified Status" && userRoleType === 'admin') {
+      if (row?.status === "completed") {
         return (
           <div style={{ display: "flex" }}>
             <Button
               style={{ backgroundColor: '#fb4', color: 'black', marginRight: '2px' }}
-              onClick={() =>handleAcceptClick(row.task_id)}>
-             Accept
+              onClick={() => handleAcceptClick(row.task_id)}>
+              Accept
             </Button>
 
             <Button
               style={{ backgroundColor: 'rgb(10, 24, 50)', color: '#ffffff' }}
-              onClick={() =>handleRejectClick(row.task_id)}>
+              onClick={() => handleRejectClick(row.task_id)}>
               Reject
             </Button>
 
           </div>
         );
-
-      // }
+      } else {
+        return <p>Pending</p>
+      }
     }
     console.log(row?.admin_verified);
 
