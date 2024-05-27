@@ -32,6 +32,7 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
         setSelectedSubTask(subTaskRow);
         setAddTaskForm(false);
     };
+   
 
     return (
         <Dialog
@@ -89,8 +90,13 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                         </Box>
 
 
+
+
+                       
                         {taskDataView?.map((task, index) => (
+                          
                             <Box key={index}>
+                                
                                 <Typography fontSize="12px" color="text.secondary">
                                     {formatDateWithmonth(task?.timestamp)}
                                 </Typography>
@@ -98,6 +104,7 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                                     {task?.task_title}
                                     {task?.subtask_title}
                                 </Typography>
+                               
                                 <Box display="flex" gap={1} alignItems="center">
                                     <Typography color="text.secondary">
                                         Target Date:
@@ -109,6 +116,9 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                                 <MuiLink component="a" href={task?.task_image} download="attachment.png">
                                     attachment.png
                                 </MuiLink>
+                                <Typography color="text.primary" variant="h6" mb={0.5}>
+                                    {task?.note_details}
+                                </Typography>
 
                                 <Box gap={2} display="flex" justifyContent="right">
                                     {task?.status && (

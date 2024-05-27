@@ -43,6 +43,9 @@ function TableNew({
     return value;
   };
 
+  
+
+
   const renderCellValue = (row, column) => {
     const value = getNestedValue(row, column.dataField);
     const userRoleType = fetchRoleType();
@@ -177,18 +180,17 @@ function TableNew({
 
 
 
-    if (column.dataField === "meetingoperation") {
+    if (column.dataField === "meetingoperation" && fetchRoleType() === 'admin') {
       return (
         <div style={{ display: "flex" }}>
-          {userRoleType === 'admin' &&
-            (<Button onClick={() => handleEditmeeting(row)}
-              style={{ backgroundColor: '#0097a7', color: '#ffffff' }}>
-              <EditOutlined />
-            </Button>
-            )}
+          <Button onClick={() => handleEditmeeting(row)} style={{ backgroundColor: '#0097a7', color: '#ffffff' }}>
+            <EditOutlined />
+          </Button>
         </div>
       );
     }
+    
+    
 
     if (value instanceof Date) {
       return value.toISOString().substr(0, 10);
@@ -336,7 +338,7 @@ function TableNew({
     const dataBlob = new Blob([excelBuffer], { type: 'application/octet-stream' });
     saveAs(dataBlob, `${filename}.xlsx`);
   };
-  console.log('exportButton', exportButton);
+  // console.log('exportButton', exportButton);
   return (
     <>
       {/* Table header */}

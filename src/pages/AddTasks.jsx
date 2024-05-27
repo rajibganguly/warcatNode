@@ -557,7 +557,7 @@ export default function AddTasks() {
                                                     </Grid>
                                                 ) : input.type === 'date' ? (
                                                     <Grid item xs={6} md={6}>
-                                                        <InputLabel sx={{ mb: 1 }}>Date</InputLabel>
+                                                        <InputLabel sx={{ mb: 1 }}>Target Date</InputLabel>
                                                         <Controller
                                                             name="date"
                                                             control={control}

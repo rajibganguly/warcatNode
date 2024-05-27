@@ -8,7 +8,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import { Link, useNavigate } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import { Button, TextField } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
@@ -33,9 +33,11 @@ import ApiConfig from "../config/ApiConfig";
 import { MeetingContext } from './../context/MeetingContext';
 import { useParams } from "react-router-dom";
 import { format } from 'date-fns';
+import { useLocation } from "react-router-dom";
 import dayjs from 'dayjs';
 import LoadingIndicator from "../components/loadingIndicator";
-import { fetchMeetingData, fetchTaskData } from "./common";
+import { fetchTaskData } from "./common";
+
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -61,7 +63,7 @@ const MenuProps = {
 
 const names = [
     'head_of_office',
-    'secretary',
+    'Secretary',
 ];
 function getStyles(name, personName, theme) {
     return {
@@ -105,28 +107,20 @@ const convertToBase64 = (file) => {
 
 export default function EditMeeting() {
     const [open, setOpen] = useState(true);
+    const location = useLocation();
     const [data, setData] = useState([]);
     const [filteredMeeting, setFilteredMeeting] = useState([]);
     const [fileName, setFileName] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [editMeetingId, seteditMeetingId] = useState('');
+    const navigate = useNavigate();
+
+console.log(editMeetingId)
     const { id } = useParams();
     const { allMeetingLists } = useContext(MeetingContext);
-    const navigate = useNavigate()
-    const { setAllMeetingLists } = React.useContext(MeetingContext);
-  
-    React.useEffect(() => {
-      const fetchData = async () => {
-        setIsLoading(true)
-        const fetchMeetingsData = await fetchMeetingData();
-        setAllMeetingLists(fetchMeetingsData);
-        setIsLoading(false)
-      };
-      fetchData();
-    }, []);
-
 
     const [formData, setFormData] = useState({
-        departmentNames: [],
+        departmentIds: [],
         tag: [],
         imageUrl: "",
         meetingTopic: "",
@@ -136,36 +130,61 @@ export default function EditMeeting() {
     });
 
     useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        const encodededMeetingId = queryParams.get('meetingId');
+
+        if (encodededMeetingId) {
+            const decodededMeetingId = window.atob(encodededMeetingId);
+            seteditMeetingId(decodededMeetingId);
+
+        }
+        console.log(allMeetingLists)
         if (Array.isArray(allMeetingLists?.meetings)) {
-            const filteredMeetings = allMeetingLists?.meetings.filter(meeting => meeting.meetingId === id);
+            const filteredMeetings = allMeetingLists?.meetings.filter(meeting => meeting.meetingId === editMeetingId);
             setFilteredMeeting(filteredMeetings);
             console.log(filteredMeetings)
         } else {
             console.error("Error getting Data");
         }
-    }, [allMeetingLists, id]);
+    }, [allMeetingLists, editMeetingId]);
+
 
     useEffect(() => {
         if (filteredMeeting.length > 0) {
             const meetingData = filteredMeeting[0];
             setFormData({
-                departmentNames: meetingData.departmentNames,
+                departmentIds: meetingData.departmentNames.map(deptName => {
+                    const dept = data.find(d => d.department.department_name === deptName);
+                    return dept ? dept.department._id : null;
+                }).filter(id => id !== null),
                 imageUrl: meetingData.imageUrl,
                 meetingTopic: meetingData.meetingTopic,
                 selectDate: dayjs(meetingData.selectDate),
-                selectTime: dayjs(meetingData.selectTime, 'hh:mm'), // Time only, parse with dummy date
+                selectTime: dayjs(meetingData.selectTime, 'hh:mm'),
                 tag: meetingData.tag
             });
         }
-    }, [filteredMeeting]);
+    }, [filteredMeeting, data]);
+
 
     const handleChange = (event) => {
         const { name, value } = event.target;
-        setFormData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
+        if (name === "departmentIds") {
+            setFormData(prevState => ({
+                ...prevState,
+                [name]: value.map(deptName => {
+                    const dept = data.find(d => d.department.department_name === deptName);
+                    return dept ? dept.department._id : null;
+                }).filter(id => id !== null)
+            }));
+        } else {
+            setFormData(prevState => ({
+                ...prevState,
+                [name]: value
+            }));
+        }
     };
+
 
     const handleFileChange = async (event) => {
         const file = event.target.files[0];
@@ -196,39 +215,39 @@ export default function EditMeeting() {
     };
 
     const handleSubmit = async (e) => {
-        console.log('handleSubmit')
         e.preventDefault();
         try {
             setIsLoading(true);
             const updatedData = {
                 ...formData,
                 selectDate: formData.selectDate.toISOString(),
-                selectTime: formData.selectTime.format('hh:mm')
+                selectTime: formData.selectTime.format('hh:mm'),
+                departmentNames: departmentNames,
             };
             console.log(updatedData)
 
-            const response = await fetch(`http://localhost:8001/api/edit-meeting?meetingId=${id}`, {
+            const response = await fetch(`https://warcat2024-qy2v.onrender.com/api/edit-meeting?meetingId=${editMeetingId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(updatedData)
             });
-            console.log(response, 'handleSubmit')
-            await fetchTaskData();
-            ////if (response) {
-            toast.success('Meeting updated successfully');
-            setIsLoading(false);
             navigate('/meetings')
-            //} else {
-            console.error('Failed to update meeting');
-            setIsLoading(false);
-            // }
+            await fetchTaskData();
+            if (response.ok) {
+                toast.success('Meeting updated successfully');
+                setIsLoading(false);
+            } else {
+                console.error('Failed to update meeting');
+                setIsLoading(false);
+            }
         } catch (error) {
             console.error('Error updating meeting:', error);
             setIsLoading(false);
         }
     };
+
 
     useEffect(() => {
         fetchDepartmentData();
@@ -368,9 +387,17 @@ export default function EditMeeting() {
                                                             id="demo-multiple-chip"
                                                             fullWidth
                                                             multiple
-                                                            value={formData.departmentNames}
-                                                            onChange={handleChange}
-                                                            input={<OutlinedInput id="select-multiple-chip1" label="Chip" name="departmentNames" />}
+                                                            value={formData.departmentIds.map(id => {
+                                                                const dept = data.find(d => d.department._id === id);
+                                                                return dept ? dept.department.department_name : '';
+                                                            })}
+                                                            onChange={(e) => handleChange({
+                                                                target: {
+                                                                    name: 'departmentIds',
+                                                                    value: e.target.value
+                                                                }
+                                                            })}
+                                                            input={<OutlinedInput id="select-multiple-chip1" label="Chip" name="departmentIds" />}
                                                             renderValue={(selected) => (
                                                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                                                     {selected.map((value) => (
@@ -386,18 +413,20 @@ export default function EditMeeting() {
                                                                 </MenuItem>
                                                             ))}
                                                         </Select>
+
                                                     </FormControl>
 
                                                 </Grid>
                                                 <Grid item xs={6}>
                                                     <FormControl sx={{ width: '100%' }}>
+                                                        <InputLabel id="demo-multiple-chip-label2">Tag</InputLabel>
                                                         <Select
+                                                            labelId="demo-multiple-chip-label2"
+                                                            id="demo-multiple-chip"
                                                             fullWidth
-                                                            name="tag"
                                                             multiple
                                                             value={formData.tag}
                                                             onChange={handleChange}
-                                                            size="small"
                                                             input={<OutlinedInput id="select-multiple-chip" label="Chip" name="tag" />}
                                                             renderValue={(selected) => (
                                                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
@@ -406,9 +435,14 @@ export default function EditMeeting() {
                                                                     ))}
                                                                 </Box>
                                                             )}
+                                                            MenuProps={MenuProps}
                                                         >
-                                                            <MenuItem value="secretary">Secretary</MenuItem>
-                                                            <MenuItem value="head_of_office">Head Office</MenuItem>
+                                                            {names.map((name) => (
+                                                                <MenuItem
+                                                                    key={name} value={name}>
+                                                                    {name}
+                                                                </MenuItem>
+                                                            ))}
                                                         </Select>
                                                     </FormControl>
                                                 </Grid>
@@ -417,7 +451,7 @@ export default function EditMeeting() {
                                                         name='meetingTopic'
                                                         value={formData.meetingTopic}
                                                         onChange={handleChange}
-                                                        variant="outlined" fullWidth disabled />
+                                                        variant="outlined" fullWidth/>
 
                                                 </Grid>
                                                 <Grid item xs={12}>

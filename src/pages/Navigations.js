@@ -89,8 +89,8 @@ const Navigations = () => {
           path="/edit-departments/:id"
           element={authToken && userRoleType === 'admin' ? <EditDepartment /> : <Navigate to="/" />}
         />
-        <Route
-          path="/edit-meeting/:id"
+         <Route
+          path="/edit-meeting"
           element={authToken && userRoleType === 'admin' ? <EditMeeting /> : <Navigate to="/" />}
         />
 
