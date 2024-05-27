@@ -33,8 +33,7 @@ function TableNew({
   handleViewParentOperationTask,
   handleTaskView,
   handleEditmeeting,
-  handleAcceptClick,
-  handleRejectClick
+  handleAcceptRejectClick
 
 }) {
   const getNestedValue = (obj, path) => {
@@ -46,8 +45,22 @@ function TableNew({
     return value;
   };
 
-
-
+  const styles = {
+    buttonAccept: {
+      backgroundColor: '#fb4',
+      color: '#000000',
+      marginRight: '2px'
+    },
+    buttonReject: {
+      backgroundColor: 'rgb(10, 24, 50)',
+      color: '#ffffff',
+    },
+    buttonDisabled: {
+      backgroundColor: 'grey',
+      color: '#ffffff',
+      marginRight: '2px'
+    }
+  };
 
   const renderCellValue = (row, column) => {
     const value = getNestedValue(row, column.dataField);
@@ -112,17 +125,20 @@ function TableNew({
 
     if (column.text === "Verified Status" && userRoleType === 'admin') {
       if (row?.status === "completed") {
+        const isDisabled = row?.admin_verified === 1 || row?.admin_verified === 2;
         return (
           <div style={{ display: "flex" }}>
             <Button
-              style={{ backgroundColor: '#fb4', color: 'black', marginRight: '2px' }}
-              onClick={() => handleAcceptClick(row.task_id)}>
+              disabled={isDisabled}
+              style={isDisabled ? styles.buttonDisabled : styles.buttonAccept}
+              onClick={() => handleAcceptRejectClick(row.task_id, 1)}>
               Accept
             </Button>
 
             <Button
-              style={{ backgroundColor: 'rgb(10, 24, 50)', color: '#ffffff' }}
-              onClick={() => handleRejectClick(row.task_id)}>
+              disabled={isDisabled}
+              style={isDisabled ? styles.buttonDisabled : styles.buttonReject}
+              onClick={() => handleAcceptRejectClick(row.task_id, 2)}>
               Reject
             </Button>
 

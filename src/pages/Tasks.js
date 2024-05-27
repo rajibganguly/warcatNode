@@ -266,7 +266,12 @@ export default function Tasks() {
     setOpen(!open);
   };
 
-  const handleAcceptClick = async (taskId) => {
+  const handleAcceptRejectClick = async (taskId, flagValue) => {
+    let toastrTextPart = 'reject';
+    if(flagValue === 1){
+      toastrTextPart = 'accept';
+    }
+    
     try {
       const localSt = JSON.parse(localStorage.getItem("user"));
       const userId = localSt ? localSt._id : "";
@@ -274,11 +279,11 @@ export default function Tasks() {
       const payload = {
         task_id: taskId,
         userId,
-        flag: 1
+        flag: flagValue
       };
 
       const response = await fetch('https://warcat2024-qy2v.onrender.com/api/admin_verified', {
-        method: 'POST',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -286,49 +291,15 @@ export default function Tasks() {
       });
 
       if (response.ok) {
-        toast.success('Task accepted successfully');
+        toast.success('Task '+toastrTextPart+'ed successfully');
       } else {
-        toast.error('Failed to accept task');
+        toast.error('Failed to '+toastrTextPart+' task');
       }
     } catch (error) {
-      console.error('Error accepting task:', error);
-      toast.error('Failed to accept task');
+      console.error('Error '+toastrTextPart+'ing task:', error);
+      toast.error('Failed to '+toastrTextPart+' task');
     }
   };
-
-  const handleRejectClick = async (taskId) => {
-    try {
-      const localSt = JSON.parse(localStorage.getItem("user"));
-      const userId = localSt ? localSt._id : "";
-
-      const payload = {
-        task_id: taskId,
-        userId,
-        flag: 2
-      };
-
-      const response = await fetch('https://warcat2024-qy2v.onrender.com/api/admin_verified', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload)
-      });
-
-      if (response.ok) {
-        toast.success('Task rejected successfully');
-      } else {
-        toast.error('Failed to reject task');
-      }
-    } catch (error) {
-      console.error('Error rejecting task:', error);
-      toast.error('Failed to reject task');
-    }
-  };
-
-
-
-
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -499,8 +470,7 @@ export default function Tasks() {
                           handleEditOperationTask={handleEditOperationTask}
                           handleAddNoteClick={handleAddNoteClick}
                           handleUploadClick={handleUploadClick}
-                          handleAcceptClick={handleAcceptClick}
-                          handleRejectClick={handleRejectClick}
+                          handleAcceptRejectClick={handleAcceptRejectClick}
                         />
                         {parentTaskView && parentModalVisible && (
                           <TaskViewDialog
