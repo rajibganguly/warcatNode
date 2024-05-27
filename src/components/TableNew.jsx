@@ -56,9 +56,17 @@ function TableNew({
       color: '#ffffff',
     },
     buttonDisabled: {
-      backgroundColor: 'grey',
+      backgroundColor: '#E0DEDE',
       color: '#ffffff',
       marginRight: '2px'
+    },
+    addSubtaskEnabled: {
+      backgroundColor: 'rgb(10, 24, 50)',
+      color: '#ffffff'
+    },
+    addSubtaskDisabled: {
+      backgroundColor: '#E0DEDE',
+      color: '#ffffff'
     }
   };
 
@@ -151,6 +159,7 @@ function TableNew({
     console.log(row?.admin_verified);
 
     if (column.dataField === "subtask") {
+      const verifiedFlag = row?.admin_verified !== 0;
       return (
         <div style={{ display: "flex" }}>
           <Button onClick={() => handleViewSubTask(row)}
@@ -158,8 +167,10 @@ function TableNew({
             <EyeOutlined />
           </Button>
           {userRoleType === 'admin' &&
-            (<Button onClick={() => handleAddSubTaskClick(row)}
-              style={{ backgroundColor: 'rgb(10, 24, 50)', color: '#ffffff' }}>
+            (<Button
+              disabled={verifiedFlag}
+              onClick={() => handleAddSubTaskClick(row)}
+              style={verifiedFlag ? styles.addSubtaskDisabled : styles.addSubtaskEnabled}>
               <AddIcon />
             </Button>
             )}
