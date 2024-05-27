@@ -40,16 +40,17 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
     const handleDateChange = (newDate) => {
         setFormValues({ ...formValues, targetDate: newDate });
     };
-
-    const [base64Image, setBase64Image] = React.useState("");
+    const [updateTaskFile, setupdateTaskFile] = useState(editSubTaskImageUrl??null);
+    // const [base64Image, setBase64Image] = React.useState("");
     const handleFileChange = async (event) => {
         const file = event.target.files[0];
         if (file) {
             const base64 = await convertToBase64(file);
             const reader = new FileReader();
             setFormValues({ ...formValues, imageUrl: base64 });
+            setupdateTaskFile(base64);
             reader.onload = () => {
-                setBase64Image(reader.result);
+                setupdateTaskFile(reader.result);
             };
             reader.readAsDataURL(file);
         }
@@ -148,13 +149,13 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
                             onChange={handleFileChange}
                         />
                         <Box width={'40px'} height={'40px'} minWidth={'40px'} borderRadius={'6px'} backgroundColor='#ebebeb'>
-                            {base64Image && (
+                            {updateTaskFile && (
                                 <img
                                     alt=""
                                     width={'100%'}
                                     height={'100%'}
                                     className="smallImageInTask"
-                                    src={base64Image}
+                                    src={updateTaskFile}
                                 />
                             )}
                         </Box>
