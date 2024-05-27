@@ -193,7 +193,7 @@ export default function Tasks() {
       console.error("Error fetching Tasks Chart data:", error);
       //toast.dismiss("loading");
       //setIsLoading(false)
-      toast.error("Failed to fetch Tasks data");
+      //toast.error("Failed to fetch Tasks data");
     }
   };
 
