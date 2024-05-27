@@ -189,7 +189,7 @@ function TableNew({
     if (column.dataField === "taskoperation") {
       return (
         <div style={{ display: "flex" }}>
-          {userRoleType === 'admin' && row?.status !== 'completed' &&
+          {userRoleType === 'admin' &&  row?.admin_verified === 0  &&
             (<Button onClick={() => handleEditOperationTask(row)}
               style={{ backgroundColor: '#0097a7', color: '#ffffff', marginRight: '2px' }}>
               <EditOutlined />
