@@ -11,7 +11,7 @@ import {
     Link as MuiLink
 } from "@mui/material";
 import { CloseOutlined } from '@mui/icons-material';
-import { fetchRoleType, formatDate, formatDateWithmonth, getFileNameFromUrl } from "../pages/common";
+import { fetchRoleType, formatDate, formatDateWithmonth, formatVerifiedStatus, getFileNameFromUrl } from "../pages/common";
 import { useNavigate } from 'react-router-dom';
 import SubTaskForm from '../components/SubTaskForm';
 export default function TaskViewDialog({ open, onClose, meetingData, taskDataView }) {
@@ -137,7 +137,7 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
 
                                                         {/* Note timestamp */}
                                                         <Typography color="text.secondary">
-                                                          Date :  {note?.timestamp || 'No timestamp available'}
+                                                            Date :  {note?.timestamp || 'No timestamp available'}
                                                         </Typography>
                                                     </Box>
                                                 </Box>
@@ -168,7 +168,7 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                                                                 href={note.upload_report}
                                                                 download={getFileNameFromUrl(note.upload_report)}
                                                             >
-                                                              Download Report
+                                                                Download Report
                                                             </MuiLink>
                                                         )}
 
@@ -182,7 +182,7 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                                 <Box gap={2} display="flex" justifyContent="right">
                                     {task?.status && (
                                         <Chip
-                                            label={task?.status}
+                                            label={`${task?.status} ${formatVerifiedStatus(task?.admin_verified)}`}
                                             className="taskStatusBtn"
                                             sx={{
                                                 background: task?.status === 'initiated' ? '#ffbb44' :
@@ -190,7 +190,7 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                                             }}
                                         />
                                     )}
-                                    {userRoleType === 'admin' && !task?.status === 'completed' &&  (
+                                    {userRoleType === 'admin' && !task?.status === 'completed' && (
                                         <Button
                                             variant="contained"
                                             style={{ backgroundColor: '#0a1832', color: '#ffffff' }}
