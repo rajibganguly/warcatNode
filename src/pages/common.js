@@ -183,10 +183,10 @@ const formatRole = (role) => {
 };
 
 export const formatStatus = (status) => {
-  if(status === 1){
+  if (status === 1) {
     return 'Accepted';
   }
-  if(status === 2){
+  if (status === 2) {
     return 'Rejected';
   }
   return 'Pending';
@@ -199,4 +199,9 @@ export const getCommaSeparatedRoles = (tagArray) => {
 export const formatPercentage = (value) => {
   const num = Number(value);
   return isNaN(num) ? '0' : num.toFixed(0);
+};
+// Function to extract file name from URL
+export const getFileNameFromUrl = (url) => {
+  if (!url) return '';
+  return url.split('/').pop();
 };

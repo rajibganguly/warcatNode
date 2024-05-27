@@ -9,6 +9,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { fetchTaskData } from '../pages/common';
 import { useNavigate } from 'react-router-dom';
 import LoadingIndicator from './loadingIndicator';
+import dayjs from 'dayjs';
 
 const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -20,8 +21,14 @@ const convertToBase64 = (file) => {
 };
 
 const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
+    console.log(forTaskDataView, 'subtask data');
+    console.log(parentTaskId, 'parent task');
+    let editFlag = 0;
+    if(forTaskDataView){
+        editFlag = 1;
+    }
     const editSubTaskTitle = forTaskDataView ? forTaskDataView?.subtask_title : '';
-    const editSubTaskDate = forTaskDataView ? forTaskDataView?.subtask_target_date : null;
+    const editSubTaskDate = forTaskDataView ? dayjs(forTaskDataView?.target_date) : null;
     const editSubTaskImageUrl = forTaskDataView ? forTaskDataView?.subtask_image : '';
     const [isLoading, setIsLoading] = React.useState(false);
     const [formValues, setFormValues] = useState({
@@ -38,16 +45,17 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
     const handleDateChange = (newDate) => {
         setFormValues({ ...formValues, targetDate: newDate });
     };
-
-    const [base64Image, setBase64Image] = React.useState("");
+    const [updateTaskFile, setupdateTaskFile] = useState(editSubTaskImageUrl??null);
+    // const [base64Image, setBase64Image] = React.useState("");
     const handleFileChange = async (event) => {
         const file = event.target.files[0];
         if (file) {
             const base64 = await convertToBase64(file);
             const reader = new FileReader();
             setFormValues({ ...formValues, imageUrl: base64 });
+            setupdateTaskFile(base64);
             reader.onload = () => {
-                setBase64Image(reader.result);
+                setupdateTaskFile(reader.result);
             };
             reader.readAsDataURL(file);
         }
@@ -61,22 +69,29 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
                 parent_task_id: parentTaskId,
                 subtask_title: formValues.subTaskTitle,
                 subtask_target_date: formValues.targetDate.toISOString(),
-                subtask_image: formValues.imageUrl
+                subtask_image: formValues.imageUrl,
+                ...(editFlag === 1 && { sub_task_id: forTaskDataView?.sub_task_id })
             };
             setIsLoading(true)
-            const response = await ApiConfig.requestData('post', '/add-sub-task', null, payload);
-            onSubmit(response);
-            window.location.reload();
-           // navigate('/tasks')
-            await fetchTaskData();
-            setIsLoading(false)
-            toast.success("Sub Task added successfully");
-
-
+            let url = '/add-sub-task'
+            if(editFlag === 1){
+                url = '/edit-sub-task';
+            }
+            const response = await ApiConfig.requestData('post', url, null, payload);
+            // onSubmit(response);
+            // navigate('/tasks')
+            if(response){
+                toast.success(editFlag === 1 ? "Sub Task edited successfully" : "Sub Task added successfully");
+                await fetchTaskData();
+                window.location.reload();
+            }else{
+                setIsLoading(false);
+            }
+            // toast.success("Sub Task added successfully");
         } catch (error) {
             setIsLoading(false)
             console.error("Error adding subtask:", error);
-            toast.success("Something went wrong");
+            toast.error("Something went wrong");
 
         }
     };
@@ -146,13 +161,13 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
                             onChange={handleFileChange}
                         />
                         <Box width={'40px'} height={'40px'} minWidth={'40px'} borderRadius={'6px'} backgroundColor='#ebebeb'>
-                            {base64Image && (
+                            {updateTaskFile && (
                                 <img
                                     alt=""
                                     width={'100%'}
                                     height={'100%'}
                                     className="smallImageInTask"
-                                    src={base64Image}
+                                    src={updateTaskFile}
                                 />
                             )}
                         </Box>
