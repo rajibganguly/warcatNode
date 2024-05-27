@@ -156,6 +156,7 @@ export default function TaskNote() {
     const localSt = JSON.parse(localStorage.getItem("user"));
     const currentRoleType = localSt.role_type;
     const userId = localSt?._id;
+    const userName = localSt?.name;
     const handleOutput = (open) => {
         toggleDrawer();
     };
@@ -170,7 +171,7 @@ export default function TaskNote() {
     async function handleSubmit() {
         const data = {
             note_description: taskNote,
-            note_written_by: userId,
+            note_written_by: userName,
             // role_type: 'secretary'
             role_type: currentRoleType
         };

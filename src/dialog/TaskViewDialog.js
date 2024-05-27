@@ -11,7 +11,7 @@ import {
     Link as MuiLink
 } from "@mui/material";
 import { CloseOutlined } from '@mui/icons-material';
-import { fetchRoleType, formatDate, formatDateWithmonth } from "../pages/common";
+import { fetchRoleType, formatDate, formatDateWithmonth, getFileNameFromUrl } from "../pages/common";
 import { useNavigate } from 'react-router-dom';
 import SubTaskForm from '../components/SubTaskForm';
 export default function TaskViewDialog({ open, onClose, meetingData, taskDataView }) {
@@ -29,7 +29,7 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
         setSelectedSubTask(subTaskRow);
         setAddTaskForm(false);
     };
-   
+
 
     return (
         <Dialog
@@ -89,11 +89,11 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
 
 
 
-                       
+
                         {taskDataView?.map((task, index) => (
-                          
+
                             <Box key={index}>
-                                
+
                                 <Typography fontSize="12px" color="text.secondary">
                                     {formatDateWithmonth(task?.timestamp)}
                                 </Typography>
@@ -101,7 +101,7 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                                     {task?.task_title}
                                     {task?.subtask_title}
                                 </Typography>
-                               
+
                                 <Box display="flex" gap={1} alignItems="center">
                                     <Typography color="text.secondary">
                                         Target Date:
@@ -113,9 +113,71 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                                 <MuiLink component="a" href={task?.task_image} download="attachment.png">
                                     attachment.png
                                 </MuiLink>
-                                <Typography color="text.primary" variant="h6" mb={0.5}>
-                                    {task?.note_details}
-                                </Typography>
+                                {task?.note_details && task.note_details.length > 0 && (
+                                    <>
+                                        <Typography variant="h4" component="h1" gutterBottom>
+                                            <b>Note Details</b>
+                                        </Typography>
+                                        <Box>
+                                            {task.note_details.map((note, index) => (
+                                                <Box key={index} mb={2} display="flex" alignItems="flex-start">
+                                                    {/* Bullet symbol */}
+                                                    <Typography variant="h6" mr={1}>•</Typography>
+
+                                                    <Box>
+                                                        {/* Note description with length check */}
+                                                        <Typography color="text.primary" variant="h6" mb={0.5}>
+                                                            Note Description :  {note?.note_description && note.note_description.length > 0 ? note.note_description : 'No description provided'}
+                                                        </Typography>
+
+                                                        {/* Note written by */}
+                                                        <Typography color="text.secondary">
+                                                            Note Written By : {note?.note_written_by || 'Unknown author'}
+                                                        </Typography>
+
+                                                        {/* Note timestamp */}
+                                                        <Typography color="text.secondary">
+                                                          Date :  {note?.timestamp || 'No timestamp available'}
+                                                        </Typography>
+                                                    </Box>
+                                                </Box>
+                                            ))}
+                                        </Box>
+                                    </>
+                                )}
+                                {task?.complate_upload_task_details && task.complate_upload_task_details.length > 0 && (
+                                    <>
+                                        <Typography variant="h4" component="h1" gutterBottom>
+                                            <b>Upload Report</b>
+                                        </Typography>
+                                        <Box>
+                                            {task?.complate_upload_task_details.map((note, index) => (
+                                                <Box key={index} mb={2} display="flex" alignItems="flex-start">
+                                                    {/* Bullet symbol */}
+                                                    <Typography variant="h6" mr={1}>•</Typography>
+
+                                                    <Box>
+                                                        {/* Note description with length check */}
+                                                        <Typography color="text.primary" variant="h6" mb={0.5}>
+                                                            {note?.description && note.description.length > 0 ? note.description : 'No description provided'}
+                                                        </Typography>
+
+                                                        {note?.upload_report && (
+                                                            <MuiLink
+                                                                component="a"
+                                                                href={note.upload_report}
+                                                                download={getFileNameFromUrl(note.upload_report)}
+                                                            >
+                                                                {getFileNameFromUrl(note.upload_report)}
+                                                            </MuiLink>
+                                                        )}
+
+                                                    </Box>
+                                                </Box>
+                                            ))}
+                                        </Box>
+                                    </>
+                                )}
 
                                 <Box gap={2} display="flex" justifyContent="right">
                                     {task?.status && (
