@@ -223,7 +223,7 @@ export default function TaskUpload() {
           >
             <Typography variant="body1" sx={{ fontWeight: 700 }}>
               {" "}
-              Add Note
+              Upload Report
             </Typography>
 
             <div>

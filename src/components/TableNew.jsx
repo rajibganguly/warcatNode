@@ -196,8 +196,8 @@ function TableNew({
     if (column.dataField === "action") {
       return (
         <div style={{ display: "flex" }}>
-          <Button onClick={() => handleAddNoteClick(row)}>Note+</Button>
-          <Button disabled={!row?.note_details?.length} onClick={() => handleUploadClick(row)}>Upload</Button>
+          <Button disabled={row?.complate_upload_task_details?.length} onClick={() => handleAddNoteClick(row)}>Note+</Button>
+          <Button disabled={!row?.note_details?.length || row?.complate_upload_task_details?.length} onClick={() => handleUploadClick(row)}>Upload</Button>
         </div>
       );
     }
