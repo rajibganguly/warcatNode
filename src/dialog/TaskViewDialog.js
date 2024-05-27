@@ -11,7 +11,7 @@ import {
     Link as MuiLink
 } from "@mui/material";
 import { CloseOutlined } from '@mui/icons-material';
-import { fetchRoleType, formatDate, formatDateWithmonth } from "../pages/common";
+import { fetchRoleType, formatDate, formatDateWithmonth, getFileNameFromUrl } from "../pages/common";
 import { useNavigate } from 'react-router-dom';
 import SubTaskForm from '../components/SubTaskForm';
 export default function TaskViewDialog({ open, onClose, meetingData, taskDataView }) {
@@ -165,9 +165,16 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                                                             {note?.description && note.description.length > 0 ? note.description : 'No description provided'}
                                                         </Typography>
 
-                                                        <MuiLink component="a" href={task?.upload_report} download="attachment.png">
-                                                            attachment.png
-                                                        </MuiLink>
+                                                        {note?.upload_report && (
+                                                            <MuiLink
+                                                                component="a"
+                                                                href={note.upload_report}
+                                                                download={getFileNameFromUrl(note.upload_report)}
+                                                            >
+                                                                {getFileNameFromUrl(note.upload_report)}
+                                                            </MuiLink>
+                                                        )}
+                                                     
                                                     </Box>
                                                 </Box>
                                             ))}
