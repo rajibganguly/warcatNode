@@ -175,16 +175,16 @@ export default function Tasks() {
       // console.log(tasksChartData, 'dipan');
       const updateTaskCahrtValues = chartData;
       if (updateTaskCahrtValues[0]['label'] === 'Total Assigned') {
-        updateTaskCahrtValues[0].percentage = tasksChartData?.totalAssigned ? formatPercentage(tasksChartData?.totalAssigned): 0
+        updateTaskCahrtValues[0].percentage = tasksChartData?.totalAssigned ? formatPercentage(tasksChartData?.totalAssigned) : 0
       }
       if (updateTaskCahrtValues[1]['label'] === 'Initiated') {
-        updateTaskCahrtValues[1].percentage = tasksChartData?.initiated?.percentage ? formatPercentage(tasksChartData?.initiated?.percentage): 0
+        updateTaskCahrtValues[1].percentage = tasksChartData?.initiated?.percentage ? formatPercentage(tasksChartData?.initiated?.percentage) : 0
       }
       if (updateTaskCahrtValues[2]['label'] === 'In Progress') {
-        updateTaskCahrtValues[2].percentage = tasksChartData?.inProgress?.percentage ? formatPercentage(tasksChartData?.inProgress?.percentage): 0
+        updateTaskCahrtValues[2].percentage = tasksChartData?.inProgress?.percentage ? formatPercentage(tasksChartData?.inProgress?.percentage) : 0
       }
       if (updateTaskCahrtValues[3]['label'] === 'Completed') {
-        updateTaskCahrtValues[3].percentage = tasksChartData?.completed?.percentage ? formatPercentage(tasksChartData?.completed?.percentage): 0
+        updateTaskCahrtValues[3].percentage = tasksChartData?.completed?.percentage ? formatPercentage(tasksChartData?.completed?.percentage) : 0
       }
       setChartData(updateTaskCahrtValues)
       // setIsLoading(false)
@@ -265,6 +265,68 @@ export default function Tasks() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
+  const handleAcceptClick = async (taskId) => {
+    try {
+      const localSt = JSON.parse(localStorage.getItem("user"));
+      const userId = localSt ? localSt._id : "";
+
+      const payload = {
+        task_id: taskId,
+        userId,
+        flag: 1
+      };
+
+      const response = await fetch('https://warcat2024-qy2v.onrender.com/api/admin_verified', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (response.ok) {
+        toast.success('Task accepted successfully');
+      } else {
+        toast.error('Failed to accept task');
+      }
+    } catch (error) {
+      console.error('Error accepting task:', error);
+      toast.error('Failed to accept task');
+    }
+  };
+
+  const handleRejectClick = async (taskId) => {
+    try {
+      const localSt = JSON.parse(localStorage.getItem("user"));
+      const userId = localSt ? localSt._id : "";
+
+      const payload = {
+        task_id: taskId,
+        userId,
+        flag: 2
+      };
+
+      const response = await fetch('https://warcat2024-qy2v.onrender.com/api/admin_verified', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (response.ok) {
+        toast.success('Task rejected successfully');
+      } else {
+        toast.error('Failed to reject task');
+      }
+    } catch (error) {
+      console.error('Error rejecting task:', error);
+      toast.error('Failed to reject task');
+    }
+  };
+
+
 
 
 
@@ -396,7 +458,7 @@ export default function Tasks() {
                                   <div style={{ width: 130, height: 130 }}>
                                     {item.label === 'Total Assigned' ? (
                                       <CircularProgressbar
-                                        value={item.percentage} 
+                                        value={item.percentage}
                                         text={`${item.percentage}`}
                                         styles={item.styles}
                                       />
@@ -437,6 +499,8 @@ export default function Tasks() {
                           handleEditOperationTask={handleEditOperationTask}
                           handleAddNoteClick={handleAddNoteClick}
                           handleUploadClick={handleUploadClick}
+                          handleAcceptClick={handleAcceptClick}
+                          handleRejectClick={handleRejectClick}
                         />
                         {parentTaskView && parentModalVisible && (
                           <TaskViewDialog

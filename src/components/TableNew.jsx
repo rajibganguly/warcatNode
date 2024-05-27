@@ -12,7 +12,7 @@ import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import AddIcon from "@mui/icons-material/Add";
-import { fetchRoleType, formatStatus, getCommaSeparatedRoles, getStatusText } from "../pages/common.js";
+import { fetchRoleType, formatStatus, getCommaSeparatedRoles, getStatusText, } from "../pages/common.js";
 import SearchIcon from "@mui/icons-material/Search";
 
 function TableNew({
@@ -32,7 +32,10 @@ function TableNew({
   handleEditOperationTask,
   handleViewParentOperationTask,
   handleTaskView,
-  handleEditmeeting
+  handleEditmeeting,
+  handleAcceptClick,
+  handleRejectClick
+
 }) {
   const getNestedValue = (obj, path) => {
     const keys = path.split(".");
@@ -43,7 +46,7 @@ function TableNew({
     return value;
   };
 
-  
+
 
 
   const renderCellValue = (row, column) => {
@@ -106,9 +109,29 @@ function TableNew({
       return getCommaSeparatedRoles(row?.tag ?? []);
     }
 
+
     if (column.text === "Verified Status") {
-      return formatStatus(row?.admin_verified);
+      // if (row?.status === "Complete") {
+        return (
+          <div style={{ display: "flex" }}>
+            <Button
+              style={{ backgroundColor: '#fb4', color: 'black', marginRight: '2px' }}
+              onClick={() =>handleAcceptClick(row.task_id)}>
+             Accept
+            </Button>
+
+            <Button
+              style={{ backgroundColor: 'rgb(10, 24, 50)', color: '#ffffff' }}
+              onClick={() =>handleRejectClick(row.task_id)}>
+              Reject
+            </Button>
+
+          </div>
+        );
+
+      // }
     }
+    console.log(row?.admin_verified);
 
     if (column.dataField === "subtask") {
       return (
@@ -189,8 +212,8 @@ function TableNew({
         </div>
       );
     }
-    
-    
+
+
 
     if (value instanceof Date) {
       return value.toISOString().substr(0, 10);
