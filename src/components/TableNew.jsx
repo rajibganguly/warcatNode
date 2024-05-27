@@ -12,7 +12,7 @@ import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import AddIcon from "@mui/icons-material/Add";
-import { fetchRoleType, formatStatus, getCommaSeparatedRoles, getStatusText, } from "../pages/common.js";
+import { fetchRoleType, formatStatus, formatVerifiedStatus, getCommaSeparatedRoles, getStatusText, } from "../pages/common.js";
 import SearchIcon from "@mui/icons-material/Search";
 
 function TableNew({
@@ -171,7 +171,7 @@ function TableNew({
 
     if (column.dataField === "status") {
       return (
-        getStatusText(row.status)
+        getStatusText(row.status)+' '+formatVerifiedStatus(row.admin_verified)
       )
     }
 

@@ -205,3 +205,8 @@ export const getFileNameFromUrl = (url) => {
   if (!url) return '';
   return url.split('/').pop();
 };
+
+export const formatVerifiedStatus = (admin_verified_status) => {
+  let VerifiedOrNot = admin_verified_status === 1? '(Verified)' : admin_verified_status === 2? '(Rejected)' : admin_verified_status === 0 ? '' : '(Unverified)';
+  return VerifiedOrNot;
+}

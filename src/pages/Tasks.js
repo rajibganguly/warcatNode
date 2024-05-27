@@ -132,7 +132,8 @@ export default function Tasks() {
   }, []);
 
   const includeActionColumn = currentRoleType !== 'admin' ? true : false;
-  console.log(data, 'dataaa');
+  const isAdmin = currentRoleType === 'admin';
+  // console.log(data, 'dataaa');
   const column = [
     { text: 'Assigned Date', dataField: 'timestamp' },
     { text: "Assigned Title", dataField: 'tasks_title' },
@@ -141,9 +142,12 @@ export default function Tasks() {
     { text: "Target Date", dataField: 'target_date' },
     { text: "Status", dataField: 'status' },
     { text: "Sub Task", dataField: 'subtask' },
-    { text: "Operations", dataField: 'taskoperation' },
-    { text: "Verified Status", dataField: '' }
+    { text: "Operations", dataField: 'taskoperation' }
   ];
+
+  if (isAdmin) {
+    column.push({ text: "Verified Status", dataField: '' });
+  }
 
   if (includeActionColumn) {
     column.push({ text: "Action", dataField: 'action' });
@@ -271,7 +275,7 @@ export default function Tasks() {
     if(flagValue === 1){
       toastrTextPart = 'accept';
     }
-    
+
     try {
       const localSt = JSON.parse(localStorage.getItem("user"));
       const userId = localSt ? localSt._id : "";
@@ -292,6 +296,7 @@ export default function Tasks() {
 
       if (response.ok) {
         toast.success('Task '+toastrTextPart+'ed successfully');
+        window.location.reload();
       } else {
         toast.error('Failed to '+toastrTextPart+' task');
       }
