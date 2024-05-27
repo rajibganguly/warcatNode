@@ -68,8 +68,8 @@ export default function Dashboard() {
   const { setAllTaskLists } = React.useContext(TaskContext);
   const [cardDataState, setCardDataState] = React.useState([
     { id: 1, title: 'Total Department', value: 5, icon: <AccountBalanceIcon /> },
-    { id: 2, title: 'Completed Tasks', value: 1, icon: <PeopleIcon /> },
-    { id: 3, title: 'Total Meeting', value: 3, icon: <MonetizationOnIcon /> },
+    { id: 2, title: 'Completed Tasks', value: 0, icon: <PeopleIcon /> },
+    { id: 3, title: 'Total Meeting', value: 0, icon: <MonetizationOnIcon /> },
     { id: 4, title: 'Assigned Task', value: 0, icon: <MonetizationOnIcon /> },
   ]);
 
