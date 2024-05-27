@@ -190,7 +190,7 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                                             }}
                                         />
                                     )}
-                                    {userRoleType === 'admin' && !task?.status === 'completed' && (
+                                    {userRoleType === 'admin' && task?.admin_verified === 0 && (
                                         <Button
                                             variant="contained"
                                             style={{ backgroundColor: '#0a1832', color: '#ffffff' }}
