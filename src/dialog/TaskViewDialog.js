@@ -15,13 +15,10 @@ import { fetchRoleType, formatDate, formatDateWithmonth } from "../pages/common"
 import { useNavigate } from 'react-router-dom';
 import SubTaskForm from '../components/SubTaskForm';
 export default function TaskViewDialog({ open, onClose, meetingData, taskDataView }) {
-
-
     const navigate = useNavigate()
     const userRoleType = fetchRoleType();
     const [addTaskForm, setAddTaskForm] = useState(true);
     const [selectedSubTask, setSelectedSubTask] = useState(null);
-
     const handleEditClick = (taskId) => {
         const encodedTaskId = window.btoa(taskId);
         navigate(`/edit-tasks?taskId=${encodeURIComponent(encodedTaskId)}`);
@@ -153,7 +150,7 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                         ))}
                     </>
                 ) : (
-                    <SubTaskForm forTaskDataView={selectedSubTask} />
+                    <SubTaskForm forTaskDataView={selectedSubTask} parentTaskId={selectedSubTask?.parent_task_id} />
                 )}
             </DialogContent>
         </Dialog>

@@ -21,7 +21,12 @@ const convertToBase64 = (file) => {
 };
 
 const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
-    console.log(forTaskDataView, 'subtask data')
+    console.log(forTaskDataView, 'subtask data');
+    console.log(parentTaskId, 'parent task');
+    let editFlag = 0;
+    if(forTaskDataView){
+        editFlag = 1;
+    }
     const editSubTaskTitle = forTaskDataView ? forTaskDataView?.subtask_title : '';
     const editSubTaskDate = forTaskDataView ? dayjs(forTaskDataView?.target_date) : null;
     const editSubTaskImageUrl = forTaskDataView ? forTaskDataView?.subtask_image : '';
@@ -64,22 +69,29 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
                 parent_task_id: parentTaskId,
                 subtask_title: formValues.subTaskTitle,
                 subtask_target_date: formValues.targetDate.toISOString(),
-                subtask_image: formValues.imageUrl
+                subtask_image: formValues.imageUrl,
+                ...(editFlag === 1 && { sub_task_id: forTaskDataView?.sub_task_id })
             };
             setIsLoading(true)
-            const response = await ApiConfig.requestData('post', '/add-sub-task', null, payload);
-            onSubmit(response);
-            window.location.reload();
-           // navigate('/tasks')
-            await fetchTaskData();
-            setIsLoading(false)
-            toast.success("Sub Task added successfully");
-
-
+            let url = '/add-sub-task'
+            if(editFlag === 1){
+                url = '/edit-sub-task';
+            }
+            const response = await ApiConfig.requestData('post', url, null, payload);
+            // onSubmit(response);
+            // navigate('/tasks')
+            if(response){
+                toast.success(editFlag === 1 ? "Sub Task edited successfully" : "Sub Task added successfully");
+                await fetchTaskData();
+                window.location.reload();
+            }else{
+                setIsLoading(false);
+            }
+            // toast.success("Sub Task added successfully");
         } catch (error) {
             setIsLoading(false)
             console.error("Error adding subtask:", error);
-            toast.success("Something went wrong");
+            toast.error("Something went wrong");
 
         }
     };
