@@ -8,7 +8,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, TextField } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
@@ -115,7 +115,7 @@ export default function EditMeeting() {
     const [editMeetingId, seteditMeetingId] = useState('');
     const navigate = useNavigate();
 
-console.log(editMeetingId)
+    console.log(editMeetingId)
     const { id } = useParams();
     const { allMeetingLists } = useContext(MeetingContext);
 
@@ -451,7 +451,7 @@ console.log(editMeetingId)
                                                         name='meetingTopic'
                                                         value={formData.meetingTopic}
                                                         onChange={handleChange}
-                                                        variant="outlined" fullWidth/>
+                                                        variant="outlined" fullWidth />
 
                                                 </Grid>
                                                 <Grid item xs={12}>
@@ -476,24 +476,18 @@ console.log(editMeetingId)
 
                                                             </Grid>
                                                             <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                                <Button
-                                                                    component="label"
-                                                                    role={undefined}
-                                                                    variant="contained"
-                                                                    tabIndex={-1}
-                                                                    startIcon={<CloudUploadIcon />}
-                                                                    sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}
-                                                                >
-                                                                    Upload file
-                                                                    <VisuallyHiddenInput type="file" onChange={handleFileChange} />
-                                                                </Button>
-                                                                <box>
-                                                                    {fileName && (
-                                                                        <Typography variant="body2" sx={{ marginTop: 1 }}>
-                                                                            Selected file: {fileName}
-                                                                        </Typography>
-                                                                    )}
-                                                                </box>
+
+                                                                <TextField
+                                                                    variant="outlined"
+                                                                    fullWidth
+                                                                    placeholder="Enter task title"
+                                                                    name="uploadImage"
+                                                                    size="small"
+                                                                    type="file"
+                                                                    onChange={handleFileChange}
+                                                                />
+
+
 
 
                                                             </Grid>
@@ -501,7 +495,21 @@ console.log(editMeetingId)
                                                     </LocalizationProvider>
                                                 </Grid>
                                             </Grid>
-                                            <Button type="submit" variant="contained" color="success" sx={{ color: 'white', marginTop: '2%' }}>Update</Button>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <Button type="submit" variant="contained" color="success" sx={{ color: 'white', marginTop: '2%' }}>Update</Button>
+                                                <Box width={'40px'} height={'40px'} minWidth={'40px'} borderRadius={'6px'} backgroundColor='#ebebeb'>
+                                                    {formData.imageUrl && (
+                                                        <img
+                                                            alt=""
+                                                            width={'100%'}
+                                                            height={'100%'}
+                                                            className="smallImageInTask"
+                                                            src={formData.imageUrl}
+                                                        />
+                                                    )}
+                                                </Box>
+                                            </div>
+
                                         </Box>
                                     </CardContent>
                                 </Card>

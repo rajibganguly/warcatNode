@@ -87,6 +87,16 @@ const AppBar = styled(MuiAppBar, {
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
+const tagMapping = {
+    'Head Office': 'head_of_office',
+    'Secretary': 'secretary'
+};
+
+const reverseTagMapping = {
+    'head_of_office': 'Head Office',
+    'secretary': 'Secretary'
+};
+
 export default function AddTasks() {
     const theme = useTheme();
     const navigate = useNavigate();
@@ -111,6 +121,7 @@ export default function AddTasks() {
     const [selectedDeparmentobj, setSelectedDeparmentObj] = useState([])
     const { setAllDepartmentList } = React.useContext(DepartmentContext);
     const { setAllTaskLists } = React.useContext(TaskContext);
+    const [formattedTagNames, setFormattedTagNames] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -153,10 +164,10 @@ export default function AddTasks() {
                 // Flatten the tags array and remove duplicates
                 const tags = [...new Set(filteredObject?.department?.flatMap(obj => obj.tag) || [])];
                 console.log(filteredObject?.target_date)
+                
                 setTagName(tags);
                 setUpdateTaskTitle(filteredObject?.task_title);
                 setUpdateSelectedDate(dateSelected(filteredObject?.target_date))
-             
                 setupdateTaskFile(filteredObject?.task_image)
 
             }
@@ -171,7 +182,7 @@ export default function AddTasks() {
         const reader = new FileReader();
         reader.onloadend = async function () {
             file = reader.result.split(',')[1];
-            setupdateTaskFile(`data:image/jpeg;base64,`+file);
+            setupdateTaskFile(`data:image/jpeg;base64,` + file);
         };
         reader.readAsDataURL(file);
     };
@@ -202,8 +213,11 @@ export default function AddTasks() {
     ] : [];
 
     const handleTagChange = (event) => {
-        setTagName(event.target.value);
-    }
+        const selectedFormattedTags = event.target.value;
+        const selectedTags = selectedFormattedTags.map(tag => tagMapping[tag]);
+        setTagName(selectedTags);
+        setFormattedTagNames(selectedFormattedTags);
+    };
 
     const handleOutput = (open) => {
         toggleDrawer();
@@ -291,7 +305,8 @@ export default function AddTasks() {
                 task_id: taskId,
                 task_title: updateTaskTitle,
                 target_date: updateSelectedDate,
-                task_image: updateTaskFile
+                task_image: updateTaskFile,
+                tag: tagName
             };
             console.log(data)
 
@@ -353,7 +368,7 @@ export default function AddTasks() {
     async function updateData(data) {
         setIsLoading(true)
         const updateData = await parentTaskEdit(data);
-       
+
         if (updateData) {
             setIsLoading(false)
             toast.success("Task Edit Successfully", {
@@ -477,7 +492,7 @@ export default function AddTasks() {
                                             fullWidth
                                             name="tag"
                                             multiple
-                                            value={tagName}
+                                            value={tagName.map(tag => reverseTagMapping[tag])}
                                             onChange={handleTagChange}
                                             size="small"
                                             renderValue={(selected) => (
@@ -488,8 +503,11 @@ export default function AddTasks() {
                                                 </Box>
                                             )}
                                         >
-                                            <MenuItem value="secretary">Secretary</MenuItem>
-                                            <MenuItem value="head_of_office">Head Office</MenuItem>
+                                            {Object.keys(tagMapping).map((displayValue) => (
+                                                <MenuItem key={displayValue} value={displayValue}>
+                                                    {displayValue}
+                                                </MenuItem>
+                                            ))}
                                         </Select>
                                     </Grid>
                                     {meetingId && (
