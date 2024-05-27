@@ -130,17 +130,17 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                                                     <Box>
                                                         {/* Note description with length check */}
                                                         <Typography color="text.primary" variant="h6" mb={0.5}>
-                                                            {note?.note_description && note.note_description.length > 0 ? note.note_description : 'No description provided'}
+                                                            Note Description :  {note?.note_description && note.note_description.length > 0 ? note.note_description : 'No description provided'}
                                                         </Typography>
 
                                                         {/* Note written by */}
                                                         <Typography color="text.secondary">
-                                                            {note?.note_written_by || 'Unknown author'}
+                                                            Note Written By : {note?.note_written_by || 'Unknown author'}
                                                         </Typography>
 
                                                         {/* Note timestamp */}
                                                         <Typography color="text.secondary">
-                                                            {note?.timestamp || 'No timestamp available'}
+                                                          Date :  {note?.timestamp || 'No timestamp available'}
                                                         </Typography>
                                                     </Box>
                                                 </Box>
@@ -174,7 +174,7 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                                                                 {getFileNameFromUrl(note.upload_report)}
                                                             </MuiLink>
                                                         )}
-                                                     
+
                                                     </Box>
                                                 </Box>
                                             ))}
