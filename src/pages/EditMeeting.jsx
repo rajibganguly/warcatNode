@@ -226,7 +226,7 @@ console.log(editMeetingId)
             };
             console.log(updatedData)
 
-            const response = await fetch(`https://warcat2024-qy2v.onrender.com/api/edit-meeting?meetingId=${editMeetingId}`, {
+            const response = await fetch(`${process.env.REACT_APP_HOSTNAME}/api/edit-meeting?meetingId=${editMeetingId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
