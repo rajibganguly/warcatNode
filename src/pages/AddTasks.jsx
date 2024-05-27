@@ -131,13 +131,13 @@ export default function AddTasks() {
             const depIds = filteredObject?.department?.map(obj => obj.dep_id);
             if (depIds) {
                 const selectedDepartments = depIds.map(id => {
-                    const department = allDepartmentData.find(dept => dept._id === id);
+                    const department = allDepartmentData.find(dept => dept?._id === id);
                     return department ? department : null;
                 });
                 setSelectedDeparmentObj(selectedDepartments[0])
-                const departmentNames = selectedDepartments.filter(dep => dep !== null).map(dep => dep.department_name);
+                const departmentNames = selectedDepartments.filter(dep => dep !== null).map(dep => dep?.department_name);
                 setPersonName(departmentNames);
-                const departmentId = selectedDepartments.filter(dep => dep !== null).map(dep => dep._id);
+                const departmentId = selectedDepartments.filter(dep => dep !== null).map(dep => dep?._id);
                 setDeptId(departmentId);
                 // Flatten the tags array and remove duplicates
                 const tags = [...new Set(filteredObject?.department?.flatMap(obj => obj.tag) || [])];
@@ -350,12 +350,12 @@ export default function AddTasks() {
             navigate("/tasks");
         }
     }
-
+  
+    if (isLoading) {
+        return (<LoadingIndicator isLoading={isLoading} />);
+    }
     return (
         <ThemeProvider theme={defaultTheme}>
-            {/* For Loader */}
-            <LoadingIndicator isLoading={isLoading} />
-            {/*  */}
             <Box display={'flex'}>
                 <CssBaseline />
                 <AppBar position="absolute" open={open}>

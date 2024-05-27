@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Button, InputLabel, TextField } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import ApiConfig from '../config/ApiConfig';
 import { toast } from "react-toastify";
-import { dateSelected, fetchTaskData } from '../pages/common';
+import { fetchTaskData } from '../pages/common';
 import { useNavigate } from 'react-router-dom';
+import dayjs from 'dayjs';
 
 const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -18,16 +19,26 @@ const convertToBase64 = (file) => {
 };
 
 const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
-    const formatdate = dateSelected(forTaskDataView?.subtask_target_date)
+    const formatdate = dayjs(forTaskDataView?.subtask_target_date);
     const editSubTaskTitle = forTaskDataView ? forTaskDataView?.subtask_title : '';
     const editSubTaskDate = forTaskDataView ? formatdate : null;
     const editSubTaskImageUrl = forTaskDataView ? forTaskDataView?.subtask_image : '';
+
+    const [base64Image, setBase64Image] = useState(editSubTaskImageUrl || '');
+    const navigate = useNavigate();
 
     const [formValues, setFormValues] = useState({
         subTaskTitle: editSubTaskTitle,
         targetDate: editSubTaskDate,
         imageUrl: editSubTaskImageUrl
     });
+
+    useEffect(() => {
+        // If there is an initial image URL (base64), set it to the base64Image state
+        if (editSubTaskImageUrl) {
+            setBase64Image(editSubTaskImageUrl);
+        }
+    }, [editSubTaskImageUrl]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -38,20 +49,14 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
         setFormValues({ ...formValues, targetDate: newDate });
     };
 
-    const [base64Image, setBase64Image] = React.useState("");
     const handleFileChange = async (event) => {
         const file = event.target.files[0];
         if (file) {
             const base64 = await convertToBase64(file);
-            const reader = new FileReader();
             setFormValues({ ...formValues, imageUrl: base64 });
-            reader.onload = () => {
-                setBase64Image(reader.result);
-            };
-            reader.readAsDataURL(file);
+            setBase64Image(base64);
         }
     };
-    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -71,8 +76,7 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
 
         } catch (error) {
             console.error("Error adding subtask:", error);
-            toast.success("Something went wrong");
-
+            toast.error("Something went wrong");
         }
     };
 
@@ -91,16 +95,6 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
             </Box>
             <Box mb={2}>
                 <InputLabel sx={{ mb: 1 }}>Date</InputLabel>
-                {/* <TextField
-                    name="date"
-                    // value={formValues.targetDate}
-                    onChange={handleDateChange}
-                    fullWidth
-                    required
-                    fo
-                    type='date'
-                    size='small'
-                /> */}
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                         value={formValues.targetDate}

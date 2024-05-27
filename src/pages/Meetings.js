@@ -31,7 +31,7 @@ import { fetchMeetingData, fetchTaskData } from "./common";
 const column = [
   { text: 'Meeting Id', dataField: 'meetingId' },
   { text: 'Meeting Topic', dataField: 'meetingTopic' },
-  { text: 'Departments', dataField: 'meeting_dept' },
+  { text: 'Departments', dataField: 'departmentNames' },
   { text: 'Tag', dataField: 'meeting_tag' },
   { text: 'Date', dataField: 'selectDate' },
   { text: 'Time', dataField: 'selectTime' },
@@ -116,7 +116,8 @@ export default function Meetings() {
   const handleEditmeeting = (row) => {
     // Check if row and row.meetings are defined
     if (row && row.meetingId){
-      navigate(`/edit-meeting/${row.meetingId}`);
+      const encodededitMeetingId = window.btoa(row?.meetingId);
+      navigate(`/edit-meeting?meetingId=${encodeURIComponent(encodededitMeetingId)}`);
     } else {
       console.error('Invalid row data:', row);
     }

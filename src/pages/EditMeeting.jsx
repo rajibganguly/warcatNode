@@ -8,7 +8,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import { Button, TextField } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
@@ -33,9 +33,11 @@ import ApiConfig from "../config/ApiConfig";
 import { MeetingContext } from './../context/MeetingContext';
 import { useParams } from "react-router-dom";
 import { format } from 'date-fns';
+import { useLocation } from "react-router-dom";
 import dayjs from 'dayjs';
 import LoadingIndicator from "../components/loadingIndicator";
 import { fetchTaskData } from "./common";
+
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -105,15 +107,20 @@ const convertToBase64 = (file) => {
 
 export default function EditMeeting() {
     const [open, setOpen] = useState(true);
+    const location = useLocation();
     const [data, setData] = useState([]);
     const [filteredMeeting, setFilteredMeeting] = useState([]);
     const [fileName, setFileName] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [editMeetingId, seteditMeetingId] = useState('');
+    const navigate = useNavigate();
+
+
     const { id } = useParams();
     const { allMeetingLists } = useContext(MeetingContext);
 
     const [formData, setFormData] = useState({
-        departmentNames: [],
+        departmentIds: [],
         tag: [],
         imageUrl: "",
         meetingTopic: "",
@@ -123,37 +130,62 @@ export default function EditMeeting() {
     });
 
     useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        const encodededMeetingId = queryParams.get('meetingId');
+
+        if (encodededMeetingId) {
+            const decodededMeetingId = window.atob(encodededMeetingId);
+            seteditMeetingId(decodededMeetingId);
+
+        }
+        console.log(editMeetingId)
         if (Array.isArray(allMeetingLists?.meetings)) {
-            const filteredMeetings = allMeetingLists?.meetings.filter(meeting => meeting.meetingId === id);
+            const filteredMeetings = allMeetingLists?.meetings.filter(meeting => meeting.meetingId === editMeetingId);
             setFilteredMeeting(filteredMeetings);
             console.log(filteredMeetings)
         } else {
             console.error("Error getting Data");
         }
     }, [allMeetingLists, id]);
-    
+
 
     useEffect(() => {
         if (filteredMeeting.length > 0) {
             const meetingData = filteredMeeting[0];
             setFormData({
-                departmentNames: meetingData.departmentNames,
-                imageUrl: meetingData.imageUrl,
-                meetingTopic: meetingData.meetingTopic,
-                selectDate: dayjs(meetingData.selectDate),
-                selectTime: dayjs(meetingData.selectTime, 'hh:mm'),
-                tag: meetingData.tag
+                departmentIds: meetingData?.departmentNames?.map(deptName => {
+                    const dept = data?.find(d => d.department?.department_name === deptName);
+                    return dept ? dept.department._id : null;
+                }).filter(id => id !== null) || [],
+                
+                imageUrl: meetingData?.imageUrl,
+                meetingTopic: meetingData?.meetingTopic,
+                selectDate: meetingData?.selectDate ? dayjs(meetingData.selectDate) : null,
+                selectTime: meetingData?.selectTime ? dayjs(meetingData.selectTime, 'hh:mm') : null,
+                tag: meetingData?.tag || '',
             });
         }
-    }, [filteredMeeting]);
+    }, [filteredMeeting, data]);
+
 
     const handleChange = (event) => {
         const { name, value } = event.target;
-        setFormData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
+        if (name === "departmentIds") {
+            setFormData(prevState => ({
+                ...prevState,
+                [name]: value.map(deptName => {
+                    const dept = data.find(d => d.department.department_name === deptName);
+                    return dept ? dept.department._id : null;
+                }).filter(id => id !== null)
+            }));
+        } else {
+            setFormData(prevState => ({
+                ...prevState,
+                [name]: value
+            }));
+        }
     };
+
 
     const handleFileChange = async (event) => {
         const file = event.target.files[0];
@@ -194,13 +226,14 @@ export default function EditMeeting() {
             };
             console.log(updatedData)
 
-            const response = await fetch(`https://warcat2024-qy2v.onrender.com/api/edit-meeting?meetingId=${id}`, {
+            const response = await fetch(`https://warcat2024-qy2v.onrender.com/api/edit-meeting?meetingId=${editMeetingId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(updatedData)
             });
+            navigate('/meetings')
             await fetchTaskData();
             if (response.ok) {
                 toast.success('Meeting updated successfully');
@@ -214,6 +247,7 @@ export default function EditMeeting() {
             setIsLoading(false);
         }
     };
+
 
     useEffect(() => {
         fetchDepartmentData();
@@ -233,12 +267,12 @@ export default function EditMeeting() {
             };
             const departmentsAll = await ApiConfig.requestData('get', '/departments', params, null);
             setData(departmentsAll);
-           // toast.dismiss("loading");
-           setIsLoading(false);
+            // toast.dismiss("loading");
+            setIsLoading(false);
         } catch (error) {
             console.error("Error fetching department data:", error);
             setIsLoading(false);
-           // toast.dismiss("loading");
+            // toast.dismiss("loading");
             //toast.error("Failed to fetch department data");
         }
     };
@@ -353,9 +387,17 @@ export default function EditMeeting() {
                                                             id="demo-multiple-chip"
                                                             fullWidth
                                                             multiple
-                                                            value={formData.departmentNames}
-                                                            onChange={handleChange}
-                                                            input={<OutlinedInput id="select-multiple-chip1" label="Chip" name="departmentNames" />}
+                                                            value={formData.departmentIds.map(id => {
+                                                                const dept = data.find(d => d.department._id === id);
+                                                                return dept ? dept.department.department_name : '';
+                                                            })}
+                                                            onChange={(e) => handleChange({
+                                                                target: {
+                                                                    name: 'departmentIds',
+                                                                    value: e.target.value
+                                                                }
+                                                            })}
+                                                            input={<OutlinedInput id="select-multiple-chip1" label="Chip" name="departmentIds" />}
                                                             renderValue={(selected) => (
                                                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                                                     {selected.map((value) => (
@@ -371,6 +413,7 @@ export default function EditMeeting() {
                                                                 </MenuItem>
                                                             ))}
                                                         </Select>
+
                                                     </FormControl>
 
                                                 </Grid>
