@@ -519,7 +519,8 @@ function TableNew({
             <thead className="ms-1 me-1 table-header-text">
               <tr>
                 {column?.map((col) => (
-                  <th key={col.dataField}>{col.text}</th>
+                  <th key={col.dataField}>{col.text}
+                  </th>
                 ))}
               </tr>
             </thead>
