@@ -137,7 +137,7 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
 
                                                         {/* Note timestamp */}
                                                         <Typography color="text.secondary">
-                                                            Date :  {note?.timestamp || 'No timestamp available'}
+                                                            Date :  {formatDateWithmonth(note?.timestamp) || 'No timestamp available'}
                                                         </Typography>
                                                     </Box>
                                                 </Box>
