@@ -150,8 +150,8 @@ export default function AddDepartment() {
       if (!token) {
         throw new Error("Token not found in localStorage");
       }
-
-      const response = await fetch(`${process.env.REACT_APP_HOSTNAME}/api/register-user-with-department`, {
+      const reactAppHostname = process.env.REACT_APP_HOSTNAME;
+      const response = await fetch(`${reactAppHostname}/api/register-user-with-department`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

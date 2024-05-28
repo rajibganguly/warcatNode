@@ -266,7 +266,7 @@ function TableNew({
 
 
 
-    if (column.dataField === "meetingoperation" && fetchRoleType() === 'admin') {
+    if (column.dataField === "meetingoperation" && userRoleType === 'admin') {
       return (
         <div style={{ display: "flex" }}>
           <Button onClick={() => handleEditmeeting(row)} style={{ backgroundColor: '#0097a7', color: '#ffffff' }}>

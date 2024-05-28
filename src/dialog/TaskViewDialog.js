@@ -137,7 +137,7 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
 
                                                         {/* Note timestamp */}
                                                         <Typography color="text.secondary">
-                                                            Date :  {note?.timestamp || 'No timestamp available'}
+                                                            Date :  {formatDateWithmonth(note?.timestamp) || 'No timestamp available'}
                                                         </Typography>
                                                     </Box>
                                                 </Box>
@@ -190,7 +190,7 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                                             }}
                                         />
                                     )}
-                                    {userRoleType === 'admin' && !task?.status === 'completed' && (
+                                    {userRoleType === 'admin' && task?.admin_verified === 0 && (
                                         <Button
                                             variant="contained"
                                             style={{ backgroundColor: '#0a1832', color: '#ffffff' }}
