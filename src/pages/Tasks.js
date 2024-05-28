@@ -108,6 +108,7 @@ export default function Tasks() {
   const [isLoading, setIsLoading] = useState(false);
   const { setAllTaskLists } = React.useContext(TaskContext);
   const { setAllDepartmentList } = React.useContext(DepartmentContext);
+  const[adminVerified, setAdminVerified] =  useState();
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -243,6 +244,7 @@ export default function Tasks() {
   const handleViewSubTask = (record) => {
     if (record?.sub_task && record?.sub_task?.length > 0) {
       setSubTaskView(record?.sub_task);
+      setAdminVerified(record?.admin_verified)
       setSubModalVisible(true);
     } else {
       toast.warning("Task not found.", {
@@ -491,7 +493,7 @@ export default function Tasks() {
                             open={subModalVisible}
                             onClose={closeModal}
                             taskDataView={subTaskView}
-                          // meetingData={meetingData}
+                            adminVerified={adminVerified}
                           />
                         )}
 
