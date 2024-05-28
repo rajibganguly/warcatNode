@@ -190,13 +190,13 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                                             }}
                                         />
                                     )}
-                                    {userRoleType === 'admin' && task?.admin_verified === 0 && (
+                                    {(userRoleType === 'admin' && task && (task.subtask_title || task.admin_verified === 0)) && (
                                         <Button
                                             variant="contained"
                                             style={{ backgroundColor: '#0a1832', color: '#ffffff' }}
                                             onClick={() => {
-                                                if (!task?.subtask_title) {
-                                                    handleEditClick(task?.task_id);
+                                                if (!task.subtask_title) {
+                                                    handleEditClick(task.task_id);
                                                 } else {
                                                     handleSubTaskEditClick(task);
                                                 }
@@ -205,6 +205,8 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                                             Edit
                                         </Button>
                                     )}
+
+
                                 </Box>
 
                                 {index < taskDataView.length - 1 && <Divider sx={{ my: 2 }} />}
