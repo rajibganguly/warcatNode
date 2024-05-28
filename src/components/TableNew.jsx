@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
+import { TablePagination } from "@mui/material";
+
 import { EyeOutlined, EditOutlined } from "@ant-design/icons";
 import {
   Box,
@@ -36,6 +38,25 @@ function TableNew({
   handleAcceptRejectClick
 
 }) {
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+  
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+
   const getNestedValue = (obj, path) => {
     const keys = path.split(".");
     let value = obj;
@@ -44,6 +65,19 @@ function TableNew({
     }
     return value;
   };
+
+
+  console.log(data);
+  const filteredData = data?.filter(row =>
+    column.some(col => {
+      const cellValue = getNestedValue(row, col.dataField);
+      return cellValue
+        ? cellValue.toString().toLowerCase().includes(searchQuery.toLowerCase())
+        : false;
+    })
+  );
+
+  const currentPageData = filteredData?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   const styles = {
     buttonAccept: {
@@ -134,6 +168,7 @@ function TableNew({
     if (column.text === "Verified Status" && userRoleType === 'admin') {
       if (row?.status === "completed") {
         const isDisabled = row?.admin_verified === 1 || row?.admin_verified === 2;
+        console.log(isDisabled)
         return (
           <div style={{ display: "flex" }}>
             <Button
@@ -182,14 +217,14 @@ function TableNew({
 
     if (column.dataField === "status") {
       return (
-        getStatusText(row.status)+' '+formatVerifiedStatus(row.admin_verified)
+        getStatusText(row.status) + ' ' + formatVerifiedStatus(row.admin_verified)
       )
     }
 
     if (column.dataField === "taskoperation") {
       return (
         <div style={{ display: "flex" }}>
-          {userRoleType === 'admin' &&  row?.admin_verified === 0  &&
+          {userRoleType === 'admin' && row?.admin_verified === 0 &&
             (<Button onClick={() => handleEditOperationTask(row)}
               style={{ backgroundColor: '#0097a7', color: '#ffffff', marginRight: '2px' }}>
               <EditOutlined />
@@ -240,8 +275,6 @@ function TableNew({
         </div>
       );
     }
-
-
 
     if (value instanceof Date) {
       return value.toISOString().substr(0, 10);
@@ -462,6 +495,8 @@ function TableNew({
             <TextField
               id="outlined-textarea"
               label="Search"
+              value={searchQuery}
+              onChange={handleSearchChange}
               variant="outlined"
               placeholder="Enter search"
               size="small"
@@ -490,8 +525,8 @@ function TableNew({
             </thead>
             {/* Your table body */}
             <tbody>
-              {data && data.length > 0 ? (
-                data.map((row, index) => (
+              {currentPageData  && currentPageData.length > 0 ? (
+                currentPageData.map((row, index) => (
                   <tr key={index}>
                     {column?.map((col) => (
                       <td key={col.dataField}>{renderCellValue(row, col)}</td>
@@ -507,6 +542,15 @@ function TableNew({
               )}
             </tbody>
           </table>
+
+          <TablePagination
+            component="div"
+            count={filteredData ? filteredData.length : 0}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         </div>
       </Box>
     </>

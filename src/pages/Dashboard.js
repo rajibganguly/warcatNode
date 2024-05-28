@@ -14,8 +14,9 @@ import Header from "../components/header";
 import { getItem } from '../config/storage';
 import { useAuth } from '../providers/AuthProvider';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-import PeopleIcon from '@mui/icons-material/People';
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
+import EventNoteIcon from '@mui/icons-material/EventNote';
+import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Stack from '@mui/material/Stack';
@@ -67,10 +68,10 @@ export default function Dashboard() {
   const { setAllMeetingLists } = React.useContext(MeetingContext);
   const { setAllTaskLists } = React.useContext(TaskContext);
   const [cardDataState, setCardDataState] = React.useState([
-    { id: 1, title: 'Total Department', value: 5, icon: <AccountBalanceIcon /> },
-    { id: 2, title: 'Completed Tasks', value: 1, icon: <PeopleIcon /> },
-    { id: 3, title: 'Total Meeting', value: 3, icon: <MonetizationOnIcon /> },
-    { id: 4, title: 'Assigned Task', value: 0, icon: <MonetizationOnIcon /> },
+    { id: 1, title: 'Total Department', value: 5, icon: <AccountBalanceIcon style={{ fill: '#ffbb44', backgroundColor: '#eff2f7', padding: '10px', borderRadius: '4px',height:'50px',width:'50px' }} /> },
+    { id: 2, title: 'Completed Tasks', value: 1, icon: <DoneAllIcon style={{ fill: '#6fd088', backgroundColor: '#eff2f7', padding: '10px', borderRadius: '4px',height:'50px',width:'50px' }} /> },
+    { id: 3, title: 'Total Meeting', value: 3, icon: <EventNoteIcon style={{ fill: '#0a1832', backgroundColor: '#eff2f7', padding: '10px', borderRadius: '4px',height:'50px',width:'50px' }}/> },
+    { id: 4, title: 'Assigned Task', value: 0, icon: <WorkHistoryIcon style={{ fill: '#f32f53', backgroundColor: '#eff2f7', padding: '10px', borderRadius: '4px',height:'50px',width:'50px' }}/> },
   ]);
 
   React.useEffect(() => {
@@ -243,7 +244,7 @@ export default function Dashboard() {
                       <CardContent>
                         <Stack spacing={2} direction="row" alignItems="center">
                           <Stack spacing={1} direction="column" alignItems="flex-start">
-                            <Typography variant="body1" component="span">
+                            <Typography variant="body1" component="span" sx={{color:'#505d69'}}>
                               {cardItems.title}
                             </Typography>
                             <Typography variant="body1" component="span" sx={{ fontWeight: 'bold' }}>

@@ -272,7 +272,7 @@ export default function Tasks() {
 
   const handleAcceptRejectClick = async (taskId, flagValue) => {
     let toastrTextPart = 'reject';
-    if(flagValue === 1){
+    if (flagValue === 1) {
       toastrTextPart = 'accept';
     }
 
@@ -295,14 +295,14 @@ export default function Tasks() {
       });
 
       if (response.ok) {
-        toast.success('Task '+toastrTextPart+'ed successfully');
+        toast.success('Task ' + toastrTextPart + 'ed successfully');
         window.location.reload();
       } else {
-        toast.error('Failed to '+toastrTextPart+' task');
+        toast.error('Failed to ' + toastrTextPart + ' task');
       }
     } catch (error) {
-      console.error('Error '+toastrTextPart+'ing task:', error);
-      toast.error('Failed to '+toastrTextPart+' task');
+      console.error('Error ' + toastrTextPart + 'ing task:', error);
+      toast.error('Failed to ' + toastrTextPart + ' task');
     }
   };
 
@@ -310,7 +310,6 @@ export default function Tasks() {
     <ThemeProvider theme={defaultTheme}>
       {/* For Loader */}
       <LoadingIndicator isLoading={isLoading} />
-
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>

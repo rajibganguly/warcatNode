@@ -8,8 +8,6 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import { Link, Navigate, useLocation } from "react-router-dom";
-import InputFileUpload from "../components/InputFileUpload";
-
 import { Button } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
@@ -19,7 +17,6 @@ import CardContent from "@mui/material/CardContent";
 import { useTheme } from "@mui/material/styles";
 import InputLabel from "@mui/material/InputLabel";
 import Sidebar from "../components/Sidebar";
-
 import { Input as BaseInput } from "@mui/base/Input";
 import { height, styled } from "@mui/system";
 import { handleCompletionReport } from "./common";

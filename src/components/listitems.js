@@ -27,7 +27,7 @@ export const mainListItems = (
       <ListItemIcon>
         <ShoppingCartIcon />
       </ListItemIcon>
-      <ListItemText primary="Departments" />
+      <ListItemText  primary="Departments" />
     </ListItemButton>
     <ListItemButton component={Link} to="/meetings">
       <ListItemIcon>
