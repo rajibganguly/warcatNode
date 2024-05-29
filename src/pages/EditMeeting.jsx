@@ -287,6 +287,13 @@ export default function EditMeeting() {
 
     const departmentNames = data.map((dept) => dept.department.department_name);
 
+    const formatTimeString = (isoString) => {
+        const date = new Date(isoString);
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`;
+    }
+
     // const getDepartmentIds = (departmentNames) => {
 
     //     const departmentMap = new Map(data.map(dep => [dep.name, dep.id]));
@@ -468,11 +475,15 @@ export default function EditMeeting() {
 
                                                             </Grid>
                                                             <Grid item xs={4}>
-
-                                                                <TimePicker
-                                                                    value={formData.selectTime}
-                                                                    onChange={handleTimeChange}
-                                                                    renderInput={(params) => <TextField {...params} />} />
+                                                            <TextField
+                                                                type="time"
+                                                                name="time"
+                                                                fullWidth
+                                                                value={formatTimeString(formData.selectTime)}
+                                                                size="small"
+                                                                onChange={handleTimeChange}
+                                                                renderInput={(params) => <TextField {...params} />} 
+                                                            />
 
                                                             </Grid>
                                                             <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
