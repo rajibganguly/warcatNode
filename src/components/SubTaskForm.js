@@ -10,6 +10,8 @@ import { fetchTaskData } from '../pages/common';
 import { useNavigate } from 'react-router-dom';
 import LoadingIndicator from './loadingIndicator';
 import dayjs from 'dayjs';
+import * as Yup from 'yup';
+import { useFormik } from 'formik';
 
 const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -20,15 +22,34 @@ const convertToBase64 = (file) => {
     });
 };
 
+const dateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+
+const validationSchema = Yup.object().shape({
+    subTaskTitle: Yup.string()
+        .required('Sub Task Title is required'),
+    // .max(100, 'Sub Task Title must be at most 100 characters'),
+    targetDate: Yup.date()
+        .required('Target Date is required')
+        .nullable()
+        .test('is-correct-format', 'Wrong date format', value => {
+            if (!value) return false;
+            return dateRegex.test(value.toISOString());
+        }),
+    uploadImage: Yup.mixed()
+        // .test('fileSize', 'File Size is too large', value => !value || (value && value.size <= 2000000)) // 2MB
+        .required('Upload image is required')
+        .test('fileFormat', 'Unsupported Format', value => !value || (value && ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'].includes(value.type)))
+});
+
 const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
     console.log(forTaskDataView, 'subtask data');
     console.log(parentTaskId, 'parent task');
     let editFlag = 0;
-    if(forTaskDataView){
+    if (forTaskDataView) {
         editFlag = 1;
     }
     const editSubTaskTitle = forTaskDataView ? forTaskDataView?.subtask_title : '';
-    const editSubTaskDate = forTaskDataView ? dayjs(forTaskDataView?.target_date) : null;
+    const editSubTaskDate = forTaskDataView ? dayjs(forTaskDataView?.target_date) : '';
     const editSubTaskImageUrl = forTaskDataView ? forTaskDataView?.subtask_image : '';
     const [isLoading, setIsLoading] = React.useState(false);
     const [formValues, setFormValues] = useState({
@@ -45,16 +66,14 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
     const handleDateChange = (newDate) => {
         setFormValues({ ...formValues, targetDate: newDate });
     };
-    const [updateTaskFile, setupdateTaskFile] = useState(editSubTaskImageUrl??null);
+    const [updateTaskFile, setupdateTaskFile] = useState(editSubTaskImageUrl ?? null);
     // const [base64Image, setBase64Image] = React.useState("");
-    const handleFileChange = async (event) => {
-        const file = event.target.files[0];
+    const handleFileChange = (event) => {
+        const file = event.currentTarget.files[0];
+        formik.setFieldValue('uploadImage', file);
         if (file) {
-            const base64 = await convertToBase64(file);
             const reader = new FileReader();
-            setFormValues({ ...formValues, imageUrl: base64 });
-            setupdateTaskFile(base64);
-            reader.onload = () => {
+            reader.onloadend = () => {
                 setupdateTaskFile(reader.result);
             };
             reader.readAsDataURL(file);
@@ -62,54 +81,64 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
     };
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const payload = {
-                parent_task_id: parentTaskId,
-                subtask_title: formValues.subTaskTitle,
-                subtask_target_date: formValues.targetDate.toISOString(),
-                subtask_image: formValues.imageUrl,
-                ...(editFlag === 1 && { sub_task_id: forTaskDataView?.sub_task_id })
-            };
-            setIsLoading(true)
-            let url = '/add-sub-task'
-            if(editFlag === 1){
-                url = '/edit-sub-task';
-            }
-            const response = await ApiConfig.requestData('post', url, null, payload);
-            // onSubmit(response);
-            // navigate('/tasks')
-            if(response){
-                toast.success(editFlag === 1 ? "Sub Task edited successfully" : "Sub Task added successfully");
-                await fetchTaskData();
-                window.location.reload();
-            }else{
+    const formik = useFormik({
+        initialValues: {
+            subTaskTitle: '',
+            targetDate: null,
+            uploadImage: null,
+        },
+        validationSchema: validationSchema,
+        onSubmit: async (values, { setSubmitting }) => {
+            try {
+                const payload = {
+                    parent_task_id: parentTaskId,
+                    subtask_title: values.subTaskTitle,
+                    subtask_target_date: values.targetDate.toISOString(),
+                    subtask_image: updateTaskFile,
+                    ...(editFlag === 1 && { sub_task_id: forTaskDataView?.sub_task_id }),
+                };
+                setIsLoading(true);
+                let url = '/add-sub-task';
+                if (editFlag === 1) {
+                    url = '/edit-sub-task';
+                }
+                const response = await ApiConfig.requestData('post', url, null, payload);
+                if (response) {
+                    toast.success(editFlag === 1 ? 'Sub Task edited successfully' : 'Sub Task added successfully');
+                    await fetchTaskData();
+                    window.location.reload();
+                } else {
+                    setIsLoading(false);
+                }
+            } catch (error) {
                 setIsLoading(false);
+                console.error('Error adding subtask:', error);
+                toast.error('Something went wrong');
+            } finally {
+                setSubmitting(false);
             }
-            // toast.success("Sub Task added successfully");
-        } catch (error) {
-            setIsLoading(false)
-            console.error("Error adding subtask:", error);
-            toast.error("Something went wrong");
+        },
+    });
 
-        }
-    };
+    console.log('Errors:', formik.errors);
+
+    console.log('Touched:', formik.touched);
 
     return (
         <>
             {/* For Loader */}
             <LoadingIndicator isLoading={isLoading} />
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={formik.handleSubmit}>
                 <Box mb={2}>
                     <InputLabel sx={{ mb: 1 }}>Sub Task Title</InputLabel>
                     <TextField
                         name="subTaskTitle"
-                        value={formValues.subTaskTitle}
-                        onChange={handleChange}
+                        value={formik.values.subTaskTitle}
+                        onChange={formik.handleChange}
                         fullWidth
-                        required
-                        size='small'
+                        size="small"
+                        error={formik.touched.subTaskTitle && Boolean(formik.errors.subTaskTitle)}
+                        helperText={formik.touched.subTaskTitle && formik.errors.subTaskTitle}
                     />
                 </Box>
                 <Box mb={2}>
@@ -126,11 +155,19 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
                 /> */}
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
-                            value={formValues.targetDate}
-                            onChange={handleDateChange}
-                            renderInput={(params) => <TextField {...params} fullWidth />}
+                            value={formik.values.targetDate}
+                            onChange={(date) => formik.setFieldValue('targetDate', date)}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    fullWidth
+                                    error={formik.touched.targetDate && Boolean(formik.errors.targetDate)}
+                                    helperText={formik.touched.targetDate ? formik.errors.targetDate : ''}
+                                    size="small"
+                                />
+                            )}
                             fullWidth
-                            size='small'
+                            size="small"
                             sx={{ width: '100%' }}
                         />
                     </LocalizationProvider>
@@ -154,11 +191,13 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
                         <TextField
                             variant="outlined"
                             fullWidth
-                            placeholder="Enter task title"
+                            placeholder="Upload Image"
                             name="uploadImage"
                             size="small"
                             type="file"
                             onChange={handleFileChange}
+                            error={formik.touched.uploadImage && Boolean(formik.errors.uploadImage)}
+                            helperText={formik.touched.uploadImage && formik.errors.uploadImage}
                         />
                         <Box width={'40px'} height={'40px'} minWidth={'40px'} borderRadius={'6px'} backgroundColor='#ebebeb'>
                             {updateTaskFile && (

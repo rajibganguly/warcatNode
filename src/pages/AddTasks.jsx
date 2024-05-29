@@ -122,6 +122,7 @@ export default function AddTasks() {
     const { setAllDepartmentList } = React.useContext(DepartmentContext);
     const { setAllTaskLists } = React.useContext(TaskContext);
     const [formattedTagNames, setFormattedTagNames] = useState([]);
+    const [dataforval, setdataforval] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -164,7 +165,7 @@ export default function AddTasks() {
                 // Flatten the tags array and remove duplicates
                 const tags = [...new Set(filteredObject?.department?.flatMap(obj => obj.tag) || [])];
                 console.log(filteredObject?.target_date)
-                
+
                 setTagName(tags);
                 setUpdateTaskTitle(filteredObject?.task_title);
                 setUpdateSelectedDate(dateSelected(filteredObject?.target_date))
@@ -298,7 +299,44 @@ export default function AddTasks() {
         };
     };
 
+
+    const isFormValid = () => {
+        if (!personName || personName.length === 0) {
+            toast.error("Department name is required");
+            return false;
+        }
+
+        if (!tagName || tagName.length === 0)  {
+            toast.error("Tag Name is required");
+            return false;
+        }
+
+        if (!updateTaskTitle)  {
+            toast.error("Task Title is required");
+            return false;
+        }
+
+        if (!updateTaskFile || updateTaskFile.length === 0)  {
+            toast.error("File is required");
+            return false;
+        }
+
+       
+
+        return true;
+    };
+
     async function handleSubmit() {
+
+
+        if (!isFormValid()) {
+            toast.error("Please fill in all required fields", {
+                autoClose: 2000,
+            });
+            return;
+        }
+
+
         if (taskId) {
             const data = {
                 department: departmentData,
@@ -311,12 +349,14 @@ export default function AddTasks() {
             console.log(data)
 
             await updateData(data);
+
         } else {
             // console.log(inputGroups);
             const taskData = transformData(inputGroups);
             // console.log(taskData);
             const transformedData = convertToDepartmentFormat(deptId, personName, tagName, taskData);
             console.log(transformedData, 'final data');
+            setdataforval(transformedData)
             setIsLoading(true)
             const saveData = await handleAddTask(transformedData);
             //await fetchTaskData();
@@ -554,7 +594,7 @@ export default function AddTasks() {
                                                             <TextField
                                                                 variant="outlined"
                                                                 fullWidth
-                                                                placeholder="Enter task title"
+                                                                placeholder="Choose Image"
                                                                 name="uploadImage"
                                                                 size="small"
                                                                 type="file"
@@ -649,6 +689,8 @@ export default function AddTasks() {
                                                 value={updateTaskTitle}
                                                 onChange={(e) => setUpdateTaskTitle(e.target.value)}
                                             />
+
+                                    
                                         </Grid>
 
                                         <Grid item xs={6}>
@@ -719,7 +761,7 @@ export default function AddTasks() {
                                             variant="contained"
                                             color="success"
                                             sx={{ color: 'white', marginTop: '2%' }}
-                                            onClick={handleSubmit}
+                                            onClick={() => isFormValid() && handleSubmit()}
                                         >
                                             {taskId ? 'Update' : 'Submit'}
                                         </Button>
