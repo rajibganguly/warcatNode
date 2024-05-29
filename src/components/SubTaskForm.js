@@ -27,7 +27,7 @@ const dateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 const validationSchema = Yup.object().shape({
     subTaskTitle: Yup.string()
         .required('Sub Task Title is required'),
-        // .max(100, 'Sub Task Title must be at most 100 characters'),
+    // .max(100, 'Sub Task Title must be at most 100 characters'),
     targetDate: Yup.date()
         .required('Target Date is required')
         .nullable()
@@ -45,7 +45,7 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
     console.log(forTaskDataView, 'subtask data');
     console.log(parentTaskId, 'parent task');
     let editFlag = 0;
-    if(forTaskDataView){
+    if (forTaskDataView) {
         editFlag = 1;
     }
     const editSubTaskTitle = forTaskDataView ? forTaskDataView?.subtask_title : '';
@@ -66,7 +66,7 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
     const handleDateChange = (newDate) => {
         setFormValues({ ...formValues, targetDate: newDate });
     };
-    const [updateTaskFile, setupdateTaskFile] = useState(editSubTaskImageUrl??null);
+    const [updateTaskFile, setupdateTaskFile] = useState(editSubTaskImageUrl ?? null);
     // const [base64Image, setBase64Image] = React.useState("");
     const handleFileChange = (event) => {
         const file = event.currentTarget.files[0];
@@ -154,22 +154,22 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
                     size='small'
                 /> */}
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                        value={formik.values.targetDate}
-                        onChange={(date) => formik.setFieldValue('targetDate', date)}
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                fullWidth
-                                error={formik.touched.targetDate && Boolean(formik.errors.targetDate)}
-                                helperText={formik.touched.targetDate ? formik.errors.targetDate : ''}
-                                size="small"
-                            />
-                        )}
-                        fullWidth
-                        size="small"
-                        sx={{ width: '100%' }}
-                    />
+                        <DatePicker
+                            value={formik.values.targetDate}
+                            onChange={(date) => formik.setFieldValue('targetDate', date)}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    fullWidth
+                                    error={formik.touched.targetDate && Boolean(formik.errors.targetDate)}
+                                    helperText={formik.touched.targetDate ? formik.errors.targetDate : ''}
+                                    size="small"
+                                />
+                            )}
+                            fullWidth
+                            size="small"
+                            sx={{ width: '100%' }}
+                        />
                     </LocalizationProvider>
                 </Box>
                 {/* <Box mb={2}>

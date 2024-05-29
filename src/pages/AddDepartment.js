@@ -26,6 +26,7 @@ import { fetchDepartmentData } from "./common";
 import { useNavigate } from "react-router-dom";
 import { DepartmentContext } from "../context/DepartmentContext";
 import LoadingIndicator from "../components/loadingIndicator";
+import { InputAdornment } from "@mui/material";
 
 const drawerWidth = 240;
 const AppBar = styled(MuiAppBar, {
@@ -46,12 +47,18 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-// TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 export default function AddDepartment() {
   const [open, setOpen] = React.useState(true);
-  const [submitDisable, setSubmitDisable] = React.useState(true);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+
+  const [errors, setErrors] = useState({
+    secretaryEmail: '',
+    headOfficeEmail: ''
+  });
+
   const [formData, setFormData] = React.useState({
     secretary: {
       email: "",
@@ -72,51 +79,85 @@ export default function AddDepartment() {
   const { setAllDepartmentList } = useContext(DepartmentContext);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+
   const handleOutput = (open) => {
     toggleDrawer();
   };
+
   const toggleDrawer = () => {
     setOpen(!open);
   };
-
-  /**
-   * Check all fields if not empty
-   */
-  const allFieldsMapped = (obj) => {
-    for (const key in obj) {
-      // Check if the value is an object, then recursively check its fields
-      if (typeof obj[key] === "object") {
-        if (!allFieldsMapped(obj[key])) {
-          return false;
-        }
-      } else {
-        // If any field is empty, return false
-        if (!obj[key]) {
-          return false;
-        }
-      }
-    }
-    return true; // All fields are not empty
-  };
-
-  /**
-   * Fetch Department Data & set the data
-   */
   const fetchDepartmentDataList = async () => {
     const data = await fetchDepartmentData();
     setAllDepartmentList(data);
   };
 
-  /**
-   * Collect form values
-   */
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+const isFormValid = () => {
+  const newErrors = {};
+  let valid = true;
+
+  if (!formData.dep_name) {
+    newErrors.dep_name = "Department name is required";
+    valid = false;
+  }
+
+  if (!formData.secretary.name) {
+    newErrors.secretaryName = "Secretary name is required";
+    valid = false;
+  }
+
+  if (!formData.secretary.phone_number) {
+    newErrors.secretaryPhoneNumber = "Secretary phone number is required";
+    valid = false;
+  }
+
+  if (!formData.secretary.email || errors.secretaryEmail) {
+    newErrors.secretaryEmail = "Valid Secretary email is required";
+    valid = false;
+  }
+
+  if (!formData.headOffice.name) {
+    newErrors.headOfficeName = "Head of Office name is required";
+    valid = false;
+  }
+
+  if (!formData.headOffice.designation) {
+    newErrors.headOfficeDesignation = "Head of Office designation is required";
+    valid = false;
+  }
+
+  if (!formData.headOffice.phone_number) {
+    newErrors.headOfficePhoneNumber = "Head of Office phone number is required";
+    valid = false;
+  }
+
+  if (!formData.headOffice.email || errors.headOfficeEmail) {
+    newErrors.headOfficeEmail = "Valid Head of Office email is required";
+    valid = false;
+  }
+
+  setErrors(newErrors);
+
+  if (!valid) {
+    toast.error("Please correct the highlighted fields", {
+      autoClose: 2000,
+    });
+  }
+
+  return valid;
+};
+
+
+
   const handleChange = (event) => {
     const { name, value } = event.target;
-
-    // Split the name to get the nested object structure
     const [field, nestedField] = name.split(".");
 
-    // Update the form data based on the field
     setFormData((prevFormData) => {
       if (field === "secretary" || field === "headOffice") {
         return {
@@ -134,16 +175,29 @@ export default function AddDepartment() {
       }
     });
 
-    if (allFieldsMapped(formData)) {
-      setSubmitDisable(false);
+    if (name === "secretary.email" || name === "headOffice.email") {
+      if (!validateEmail(value)) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          [name === "secretary.email" ? "secretaryEmail" : "headOfficeEmail"]: "Enter Correct Email ID",
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          [name === "secretary.email" ? "secretaryEmail" : "headOfficeEmail"]: "",
+        }));
+      }
     }
   };
 
-  /**
-   * Post call on submit
-   */
   const handleAddDepartment = async () => {
-    setSubmitDisable(true);
+
+    setIsSubmitted(true);
+
+    if (!isFormValid()) {
+      return;
+    }
+
     setIsLoading(true);
     try {
       const token = localStorage.getItem("token");
@@ -151,13 +205,27 @@ export default function AddDepartment() {
         throw new Error("Token not found in localStorage");
       }
 
-      const response = await fetch("http://localhost:8001/api/register-user-with-department", {
+      const reactAppHostname = process.env.REACT_APP_HOSTNAME;
+
+      const updatedFormData = {
+        ...formData,
+        secretary: {
+          ...formData.secretary,
+          phone_number: `+91${formData.secretary.phone_number}`,
+        },
+        headOffice: {
+          ...formData.headOffice,
+          phone_number: `+91${formData.headOffice.phone_number}`,
+        },
+      };
+
+      const response = await fetch(`${reactAppHostname}/api/register-user-with-department`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(updatedFormData),
       });
 
       const responseData = await response.json();
@@ -178,15 +246,12 @@ export default function AddDepartment() {
     } catch (error) {
       console.error("Error occurred:", error);
       setIsLoading(false);
-
     }
   };
+
   return (
     <ThemeProvider theme={defaultTheme}>
-      {/* For Loader */}
       <LoadingIndicator isLoading={isLoading} />
-
-      {/*  */}
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>
@@ -207,7 +272,6 @@ export default function AddDepartment() {
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
-              {/* Recent Orders */}
               <Grid item xs={12}>
                 <div
                   style={{
@@ -281,6 +345,9 @@ export default function AddDepartment() {
                         name="dep_name"
                         value={formData.dep_name}
                         onChange={handleChange}
+                        error={isSubmitted && !formData.dep_name}
+                        helperText={isSubmitted && !formData.dep_name ? "Department name is required" : ""}
+
                       />
 
                       <Typography
@@ -308,6 +375,8 @@ export default function AddDepartment() {
                             value={formData.secretary.name}
                             onChange={handleChange}
                             size="small"
+                            error={isSubmitted && !formData.secretary.name}
+                            helperText={isSubmitted && !formData.secretary.name ? "Secretary name is required" : ""}
                           />
 
                         </Grid>
@@ -316,17 +385,26 @@ export default function AddDepartment() {
                           <TextField
                             id="outlined-basic-2"
                             label="Enter Secretary Phone Number"
-                            placeholder="ex +91XXXXXXXXXX"
+                            placeholder=""
                             variant="outlined"
                             size="small"
                             sx={{ width: "100%" }}
                             name="secretary.phone_number"
                             value={formData.secretary.phone_number}
                             inputProps={{
-                              minLength: 13,
-                              maxLength: 13
+                              maxLength: 10,
+                              onKeyPress: (event) => {
+                                if (!/^\d*$/.test(event.key)) {
+                                  event.preventDefault();
+                                }
+                              }
                             }}
                             onChange={handleChange}
+                            InputProps={{
+                              startAdornment: <InputAdornment position="start">+91</InputAdornment>,
+                            }}
+                            error={isSubmitted && !formData.secretary.phone_number}
+                            helperText={isSubmitted && !formData.secretary.phone_number ? "Secretary phone number is required" : ""}
                           />
 
                         </Grid>
@@ -341,6 +419,11 @@ export default function AddDepartment() {
                             value={formData.secretary.email}
                             onChange={handleChange}
                             size="small"
+                            error={isSubmitted && !!errors.secretaryEmail}
+                            helperText={isSubmitted && errors.secretaryEmail}
+                            FormHelperTextProps={{
+                              sx: { paddingLeft: '0px' }
+                            }}
                           />
                         </Grid>
 
@@ -371,6 +454,8 @@ export default function AddDepartment() {
                               value={formData.headOffice.name}
                               onChange={handleChange}
                               size="small"
+                              error={isSubmitted && !formData.headOffice.name}
+                              helperText={isSubmitted && !formData.headOffice.name ? "Head of Office name is required" : ""}
                             />
 
                             <TextField
@@ -382,6 +467,8 @@ export default function AddDepartment() {
                               value={formData.headOffice.designation}
                               onChange={handleChange}
                               size="small"
+                              error={isSubmitted && !formData.headOffice.designation}
+                              helperText={isSubmitted && !formData.headOffice.designation ? "Head of Office designation is required" : ""}
                             />
                           </Stack>
                         </Grid>
@@ -391,17 +478,26 @@ export default function AddDepartment() {
                             <TextField
                               id="outlined-basic-1"
                               label="Enter Head of Office Phone Number"
-                              placeholder="ex +91XXXXXXXXXX"
+                              placeholder=""
                               variant="outlined"
                               size="small"
                               sx={{ width: "100%" }}
                               name="headOffice.phone_number"
                               value={formData.headOffice.phone_number}
                               inputProps={{
-                                minLength: 13,
-                                maxLength: 13
+                                maxLength: 10,
+                                onKeyPress: (event) => {
+                                  if (!/^\d*$/.test(event.key)) {
+                                    event.preventDefault();
+                                  }
+                                }
                               }}
                               onChange={handleChange}
+                              InputProps={{
+                                startAdornment: <InputAdornment position="start">+91</InputAdornment>,
+                              }}
+                              error={isSubmitted && !formData.headOffice.phone_number}
+                              helperText={isSubmitted && !formData.headOffice.phone_number ? "Head of Office phone number is required" : ""}
                             />
 
                             <TextField
@@ -413,6 +509,8 @@ export default function AddDepartment() {
                               value={formData.headOffice.email}
                               onChange={handleChange}
                               size="small"
+                              error={isSubmitted && !!errors.headOfficeEmail}
+                              helperText={isSubmitted && errors.headOfficeEmail}
                             />
                           </Stack>
                         </Grid>
@@ -422,7 +520,6 @@ export default function AddDepartment() {
                         variant="contained"
                         color="success"
                         sx={{ color: "white", marginTop: "2%" }}
-                        disabled={submitDisable}
                         onClick={handleAddDepartment}
                       >
                         Submit
