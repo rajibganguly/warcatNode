@@ -150,10 +150,7 @@ export default function Tasks() {
     { text: "Operations", dataField: 'taskoperation' }
   ];
 
-  console.log(selectedDept, 'selected tag');
-  console.log(selectedStatus, 'selected status');
   let filteredData = allTaskListsData;
-  console.log(filteredData, 'all task list');
   // department filter
   if(selectedDept){
     if(selectedDept === 'ALL'){
@@ -170,7 +167,7 @@ export default function Tasks() {
       filteredData = filteredData.filter(task => task.status === selectedStatus);
     }
   }
-  // searchbox filter
+  // search box filter
   const matchesSearchText = (obj, searchText) => {
     if (Array.isArray(obj)) {
         return obj.some(item => matchesSearchText(item, searchText));
