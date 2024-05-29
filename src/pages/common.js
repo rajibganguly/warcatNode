@@ -210,3 +210,14 @@ export const formatVerifiedStatus = (admin_verified_status) => {
   let VerifiedOrNot = admin_verified_status === 1? '(Verified)' : admin_verified_status === 2? '(Rejected)' : admin_verified_status === 0 ? '' : '(Unverified)';
   return VerifiedOrNot;
 }
+
+export const getRoleTypename = (roleType) => {
+  switch (roleType) {
+    case 'secretary':
+      return 'Secretary';
+    case 'head_of_Office':
+      return 'Head Of Office';
+    default:
+      return 'Unknown';
+  }
+};

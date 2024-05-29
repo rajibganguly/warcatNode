@@ -25,7 +25,7 @@ import Sidebar from "../components/Sidebar";
 import { Input as BaseInput } from '@mui/base/Input';
 import { styled } from '@mui/system';
 import { toast } from "react-toastify";
-import { handleAddNote } from "./common";
+import { fetchRoleType, getRoleTypename, handleAddNote } from "./common";
 import { useNavigate } from "react-router-dom";
 
 
@@ -156,6 +156,7 @@ export default function TaskNote() {
     const localSt = JSON.parse(localStorage.getItem("user"));
     const currentRoleType = localSt.role_type;
     const userId = localSt?._id;
+    const userRoleType = fetchRoleType();
     const userName = localSt?.name;
     const handleOutput = (open) => {
         toggleDrawer();
@@ -171,7 +172,7 @@ export default function TaskNote() {
     async function handleSubmit() {
         const data = {
             note_description: taskNote,
-            note_written_by: userName,
+            note_written_by: userName +' - ('+ getRoleTypename(userRoleType) +')',
             // role_type: 'secretary'
             role_type: currentRoleType
         };
