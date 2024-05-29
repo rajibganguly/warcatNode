@@ -88,6 +88,7 @@ export default function Tasks() {
   const [selectedDept, setSelectedDept] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
   const { allDepartmentList } = React.useContext(DepartmentContext);
+  const [searchText, setSearchText] = useState('');
   
   const departmentDropdownItems = allDepartmentList.map(department => ({
     label: department?.department?.department_name,
@@ -168,6 +169,19 @@ export default function Tasks() {
     }else{
       filteredData = filteredData.filter(task => task.status === selectedStatus);
     }
+  }
+  // searchbox filter
+  const matchesSearchText = (obj, searchText) => {
+    if (Array.isArray(obj)) {
+        return obj.some(item => matchesSearchText(item, searchText));
+    }
+    if (typeof obj === 'object' && obj !== null) {
+        return Object.values(obj).some(value => matchesSearchText(value, searchText));
+    }
+    return typeof obj === 'string' && obj.toLowerCase().includes(searchText.toLowerCase());
+  };
+  if(searchText){
+    filteredData = filteredData.filter(task => matchesSearchText(task, searchText));
   }
 
   if (isAdmin) {
@@ -503,6 +517,7 @@ export default function Tasks() {
                           handleAddNoteClick={handleAddNoteClick}
                           handleUploadClick={handleUploadClick}
                           handleAcceptRejectClick={handleAcceptRejectClick}
+                          setSearchText={setSearchText}
                         />
                         {parentTaskView && parentModalVisible && (
                           <TaskViewDialog

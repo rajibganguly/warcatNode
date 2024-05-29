@@ -33,8 +33,8 @@ function TableNew({
   handleViewParentOperationTask,
   handleTaskView,
   handleEditmeeting,
-  handleAcceptRejectClick
-
+  handleAcceptRejectClick,
+  setSearchText
 }) {
   const getNestedValue = (obj, path) => {
     const keys = path.split(".");
@@ -465,6 +465,7 @@ function TableNew({
               variant="outlined"
               placeholder="Enter search"
               size="small"
+              onChange={(e) => setSearchText(e.target.value)}
               InputProps={{
                 endAdornment: (
                   <IconButton>
