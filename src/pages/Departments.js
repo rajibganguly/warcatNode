@@ -83,7 +83,22 @@ export default function Departments() {
   const { setSelectedDepartmentData } = React.useContext(DepartmentContext);
   const localUser = JSON.parse(localStorage.getItem('user'));
   const currentRoleType = localUser.role_type;
-
+  const [searchText, setSearchText] = useState('');
+  let filteredDepartmentList = allDepartmentList;
+  
+  // search box filter
+  const matchesSearchText = (obj, searchText) => {
+    if (Array.isArray(obj)) {
+        return obj.some(item => matchesSearchText(item, searchText));
+    }
+    if (typeof obj === 'object' && obj !== null) {
+        return Object.values(obj).some(value => matchesSearchText(value, searchText));
+    }
+    return typeof obj === 'string' && obj.toLowerCase().includes(searchText.toLowerCase());
+  };
+  if(searchText){
+    filteredDepartmentList = filteredDepartmentList.filter(task => matchesSearchText(task, searchText));
+  }
 
   const handleSeeClick = (row) => {
     setModalContent(row);
@@ -198,7 +213,7 @@ export default function Departments() {
                   </Box>
                   <CardContent>
                     <TableNew
-                      data={allDepartmentList}
+                      data={filteredDepartmentList}
                       column={column}
                       icons={icons}
                       exportButton={true}
@@ -206,6 +221,7 @@ export default function Departments() {
                       tableHeading={''}
                       handleSeeClick={handleSeeClick}
                       handleEditClick={handleEditClick}
+                      setSearchText={setSearchText}
                     />
                     <Dialog
                       open={modalVisible}

@@ -33,8 +33,8 @@ function TableNew({
   handleViewParentOperationTask,
   handleTaskView,
   handleEditmeeting,
-  handleAcceptRejectClick
-
+  handleAcceptRejectClick,
+  setSearchText
 }) {
   const getNestedValue = (obj, path) => {
     const keys = path.split(".");
@@ -156,7 +156,7 @@ function TableNew({
         return <p>Pending</p>
       }
     }
-    console.log(row?.admin_verified);
+    // console.log(row?.admin_verified);
 
     if (column.dataField === "subtask") {
       const verifiedFlag = row?.admin_verified !== 0;
@@ -465,6 +465,7 @@ function TableNew({
               variant="outlined"
               placeholder="Enter search"
               size="small"
+              onChange={(e) => setSearchText(e.target.value)}
               InputProps={{
                 endAdornment: (
                   <IconButton>

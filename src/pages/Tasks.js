@@ -62,30 +62,6 @@ const AppBar = styled(MuiAppBar, {
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
-const dropdownData = [
-  {
-    label: "Select",
-    items: [
-      { label: "All Department", value: "All Department" },
-      { label: "Agriculture", value: "Agriculture" },
-      { label: "Forest", value: "Forest" },
-      { label: "Labour", value: "Labour" },
-    ],
-  },
-  {
-    label: "Select",
-    items: [
-      { label: "ALL Tasks", value: "ALL Tasks" },
-      { label: "Assigned", value: "Assigned" },
-      { label: "In Progress", value: "In Progress" },
-      { label: "Completed", value: "Completed" },
-    ],
-  },
-];
-const handleDropdownChange = (value) => {
-  console.log("Selected value:", value);
-};
-
 const progressData = TaskChartData;
 
 export default function Tasks() {
@@ -109,6 +85,34 @@ export default function Tasks() {
   const { setAllTaskLists } = React.useContext(TaskContext);
   const { setAllDepartmentList } = React.useContext(DepartmentContext);
   const[adminVerified, setAdminVerified] =  useState();
+  const [selectedDept, setSelectedDept] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState('');
+  const { allDepartmentList } = React.useContext(DepartmentContext);
+  const [searchText, setSearchText] = useState('');
+  
+  const departmentDropdownItems = allDepartmentList.map(department => ({
+    label: department?.department?.department_name,
+    value: department?.department?._id
+  }));
+
+  const dropdownData = [
+    {
+      label: "Select",
+      items: [
+        { label: "All Department", value: "ALL" },
+        ...departmentDropdownItems
+      ],
+    },
+    {
+      label: "Select",
+      items: [
+        { label: "ALL Tasks", value: "ALL" },
+        { label: "Assigned", value: "initiated" },
+        { label: "In Progress", value: "inprogress" },
+        { label: "Completed", value: "completed" },
+      ],
+    },
+  ];
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -145,6 +149,37 @@ export default function Tasks() {
     { text: "Sub Task", dataField: 'subtask' },
     { text: "Operations", dataField: 'taskoperation' }
   ];
+
+  let filteredData = allTaskListsData;
+  // department filter
+  if(selectedDept){
+    if(selectedDept === 'ALL'){
+      filteredData = allTaskListsData;
+    }else{
+      filteredData = filteredData.filter(task => task.department?.[0]?.dep_id === selectedDept);
+    }
+  }
+  // status filter
+  if(selectedStatus){
+    if(selectedStatus === 'ALL'){
+      filteredData = allTaskListsData;
+    }else{
+      filteredData = filteredData.filter(task => task.status === selectedStatus);
+    }
+  }
+  // search box filter
+  const matchesSearchText = (obj, searchText) => {
+    if (Array.isArray(obj)) {
+        return obj.some(item => matchesSearchText(item, searchText));
+    }
+    if (typeof obj === 'object' && obj !== null) {
+        return Object.values(obj).some(value => matchesSearchText(value, searchText));
+    }
+    return typeof obj === 'string' && obj.toLowerCase().includes(searchText.toLowerCase());
+  };
+  if(searchText){
+    filteredData = filteredData.filter(task => matchesSearchText(task, searchText));
+  }
 
   if (isAdmin) {
     column.push({ text: "Verified Status", dataField: '' });
@@ -418,7 +453,8 @@ export default function Tasks() {
 
                         <Dropdowns
                           dropdownData={dropdownData}
-                          onChange={handleDropdownChange}
+                          setSelectedDept={setSelectedDept}
+                          setSelectedStatus={setSelectedStatus}
                         />
                       </Box>
 
@@ -465,7 +501,7 @@ export default function Tasks() {
                       </Grid>
                       <CardContent>
                         <TableNew
-                          data={allTaskListsData}
+                          data={filteredData}
                           column={column}
                           icons={icons}
                           exportButton={true}
@@ -478,6 +514,7 @@ export default function Tasks() {
                           handleAddNoteClick={handleAddNoteClick}
                           handleUploadClick={handleUploadClick}
                           handleAcceptRejectClick={handleAcceptRejectClick}
+                          setSearchText={setSearchText}
                         />
                         {parentTaskView && parentModalVisible && (
                           <TaskViewDialog

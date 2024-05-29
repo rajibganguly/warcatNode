@@ -6,16 +6,21 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 
-const Dropdowns = ({ dropdownData, onChange }) => {
+const Dropdowns = ({ dropdownData, setSelectedStatus, setSelectedDept }) => {
   // Maintain separate state for each dropdown
   const [select1, setSelect1] = useState('');
   const [select2, setSelect2] = useState('');
 
-  const handleChange = (event, setter) => {
+  const handleChange = (event, setter, index) => {
     const value = event.target.value;
     setter(value);
-    if (onChange) {
-      onChange(value);
+    // if (onChange) {
+    //   onChange(value);
+    // }
+    if(index === 0){
+      setSelectedDept(value);
+    }else{
+      setSelectedStatus(value);
     }
   };
 
@@ -30,7 +35,7 @@ const Dropdowns = ({ dropdownData, onChange }) => {
               id={`demo-simple-select-${index}`}
               value={index === 0 ? select1 : select2} 
               label={data.label}
-              onChange={(e) => handleChange(e, index === 0 ? setSelect1 : setSelect2)} 
+              onChange={(e) => handleChange(e, index === 0 ? setSelect1 : setSelect2, index)} 
             >
               {data.items.map((item, itemIndex) => (
                 <MenuItem key={itemIndex} value={item.value}>
