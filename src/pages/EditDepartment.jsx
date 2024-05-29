@@ -54,6 +54,8 @@ export default function EditDepartment() {
   const [open, setOpen] = React.useState(true);
   const [submitDisable, setSubmitDisable] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [errors, setErrors] = React.useState({});
+
   const [formData, setFormData] = React.useState({
     secretary: {
       email: "",
@@ -101,6 +103,62 @@ export default function EditDepartment() {
     const data = await fetchDepartmentData();
     setAllDepartmentList(data);
   };
+
+  const isFormValid = () => {
+    const newErrors = {};
+    let valid = true;
+  
+    if (!formData.department.department_name) {
+      newErrors.department_name = "Department name is required";
+      valid = false;
+    }
+  
+    if (!formData.secretary.name) {
+      newErrors.secretaryName = "Secretary name is required";
+      valid = false;
+    }
+  
+    if (!formData.secretary.phone_number) {
+      newErrors.secretaryPhoneNumber = "Secretary phone number is required";
+      valid = false;
+    }
+  
+    if (!formData.secretary.email) {
+      newErrors.secretaryEmail = "Secretary email is required";
+      valid = false;
+    }
+  
+    if (!formData.headOffice.name) {
+      newErrors.headOfficeName = "Head of Office name is required";
+      valid = false;
+    }
+  
+    if (!formData.headOffice.designation) {
+      newErrors.headOfficeDesignation = "Head of Office designation is required";
+      valid = false;
+    }
+  
+    if (!formData.headOffice.phone_number) {
+      newErrors.headOfficePhoneNumber = "Head of Office phone number is required";
+      valid = false;
+    }
+  
+    if (!formData.headOffice.email) {
+      newErrors.headOfficeEmail = "Head of Office email is required";
+      valid = false;
+    }
+  
+    setErrors(newErrors);
+  
+    if (!valid) {
+      toast.error("Please correct the highlighted fields", {
+        autoClose: 2000,
+      });
+    }
+  
+    return valid;
+  };
+  
 
   /**
    * Check all fields if not empty
@@ -155,7 +213,13 @@ export default function EditDepartment() {
   /**
    * Post call on submit
    */
+
+
   const handleAddDepartment = async () => {
+
+    if (!isFormValid()) return;
+
+
     const reactAppHostname = process.env.REACT_APP_HOSTNAME;
     setSubmitDisable(true);
     setIsLoading(true);
@@ -282,6 +346,8 @@ export default function EditDepartment() {
                           value={formData?.department?.department_name}
                           onChange={handleChange}
                           aria-readonly
+                          error={!!errors.department_name}
+                          helperText={errors.department_name}
                         />
 
                         <Typography
@@ -305,6 +371,8 @@ export default function EditDepartment() {
                               name="secretary.name"
                               value={formData?.secretary?.name}
                               onChange={handleChange}
+                              error={!!errors.secretaryName}
+                              helperText={errors.secretaryName}
                             />
                           </Grid>
                           <Grid item xs={12} sm={6}>
@@ -319,6 +387,8 @@ export default function EditDepartment() {
                                 maxLength: 13,
                               }}
                               onChange={handleChange}
+                              error={!!errors.secretaryPhoneNumber}
+                              helperText={errors.secretaryPhoneNumber}
                             />
                           </Grid>
                           <Grid item xs={12} sm={6}>
@@ -329,6 +399,8 @@ export default function EditDepartment() {
                               name="secretary.email"
                               value={formData?.secretary?.email}
                               onChange={handleChange}
+                              error={!!errors.secretaryEmail}
+                              helperText={errors.secretaryEmail}
                             />
                             <input
                               variant="outlined"
@@ -365,6 +437,8 @@ export default function EditDepartment() {
                                 name="headOffice.name"
                                 value={formData?.headOffice?.name}
                                 onChange={handleChange}
+                                error={!!errors.headOfficeName}
+                                helperText={errors.headOfficeName}
                               />
                               <label>Head of Office Designation</label>
                               <TextField
@@ -375,6 +449,8 @@ export default function EditDepartment() {
                                 name="headOffice.designation"
                                 value={formData?.headOffice?.designation}
                                 onChange={handleChange}
+                                error={!!errors.headOfficeDesignation}
+                                helperText={errors.headOfficeDesignation}
                               />
                               <input
                                 type="hidden"
@@ -399,6 +475,8 @@ export default function EditDepartment() {
                                   maxLength: 13,
                                 }}
                                 onChange={handleChange}
+                                error={!!errors.headOfficePhoneNumber}
+                                helperText={errors.headOfficePhoneNumber}
                               />
                               <label>Head of Office Email Id</label>
                               <TextField
@@ -409,6 +487,8 @@ export default function EditDepartment() {
                                 name="headOffice.email"
                                 value={formData?.headOffice?.email}
                                 onChange={handleChange}
+                                error={!!errors.headOfficeEmail}
+                                helperText={errors.headOfficeEmail}
                               />
                             </Stack>
                           </Grid>
