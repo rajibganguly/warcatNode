@@ -156,7 +156,7 @@ function TableNew({
         return <p>Pending</p>
       }
     }
-    console.log(row?.admin_verified);
+    // console.log(row?.admin_verified);
 
     if (column.dataField === "subtask") {
       const verifiedFlag = row?.admin_verified !== 0;
