@@ -33,8 +33,8 @@ function TableNew({
   handleViewParentOperationTask,
   handleTaskView,
   handleEditmeeting,
-  handleAcceptRejectClick
-
+  handleAcceptRejectClick,
+  setSearchText
 }) {
   const getNestedValue = (obj, path) => {
     const keys = path.split(".");
@@ -156,7 +156,7 @@ function TableNew({
         return <p>Pending</p>
       }
     }
-    console.log(row?.admin_verified);
+    // console.log(row?.admin_verified);
 
     if (column.dataField === "subtask") {
       const verifiedFlag = row?.admin_verified !== 0;
@@ -231,7 +231,7 @@ function TableNew({
 
 
 
-    if (column.dataField === "meetingoperation" && fetchRoleType() === 'admin') {
+    if (column.dataField === "meetingoperation" && userRoleType === 'admin') {
       return (
         <div style={{ display: "flex" }}>
           <Button onClick={() => handleEditmeeting(row)} style={{ backgroundColor: '#0097a7', color: '#ffffff' }}>
@@ -465,6 +465,7 @@ function TableNew({
               variant="outlined"
               placeholder="Enter search"
               size="small"
+              onChange={(e) => setSearchText(e.target.value)}
               InputProps={{
                 endAdornment: (
                   <IconButton>

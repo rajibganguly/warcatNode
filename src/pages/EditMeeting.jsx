@@ -207,10 +207,10 @@ export default function EditMeeting() {
         }));
     };
 
-    const handleTimeChange = (newTime) => {
+    const handleTimeChange = (event) => {
         setFormData(prevState => ({
             ...prevState,
-            selectTime: newTime
+            selectTime: event.target.value
         }));
     };
 
@@ -221,10 +221,9 @@ export default function EditMeeting() {
             const updatedData = {
                 ...formData,
                 selectDate: formData.selectDate.toISOString(),
-                selectTime: formData.selectTime.format('hh:mm'),
+                selectTime: formData.selectTime, //.format('hh:mm'),
                 departmentNames: departmentNames,
             };
-            console.log(updatedData)
 
             const response = await fetch(`${process.env.REACT_APP_HOSTNAME}/api/edit-meeting?meetingId=${editMeetingId}`, {
                 method: 'PUT',
@@ -277,6 +276,8 @@ export default function EditMeeting() {
         }
     };
 
+
+
     const handleOutput = (open) => {
         toggleDrawer();
     };
@@ -286,6 +287,17 @@ export default function EditMeeting() {
     };
 
     const departmentNames = data.map((dept) => dept.department.department_name);
+
+    const formatTimeString = (isoString) => {
+        if(typeof(isoString) === 'string') {
+            return `${isoString}`;
+        } else {
+            const date = new Date(isoString);
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+    }
 
     // const getDepartmentIds = (departmentNames) => {
 
@@ -468,11 +480,18 @@ export default function EditMeeting() {
 
                                                             </Grid>
                                                             <Grid item xs={4}>
-
-                                                                <TimePicker
-                                                                    value={formData.selectTime}
-                                                                    onChange={handleTimeChange}
-                                                                    renderInput={(params) => <TextField {...params} />} />
+                                                            <TextField
+                                                                type="time"
+                                                                name="time"
+                                                                fullWidth
+                                                                value={formatTimeString(formData.selectTime)}
+                                                                size="small"
+                                                                onChange={handleTimeChange}
+                                                                renderInput={(params) => <TextField {...params} />} 
+                                                                inputProps={{
+                                                                    step: 300, // Set the step interval (in seconds) for the time picker
+                                                                  }}
+                                                            />
 
                                                             </Grid>
                                                             <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

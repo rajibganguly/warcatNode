@@ -66,12 +66,17 @@ export default function Dashboard() {
   const { setAllDepartmentList } = React.useContext(DepartmentContext);
   const { setAllMeetingLists } = React.useContext(MeetingContext);
   const { setAllTaskLists } = React.useContext(TaskContext);
+  const [userType, setUserType] = React.useState('');
   const [cardDataState, setCardDataState] = React.useState([
+
     { id: 1, title: 'Total Department', value: 5, icon: <AccountBalanceIcon /> },
-    { id: 2, title: 'Completed Tasks', value: 1, icon: <PeopleIcon /> },
-    { id: 3, title: 'Total Meeting', value: 3, icon: <MonetizationOnIcon /> },
+    { id: 2, title: 'Completed Tasks', value: 0, icon: <PeopleIcon /> },
+    { id: 3, title: 'Total Meeting', value: 0, icon: <MonetizationOnIcon /> },
     { id: 4, title: 'Assigned Task', value: 0, icon: <MonetizationOnIcon /> },
+
   ]);
+
+
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -115,7 +120,8 @@ export default function Dashboard() {
     const localData = getItem("user");
     if (localData !== null) {
       setCurrUser(localData);
-      return localData
+      setUserType(localData.role_type); // Set user type
+      return localData;
     }
   }
 
@@ -237,26 +243,31 @@ export default function Dashboard() {
 
 
               <Grid container spacing={2} >
-                {cardDataState.map((cardItems, index) => (
-                  <Grid item xs={12} sm={3} key={cardItems.id}>
-                    <Card sx={{ maxWidth: 345 }}>
-                      <CardContent>
-                        <Stack spacing={2} direction="row" alignItems="center">
-                          <Stack spacing={1} direction="column" alignItems="flex-start">
-                            <Typography variant="body1" component="span">
-                              {cardItems.title}
-                            </Typography>
-                            <Typography variant="body1" component="span" sx={{ fontWeight: 'bold' }}>
-                              {cardItems.value}
-                            </Typography>
+                {cardDataState.map((cardItems, index) => {
+                  if (cardItems.title === 'Total Department' && userType !== 'admin') {
+                    return null;
+                  }
+                  return (
+                    <Grid item xs={12} sm={3} key={cardItems.id}>
+                      <Card sx={{ maxWidth: 345 }}>
+                        <CardContent>
+                          <Stack spacing={2} direction="row" alignItems="center">
+                            <Stack spacing={1} direction="column" alignItems="flex-start">
+                              <Typography variant="body1" component="span">
+                                {cardItems.title}
+                              </Typography>
+                              <Typography variant="body1" component="span" sx={{ fontWeight: 'bold' }}>
+                                {cardItems.value}
+                              </Typography>
+                            </Stack>
+                            <Box flexGrow={1} />
+                            {cardItems.icon}
                           </Stack>
-                          <Box flexGrow={1} />
-                          {cardItems.icon}
-                        </Stack>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  );
+                })}
               </Grid>
 
               <Box sx={{ my: 3 }} />

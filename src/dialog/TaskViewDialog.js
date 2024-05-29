@@ -14,7 +14,7 @@ import { CloseOutlined } from '@mui/icons-material';
 import { fetchRoleType, formatDate, formatDateWithmonth, formatVerifiedStatus, getFileNameFromUrl } from "../pages/common";
 import { useNavigate } from 'react-router-dom';
 import SubTaskForm from '../components/SubTaskForm';
-export default function TaskViewDialog({ open, onClose, meetingData, taskDataView }) {
+export default function TaskViewDialog({ open, onClose, meetingData, taskDataView, adminVerified }) {
     const navigate = useNavigate()
     const userRoleType = fetchRoleType();
     const [addTaskForm, setAddTaskForm] = useState(true);
@@ -137,7 +137,7 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
 
                                                         {/* Note timestamp */}
                                                         <Typography color="text.secondary">
-                                                            Date :  {note?.timestamp || 'No timestamp available'}
+                                                            Date :  {formatDateWithmonth(note?.timestamp) || 'No timestamp available'}
                                                         </Typography>
                                                     </Box>
                                                 </Box>
@@ -190,16 +190,21 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                                             }}
                                         />
                                     )}
-                                    {userRoleType === 'admin' && !task?.status === 'completed' && (
+                                    {(userRoleType === 'admin' && adminVerified === 0) && (
+                                        <Button
+                                            variant="contained"
+                                            style={{ backgroundColor: '#0a1832', color: '#ffffff' }}
+                                            onClick={() => { handleSubTaskEditClick(task); }}
+                                        >
+                                            Edit
+                                        </Button>
+                                    )}
+                                    {userRoleType === 'admin' && task?.admin_verified === 0 && (
                                         <Button
                                             variant="contained"
                                             style={{ backgroundColor: '#0a1832', color: '#ffffff' }}
                                             onClick={() => {
-                                                if (!task?.subtask_title) {
-                                                    handleEditClick(task?.task_id);
-                                                } else {
-                                                    handleSubTaskEditClick(task);
-                                                }
+                                                handleEditClick(task.task_id);
                                             }}
                                         >
                                             Edit
