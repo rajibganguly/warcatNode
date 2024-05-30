@@ -329,12 +329,12 @@ export default function AddTasks() {
     async function handleSubmit() {
 
 
-        if (!isFormValid()) {
-            toast.error("Please fill in all required fields", {
-                autoClose: 2000,
-            });
-            return;
-        }
+        // if (!isFormValid()) {
+        //     toast.error("Please fill in all required fields", {
+        //         autoClose: 2000,
+        //     });
+        //     return;
+        // }
 
 
         if (taskId) {
@@ -761,7 +761,7 @@ export default function AddTasks() {
                                             variant="contained"
                                             color="success"
                                             sx={{ color: 'white', marginTop: '2%' }}
-                                            onClick={() => isFormValid() && handleSubmit()}
+                                            onClick={() => handleSubmit()}
                                         >
                                             {taskId ? 'Update' : 'Submit'}
                                         </Button>
