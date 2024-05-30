@@ -319,7 +319,7 @@ export default function AddTasks() {
         if (!updateTaskFile || updateTaskFile.length === 0)  {
             toast.error("File is required");
             return false;
-        }
+        }  
 
        
 
