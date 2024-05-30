@@ -219,7 +219,6 @@ const isFormValid = () => {
         },
       };
 
-      
       const response = await fetch(`${reactAppHostname}/api/register-user-with-department`, {
         method: "POST",
         headers: {
