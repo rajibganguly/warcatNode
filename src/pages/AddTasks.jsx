@@ -26,6 +26,7 @@ import {
     dateSelected,
     fetchDepartmentData,
     fetchTaskData,
+    getTodayDate,
     handleAddTask,
     parentTaskEdit,
 } from "./common";
@@ -151,7 +152,7 @@ export default function AddTasks() {
         const encodedMeetingTopic = queryParams.get('meetingTopic');
         const encodedTaskId = queryParams.get('taskId');
         if (encodedMeetingId && encodedMeetingTopic) {
-            // Base64 decode the parameters
+           
             const decodedMeetingId = window.atob(encodedMeetingId);
             const decodedMeetingTopic = window.atob(encodedMeetingTopic);
 
@@ -173,7 +174,7 @@ export default function AddTasks() {
                 setPersonName(departmentNames);
                 const departmentId = selectedDepartments?.filter(dep => dep !== null)?.map(dep => dep._id);
                 setDeptId(departmentId);
-                // Flatten the tags array and remove duplicates
+               
                 const tags = [...new Set(filteredObject?.department?.flatMap(obj => obj.tag) || [])];
                 console.log(filteredObject?.target_date)
 
@@ -264,19 +265,15 @@ export default function AddTasks() {
             const inputIndex = newInputGroups[groupIndex].findIndex(
                 (input) => input.id === id
             );
+            
             if (inputIndex !== -1) {
                 newInputGroups[groupIndex][inputIndex].value = e.target.value;
                 setInputGroups(newInputGroups);
-
-
-
-
             }
 
             if (inputGroups[0][0].value) {
 
                 error.taskTitle = false;
-
             }
 
             if (inputGroups[0].find(item => item.type === 'date').value) {
@@ -285,19 +282,10 @@ export default function AddTasks() {
 
             }
 
-          
-
-
         }
     }
 
-    const getTodayDate = () => {
-        const today = new Date();
-        const yyyy = today.getFullYear();
-        const mm = String(today.getMonth() + 1).padStart(2, '0');
-        const dd = String(today.getDate()).padStart(2, '0');
-        return `${yyyy}-${mm}-${dd}`;
-    };
+   
 
 
     const transformData = (data) => {
@@ -475,6 +463,12 @@ export default function AddTasks() {
         const file = e.target.files[0];
         let imageValue = '';
         if (file) {
+
+            if (!file.type.startsWith('image/')) {
+                setError({ taskImage: true });
+                return;
+            }
+
             imageValue = await convertToBase64(file);
             const newInputGroups = [...inputGroups];
             const groupIndex = newInputGroups.findIndex(
@@ -814,6 +808,7 @@ export default function AddTasks() {
                                                     name="uploadImage"
                                                     size="small"
                                                     type="file"
+                                                    accept="image/*" 
                                                     // value={updateTaskFile || ''}
                                                     onChange={handleUpdateFileChange}
                                                 />

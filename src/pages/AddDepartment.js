@@ -346,7 +346,7 @@ const isFormValid = () => {
                         value={formData.dep_name}
                         onChange={handleChange}
                         error={isSubmitted && !formData.dep_name}
-                        helperText={isSubmitted && !formData.dep_name ? "Department name is required" : ""}
+                        // helperText={isSubmitted && !formData.dep_name ? "Department name is required" : ""}
 
                       />
 
@@ -376,7 +376,7 @@ const isFormValid = () => {
                             onChange={handleChange}
                             size="small"
                             error={isSubmitted && !formData.secretary.name}
-                            helperText={isSubmitted && !formData.secretary.name ? "Secretary name is required" : ""}
+                            // helperText={isSubmitted && !formData.secretary.name ? "Secretary name is required" : ""}
                           />
 
                         </Grid>
@@ -404,7 +404,7 @@ const isFormValid = () => {
                               startAdornment: <InputAdornment position="start">+91</InputAdornment>,
                             }}
                             error={isSubmitted && !formData.secretary.phone_number}
-                            helperText={isSubmitted && !formData.secretary.phone_number ? "Secretary phone number is required" : ""}
+                            // helperText={isSubmitted && !formData.secretary.phone_number ? "Secretary phone number is required" : ""}
                           />
 
                         </Grid>
@@ -420,7 +420,7 @@ const isFormValid = () => {
                             onChange={handleChange}
                             size="small"
                             error={isSubmitted && !!errors.secretaryEmail}
-                            helperText={isSubmitted && errors.secretaryEmail}
+                            // helperText={isSubmitted && errors.secretaryEmail}
                             FormHelperTextProps={{
                               sx: { paddingLeft: '0px' }
                             }}
@@ -455,7 +455,7 @@ const isFormValid = () => {
                               onChange={handleChange}
                               size="small"
                               error={isSubmitted && !formData.headOffice.name}
-                              helperText={isSubmitted && !formData.headOffice.name ? "Head of Office name is required" : ""}
+                              // helperText={isSubmitted && !formData.headOffice.name ? "Head of Office name is required" : ""}
                             />
 
                             <TextField
@@ -468,7 +468,7 @@ const isFormValid = () => {
                               onChange={handleChange}
                               size="small"
                               error={isSubmitted && !formData.headOffice.designation}
-                              helperText={isSubmitted && !formData.headOffice.designation ? "Head of Office designation is required" : ""}
+                              // helperText={isSubmitted && !formData.headOffice.designation ? "Head of Office designation is required" : ""}
                             />
                           </Stack>
                         </Grid>
@@ -497,7 +497,7 @@ const isFormValid = () => {
                                 startAdornment: <InputAdornment position="start">+91</InputAdornment>,
                               }}
                               error={isSubmitted && !formData.headOffice.phone_number}
-                              helperText={isSubmitted && !formData.headOffice.phone_number ? "Head of Office phone number is required" : ""}
+                              // helperText={isSubmitted && !formData.headOffice.phone_number ? "Head of Office phone number is required" : ""}
                             />
 
                             <TextField
@@ -510,7 +510,7 @@ const isFormValid = () => {
                               onChange={handleChange}
                               size="small"
                               error={isSubmitted && !!errors.headOfficeEmail}
-                              helperText={isSubmitted && errors.headOfficeEmail}
+                              // helperText={isSubmitted && errors.headOfficeEmail}
                             />
                           </Stack>
                         </Grid>

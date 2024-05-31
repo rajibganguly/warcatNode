@@ -24,7 +24,7 @@ import {
   ThemeProvider,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import { addMeetings, fetchTaskData } from './common';
+import { addMeetings, fetchTaskData, getTodayDate } from './common';
 import Footer from "../components/Footer";
 import Header from "../components/header";
 import Sidebar from "../components/Sidebar";
@@ -32,6 +32,7 @@ import MuiAppBar from "@mui/material/AppBar";
 import { DepartmentContext } from '../context/DepartmentContext';
 import { toast } from "react-toastify";
 import LoadingIndicator from "../components/loadingIndicator";
+
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -44,6 +45,7 @@ const VisuallyHiddenInput = styled('input')({
   whiteSpace: 'nowrap',
   width: 1,
 });
+
 
 const defaultTheme = createTheme();
 
@@ -85,6 +87,15 @@ function getStyles(name, personName, theme) {
         : theme.typography.fontWeightMedium,
   };
 }
+const tagMapping = {
+  'Head Office': 'head_of_office',
+  'Secretary': 'secretary'
+};
+
+const reverseTagMapping = {
+  'head_of_office': 'Head Office',
+  'secretary': 'Secretary'
+};
 
 export default function AddNewMeeting() {
   const [open, setOpen] = React.useState(true);
@@ -214,10 +225,10 @@ export default function AddNewMeeting() {
     }
   }
 
-/**
- * 
- * All Handle change for image 
- */
+  /**
+   * 
+   * All Handle change for image 
+   */
 
   const handleChangeForImage = (event) => {
     const file = event.target.files[0];
@@ -235,7 +246,7 @@ export default function AddNewMeeting() {
     <ThemeProvider theme={defaultTheme}>
       {/* For Loader */}
       <LoadingIndicator isLoading={isLoading} />
-      
+
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>
@@ -374,8 +385,11 @@ export default function AddNewMeeting() {
                                 </Box>
                               )}
                             >
-                              <MenuItem value="secretary">Secretary</MenuItem>
-                              <MenuItem value="head_of_office">Head Office</MenuItem>
+                              {Object.keys(tagMapping).map((key) => (
+                                <MenuItem key={key} value={key}>
+                                  {key === 'head_of_office' ? 'Head Of Office' : key}
+                                </MenuItem>
+                              ))}
                             </Select>
                           </FormControl>
                         </Grid>
@@ -413,13 +427,16 @@ export default function AddNewMeeting() {
                         </Grid>
 
                         <Grid item xs={12} md={6}>
-                        <InputLabel sx={{ mb: 1 }}>Select date</InputLabel>
+                          <InputLabel sx={{ mb: 1 }}>Select date</InputLabel>
                           <TextField
                             type="date"
                             name="date"
                             fullWidth
                             size="small"
                             onChange={getMeetingValue}
+                            InputProps={{
+                              inputProps: { min: getTodayDate() }
+                            }}
                           />
                         </Grid>
 
@@ -436,15 +453,18 @@ export default function AddNewMeeting() {
 
                         <Grid item xs={6} md={6}>
                           <InputLabel sx={{ mb: 1 }}>Upload Images</InputLabel>
-                          <Box display={'flex'} gap={2}>
-                            <TextField
+                          <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} border={'1px solid rgb(133, 133, 133)'} gap={2}>
+                            <input
                               variant="outlined"
                               fullWidth
                               placeholder="Enter task title"
                               name="uploadImage"
                               size="small"
                               type="file"
+                              accept="image/png, image/jpeg"
                               onChange={handleChangeForImage}
+                              className="inputfile inputfile-6"
+
                             />
                             <Box width={'40px'} height={'40px'} minWidth={'40px'} borderRadius={'6px'} backgroundColor='#ebebeb'>
                               {base64Image && (

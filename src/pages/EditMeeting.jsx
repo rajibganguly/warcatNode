@@ -289,7 +289,7 @@ export default function EditMeeting() {
     const departmentNames = data.map((dept) => dept.department.department_name);
 
     const formatTimeString = (isoString) => {
-        if(typeof(isoString) === 'string') {
+        if (typeof (isoString) === 'string') {
             return `${isoString}`;
         } else {
             const date = new Date(isoString);
@@ -471,27 +471,29 @@ export default function EditMeeting() {
                                                         <DemoContainer
                                                             components={['DatePicker', 'TimePicker']}
                                                         >
-                                                            <Grid item xs={4}>
+                                                            <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
 
                                                                 <DatePicker
                                                                     value={formData.selectDate}
                                                                     onChange={handleDateChange}
-                                                                    renderInput={(params) => <TextField {...params} />} />
+                                                                    renderInput={(params) => <TextField {...params} />}
+                                                                    disablePast
+                                                                    fullWidth />
 
                                                             </Grid>
-                                                            <Grid item xs={4}>
-                                                            <TextField
-                                                                type="time"
-                                                                name="time"
-                                                                fullWidth
-                                                                value={formatTimeString(formData.selectTime)}
-                                                                size="small"
-                                                                onChange={handleTimeChange}
-                                                                renderInput={(params) => <TextField {...params} />} 
-                                                                inputProps={{
-                                                                    step: 300, // Set the step interval (in seconds) for the time picker
-                                                                  }}
-                                                            />
+                                                            <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                                                <TextField
+                                                                    type="time"
+                                                                    name="time"
+                                                                    fullWidth
+                                                                    value={formatTimeString(formData.selectTime)}
+                                                                    size="small"
+                                                                    onChange={handleTimeChange}
+                                                                    renderInput={(params) => <TextField {...params} />}
+                                                                    inputProps={{
+                                                                        step: 300,
+                                                                    }}
+                                                                />
 
                                                             </Grid>
                                                             <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
