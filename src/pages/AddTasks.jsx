@@ -124,6 +124,17 @@ export default function AddTasks() {
     const [formattedTagNames, setFormattedTagNames] = useState([]);
     const [dataforval, setdataforval] = useState([]);
 
+    const { formState: { errors }, reset } = useForm();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const [error, setError] = useState({
+        personName: false,
+        taskTitle: false,
+        tagName: false,
+        targetDate: false,
+        taskImage: false,
+    });
+
     useEffect(() => {
         const fetchData = async () => {
             setIsLoading(true)
@@ -203,6 +214,11 @@ export default function AddTasks() {
             setDeptId(prevPersonName => [selectedDept._id]);
             setPersonName(prevPersonName => [selectedDept.department_name]);
         }
+
+        setError(prev => ({
+            ...prev,
+            personName: value.length === 0
+        }));
     };
 
     let departmentData = selectedDeparmentobj ? [
@@ -218,6 +234,10 @@ export default function AddTasks() {
         const selectedTags = selectedFormattedTags.map(tag => tagMapping[tag]);
         setTagName(selectedTags);
         setFormattedTagNames(selectedFormattedTags);
+        setError(prev => ({
+            ...prev,
+            tagName: selectedFormattedTags.length === 0
+        }));
     };
 
     const handleOutput = (open) => {
@@ -247,9 +267,38 @@ export default function AddTasks() {
             if (inputIndex !== -1) {
                 newInputGroups[groupIndex][inputIndex].value = e.target.value;
                 setInputGroups(newInputGroups);
+
+
+
+
             }
+
+            if (inputGroups[0][0].value) {
+
+                error.taskTitle = false;
+
+            }
+
+            if (inputGroups[0].find(item => item.type === 'date').value) {
+
+                error.targetDate = false;
+
+            }
+
+          
+
+
         }
     }
+
+    const getTodayDate = () => {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+    };
+
 
     const transformData = (data) => {
         return {
@@ -299,76 +348,115 @@ export default function AddTasks() {
         };
     };
 
+    function validateForm() {
+        let isValid = true;
 
-    const isFormValid = () => {
-        if (!personName || personName.length === 0) {
-            toast.error("Department name is required");
-            return false;
+        let newError = {
+            personName: false,
+            taskTitle: false,
+            tagName: false,
+            targetDate: false,
+            taskImage: false,
+        };
+
+        if (!personName[0]) {
+
+            newError.personName = true;
+            isValid = false;
         }
 
-        if (!tagName || tagName.length === 0)  {
-            toast.error("Tag Name is required");
-            return false;
+        if (!inputGroups[0][0].value) {
+
+            newError.taskTitle = true;
+            isValid = false;
         }
 
-        if (!updateTaskTitle)  {
-            toast.error("Task Title is required");
-            return false;
+        if (!tagName.length > 0) {
+
+            newError.tagName = true;
+            isValid = false;
         }
 
-        if (!updateTaskFile || updateTaskFile.length === 0)  {
-            toast.error("File is required");
-            return false;
-        }  
 
-       
+        if (!inputGroups[0].find(item => item.type === 'date').value) {
 
-        return true;
-    };
+            newError.targetDate = true;
+            isValid = false;
+        }
+
+
+
+        if (!inputGroups[0].find(item => item.type === 'file').value) {
+
+            newError.taskImage = true;
+            isValid = false;
+        }
+
+        setError(newError);
+        if (!isValid) {
+            toast.error("Please Check the fields with Red Outlines.");
+        }
+        return isValid;
+    }
+
+
+
 
     async function handleSubmit() {
 
 
-        // if (!isFormValid()) {
-        //     toast.error("Please fill in all required fields", {
-        //         autoClose: 2000,
-        //     });
-        //     return;
-        // }
+        setIsSubmitting(true);
 
 
-        if (taskId) {
-            const data = {
-                department: departmentData,
-                task_id: taskId,
-                task_title: updateTaskTitle,
-                target_date: updateSelectedDate,
-                task_image: updateTaskFile,
-                tag: tagName
-            };
-            console.log(data)
+        if (validateForm()) {
+            try {
 
-            await updateData(data);
+                if (taskId) {
+                    const data = {
+                        department: departmentData,
+                        task_id: taskId,
+                        task_title: updateTaskTitle,
+                        target_date: updateSelectedDate,
+                        task_image: updateTaskFile,
+                        tag: tagName
+                    };
+                    console.log(data);
 
-        } else {
-            // console.log(inputGroups);
-            const taskData = transformData(inputGroups);
-            // console.log(taskData);
-            const transformedData = convertToDepartmentFormat(deptId, personName, tagName, taskData);
-            console.log(transformedData, 'final data');
-            setdataforval(transformedData)
-            setIsLoading(true)
-            const saveData = await handleAddTask(transformedData);
-            //await fetchTaskData();
-            setIsLoading(false)
-            if (saveData) {
-                toast.success("Task Added Successfully", {
-                    autoClose: 2000,
-                });
-                navigate("/tasks");
+
+                    await updateData(data);
+                } else {
+
+                    const taskData = transformData(inputGroups);
+                    const transformedData = convertToDepartmentFormat(deptId, personName, tagName, taskData);
+                    console.log(transformedData, 'final data');
+
+
+                    setdataforval(transformedData);
+
+
+                    setIsLoading(true);
+                    const saveData = await handleAddTask(transformedData);
+                    setIsLoading(false);
+
+
+                    if (saveData) {
+                        toast.success("Task Added Successfully", { autoClose: 2000 });
+                        navigate("/tasks");
+                    }
+                }
+            } catch (error) {
+                console.error("Error occurred:", error);
+
+                toast.error("An error occurred. Please try again later.");
             }
+        } else {
+            setIsSubmitting(false);
         }
     }
+
+
+
+
 
     /**
      * 
@@ -399,6 +487,12 @@ export default function AddTasks() {
                 if (inputIndex !== -1) {
                     newInputGroups[groupIndex][inputIndex].value = imageValue;
                     setInputGroups(newInputGroups);
+                }
+
+                if (inputGroups[0].find(item => item.type === 'file').value) {
+
+                    error.taskImage = false;
+    
                 }
             }
             setBase64Image(imageValue);
@@ -512,6 +606,9 @@ export default function AddTasks() {
                                                 </Box>
                                             )}
                                             MenuProps={MenuProps}
+                                            error={error.personName}
+                                            sx={{ borderColor: error.personName ? 'red' : '' }}
+
                                         >
                                             {allDepartmentData?.map((value) => (
                                                 <MenuItem
@@ -542,6 +639,9 @@ export default function AddTasks() {
                                                     ))}
                                                 </Box>
                                             )}
+
+                                            error={error.tagName}
+                                            sx={{ borderColor: error.tagName ? 'red' : '' }}
                                         >
                                             {Object.keys(tagMapping).map((displayValue) => (
                                                 <MenuItem key={displayValue} value={displayValue}>
@@ -599,6 +699,8 @@ export default function AddTasks() {
                                                                 size="small"
                                                                 type="file"
                                                                 onChange={(e) => handleChangeForImage(group[0].id, input.id, e)}
+                                                                error={error.taskImage}
+                                                                sx={{ borderColor: error.taskImage ? 'red' : '' }}
                                                             />
                                                             <Box width={'40px'} height={'40px'} minWidth={'40px'} borderRadius={'6px'} backgroundColor='#ebebeb'>
                                                                 {base64Image && (
@@ -636,6 +738,12 @@ export default function AddTasks() {
                                                                     InputLabelProps={{
                                                                         shrink: true
                                                                     }}
+                                                                    error={error.targetDate}
+                                                                    sx={{ borderColor: error.targetDate ? 'red' : '' }}
+
+                                                                    InputProps={{
+                                                                        inputProps: { min: getTodayDate() }
+                                                                    }}
                                                                 />
                                                             )}
                                                         />
@@ -652,6 +760,9 @@ export default function AddTasks() {
                                                             onChange={(e) => handleInputChange(group[0].id, input.id, e)}
                                                             fullWidth
                                                             size="small"
+                                                            error={error.taskTitle}
+                                                            sx={{ borderColor: error.taskTitle ? 'red' : '' }}
+
                                                         />
                                                     </Grid>
                                                 )}
@@ -690,7 +801,7 @@ export default function AddTasks() {
                                                 onChange={(e) => setUpdateTaskTitle(e.target.value)}
                                             />
 
-                                    
+
                                         </Grid>
 
                                         <Grid item xs={6}>
@@ -761,7 +872,7 @@ export default function AddTasks() {
                                             variant="contained"
                                             color="success"
                                             sx={{ color: 'white', marginTop: '2%' }}
-                                            onClick={() => handleSubmit()}
+                                            onClick={handleSubmit}
                                         >
                                             {taskId ? 'Update' : 'Submit'}
                                         </Button>
