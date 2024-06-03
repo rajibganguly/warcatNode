@@ -128,40 +128,39 @@ export default function AddNewMeeting() {
 
   const handleChange = (event) => {
     const {
-      target: { value },
+      target: { value, name },
     } = event;
 
-    if (event.target.name === "tag") {
-      setTagName([...event.target.value]);
+    if (name === "tag") {
+      setTagName([...value]);
     }
-    if (event.target.name === "department") {
+    if (name === "department") {
       // Find the department objects with the matching _ids
       const selectedDepts = allDepartmentData.filter((dept) =>
         value.includes(dept._id)
       );
-      // Create a new array to hold the updated personName state
-      let updatedPersonName = [...personName];
-      let updatedDeptIds = [...departmentIds];
 
-      // Add or remove department names based on the selected value
-      selectedDepts.forEach((dept) => {
-        const index = updatedPersonName.indexOf(dept.department_name);
-        if (index === -1) {
-          // If the department name is not already in the array, add it
-          updatedPersonName.push(dept.department_name);
-          updatedDeptIds.push(dept._id);
-        } else {
-          // If the department name is already in the array, remove it
-          updatedPersonName.splice(index, 1);
-          updatedDeptIds.splice(index, 1);
-        }
-      });
+      // Update the departmentIds state
+      setDepartmentIds(value);
 
-      // Update the personName state with the new array
-      setPersonName(updatedPersonName);
-      setDepartmentIds(updatedDeptIds);
+      // Update the personName state with the names of selected departments
+      setPersonName(selectedDepts.map((dept) => dept.department_name));
     }
   };
+
+  // In the handleRemoveDepartment function
+  const handleRemoveDepartment = (event, departmentId) => {
+    event.preventDefault();
+    const updatedPersonName = personName.filter((deptId) => deptId !== departmentId);
+    const updatedDeptIds = departmentIds.filter((id) => id !== departmentId);
+    setPersonName(updatedPersonName);
+    setDepartmentIds(updatedDeptIds);
+  };
+  const handleRemoveTag = (tag) => {
+    const updatedTags = tagName.filter((t) => t !== tag);
+    setTagName(updatedTags);
+  };
+
 
   const handleDateChange = (date) => {
     setFormData((prevData) => ({
@@ -329,13 +328,11 @@ export default function AddNewMeeting() {
                             <Select
                               fullWidth
                               name="department"
-                              value={personName}
+                              value={departmentIds}
                               onChange={handleChange}
                               size="small"
                               multiple
-                              input={
-                                <OutlinedInput />
-                              }
+                              input={<OutlinedInput />}
                               renderValue={(selected) => (
                                 <Box
                                   sx={{
@@ -344,8 +341,14 @@ export default function AddNewMeeting() {
                                     gap: 0.5,
                                   }}
                                 >
-                                  {selected.map((value) => (
-                                    <Chip key={value} label={value} />
+                                  {selected.map((deptId) => (
+                                    <Chip
+                                      key={deptId}
+                                      label={allDepartmentData.find((dept) => dept._id === deptId)?.department_name}
+                                      onDelete={(event) => handleRemoveDepartment(event, deptId)}
+                                      onMouseDown={(event) => event.stopPropagation()}
+                                    />
+
                                   ))}
                                 </Box>
                               )}
@@ -355,17 +358,14 @@ export default function AddNewMeeting() {
                                 <MenuItem
                                   key={value?._id}
                                   value={value?._id}
-                                  style={getStyles(
-                                    value?._id,
-                                    personName,
-                                    theme
-                                  )}
+                                  style={getStyles(value?._id, departmentIds, theme)}
                                 >
                                   {value?.department_name}
                                 </MenuItem>
                               ))}
                             </Select>
                           </FormControl>
+
                         </Grid>
                         <Grid item xs={12} md={6}>
                           <InputLabel sx={{ mb: 1 }}>Tag</InputLabel>
@@ -380,7 +380,12 @@ export default function AddNewMeeting() {
                               renderValue={(selected) => (
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                   {selected.map((value) => (
-                                    <Chip key={value} label={value} />
+                                    <Chip
+                                      key={value}
+                                      label={value}
+                                      onDelete={() => handleRemoveTag(value)} // Attach onDelete event
+                                      onMouseDown={(event) => event.stopPropagation()}
+                                    />
                                   ))}
                                 </Box>
                               )}

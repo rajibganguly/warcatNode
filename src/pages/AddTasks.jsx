@@ -136,6 +136,8 @@ export default function AddTasks() {
         taskImage: false,
     });
 
+
+
     useEffect(() => {
         const fetchData = async () => {
             setIsLoading(true)
@@ -152,7 +154,7 @@ export default function AddTasks() {
         const encodedMeetingTopic = queryParams.get('meetingTopic');
         const encodedTaskId = queryParams.get('taskId');
         if (encodedMeetingId && encodedMeetingTopic) {
-           
+
             const decodedMeetingId = window.atob(encodedMeetingId);
             const decodedMeetingTopic = window.atob(encodedMeetingTopic);
 
@@ -174,7 +176,7 @@ export default function AddTasks() {
                 setPersonName(departmentNames);
                 const departmentId = selectedDepartments?.filter(dep => dep !== null)?.map(dep => dep._id);
                 setDeptId(departmentId);
-               
+
                 const tags = [...new Set(filteredObject?.department?.flatMap(obj => obj.tag) || [])];
                 console.log(filteredObject?.target_date)
 
@@ -265,27 +267,28 @@ export default function AddTasks() {
             const inputIndex = newInputGroups[groupIndex].findIndex(
                 (input) => input.id === id
             );
-            
+
             if (inputIndex !== -1) {
                 newInputGroups[groupIndex][inputIndex].value = e.target.value;
                 setInputGroups(newInputGroups);
             }
 
-            if (inputGroups[0][0].value) {
+            // if (newInputGroups[groupIndex].find(item => item.type === 'text').value) {
+            //     error.taskTitle[groupIndex] = false;
+            // }
 
-                error.taskTitle = false;
+            // if (newInputGroups[groupIndex].find(item => item.type === 'date').value) {
+            //     error.targetDate[groupIndex] = false;
+            // }
+
+            if (newInputGroups[groupIndex].find(item => item.type === 'file').value) {
+                error.taskImage[groupIndex] = false;
             }
-
-            if (inputGroups[0].find(item => item.type === 'date').value) {
-
-                error.targetDate = false;
-
-            }
-
         }
     }
 
-   
+
+
 
 
     const transformData = (data) => {
@@ -304,7 +307,16 @@ export default function AddTasks() {
         };
     };
 
-    function handleAddClick() {
+    const handleAddClick = () => {
+        // Validate the existing input fields
+        const isValid = validateFields();
+
+        if (!isValid) {
+            toast.error('Please fill out all required fields before adding new ones.');
+            return;
+        }
+
+        // If validation passes, add new fields
         const lastGroupId = inputGroups[inputGroups.length - 1][0]?.id || 0;
         const newInputGroups = [...inputGroups];
         const newGroup = [
@@ -314,14 +326,51 @@ export default function AddTasks() {
         ];
         newInputGroups.push(newGroup);
         setInputGroups(newInputGroups);
-    }
+
+        setError(prev => ({
+            ...prev,
+            taskTitle: false,
+            targetDate: false,
+            taskImage: false,
+        }));
+    };
+    const validateFields = () => {
+        let isValid = true;
+
+
+        inputGroups.forEach(group => {
+            group.forEach(input => {
+                if (input.type === 'text' && !input.value) {
+                    isValid = false;
+                } else if (input.type === 'file' && !input.value) {
+                    isValid = false;
+                } else if (input.type === 'date' && !input.value) {
+                    isValid = false;
+                }
+            });
+        });
+
+        return isValid;
+    };
+
 
     function handleRemoveClick(groupId) {
         const newInputGroups = inputGroups.filter(
             (group) => group[0].id !== groupId
         );
+
         setInputGroups(newInputGroups);
+
+        // Remove the corresponding error for the removed group
+        setError(prev => ({
+            ...prev,
+            taskTitle: false, // Reset to false
+            targetDate: false, // Reset to false
+            taskImage: false, // Reset to false
+        }));
     }
+
+
 
     const convertToDepartmentFormat = (deptid, deptName, tags, task) => {
         return {
@@ -338,7 +387,6 @@ export default function AddTasks() {
 
     function validateForm() {
         let isValid = true;
-
         let newError = {
             personName: false,
             taskTitle: false,
@@ -348,35 +396,29 @@ export default function AddTasks() {
         };
 
         if (!personName[0]) {
-
             newError.personName = true;
             isValid = false;
         }
 
-        if (!inputGroups[0][0].value) {
+        inputGroups.forEach((group, index) => {
+            if (!group.find(item => item.type === 'text').value) {
+                newError.taskTitle = true;
+                isValid = false;
+            }
 
-            newError.taskTitle = true;
-            isValid = false;
-        }
+            if (!group.find(item => item.type === 'date').value) {
+                newError.targetDate = true;
+                isValid = false;
+            }
+
+            if (!group.find(item => item.type === 'file').value) {
+                newError.taskImage = true;
+                isValid = false;
+            }
+        });
 
         if (!tagName.length > 0) {
-
             newError.tagName = true;
-            isValid = false;
-        }
-
-
-        if (!inputGroups[0].find(item => item.type === 'date').value) {
-
-            newError.targetDate = true;
-            isValid = false;
-        }
-
-
-
-        if (!inputGroups[0].find(item => item.type === 'file').value) {
-
-            newError.taskImage = true;
             isValid = false;
         }
 
@@ -390,12 +432,10 @@ export default function AddTasks() {
 
 
 
+
+
     async function handleSubmit() {
-
-
         setIsSubmitting(true);
-
-
         if (validateForm()) {
             try {
 
@@ -417,16 +457,10 @@ export default function AddTasks() {
                     const taskData = transformData(inputGroups);
                     const transformedData = convertToDepartmentFormat(deptId, personName, tagName, taskData);
                     console.log(transformedData, 'final data');
-
-
                     setdataforval(transformedData);
-
-
                     setIsLoading(true);
                     const saveData = await handleAddTask(transformedData);
                     setIsLoading(false);
-
-
                     if (saveData) {
                         toast.success("Task Added Successfully", { autoClose: 2000 });
                         navigate("/tasks");
@@ -441,10 +475,6 @@ export default function AddTasks() {
             setIsSubmitting(false);
         }
     }
-
-
-
-
 
     /**
      * 
@@ -486,7 +516,7 @@ export default function AddTasks() {
                 if (inputGroups[0].find(item => item.type === 'file').value) {
 
                     error.taskImage = false;
-    
+
                 }
             }
             setBase64Image(imageValue);
@@ -794,8 +824,6 @@ export default function AddTasks() {
                                                 value={updateTaskTitle}
                                                 onChange={(e) => setUpdateTaskTitle(e.target.value)}
                                             />
-
-
                                         </Grid>
 
                                         <Grid item xs={6}>
@@ -808,7 +836,7 @@ export default function AddTasks() {
                                                     name="uploadImage"
                                                     size="small"
                                                     type="file"
-                                                    accept="image/*" 
+                                                    accept="image/*"
                                                     // value={updateTaskFile || ''}
                                                     onChange={handleUpdateFileChange}
                                                 />
@@ -887,4 +915,6 @@ export default function AddTasks() {
             </Box>
         </ThemeProvider>
     );
+
+
 }

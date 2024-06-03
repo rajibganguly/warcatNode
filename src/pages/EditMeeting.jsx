@@ -215,13 +215,17 @@ export default function EditMeeting() {
     };
 
     const handleSubmit = async (e) => {
+        const formattedTime = formData.selectTime.format('HH:mm');
+       
+
         e.preventDefault();
         try {
             setIsLoading(true);
             const updatedData = {
                 ...formData,
                 selectDate: formData.selectDate.toISOString(),
-                selectTime: formData.selectTime, //.format('hh:mm'),
+
+                selectTime: formattedTime,
                 departmentNames: departmentNames,
             };
 
@@ -274,6 +278,22 @@ export default function EditMeeting() {
             // toast.dismiss("loading");
             //toast.error("Failed to fetch department data");
         }
+    };
+
+    const handleRemoveTag = (tag) => {
+        const updatedTags = formData.tag.filter((t) => t !== tag);
+        setFormData(prevState => ({
+            ...prevState,
+            tag: updatedTags
+        }));
+    };
+
+    const handleRemoveDepartment = (departmentId) => {
+        const updatedDepartments = formData.departmentIds.filter((id) => id !== departmentId);
+        setFormData(prevState => ({
+            ...prevState,
+            departmentIds: updatedDepartments
+        }));
     };
 
 
@@ -413,7 +433,12 @@ export default function EditMeeting() {
                                                             renderValue={(selected) => (
                                                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                                                     {selected.map((value) => (
-                                                                        <Chip key={value} label={value} />
+                                                                        <Chip
+                                                                            key={value}
+                                                                            label={value}
+                                                                            onDelete={() => handleRemoveDepartment(data.find(d => d.department.department_name === value).department._id)} // Attach onDelete event
+                                                                            onMouseDown={(event) => event.stopPropagation()}
+                                                                        />
                                                                     ))}
                                                                 </Box>
                                                             )}
@@ -443,7 +468,12 @@ export default function EditMeeting() {
                                                             renderValue={(selected) => (
                                                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                                                     {selected.map((value) => (
-                                                                        <Chip key={value} label={value} />
+                                                                        <Chip
+                                                                            key={value}
+                                                                            label={value}
+                                                                            onDelete={() => handleRemoveTag(value)} // Attach onDelete event
+                                                                            onMouseDown={(event) => event.stopPropagation()}
+                                                                        />
                                                                     ))}
                                                                 </Box>
                                                             )}

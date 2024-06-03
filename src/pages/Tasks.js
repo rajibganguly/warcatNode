@@ -84,12 +84,12 @@ export default function Tasks() {
   const [isLoading, setIsLoading] = useState(false);
   const { setAllTaskLists } = React.useContext(TaskContext);
   const { setAllDepartmentList } = React.useContext(DepartmentContext);
-  const[adminVerified, setAdminVerified] =  useState();
+  const [adminVerified, setAdminVerified] = useState();
   const [selectedDept, setSelectedDept] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
   const { allDepartmentList } = React.useContext(DepartmentContext);
   const [searchText, setSearchText] = useState('');
-  
+
   const departmentDropdownItems = allDepartmentList.map(department => ({
     label: department?.department?.department_name,
     value: department?.department?._id
@@ -107,7 +107,7 @@ export default function Tasks() {
       label: "Select",
       items: [
         { label: "ALL Tasks", value: "ALL" },
-        { label: "Assigned", value: "initiated" },
+        { label: "Assigned", value: "Assigned" },
         { label: "In Progress", value: "inprogress" },
         { label: "Completed", value: "completed" },
       ],
@@ -152,32 +152,32 @@ export default function Tasks() {
 
   let filteredData = allTaskListsData;
   // department filter
-  if(selectedDept){
-    if(selectedDept === 'ALL'){
+  if (selectedDept) {
+    if (selectedDept === 'ALL') {
       filteredData = allTaskListsData;
-    }else{
+    } else {
       filteredData = filteredData.filter(task => task.department?.[0]?.dep_id === selectedDept);
     }
   }
   // status filter
-  if(selectedStatus){
-    if(selectedStatus === 'ALL'){
+  if (selectedStatus) {
+    if (selectedStatus === 'ALL') {
       filteredData = allTaskListsData;
-    }else{
+    } else {
       filteredData = filteredData.filter(task => task.status === selectedStatus);
     }
   }
   // search box filter
   const matchesSearchText = (obj, searchText) => {
     if (Array.isArray(obj)) {
-        return obj.some(item => matchesSearchText(item, searchText));
+      return obj.some(item => matchesSearchText(item, searchText));
     }
     if (typeof obj === 'object' && obj !== null) {
-        return Object.values(obj).some(value => matchesSearchText(value, searchText));
+      return Object.values(obj).some(value => matchesSearchText(value, searchText));
     }
     return typeof obj === 'string' && obj.toLowerCase().includes(searchText.toLowerCase());
   };
-  if(searchText){
+  if (searchText) {
     filteredData = filteredData.filter(task => matchesSearchText(task, searchText));
   }
 
@@ -214,10 +214,10 @@ export default function Tasks() {
       const tasksChartData = await ApiConfig.requestData('get', '/task-status-percentages', params, null);
       // console.log(tasksChartData, 'dipan');
       const updateTaskCahrtValues = chartData;
-      if (updateTaskCahrtValues[0]['label'] === 'Total Assigned') {
+      if (updateTaskCahrtValues[0]['label'] === 'Total Tasks') {
         updateTaskCahrtValues[0].percentage = tasksChartData?.totalAssigned ? formatPercentage(tasksChartData?.totalAssigned) : 0
       }
-      if (updateTaskCahrtValues[1]['label'] === 'Initiated') {
+      if (updateTaskCahrtValues[1]['label'] === 'Assigned') {
         updateTaskCahrtValues[1].percentage = tasksChartData?.initiated?.percentage ? formatPercentage(tasksChartData?.initiated?.percentage) : 0
       }
       if (updateTaskCahrtValues[2]['label'] === 'In Progress') {
@@ -253,7 +253,12 @@ export default function Tasks() {
   const handleEditOperationTask = (row) => {
     const encodedTaskId = window.btoa(row?.task_id);
     navigate(`/edit-tasks?taskId=${encodeURIComponent(encodedTaskId)}`);
+
   };
+  // const handleEditOperationTaskNew = (row) => {
+  //   const encodedTaskId = window.btoa(row?.task_id);
+  //   navigate(`/add-tasks-new?taskId=${encodeURIComponent(encodedTaskId)}`);
+  // };
 
   const closeModal = () => {
     setModalVisible(false);
@@ -309,7 +314,7 @@ export default function Tasks() {
 
   const handleAcceptRejectClick = async (taskId, flagValue) => {
     let toastrTextPart = 'reject';
-    if(flagValue === 1){
+    if (flagValue === 1) {
       toastrTextPart = 'accept';
     }
 
@@ -332,14 +337,14 @@ export default function Tasks() {
       });
 
       if (response.ok) {
-        toast.success('Task '+toastrTextPart+'ed successfully');
+        toast.success('Task ' + toastrTextPart + 'ed successfully');
         window.location.reload();
       } else {
-        toast.error('Failed to '+toastrTextPart+' task');
+        toast.error('Failed to ' + toastrTextPart + ' task');
       }
     } catch (error) {
-      console.error('Error '+toastrTextPart+'ing task:', error);
-      toast.error('Failed to '+toastrTextPart+' task');
+      console.error('Error ' + toastrTextPart + 'ing task:', error);
+      toast.error('Failed to ' + toastrTextPart + ' task');
     }
   };
 
@@ -433,6 +438,22 @@ export default function Tasks() {
                             >
                               Add Task
                             </Button>)}
+
+                          {/* {currentRoleType === "admin" && (
+                            <Button
+                              variant="contained"
+                              sx={{
+                                bgcolor: "#6fd088",
+                                color: "white",
+                                "&:hover": {
+                                  bgcolor: "#5eb174",
+                                },
+                              }}
+                              component={Link}
+                              to="/add-tasks-new"
+                            >
+                              Add Task New
+                            </Button>)} */}
                           {currentRoleType === "admin" && (
                             <Button
                               variant="contained"
@@ -470,7 +491,7 @@ export default function Tasks() {
                                   }}
                                 >
                                   <div style={{ width: 130, height: 130 }}>
-                                    {item.label === 'Total Assigned' ? (
+                                    {item.label === 'Total Tasks' ? (
                                       <CircularProgressbar
                                         value={item.percentage}
                                         text={`${item.percentage}`}
@@ -511,6 +532,7 @@ export default function Tasks() {
                           handleViewSubTask={handleViewSubTask}
                           handleViewParentOperationTask={handleViewParentOperationTask}
                           handleEditOperationTask={handleEditOperationTask}
+                          // handleEditOperationTaskNew={handleEditOperationTaskNew}
                           handleAddNoteClick={handleAddNoteClick}
                           handleUploadClick={handleUploadClick}
                           handleAcceptRejectClick={handleAcceptRejectClick}

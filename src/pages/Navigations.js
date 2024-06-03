@@ -26,13 +26,14 @@ import TaskApproval from "./TaskApproval";
 import { fetchRoleType } from "./common";
 
 import Logout from "./Logout";
+import AddTaskNew from "./AddTaskNew";
 
 
 const Navigations = () => {
   const { authToken } = useAuth();
   const userRoleType = fetchRoleType();
 
-  
+
 
   return (
     <Router>
@@ -78,6 +79,10 @@ const Navigations = () => {
           element={authToken && userRoleType === 'admin' ? <AddTask /> : <Navigate to="/" />}
         />
         <Route
+          path="/add-tasks-new"
+          element={authToken && userRoleType === 'admin' ? <AddTaskNew /> : <Navigate to="/" />}
+        />
+        <Route
           path="/edit-tasks"
           element={authToken && userRoleType === 'admin' ? <AddTask /> : <Navigate to="/" />}
         />
@@ -89,7 +94,7 @@ const Navigations = () => {
           path="/edit-departments/:id"
           element={authToken && userRoleType === 'admin' ? <EditDepartment /> : <Navigate to="/" />}
         />
-         <Route
+        <Route
           path="/edit-meeting"
           element={authToken && userRoleType === 'admin' ? <EditMeeting /> : <Navigate to="/" />}
         />
