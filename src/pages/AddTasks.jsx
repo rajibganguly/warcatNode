@@ -122,6 +122,18 @@ export default function AddTasks() {
     const { setAllDepartmentList } = React.useContext(DepartmentContext);
     const { setAllTaskLists } = React.useContext(TaskContext);
     const [formattedTagNames, setFormattedTagNames] = useState([]);
+    const [dataforval, setdataforval] = useState([]);
+
+    const { formState: { errors }, reset } = useForm();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const [error, setError] = useState({
+        personName: false,
+        taskTitle: false,
+        tagName: false,
+        targetDate: false,
+        taskImage: false,
+    });
 
     useEffect(() => {
         const fetchData = async () => {
@@ -164,7 +176,7 @@ export default function AddTasks() {
                 // Flatten the tags array and remove duplicates
                 const tags = [...new Set(filteredObject?.department?.flatMap(obj => obj.tag) || [])];
                 console.log(filteredObject?.target_date)
-                
+
                 setTagName(tags);
                 setUpdateTaskTitle(filteredObject?.task_title);
                 setUpdateSelectedDate(dateSelected(filteredObject?.target_date))
@@ -202,6 +214,11 @@ export default function AddTasks() {
             setDeptId(prevPersonName => [selectedDept._id]);
             setPersonName(prevPersonName => [selectedDept.department_name]);
         }
+
+        setError(prev => ({
+            ...prev,
+            personName: value.length === 0
+        }));
     };
 
     let departmentData = selectedDeparmentobj ? [
@@ -217,6 +234,10 @@ export default function AddTasks() {
         const selectedTags = selectedFormattedTags.map(tag => tagMapping[tag]);
         setTagName(selectedTags);
         setFormattedTagNames(selectedFormattedTags);
+        setError(prev => ({
+            ...prev,
+            tagName: selectedFormattedTags.length === 0
+        }));
     };
 
     const handleOutput = (open) => {
@@ -246,9 +267,38 @@ export default function AddTasks() {
             if (inputIndex !== -1) {
                 newInputGroups[groupIndex][inputIndex].value = e.target.value;
                 setInputGroups(newInputGroups);
+
+
+
+
             }
+
+            if (inputGroups[0][0].value) {
+
+                error.taskTitle = false;
+
+            }
+
+            if (inputGroups[0].find(item => item.type === 'date').value) {
+
+                error.targetDate = false;
+
+            }
+
+          
+
+
         }
     }
+
+    const getTodayDate = () => {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+    };
+
 
     const transformData = (data) => {
         return {
@@ -298,37 +348,115 @@ export default function AddTasks() {
         };
     };
 
-    async function handleSubmit() {
-        if (taskId) {
-            const data = {
-                department: departmentData,
-                task_id: taskId,
-                task_title: updateTaskTitle,
-                target_date: updateSelectedDate,
-                task_image: updateTaskFile,
-                tag: tagName
-            };
-            console.log(data)
+    function validateForm() {
+        let isValid = true;
 
-            await updateData(data);
-        } else {
-            // console.log(inputGroups);
-            const taskData = transformData(inputGroups);
-            // console.log(taskData);
-            const transformedData = convertToDepartmentFormat(deptId, personName, tagName, taskData);
-            console.log(transformedData, 'final data');
-            setIsLoading(true)
-            const saveData = await handleAddTask(transformedData);
-            //await fetchTaskData();
-            setIsLoading(false)
-            if (saveData) {
-                toast.success("Task Added Successfully", {
-                    autoClose: 2000,
-                });
-                navigate("/tasks");
+        let newError = {
+            personName: false,
+            taskTitle: false,
+            tagName: false,
+            targetDate: false,
+            taskImage: false,
+        };
+
+        if (!personName[0]) {
+
+            newError.personName = true;
+            isValid = false;
+        }
+
+        if (!inputGroups[0][0].value) {
+
+            newError.taskTitle = true;
+            isValid = false;
+        }
+
+        if (!tagName.length > 0) {
+
+            newError.tagName = true;
+            isValid = false;
+        }
+
+
+        if (!inputGroups[0].find(item => item.type === 'date').value) {
+
+            newError.targetDate = true;
+            isValid = false;
+        }
+
+
+
+        if (!inputGroups[0].find(item => item.type === 'file').value) {
+
+            newError.taskImage = true;
+            isValid = false;
+        }
+
+        setError(newError);
+        if (!isValid) {
+            toast.error("Please Check the fields with Red Outlines.");
+        }
+        return isValid;
+    }
+
+
+
+
+    async function handleSubmit() {
+
+
+        setIsSubmitting(true);
+
+
+        if (validateForm()) {
+            try {
+
+                if (taskId) {
+                    const data = {
+                        department: departmentData,
+                        task_id: taskId,
+                        task_title: updateTaskTitle,
+                        target_date: updateSelectedDate,
+                        task_image: updateTaskFile,
+                        tag: tagName
+                    };
+                    console.log(data);
+
+
+                    await updateData(data);
+                } else {
+
+                    const taskData = transformData(inputGroups);
+                    const transformedData = convertToDepartmentFormat(deptId, personName, tagName, taskData);
+                    console.log(transformedData, 'final data');
+
+
+                    setdataforval(transformedData);
+
+
+                    setIsLoading(true);
+                    const saveData = await handleAddTask(transformedData);
+                    setIsLoading(false);
+
+
+                    if (saveData) {
+                        toast.success("Task Added Successfully", { autoClose: 2000 });
+                        navigate("/tasks");
+                    }
+                }
+            } catch (error) {
+                console.error("Error occurred:", error);
+
+                toast.error("An error occurred. Please try again later.");
             }
+        } else {
+            setIsSubmitting(false);
         }
     }
+
+
+
+
 
     /**
      * 
@@ -359,6 +487,12 @@ export default function AddTasks() {
                 if (inputIndex !== -1) {
                     newInputGroups[groupIndex][inputIndex].value = imageValue;
                     setInputGroups(newInputGroups);
+                }
+
+                if (inputGroups[0].find(item => item.type === 'file').value) {
+
+                    error.taskImage = false;
+    
                 }
             }
             setBase64Image(imageValue);
@@ -472,6 +606,9 @@ export default function AddTasks() {
                                                 </Box>
                                             )}
                                             MenuProps={MenuProps}
+                                            error={error.personName}
+                                            sx={{ borderColor: error.personName ? 'red' : '' }}
+
                                         >
                                             {allDepartmentData?.map((value) => (
                                                 <MenuItem
@@ -502,6 +639,9 @@ export default function AddTasks() {
                                                     ))}
                                                 </Box>
                                             )}
+
+                                            error={error.tagName}
+                                            sx={{ borderColor: error.tagName ? 'red' : '' }}
                                         >
                                             {Object.keys(tagMapping).map((displayValue) => (
                                                 <MenuItem key={displayValue} value={displayValue}>
@@ -554,11 +694,13 @@ export default function AddTasks() {
                                                             <TextField
                                                                 variant="outlined"
                                                                 fullWidth
-                                                                placeholder="Enter task title"
+                                                                placeholder="Choose Image"
                                                                 name="uploadImage"
                                                                 size="small"
                                                                 type="file"
                                                                 onChange={(e) => handleChangeForImage(group[0].id, input.id, e)}
+                                                                error={error.taskImage}
+                                                                sx={{ borderColor: error.taskImage ? 'red' : '' }}
                                                             />
                                                             <Box width={'40px'} height={'40px'} minWidth={'40px'} borderRadius={'6px'} backgroundColor='#ebebeb'>
                                                                 {base64Image && (
@@ -596,6 +738,12 @@ export default function AddTasks() {
                                                                     InputLabelProps={{
                                                                         shrink: true
                                                                     }}
+                                                                    error={error.targetDate}
+                                                                    sx={{ borderColor: error.targetDate ? 'red' : '' }}
+
+                                                                    InputProps={{
+                                                                        inputProps: { min: getTodayDate() }
+                                                                    }}
                                                                 />
                                                             )}
                                                         />
@@ -612,6 +760,9 @@ export default function AddTasks() {
                                                             onChange={(e) => handleInputChange(group[0].id, input.id, e)}
                                                             fullWidth
                                                             size="small"
+                                                            error={error.taskTitle}
+                                                            sx={{ borderColor: error.taskTitle ? 'red' : '' }}
+
                                                         />
                                                     </Grid>
                                                 )}
@@ -649,6 +800,8 @@ export default function AddTasks() {
                                                 value={updateTaskTitle}
                                                 onChange={(e) => setUpdateTaskTitle(e.target.value)}
                                             />
+
+
                                         </Grid>
 
                                         <Grid item xs={6}>

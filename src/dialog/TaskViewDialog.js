@@ -127,17 +127,17 @@ export default function TaskViewDialog({ open, onClose, meetingData, taskDataVie
                                                     <Box>
                                                         {/* Note description with length check */}
                                                         <Typography color="text.primary" variant="h6" mb={0.5}>
-                                                            Note Description :  {note?.note_description && note.note_description.length > 0 ? note.note_description : 'No description provided'}
+                                                            {note?.note_description && note.note_description.length > 0 ? note.note_description : 'No description provided'}
                                                         </Typography>
 
                                                         {/* Note written by */}
                                                         <Typography color="text.secondary">
-                                                            Note Written By : {note?.note_written_by || 'Unknown author'}
+                                                            {note?.note_written_by || 'Unknown author'}
                                                         </Typography>
 
                                                         {/* Note timestamp */}
                                                         <Typography color="text.secondary">
-                                                            Date :  {formatDateWithmonth(note?.timestamp) || 'No timestamp available'}
+                                                            {formatDateWithmonth(note?.timestamp) || 'No timestamp available'}
                                                         </Typography>
                                                     </Box>
                                                 </Box>
