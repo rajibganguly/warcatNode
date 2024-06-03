@@ -238,11 +238,27 @@ export default function AddTasks() {
         const selectedTags = selectedFormattedTags.map(tag => tagMapping[tag]);
         setTagName(selectedTags);
         setFormattedTagNames(selectedFormattedTags);
-        setError(prev => ({
+    
+        setError((prev) => ({
             ...prev,
             tagName: selectedFormattedTags.length === 0
         }));
     };
+    
+    const handleRemoveTag = (tag) => {
+        const displayValue = reverseTagMapping[tag];
+        const updatedTags = tagName.filter((t) => t !== tag);
+        const updatedFormattedTags = formattedTagNames.filter((t) => t !== displayValue);
+    
+        setTagName(updatedTags);
+        setFormattedTagNames(updatedFormattedTags);
+    
+        setError((prev) => ({
+            ...prev,
+            tagName: updatedFormattedTags.length === 0
+        }));
+    };
+    
     
 
     const handleOutput = (open) => {
@@ -676,7 +692,12 @@ export default function AddTasks() {
                                             renderValue={(selected) => (
                                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                                     {selected?.map((value) => (
-                                                        <Chip key={value} label={value} />
+                                                        <Chip
+                                                        key={value}
+                                                        label={value}
+                                                        onDelete={() => handleRemoveTag(tagMapping[value])} // Attach onDelete event
+                                                        onMouseDown={(event) => event.stopPropagation()}
+                                                      />
                                                     ))}
                                                 </Box>
                                             )}
