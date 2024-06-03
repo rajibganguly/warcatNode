@@ -90,29 +90,33 @@ export default function Tasks() {
   const { allDepartmentList } = React.useContext(DepartmentContext);
   const [searchText, setSearchText] = useState('');
   
-  const departmentDropdownItems = allDepartmentList.map(department => ({
+  const departmentDropdownItems = allDepartmentList?.map(department => ({
     label: department?.department?.department_name,
     value: department?.department?._id
   }));
 
-  const dropdownData = [
-    {
+  const dropdownData = [];
+  
+  if (departmentDropdownItems && departmentDropdownItems.length > 0) {
+    dropdownData.push({
       label: "Select",
       items: [
         { label: "All Department", value: "ALL" },
         ...departmentDropdownItems
       ],
-    },
-    {
-      label: "Select",
-      items: [
-        { label: "ALL Tasks", value: "ALL" },
-        { label: "Assigned", value: "initiated" },
-        { label: "In Progress", value: "inprogress" },
-        { label: "Completed", value: "completed" },
-      ],
-    },
-  ];
+    });
+  }
+  
+  // Add task status dropdown items
+  dropdownData.push({
+    label: "Select",
+    items: [
+      { label: "ALL Tasks", value: "ALL" },
+      { label: "Assigned", value: "initiated" },
+      { label: "In Progress", value: "inprogress" },
+      { label: "Completed", value: "completed" },
+    ],
+  });
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -150,11 +154,15 @@ export default function Tasks() {
     { text: "Operations", dataField: 'taskoperation' }
   ];
 
-  let filteredData = allTaskListsData;
+  let filteredData = allTaskListsData; // 10
   // department filter
   if(selectedDept){
     if(selectedDept === 'ALL'){
-      filteredData = allTaskListsData;
+      if(selectedStatus === 'ALL'){
+        filteredData = allTaskListsData;
+      }else{
+        filteredData = filteredData.filter(task => task.status === selectedStatus);
+      }
     }else{
       filteredData = filteredData.filter(task => task.department?.[0]?.dep_id === selectedDept);
     }
@@ -162,7 +170,11 @@ export default function Tasks() {
   // status filter
   if(selectedStatus){
     if(selectedStatus === 'ALL'){
-      filteredData = allTaskListsData;
+      if(selectedDept === 'ALL'){
+        filteredData = allTaskListsData;
+      }else{
+        filteredData = filteredData.filter(task => task.department?.[0]?.dep_id === selectedDept);
+      }
     }else{
       filteredData = filteredData.filter(task => task.status === selectedStatus);
     }
