@@ -216,7 +216,7 @@ export default function EditMeeting() {
 
     const handleSubmit = async (e) => {
         const formattedTime = formData.selectTime.format('HH:mm');
-       
+
 
         e.preventDefault();
         try {
@@ -415,7 +415,7 @@ export default function EditMeeting() {
                                                     <FormControl sx={{ width: '100%' }}>
                                                         <InputLabel id="demo-multiple-chip-label1">Department / Government Organisation</InputLabel>
                                                         <Select
-                                                            labelId="demo-multiple-chip-label1"
+                                                            label="Department / Government Organisation"
                                                             id="demo-multiple-chip"
                                                             fullWidth
                                                             multiple
@@ -429,7 +429,7 @@ export default function EditMeeting() {
                                                                     value: e.target.value
                                                                 }
                                                             })}
-                                                            input={<OutlinedInput id="select-multiple-chip1" label="Chip" name="departmentIds" />}
+
                                                             renderValue={(selected) => (
                                                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                                                     {selected.map((value) => (

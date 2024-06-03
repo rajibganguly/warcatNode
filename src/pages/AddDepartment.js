@@ -97,60 +97,66 @@ export default function AddDepartment() {
     return emailRegex.test(email);
   };
 
-const isFormValid = () => {
-  const newErrors = {};
-  let valid = true;
+  const styles = {
+    labelAsterisk: {
+      color: "red"
+    }
+  };
 
-  if (!formData.dep_name) {
-    newErrors.dep_name = "Department name is required";
-    valid = false;
-  }
+  const isFormValid = () => {
+    const newErrors = {};
+    let valid = true;
 
-  if (!formData.secretary.name) {
-    newErrors.secretaryName = "Secretary name is required";
-    valid = false;
-  }
+    if (!formData.dep_name) {
+      newErrors.dep_name = "Department name is required";
+      valid = false;
+    }
 
-  if (!formData.secretary.phone_number) {
-    newErrors.secretaryPhoneNumber = "Secretary phone number is required";
-    valid = false;
-  }
+    if (!formData.secretary.name) {
+      newErrors.secretaryName = "Secretary name is required";
+      valid = false;
+    }
 
-  if (!formData.secretary.email || errors.secretaryEmail) {
-    newErrors.secretaryEmail = "Valid Secretary email is required";
-    valid = false;
-  }
+    if (!formData.secretary.phone_number) {
+      newErrors.secretaryPhoneNumber = "Secretary phone number is required";
+      valid = false;
+    }
 
-  if (!formData.headOffice.name) {
-    newErrors.headOfficeName = "Head of Office name is required";
-    valid = false;
-  }
+    if (!formData.secretary.email || errors.secretaryEmail) {
+      newErrors.secretaryEmail = "Valid Secretary email is required";
+      valid = false;
+    }
 
-  if (!formData.headOffice.designation) {
-    newErrors.headOfficeDesignation = "Head of Office designation is required";
-    valid = false;
-  }
+    if (!formData.headOffice.name) {
+      newErrors.headOfficeName = "Head of Office name is required";
+      valid = false;
+    }
 
-  if (!formData.headOffice.phone_number) {
-    newErrors.headOfficePhoneNumber = "Head of Office phone number is required";
-    valid = false;
-  }
+    if (!formData.headOffice.designation) {
+      newErrors.headOfficeDesignation = "Head of Office designation is required";
+      valid = false;
+    }
 
-  if (!formData.headOffice.email || errors.headOfficeEmail) {
-    newErrors.headOfficeEmail = "Valid Head of Office email is required";
-    valid = false;
-  }
+    if (!formData.headOffice.phone_number) {
+      newErrors.headOfficePhoneNumber = "Head of Office phone number is required";
+      valid = false;
+    }
 
-  setErrors(newErrors);
+    if (!formData.headOffice.email || errors.headOfficeEmail) {
+      newErrors.headOfficeEmail = "Valid Head of Office email is required";
+      valid = false;
+    }
 
-  if (!valid) {
-    toast.error("Please correct the highlighted fields", {
-      autoClose: 2000,
-    });
-  }
+    setErrors(newErrors);
 
-  return valid;
-};
+    if (!valid) {
+      toast.error("Please correct the highlighted fields", {
+        autoClose: 2000,
+      });
+    }
+
+    return valid;
+  };
 
 
 
@@ -338,7 +344,12 @@ const isFormValid = () => {
 
                       <TextField
                         id="outlined-basic"
-                        label="Department / Government Organisation"
+                        label={
+                          <span>
+                            Department / Government Organisation
+                            <span style={styles.labelAsterisk}> *</span>
+                          </span>
+                        }
                         variant="outlined"
                         fullWidth
                         size="small"
@@ -346,7 +357,7 @@ const isFormValid = () => {
                         value={formData.dep_name}
                         onChange={handleChange}
                         error={isSubmitted && !formData.dep_name}
-                        // helperText={isSubmitted && !formData.dep_name ? "Department name is required" : ""}
+                      // helperText={isSubmitted && !formData.dep_name ? "Department name is required" : ""}
 
                       />
 
@@ -368,7 +379,13 @@ const isFormValid = () => {
 
                           <TextField
                             id="outlined-basic-1"
-                            label="Enter Secretary Name"
+                          
+                            label={
+                              <span>
+                               Enter Secretary Name
+                                <span style={styles.labelAsterisk}> *</span>
+                              </span>
+                            }
                             variant="outlined"
                             sx={{ width: "100%" }}
                             name="secretary.name"
@@ -376,7 +393,7 @@ const isFormValid = () => {
                             onChange={handleChange}
                             size="small"
                             error={isSubmitted && !formData.secretary.name}
-                            // helperText={isSubmitted && !formData.secretary.name ? "Secretary name is required" : ""}
+                          // helperText={isSubmitted && !formData.secretary.name ? "Secretary name is required" : ""}
                           />
 
                         </Grid>
@@ -384,7 +401,13 @@ const isFormValid = () => {
 
                           <TextField
                             id="outlined-basic-2"
-                            label="Enter Secretary Phone Number"
+                           
+                            label={
+                              <span>
+                              Enter Secretary Phone Number
+                                <span style={styles.labelAsterisk}> *</span>
+                              </span>
+                            }
                             placeholder=""
                             variant="outlined"
                             size="small"
@@ -404,7 +427,7 @@ const isFormValid = () => {
                               startAdornment: <InputAdornment position="start">+91</InputAdornment>,
                             }}
                             error={isSubmitted && !formData.secretary.phone_number}
-                            // helperText={isSubmitted && !formData.secretary.phone_number ? "Secretary phone number is required" : ""}
+                          // helperText={isSubmitted && !formData.secretary.phone_number ? "Secretary phone number is required" : ""}
                           />
 
                         </Grid>
@@ -412,7 +435,13 @@ const isFormValid = () => {
 
                           <TextField
                             id="outlined-basic-3"
-                            label="Enter Secretary Email Id"
+                            
+                            label={
+                              <span>
+                               Enter Secretary Email Id
+                                <span style={styles.labelAsterisk}> *</span>
+                              </span>
+                            }
                             variant="outlined"
                             sx={{ width: "100%" }}
                             name="secretary.email"
@@ -447,7 +476,13 @@ const isFormValid = () => {
 
                             <TextField
                               id="outlined-basic-1"
-                              label="Enter Head of Office Name"
+                              
+                              label={
+                                <span>
+                                Enter Head of Office Name
+                                  <span style={styles.labelAsterisk}> *</span>
+                                </span>
+                              }
                               variant="outlined"
                               sx={{ width: "100%" }}
                               name="headOffice.name"
@@ -455,12 +490,18 @@ const isFormValid = () => {
                               onChange={handleChange}
                               size="small"
                               error={isSubmitted && !formData.headOffice.name}
-                              // helperText={isSubmitted && !formData.headOffice.name ? "Head of Office name is required" : ""}
+                            // helperText={isSubmitted && !formData.headOffice.name ? "Head of Office name is required" : ""}
                             />
 
                             <TextField
                               id="outlined-basic-2"
-                              label="Enter Head of Office Designation"
+                            
+                              label={
+                                <span>
+                                 Enter Head of Office Designation
+                                  <span style={styles.labelAsterisk}> *</span>
+                                </span>
+                              }
                               variant="outlined"
                               sx={{ width: "100%" }}
                               name="headOffice.designation"
@@ -468,7 +509,7 @@ const isFormValid = () => {
                               onChange={handleChange}
                               size="small"
                               error={isSubmitted && !formData.headOffice.designation}
-                              // helperText={isSubmitted && !formData.headOffice.designation ? "Head of Office designation is required" : ""}
+                            // helperText={isSubmitted && !formData.headOffice.designation ? "Head of Office designation is required" : ""}
                             />
                           </Stack>
                         </Grid>
@@ -477,7 +518,13 @@ const isFormValid = () => {
 
                             <TextField
                               id="outlined-basic-1"
-                              label="Enter Head of Office Phone Number"
+                              
+                              label={
+                                <span>
+                                 Enter Head of Office Phone Number
+                                  <span style={styles.labelAsterisk}> *</span>
+                                </span>
+                              }
                               placeholder=""
                               variant="outlined"
                               size="small"
@@ -497,12 +544,18 @@ const isFormValid = () => {
                                 startAdornment: <InputAdornment position="start">+91</InputAdornment>,
                               }}
                               error={isSubmitted && !formData.headOffice.phone_number}
-                              // helperText={isSubmitted && !formData.headOffice.phone_number ? "Head of Office phone number is required" : ""}
+                            // helperText={isSubmitted && !formData.headOffice.phone_number ? "Head of Office phone number is required" : ""}
                             />
 
                             <TextField
                               id="outlined-basic-2"
-                              label="Head of Office Email Id"
+                              
+                              label={
+                                <span>
+                                Head of Office Email Id
+                                  <span style={styles.labelAsterisk}> *</span>
+                                </span>
+                              }
                               variant="outlined"
                               sx={{ width: "100%" }}
                               name="headOffice.email"
@@ -510,7 +563,7 @@ const isFormValid = () => {
                               onChange={handleChange}
                               size="small"
                               error={isSubmitted && !!errors.headOfficeEmail}
-                              // helperText={isSubmitted && errors.headOfficeEmail}
+                            // helperText={isSubmitted && errors.headOfficeEmail}
                             />
                           </Stack>
                         </Grid>
