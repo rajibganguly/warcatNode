@@ -121,6 +121,64 @@ export default function AddNewMeeting() {
   const { allDepartmentList } = React.useContext(DepartmentContext);
   const allDepartmentData = allDepartmentList?.map((dept) => dept.department);
 
+
+  const [error, setError] = useState({
+    departmentIds: false,
+    tagName: false,
+    meetingTopic: false,
+    selectDate: false,
+    selectTime: false,
+    base64Image: false,
+  });
+
+  const validateForm = () => {
+    let isValid = true;
+    let newError = {
+      departmentIds: false,
+      tagName: false,
+      meetingTopic: false,
+      selectDate: false,
+      selectTime: false,
+      base64Image: false,
+    };
+  
+    if (departmentIds.length === 0) {
+      newError.departmentIds = true;
+      isValid = false;
+    }
+  
+    if (tagName.length === 0) {
+      newError.tagName = true;
+      isValid = false;
+    }
+  
+    if (!meetingTopic) {
+      newError.meetingTopic = true;
+      isValid = false;
+    }
+  
+    if (!meetingDate) {
+      newError.selectDate = true;
+      isValid = false;
+    }
+  
+    if (!meetingTime) {
+      newError.selectTime = true;
+      isValid = false;
+    }
+  
+    if (!base64Image) {
+      newError.base64Image = true;
+      isValid = false;
+    }
+  
+    setError(newError);
+  
+    return isValid;
+  };
+  
+  
+
   /**
    * 
    * All Handle change except image 
@@ -130,23 +188,31 @@ export default function AddNewMeeting() {
     const {
       target: { value, name },
     } = event;
-
+  
     if (name === "tag") {
       setTagName([...value]);
+      if (value.length > 0) {
+        setError(prev => ({ ...prev, tagName: false }));
+      }
     }
     if (name === "department") {
       // Find the department objects with the matching _ids
       const selectedDepts = allDepartmentData.filter((dept) =>
         value.includes(dept._id)
       );
-
+  
       // Update the departmentIds state
       setDepartmentIds(value);
-
+      if (value.length > 0) {
+        setError(prev => ({ ...prev, departmentIds: false }));
+      }
+  
       // Update the personName state with the names of selected departments
       setPersonName(selectedDepts.map((dept) => dept.department_name));
     }
   };
+
+
 
   // In the handleRemoveDepartment function
   const handleRemoveDepartment = (event, departmentId) => {
@@ -182,6 +248,11 @@ export default function AddNewMeeting() {
    * handleAddMeeting POST call
    */
   const handleAddMeeting = async () => {
+    if (!validateForm()) {
+      toast.error("Please check the fields with red outlines.");
+      return;
+    }
+  
     const formDataSend = {
       departmentIds: departmentIds,
       tag: tagName,
@@ -207,6 +278,7 @@ export default function AddNewMeeting() {
       setIsLoading(false);
     }
   };
+  
 
   const handleOutput = (open) => {
     toggleDrawer();
@@ -215,14 +287,28 @@ export default function AddNewMeeting() {
     setOpen(!open);
   };
 
-  function getMeetingValue(e) {
-    if (e.target.name === 'date') {
-      setMeetingDate(e.target.value);
+  const getMeetingValue = (e) => {
+    const { name, value } = e.target;
+    if (name === 'date') {
+      setMeetingDate(value);
+      if (value) {
+        setError(prev => ({ ...prev, selectDate: false }));
+      }
     }
-    if (e.target.name === 'time') {
-      setMeetingTime(e.target.value);
+    if (name === 'time') {
+      setMeetingTime(value);
+      if (value) {
+        setError(prev => ({ ...prev, selectTime: false }));
+      }
     }
-  }
+  };
+
+  const handleMeetingTopicChange = (event) => {
+    setMeetingTopic(event.target.value);
+    if (event.target.value) {
+      setError(prev => ({ ...prev, meetingTopic: false }));
+    }
+  };
 
   /**
    * 
@@ -235,11 +321,14 @@ export default function AddNewMeeting() {
       const reader = new FileReader();
       reader.onload = () => {
         setBase64Image(reader.result);
-        console.log(reader.result, base64Image)
+        if (reader.result) {
+          setError(prev => ({ ...prev, base64Image: false }));
+        }
       };
       reader.readAsDataURL(file);
     }
-  }
+  };
+  
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -353,6 +442,8 @@ export default function AddNewMeeting() {
                                 </Box>
                               )}
                               MenuProps={MenuProps}
+                              error={error.departmentIds}
+                              sx={{ borderColor: error.departmentIds ? 'red' : '' }}
                             >
                               {allDepartmentData.map((value) => (
                                 <MenuItem
@@ -389,6 +480,8 @@ export default function AddNewMeeting() {
                                   ))}
                                 </Box>
                               )}
+                              error={error.tagName}
+                              sx={{ borderColor: error.tagName ? 'red' : '' }}
                             >
                               {Object.keys(tagMapping).map((key) => (
                                 <MenuItem key={key} value={key}>
@@ -427,6 +520,8 @@ export default function AddNewMeeting() {
                               setMeetingTopic(event.target.value)
                             }
                             size="small"
+                            error={error.meetingTopic}
+                            sx={{ borderColor: error.meetingTopic ? 'red' : '' }}
                             aria-readonly
                           />
                         </Grid>
@@ -442,6 +537,8 @@ export default function AddNewMeeting() {
                             InputProps={{
                               inputProps: { min: getTodayDate() }
                             }}
+                            error={error.selectDate}
+                            sx={{ borderColor: error.selectDate ? 'red' : '' }}
                           />
                         </Grid>
 
@@ -453,12 +550,14 @@ export default function AddNewMeeting() {
                             fullWidth
                             size="small"
                             onChange={getMeetingValue}
+                            error={error.selectTime}
+                            sx={{ borderColor: error.selectTime ? 'red' : '' }}
                           />
                         </Grid>
 
                         <Grid item xs={6} md={6}>
                           <InputLabel sx={{ mb: 1 }}>Upload Images</InputLabel>
-                          <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} border={'1px solid rgb(133, 133, 133)'} gap={2}>
+                          <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} border={error.base64Image ? '1px solid red' : '1px solid rgb(133, 133, 133)'} gap={2}>
                             <input
                               variant="outlined"
                               fullWidth
@@ -469,6 +568,7 @@ export default function AddNewMeeting() {
                               accept="image/png, image/jpeg"
                               onChange={handleChangeForImage}
                               className="inputfile inputfile-6"
+                             
 
                             />
                             <Box width={'40px'} height={'40px'} minWidth={'40px'} borderRadius={'6px'} backgroundColor='#ebebeb'>
