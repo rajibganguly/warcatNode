@@ -196,12 +196,6 @@ function TableNew({
               <EditOutlined />
             </Button>
             )}
-             {/* {userRoleType === 'admin' && row?.admin_verified === 0 &&
-            (<Button onClick={() => handleEditOperationTaskNew(row)}
-              style={{ backgroundColor: '#0097a7', color: '#ffffff', marginRight: '2px' }}>
-              <EditOutlined />
-            </Button>
-            )} */}
           <Button onClick={() => handleViewParentOperationTask(row)}
             style={{ backgroundColor: '#fb4', color: 'black' }}>
             <EyeOutlined />

@@ -78,10 +78,7 @@ const Navigations = () => {
           path="/add-tasks"
           element={authToken && userRoleType === 'admin' ? <AddTask /> : <Navigate to="/" />}
         />
-        <Route
-          path="/add-tasks-new"
-          element={authToken && userRoleType === 'admin' ? <AddTaskNew /> : <Navigate to="/" />}
-        />
+      
         <Route
           path="/edit-tasks"
           element={authToken && userRoleType === 'admin' ? <AddTask /> : <Navigate to="/" />}

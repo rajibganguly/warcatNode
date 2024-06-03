@@ -438,22 +438,6 @@ export default function Tasks() {
                             >
                               Add Task
                             </Button>)}
-
-                          {/* {currentRoleType === "admin" && (
-                            <Button
-                              variant="contained"
-                              sx={{
-                                bgcolor: "#6fd088",
-                                color: "white",
-                                "&:hover": {
-                                  bgcolor: "#5eb174",
-                                },
-                              }}
-                              component={Link}
-                              to="/add-tasks-new"
-                            >
-                              Add Task New
-                            </Button>)} */}
                           {currentRoleType === "admin" && (
                             <Button
                               variant="contained"
