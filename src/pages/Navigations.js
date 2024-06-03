@@ -26,7 +26,7 @@ import TaskApproval from "./TaskApproval";
 import { fetchRoleType } from "./common";
 
 import Logout from "./Logout";
-import AddTaskNew from "./AddTaskNew";
+
 
 
 const Navigations = () => {
