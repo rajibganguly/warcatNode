@@ -134,7 +134,10 @@ export default function AddTasks() {
         tagName: false,
         taskTitle: {},
         targetDate: {},
-        taskImage: {}
+        taskImage: {},
+        updateTaskTitle: false,
+        updateSelectedDate: false,
+        updateTaskFile: false,
     });
 
     useEffect(() => {
@@ -195,14 +198,18 @@ export default function AddTasks() {
 
     const handleUpdateFileChange = (event) => {
         let file = event.target.files[0];
-
+    
         const reader = new FileReader();
         reader.onloadend = async function () {
             file = reader.result.split(',')[1];
             setupdateTaskFile(`data:image/jpeg;base64,` + file);
+            if (file) {
+                setError(prev => ({ ...prev, updateTaskFile: false }));
+            }
         };
         reader.readAsDataURL(file);
     };
+    
 
     const handleChange = (event) => {
         const {
@@ -420,6 +427,9 @@ export default function AddTasks() {
             taskTitle: {},
             targetDate: {},
             taskImage: {},
+            updateTaskTitle: false,
+            updateSelectedDate: false,
+            updateTaskFile: false,
         };
     
         if (!personName[0]) {
@@ -452,6 +462,24 @@ export default function AddTasks() {
                 isValid = false;
             }
         });
+
+        if (taskId) {
+            if (!updateTaskTitle) {
+                newError.updateTaskTitle = true;
+                isValid = false;
+            }
+    
+            if (!updateSelectedDate) {
+                newError.updateSelectedDate = true;
+                isValid = false;
+            }
+    
+            if (!updateTaskFile) {
+                newError.updateTaskFile = true;
+                isValid = false;
+            }
+        }
+    
     
         setError(newError);
     
@@ -860,8 +888,14 @@ export default function AddTasks() {
                                                 name="taskTitle"
                                                 size="small"
                                                 value={updateTaskTitle}
-                                                onChange={(e) => setUpdateTaskTitle(e.target.value)}
-                                                
+                                                onChange={(e) => {
+                                                    setUpdateTaskTitle(e.target.value);
+                                                    if (e.target.value) {
+                                                        setError(prev => ({ ...prev, updateTaskTitle: false }));
+                                                    }
+                                                }}
+                                                error={error.updateTaskTitle}
+                                                sx={{ borderColor: error.updateTaskTitle ? 'red' : '' }}
                                                 
                                             />
                                         </Grid>
@@ -879,6 +913,8 @@ export default function AddTasks() {
                                                     accept="image/*"
                                                     // value={updateTaskFile || ''}
                                                     onChange={handleUpdateFileChange}
+                                                    error={error.updateTaskFile}
+                                                    sx={{ borderColor: error.updateTaskFile ? 'red' : '' }}
                                                 />
                                                 <Box width={'40px'} height={'40px'} minWidth={'40px'} borderRadius={'6px'} backgroundColor='#ebebeb'>
                                                     {updateTaskFile && (
@@ -904,6 +940,9 @@ export default function AddTasks() {
                                                         placeholder="dd-mm-yyyy"
                                                         onChange={(e) => {
                                                             setUpdateSelectedDate(e.target.value);
+                                                            if (e.target.value) {
+                                                                setError(prev => ({ ...prev, updateSelectedDate: false }));
+                                                            }
                                                         }}
 
                                                         value={updateSelectedDate || ''}
@@ -912,6 +951,8 @@ export default function AddTasks() {
                                                         InputLabelProps={{
                                                             shrink: true
                                                         }}
+                                                        error={error.updateSelectedDate}
+                                                        sx={{ borderColor: error.updateSelectedDate ? 'red' : '' }}
                                                     />
                                                 )}
                                             />
