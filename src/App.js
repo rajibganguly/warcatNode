@@ -5,6 +5,7 @@ import { TaskProvider } from './context/TaskContext';
 import { AuthProvider } from './providers/AuthProvider';
 import { MeetingProvider } from './context/MeetingContext';
 import { DepartmentProvider } from './context/DepartmentContext';
+import imageAP from './assets/logo-dark-sm-removebg-preview.png'
 
 function App() {
   return (
