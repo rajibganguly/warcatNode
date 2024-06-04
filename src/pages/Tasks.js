@@ -109,7 +109,7 @@ export default function Tasks() {
       label: "Select",
       items: [
         { label: "ALL Tasks", value: "ALL" },
-        { label: "Assigned", value: "Assigned" },
+        { label: "Assigned", value: "initiated" },
         { label: "In Progress", value: "inprogress" },
         { label: "Completed", value: "completed" },
       ],
