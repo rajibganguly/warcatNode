@@ -28,12 +28,11 @@ import { fetchRoleType } from "./common";
 import Logout from "./Logout";
 
 
-
 const Navigations = () => {
   const { authToken } = useAuth();
   const userRoleType = fetchRoleType();
 
-
+  
 
   return (
     <Router>
@@ -78,7 +77,6 @@ const Navigations = () => {
           path="/add-tasks"
           element={authToken && userRoleType === 'admin' ? <AddTask /> : <Navigate to="/" />}
         />
-      
         <Route
           path="/edit-tasks"
           element={authToken && userRoleType === 'admin' ? <AddTask /> : <Navigate to="/" />}
@@ -91,7 +89,7 @@ const Navigations = () => {
           path="/edit-departments/:id"
           element={authToken && userRoleType === 'admin' ? <EditDepartment /> : <Navigate to="/" />}
         />
-        <Route
+         <Route
           path="/edit-meeting"
           element={authToken && userRoleType === 'admin' ? <EditMeeting /> : <Navigate to="/" />}
         />

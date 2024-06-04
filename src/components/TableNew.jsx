@@ -34,8 +34,7 @@ function TableNew({
   handleTaskView,
   handleEditmeeting,
   handleAcceptRejectClick,
-  setSearchText,
-  handleEditOperationTaskNew
+  setSearchText
 }) {
   const getNestedValue = (obj, path) => {
     const keys = path.split(".");
@@ -183,14 +182,14 @@ function TableNew({
 
     if (column.dataField === "status") {
       return (
-        getStatusText(row.status) + ' ' + formatVerifiedStatus(row.admin_verified)
+        getStatusText(row.status)+' '+formatVerifiedStatus(row.admin_verified)
       )
     }
 
     if (column.dataField === "taskoperation") {
       return (
         <div style={{ display: "flex" }}>
-          {userRoleType === 'admin' && row?.admin_verified === 0 &&
+          {userRoleType === 'admin' &&  row?.admin_verified === 0  &&
             (<Button onClick={() => handleEditOperationTask(row)}
               style={{ backgroundColor: '#0097a7', color: '#ffffff', marginRight: '2px' }}>
               <EditOutlined />

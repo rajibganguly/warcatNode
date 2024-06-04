@@ -97,66 +97,60 @@ export default function AddDepartment() {
     return emailRegex.test(email);
   };
 
-  const styles = {
-    labelAsterisk: {
-      color: "red"
-    }
-  };
+const isFormValid = () => {
+  const newErrors = {};
+  let valid = true;
 
-  const isFormValid = () => {
-    const newErrors = {};
-    let valid = true;
+  if (!formData.dep_name) {
+    newErrors.dep_name = "Department name is required";
+    valid = false;
+  }
 
-    if (!formData.dep_name) {
-      newErrors.dep_name = "Department name is required";
-      valid = false;
-    }
+  if (!formData.secretary.name) {
+    newErrors.secretaryName = "Secretary name is required";
+    valid = false;
+  }
 
-    if (!formData.secretary.name) {
-      newErrors.secretaryName = "Secretary name is required";
-      valid = false;
-    }
+  if (!formData.secretary.phone_number) {
+    newErrors.secretaryPhoneNumber = "Secretary phone number is required";
+    valid = false;
+  }
 
-    if (!formData.secretary.phone_number) {
-      newErrors.secretaryPhoneNumber = "Secretary phone number is required";
-      valid = false;
-    }
+  if (!formData.secretary.email || errors.secretaryEmail) {
+    newErrors.secretaryEmail = "Valid Secretary email is required";
+    valid = false;
+  }
 
-    if (!formData.secretary.email || errors.secretaryEmail) {
-      newErrors.secretaryEmail = "Valid Secretary email is required";
-      valid = false;
-    }
+  if (!formData.headOffice.name) {
+    newErrors.headOfficeName = "Head of Office name is required";
+    valid = false;
+  }
 
-    if (!formData.headOffice.name) {
-      newErrors.headOfficeName = "Head of Office name is required";
-      valid = false;
-    }
+  if (!formData.headOffice.designation) {
+    newErrors.headOfficeDesignation = "Head of Office designation is required";
+    valid = false;
+  }
 
-    if (!formData.headOffice.designation) {
-      newErrors.headOfficeDesignation = "Head of Office designation is required";
-      valid = false;
-    }
+  if (!formData.headOffice.phone_number) {
+    newErrors.headOfficePhoneNumber = "Head of Office phone number is required";
+    valid = false;
+  }
 
-    if (!formData.headOffice.phone_number) {
-      newErrors.headOfficePhoneNumber = "Head of Office phone number is required";
-      valid = false;
-    }
+  if (!formData.headOffice.email || errors.headOfficeEmail) {
+    newErrors.headOfficeEmail = "Valid Head of Office email is required";
+    valid = false;
+  }
 
-    if (!formData.headOffice.email || errors.headOfficeEmail) {
-      newErrors.headOfficeEmail = "Valid Head of Office email is required";
-      valid = false;
-    }
+  setErrors(newErrors);
 
-    setErrors(newErrors);
+  if (!valid) {
+    toast.error("Please correct the highlighted fields", {
+      autoClose: 2000,
+    });
+  }
 
-    if (!valid) {
-      toast.error("Please correct the highlighted fields", {
-        autoClose: 2000,
-      });
-    }
-
-    return valid;
-  };
+  return valid;
+};
 
 
 
@@ -344,12 +338,7 @@ export default function AddDepartment() {
 
                       <TextField
                         id="outlined-basic"
-                        label={
-                          <span>
-                            Department / Government Organisation
-                            <span style={styles.labelAsterisk}> *</span>
-                          </span>
-                        }
+                        label="Department / Government Organisation"
                         variant="outlined"
                         fullWidth
                         size="small"
@@ -357,7 +346,7 @@ export default function AddDepartment() {
                         value={formData.dep_name}
                         onChange={handleChange}
                         error={isSubmitted && !formData.dep_name}
-                      // helperText={isSubmitted && !formData.dep_name ? "Department name is required" : ""}
+                        helperText={isSubmitted && !formData.dep_name ? "Department name is required" : ""}
 
                       />
 
@@ -379,13 +368,7 @@ export default function AddDepartment() {
 
                           <TextField
                             id="outlined-basic-1"
-                          
-                            label={
-                              <span>
-                               Enter Secretary Name
-                                <span style={styles.labelAsterisk}> *</span>
-                              </span>
-                            }
+                            label="Enter Secretary Name"
                             variant="outlined"
                             sx={{ width: "100%" }}
                             name="secretary.name"
@@ -393,7 +376,7 @@ export default function AddDepartment() {
                             onChange={handleChange}
                             size="small"
                             error={isSubmitted && !formData.secretary.name}
-                          // helperText={isSubmitted && !formData.secretary.name ? "Secretary name is required" : ""}
+                            helperText={isSubmitted && !formData.secretary.name ? "Secretary name is required" : ""}
                           />
 
                         </Grid>
@@ -401,13 +384,7 @@ export default function AddDepartment() {
 
                           <TextField
                             id="outlined-basic-2"
-                           
-                            label={
-                              <span>
-                              Enter Secretary Phone Number
-                                <span style={styles.labelAsterisk}> *</span>
-                              </span>
-                            }
+                            label="Enter Secretary Phone Number"
                             placeholder=""
                             variant="outlined"
                             size="small"
@@ -427,7 +404,7 @@ export default function AddDepartment() {
                               startAdornment: <InputAdornment position="start">+91</InputAdornment>,
                             }}
                             error={isSubmitted && !formData.secretary.phone_number}
-                          // helperText={isSubmitted && !formData.secretary.phone_number ? "Secretary phone number is required" : ""}
+                            helperText={isSubmitted && !formData.secretary.phone_number ? "Secretary phone number is required" : ""}
                           />
 
                         </Grid>
@@ -435,13 +412,7 @@ export default function AddDepartment() {
 
                           <TextField
                             id="outlined-basic-3"
-                            
-                            label={
-                              <span>
-                               Enter Secretary Email Id
-                                <span style={styles.labelAsterisk}> *</span>
-                              </span>
-                            }
+                            label="Enter Secretary Email Id"
                             variant="outlined"
                             sx={{ width: "100%" }}
                             name="secretary.email"
@@ -449,7 +420,7 @@ export default function AddDepartment() {
                             onChange={handleChange}
                             size="small"
                             error={isSubmitted && !!errors.secretaryEmail}
-                            // helperText={isSubmitted && errors.secretaryEmail}
+                            helperText={isSubmitted && errors.secretaryEmail}
                             FormHelperTextProps={{
                               sx: { paddingLeft: '0px' }
                             }}
@@ -476,13 +447,7 @@ export default function AddDepartment() {
 
                             <TextField
                               id="outlined-basic-1"
-                              
-                              label={
-                                <span>
-                                Enter Head of Office Name
-                                  <span style={styles.labelAsterisk}> *</span>
-                                </span>
-                              }
+                              label="Enter Head of Office Name"
                               variant="outlined"
                               sx={{ width: "100%" }}
                               name="headOffice.name"
@@ -490,18 +455,12 @@ export default function AddDepartment() {
                               onChange={handleChange}
                               size="small"
                               error={isSubmitted && !formData.headOffice.name}
-                            // helperText={isSubmitted && !formData.headOffice.name ? "Head of Office name is required" : ""}
+                              helperText={isSubmitted && !formData.headOffice.name ? "Head of Office name is required" : ""}
                             />
 
                             <TextField
                               id="outlined-basic-2"
-                            
-                              label={
-                                <span>
-                                 Enter Head of Office Designation
-                                  <span style={styles.labelAsterisk}> *</span>
-                                </span>
-                              }
+                              label="Enter Head of Office Designation"
                               variant="outlined"
                               sx={{ width: "100%" }}
                               name="headOffice.designation"
@@ -509,7 +468,7 @@ export default function AddDepartment() {
                               onChange={handleChange}
                               size="small"
                               error={isSubmitted && !formData.headOffice.designation}
-                            // helperText={isSubmitted && !formData.headOffice.designation ? "Head of Office designation is required" : ""}
+                              helperText={isSubmitted && !formData.headOffice.designation ? "Head of Office designation is required" : ""}
                             />
                           </Stack>
                         </Grid>
@@ -518,13 +477,7 @@ export default function AddDepartment() {
 
                             <TextField
                               id="outlined-basic-1"
-                              
-                              label={
-                                <span>
-                                 Enter Head of Office Phone Number
-                                  <span style={styles.labelAsterisk}> *</span>
-                                </span>
-                              }
+                              label="Enter Head of Office Phone Number"
                               placeholder=""
                               variant="outlined"
                               size="small"
@@ -544,18 +497,12 @@ export default function AddDepartment() {
                                 startAdornment: <InputAdornment position="start">+91</InputAdornment>,
                               }}
                               error={isSubmitted && !formData.headOffice.phone_number}
-                            // helperText={isSubmitted && !formData.headOffice.phone_number ? "Head of Office phone number is required" : ""}
+                              helperText={isSubmitted && !formData.headOffice.phone_number ? "Head of Office phone number is required" : ""}
                             />
 
                             <TextField
                               id="outlined-basic-2"
-                              
-                              label={
-                                <span>
-                                Head of Office Email Id
-                                  <span style={styles.labelAsterisk}> *</span>
-                                </span>
-                              }
+                              label="Head of Office Email Id"
                               variant="outlined"
                               sx={{ width: "100%" }}
                               name="headOffice.email"
@@ -563,7 +510,7 @@ export default function AddDepartment() {
                               onChange={handleChange}
                               size="small"
                               error={isSubmitted && !!errors.headOfficeEmail}
-                            // helperText={isSubmitted && errors.headOfficeEmail}
+                              helperText={isSubmitted && errors.headOfficeEmail}
                             />
                           </Stack>
                         </Grid>

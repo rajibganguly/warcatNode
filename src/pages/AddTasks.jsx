@@ -26,7 +26,6 @@ import {
     dateSelected,
     fetchDepartmentData,
     fetchTaskData,
-    getTodayDate,
     handleAddTask,
     parentTaskEdit,
 } from "./common";
@@ -127,17 +126,13 @@ export default function AddTasks() {
 
     const { formState: { errors }, reset } = useForm();
     const [isSubmitting, setIsSubmitting] = useState(false);
-    console.log(allDepartmentData);
 
     const [error, setError] = useState({
         personName: false,
+        taskTitle: false,
         tagName: false,
-        taskTitle: {},
-        targetDate: {},
-        taskImage: {},
-        updateTaskTitle: false,
-        updateSelectedDate: false,
-        updateTaskFile: false,
+        targetDate: false,
+        taskImage: false,
     });
 
     useEffect(() => {
@@ -156,7 +151,7 @@ export default function AddTasks() {
         const encodedMeetingTopic = queryParams.get('meetingTopic');
         const encodedTaskId = queryParams.get('taskId');
         if (encodedMeetingId && encodedMeetingTopic) {
-
+            // Base64 decode the parameters
             const decodedMeetingId = window.atob(encodedMeetingId);
             const decodedMeetingTopic = window.atob(encodedMeetingTopic);
 
@@ -178,13 +173,10 @@ export default function AddTasks() {
                 setPersonName(departmentNames);
                 const departmentId = selectedDepartments?.filter(dep => dep !== null)?.map(dep => dep._id);
                 setDeptId(departmentId);
-                console.log(departmentId);
-                
+                // Flatten the tags array and remove duplicates
                 const tags = [...new Set(filteredObject?.department?.flatMap(obj => obj.tag) || [])];
-
-
                 console.log(filteredObject?.target_date)
-               
+
                 setTagName(tags);
                 setUpdateTaskTitle(filteredObject?.task_title);
                 setUpdateSelectedDate(dateSelected(filteredObject?.target_date))
@@ -198,39 +190,36 @@ export default function AddTasks() {
 
     const handleUpdateFileChange = (event) => {
         let file = event.target.files[0];
-    
+
         const reader = new FileReader();
         reader.onloadend = async function () {
             file = reader.result.split(',')[1];
             setupdateTaskFile(`data:image/jpeg;base64,` + file);
-            if (file) {
-                setError(prev => ({ ...prev, updateTaskFile: false }));
-            }
         };
         reader.readAsDataURL(file);
     };
-    
 
     const handleChange = (event) => {
         const {
             target: { value },
         } = event;
-    
+        console.log(value, 'valuevaluevalue')
         // Find the department object with the matching _id
         const selectedDept = allDepartmentData.find(dept => dept._id === value);
+        console.log(selectedDept, 'selectedDeptselectedDept')
         setSelectedDeparmentObj(selectedDept);
-    
+
+        // If a matching department is found, add its name to the personName array
         if (selectedDept) {
-            setDeptId([selectedDept._id]);
-            setPersonName([selectedDept.department_name]);
+            setDeptId(prevPersonName => [selectedDept._id]);
+            setPersonName(prevPersonName => [selectedDept.department_name]);
         }
-    
+
         setError(prev => ({
             ...prev,
-            personName: !value.length
+            personName: value.length === 0
         }));
     };
-    
 
     let departmentData = selectedDeparmentobj ? [
         {
@@ -245,28 +234,11 @@ export default function AddTasks() {
         const selectedTags = selectedFormattedTags.map(tag => tagMapping[tag]);
         setTagName(selectedTags);
         setFormattedTagNames(selectedFormattedTags);
-    
-        setError((prev) => ({
+        setError(prev => ({
             ...prev,
             tagName: selectedFormattedTags.length === 0
         }));
     };
-    
-    const handleRemoveTag = (tag) => {
-        const displayValue = reverseTagMapping[tag];
-        const updatedTags = tagName.filter((t) => t !== tag);
-        const updatedFormattedTags = formattedTagNames.filter((t) => t !== displayValue);
-    
-        setTagName(updatedTags);
-        setFormattedTagNames(updatedFormattedTags);
-    
-        setError((prev) => ({
-            ...prev,
-            tagName: updatedFormattedTags.length === 0
-        }));
-    };
-    
-    
 
     const handleOutput = (open) => {
         toggleDrawer();
@@ -288,40 +260,44 @@ export default function AddTasks() {
         const groupIndex = newInputGroups.findIndex(
             (group) => group[0].id === groupId
         );
-    
         if (groupIndex !== -1) {
             const inputIndex = newInputGroups[groupIndex].findIndex(
                 (input) => input.id === id
             );
-    
             if (inputIndex !== -1) {
                 newInputGroups[groupIndex][inputIndex].value = e.target.value;
                 setInputGroups(newInputGroups);
-    
-                // Ensure error objects exist for the groupIndex
-                if (!error.taskTitle[groupIndex]) error.taskTitle[groupIndex] = false;
-                if (!error.targetDate[groupIndex]) error.targetDate[groupIndex] = false;
-                if (!error.taskImage[groupIndex]) error.taskImage[groupIndex] = false;
-    
-                // Set error values
-                const taskTitle = newInputGroups[groupIndex].find(item => item.type === 'text').value;
-                const targetDate = newInputGroups[groupIndex].find(item => item.type === 'date').value;
-                const taskImage = newInputGroups[groupIndex].find(item => item.type === 'file').value;
-    
-                setError(prev => ({
-                    ...prev,
-                    taskTitle: { ...prev.taskTitle, [groupIndex]: !taskTitle },
-                    targetDate: { ...prev.targetDate, [groupIndex]: !targetDate },
-                    taskImage: { ...prev.taskImage, [groupIndex]: !taskImage }
-                }));
+
+
+
+
             }
+
+            if (inputGroups[0][0].value) {
+
+                error.taskTitle = false;
+
+            }
+
+            if (inputGroups[0].find(item => item.type === 'date').value) {
+
+                error.targetDate = false;
+
+            }
+
+          
+
+
         }
     }
-    
-    
 
-
-
+    const getTodayDate = () => {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+    };
 
 
     const transformData = (data) => {
@@ -340,16 +316,7 @@ export default function AddTasks() {
         };
     };
 
-    const handleAddClick = () => {
-        // Validate the existing input fields
-        const isValid = validateFields();
-    
-        if (!isValid) {
-            toast.error('Please fill out all required fields before adding new ones.');
-            return;
-        }
-    
-        // If validation passes, add new fields
+    function handleAddClick() {
         const lastGroupId = inputGroups[inputGroups.length - 1][0]?.id || 0;
         const newInputGroups = [...inputGroups];
         const newGroup = [
@@ -359,52 +326,14 @@ export default function AddTasks() {
         ];
         newInputGroups.push(newGroup);
         setInputGroups(newInputGroups);
-    
-        setError(prev => ({
-            ...prev,
-            taskTitle: { ...prev.taskTitle, [lastGroupId + 1]: true },
-            targetDate: { ...prev.targetDate, [lastGroupId + 2]: true },
-            taskImage: { ...prev.taskImage, [lastGroupId + 3]: true }
-        }));
-    };
-    
-    const validateFields = () => {
-        let isValid = true;
-
-
-        inputGroups.forEach(group => {
-            group.forEach(input => {
-                if (input.type === 'text' && !input.value) {
-                    isValid = false;
-                } else if (input.type === 'file' && !input.value) {
-                    isValid = false;
-                } else if (input.type === 'date' && !input.value) {
-                    isValid = false;
-                }
-            });
-        });
-
-        return isValid;
-    };
-
+    }
 
     function handleRemoveClick(groupId) {
         const newInputGroups = inputGroups.filter(
             (group) => group[0].id !== groupId
         );
-
         setInputGroups(newInputGroups);
-
-        // Remove the corresponding error for the removed group
-        setError(prev => ({
-            ...prev,
-            taskTitle: false, // Reset to false
-            targetDate: false, // Reset to false
-            taskImage: false, // Reset to false
-        }));
     }
-
-
 
     const convertToDepartmentFormat = (deptid, deptName, tags, task) => {
         return {
@@ -421,113 +350,113 @@ export default function AddTasks() {
 
     function validateForm() {
         let isValid = true;
+
         let newError = {
             personName: false,
+            taskTitle: false,
             tagName: false,
-            taskTitle: {},
-            targetDate: {},
-            taskImage: {},
-            updateTaskTitle: false,
-            updateSelectedDate: false,
-            updateTaskFile: false,
+            targetDate: false,
+            taskImage: false,
         };
-    
+
         if (!personName[0]) {
+
             newError.personName = true;
             isValid = false;
         }
-    
-        if (tagName.length === 0) {
+
+        if (!inputGroups[0][0].value) {
+
+            newError.taskTitle = true;
+            isValid = false;
+        }
+
+        if (!tagName.length > 0) {
+
             newError.tagName = true;
             isValid = false;
         }
-    
-        inputGroups.forEach((group, index) => {
-            const taskTitleInput = group.find(item => item.type === 'text');
-            const targetDateInput = group.find(item => item.type === 'date');
-            const taskImageInput = group.find(item => item.type === 'file');
-    
-            if (taskTitleInput && !taskTitleInput.value) {
-                newError.taskTitle[index] = true;
-                isValid = false;
-            }
-    
-            if (targetDateInput && !targetDateInput.value) {
-                newError.targetDate[index] = true;
-                isValid = false;
-            }
-    
-            if (taskImageInput && !taskImageInput.value) {
-                newError.taskImage[index] = true;
-                isValid = false;
-            }
-        });
 
-        if (taskId) {
-            if (!updateTaskTitle) {
-                newError.updateTaskTitle = true;
-                isValid = false;
-            }
-    
-            if (!updateSelectedDate) {
-                newError.updateSelectedDate = true;
-                isValid = false;
-            }
-    
-            if (!updateTaskFile) {
-                newError.updateTaskFile = true;
-                isValid = false;
-            }
+
+        if (!inputGroups[0].find(item => item.type === 'date').value) {
+
+            newError.targetDate = true;
+            isValid = false;
         }
-    
-    
+
+
+
+        if (!inputGroups[0].find(item => item.type === 'file').value) {
+
+            newError.taskImage = true;
+            isValid = false;
+        }
+
         setError(newError);
-    
         if (!isValid) {
-            toast.error("Please check the fields with red outlines.");
+            toast.error("Please Check the fields with Red Outlines.");
         }
-    
         return isValid;
     }
-    
+
+
+
 
     async function handleSubmit() {
-        if (!validateForm()) {
-            return;
-        }
-    
-        try {
-            if (taskId) {
-                const data = {
-                    department: departmentData,
-                    task_id: taskId,
-                    task_title: updateTaskTitle,
-                    target_date: updateSelectedDate,
-                    task_image: updateTaskFile,
-                    tag: tagName
-                };
-                console.log(data);
-    
-                await updateData(data);
-            } else {
-                const taskData = transformData(inputGroups);
-                const transformedData = convertToDepartmentFormat(deptId, personName, tagName, taskData);
-                console.log(transformedData, 'final data');
-                setdataforval(transformedData);
-                setIsLoading(true);
-                const saveData = await handleAddTask(transformedData);
-                setIsLoading(false);
-                if (saveData) {
-                    toast.success("Task Added Successfully", { autoClose: 2000 });
-                    navigate("/tasks");
+
+
+        setIsSubmitting(true);
+
+
+        if (validateForm()) {
+            try {
+
+                if (taskId) {
+                    const data = {
+                        department: departmentData,
+                        task_id: taskId,
+                        task_title: updateTaskTitle,
+                        target_date: updateSelectedDate,
+                        task_image: updateTaskFile,
+                        tag: tagName
+                    };
+                    console.log(data);
+
+
+                    await updateData(data);
+                } else {
+
+                    const taskData = transformData(inputGroups);
+                    const transformedData = convertToDepartmentFormat(deptId, personName, tagName, taskData);
+                    console.log(transformedData, 'final data');
+
+
+                    setdataforval(transformedData);
+
+
+                    setIsLoading(true);
+                    const saveData = await handleAddTask(transformedData);
+                    setIsLoading(false);
+
+
+                    if (saveData) {
+                        toast.success("Task Added Successfully", { autoClose: 2000 });
+                        navigate("/tasks");
+                    }
                 }
+            } catch (error) {
+                console.error("Error occurred:", error);
+
+                toast.error("An error occurred. Please try again later.");
             }
-        } catch (error) {
-            console.error("Error occurred:", error);
-            toast.error("An error occurred. Please try again later.");
+        } else {
+            setIsSubmitting(false);
         }
     }
-    
+
+
+
+
 
     /**
      * 
@@ -545,43 +474,30 @@ export default function AddTasks() {
     const handleChangeForImage = async (groupId, id, e) => {
         const file = e.target.files[0];
         let imageValue = '';
-    
         if (file) {
-            if (!file.type.startsWith('image/')) {
-                setError(prev => ({
-                    ...prev,
-                    taskImage: { ...prev.taskImage, [groupIndex]: true }
-                }));
-                return;
-            }
-    
             imageValue = await convertToBase64(file);
             const newInputGroups = [...inputGroups];
             const groupIndex = newInputGroups.findIndex(
                 (group) => group[0].id === groupId
             );
-    
             if (groupIndex !== -1) {
                 const inputIndex = newInputGroups[groupIndex].findIndex(
                     (input) => input.id === id
                 );
-    
                 if (inputIndex !== -1) {
                     newInputGroups[groupIndex][inputIndex].value = imageValue;
                     setInputGroups(newInputGroups);
+                }
+
+                if (inputGroups[0].find(item => item.type === 'file').value) {
+
+                    error.taskImage = false;
     
-                    if (newInputGroups[groupIndex].find(item => item.type === 'file').value) {
-                        setError(prev => ({
-                            ...prev,
-                            taskImage: { ...prev.taskImage, [groupIndex]: false }
-                        }));
-                    }
                 }
             }
             setBase64Image(imageValue);
         }
     };
-    
 
     async function updateData(data) {
         setIsLoading(true)
@@ -676,7 +592,6 @@ export default function AddTasks() {
                                 <Grid container spacing={2} sx={{ mb: 4, borderBottom: '1px solid #eff2f7', pb: 2 }}>
                                     <Grid item xs={12} md={6}>
                                         <InputLabel>Department / Government Organisation</InputLabel>
-                                        
                                         <Select
                                             fullWidth
                                             value={personName}
@@ -720,12 +635,7 @@ export default function AddTasks() {
                                             renderValue={(selected) => (
                                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                                     {selected?.map((value) => (
-                                                        <Chip
-                                                        key={value}
-                                                        label={value}
-                                                        onDelete={() => handleRemoveTag(tagMapping[value])} // Attach onDelete event
-                                                        onMouseDown={(event) => event.stopPropagation()}
-                                                      />
+                                                        <Chip key={value} label={value} />
                                                     ))}
                                                 </Box>
                                             )}
@@ -789,8 +699,8 @@ export default function AddTasks() {
                                                                 size="small"
                                                                 type="file"
                                                                 onChange={(e) => handleChangeForImage(group[0].id, input.id, e)}
-                                                                error={error.taskImage[index]}
-                                                                sx={{ borderColor: error.taskImage[index] ? 'red' : '' }}
+                                                                error={error.taskImage}
+                                                                sx={{ borderColor: error.taskImage ? 'red' : '' }}
                                                             />
                                                             <Box width={'40px'} height={'40px'} minWidth={'40px'} borderRadius={'6px'} backgroundColor='#ebebeb'>
                                                                 {base64Image && (
@@ -828,8 +738,8 @@ export default function AddTasks() {
                                                                     InputLabelProps={{
                                                                         shrink: true
                                                                     }}
-                                                                    error={error.targetDate[index]}
-                                                                    sx={{ borderColor: error.targetDate[index] ? 'red' : '' }}
+                                                                    error={error.targetDate}
+                                                                    sx={{ borderColor: error.targetDate ? 'red' : '' }}
 
                                                                     InputProps={{
                                                                         inputProps: { min: getTodayDate() }
@@ -850,8 +760,8 @@ export default function AddTasks() {
                                                             onChange={(e) => handleInputChange(group[0].id, input.id, e)}
                                                             fullWidth
                                                             size="small"
-                                                            error={error.taskTitle[index]}
-                                                            sx={{ borderColor: error.taskTitle[index] ? 'red' : '' }}
+                                                            error={error.taskTitle}
+                                                            sx={{ borderColor: error.taskTitle ? 'red' : '' }}
 
                                                         />
                                                     </Grid>
@@ -888,16 +798,10 @@ export default function AddTasks() {
                                                 name="taskTitle"
                                                 size="small"
                                                 value={updateTaskTitle}
-                                                onChange={(e) => {
-                                                    setUpdateTaskTitle(e.target.value);
-                                                    if (e.target.value) {
-                                                        setError(prev => ({ ...prev, updateTaskTitle: false }));
-                                                    }
-                                                }}
-                                                error={error.updateTaskTitle}
-                                                sx={{ borderColor: error.updateTaskTitle ? 'red' : '' }}
-                                                
+                                                onChange={(e) => setUpdateTaskTitle(e.target.value)}
                                             />
+
+
                                         </Grid>
 
                                         <Grid item xs={6}>
@@ -910,11 +814,8 @@ export default function AddTasks() {
                                                     name="uploadImage"
                                                     size="small"
                                                     type="file"
-                                                    accept="image/*"
                                                     // value={updateTaskFile || ''}
                                                     onChange={handleUpdateFileChange}
-                                                    error={error.updateTaskFile}
-                                                    sx={{ borderColor: error.updateTaskFile ? 'red' : '' }}
                                                 />
                                                 <Box width={'40px'} height={'40px'} minWidth={'40px'} borderRadius={'6px'} backgroundColor='#ebebeb'>
                                                     {updateTaskFile && (
@@ -940,9 +841,6 @@ export default function AddTasks() {
                                                         placeholder="dd-mm-yyyy"
                                                         onChange={(e) => {
                                                             setUpdateSelectedDate(e.target.value);
-                                                            if (e.target.value) {
-                                                                setError(prev => ({ ...prev, updateSelectedDate: false }));
-                                                            }
                                                         }}
 
                                                         value={updateSelectedDate || ''}
@@ -951,8 +849,6 @@ export default function AddTasks() {
                                                         InputLabelProps={{
                                                             shrink: true
                                                         }}
-                                                        error={error.updateSelectedDate}
-                                                        sx={{ borderColor: error.updateSelectedDate ? 'red' : '' }}
                                                     />
                                                 )}
                                             />
@@ -996,6 +892,4 @@ export default function AddTasks() {
             </Box>
         </ThemeProvider>
     );
-
-
 }

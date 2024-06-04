@@ -24,7 +24,7 @@ import {
   ThemeProvider,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import { addMeetings, fetchTaskData, getTodayDate } from './common';
+import { addMeetings, fetchTaskData } from './common';
 import Footer from "../components/Footer";
 import Header from "../components/header";
 import Sidebar from "../components/Sidebar";
@@ -32,7 +32,6 @@ import MuiAppBar from "@mui/material/AppBar";
 import { DepartmentContext } from '../context/DepartmentContext';
 import { toast } from "react-toastify";
 import LoadingIndicator from "../components/loadingIndicator";
-
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -45,7 +44,6 @@ const VisuallyHiddenInput = styled('input')({
   whiteSpace: 'nowrap',
   width: 1,
 });
-
 
 const defaultTheme = createTheme();
 
@@ -87,15 +85,6 @@ function getStyles(name, personName, theme) {
         : theme.typography.fontWeightMedium,
   };
 }
-const tagMapping = {
-  'Head Office': 'head_of_office',
-  'Secretary': 'secretary'
-};
-
-const reverseTagMapping = {
-  'head_of_office': 'Head Office',
-  'secretary': 'Secretary'
-};
 
 export default function AddNewMeeting() {
   const [open, setOpen] = React.useState(true);
@@ -121,64 +110,6 @@ export default function AddNewMeeting() {
   const { allDepartmentList } = React.useContext(DepartmentContext);
   const allDepartmentData = allDepartmentList?.map((dept) => dept.department);
 
-
-  const [error, setError] = useState({
-    departmentIds: false,
-    tagName: false,
-    meetingTopic: false,
-    selectDate: false,
-    selectTime: false,
-    base64Image: false,
-  });
-
-  const validateForm = () => {
-    let isValid = true;
-    let newError = {
-      departmentIds: false,
-      tagName: false,
-      meetingTopic: false,
-      selectDate: false,
-      selectTime: false,
-      base64Image: false,
-    };
-  
-    if (departmentIds.length === 0) {
-      newError.departmentIds = true;
-      isValid = false;
-    }
-  
-    if (tagName.length === 0) {
-      newError.tagName = true;
-      isValid = false;
-    }
-  
-    if (!meetingTopic) {
-      newError.meetingTopic = true;
-      isValid = false;
-    }
-  
-    if (!meetingDate) {
-      newError.selectDate = true;
-      isValid = false;
-    }
-  
-    if (!meetingTime) {
-      newError.selectTime = true;
-      isValid = false;
-    }
-  
-    if (!base64Image) {
-      newError.base64Image = true;
-      isValid = false;
-    }
-  
-    setError(newError);
-  
-    return isValid;
-  };
-  
-  
-
   /**
    * 
    * All Handle change except image 
@@ -186,47 +117,40 @@ export default function AddNewMeeting() {
 
   const handleChange = (event) => {
     const {
-      target: { value, name },
+      target: { value },
     } = event;
-  
-    if (name === "tag") {
-      setTagName([...value]);
-      if (value.length > 0) {
-        setError(prev => ({ ...prev, tagName: false }));
-      }
+
+    if (event.target.name === "tag") {
+      setTagName([...event.target.value]);
     }
-    if (name === "department") {
+    if (event.target.name === "department") {
       // Find the department objects with the matching _ids
       const selectedDepts = allDepartmentData.filter((dept) =>
         value.includes(dept._id)
       );
-  
-      // Update the departmentIds state
-      setDepartmentIds(value);
-      if (value.length > 0) {
-        setError(prev => ({ ...prev, departmentIds: false }));
-      }
-  
-      // Update the personName state with the names of selected departments
-      setPersonName(selectedDepts.map((dept) => dept.department_name));
+      // Create a new array to hold the updated personName state
+      let updatedPersonName = [...personName];
+      let updatedDeptIds = [...departmentIds];
+
+      // Add or remove department names based on the selected value
+      selectedDepts.forEach((dept) => {
+        const index = updatedPersonName.indexOf(dept.department_name);
+        if (index === -1) {
+          // If the department name is not already in the array, add it
+          updatedPersonName.push(dept.department_name);
+          updatedDeptIds.push(dept._id);
+        } else {
+          // If the department name is already in the array, remove it
+          updatedPersonName.splice(index, 1);
+          updatedDeptIds.splice(index, 1);
+        }
+      });
+
+      // Update the personName state with the new array
+      setPersonName(updatedPersonName);
+      setDepartmentIds(updatedDeptIds);
     }
   };
-
-
-
-  // In the handleRemoveDepartment function
-  const handleRemoveDepartment = (event, departmentId) => {
-    event.preventDefault();
-    const updatedPersonName = personName.filter((deptId) => deptId !== departmentId);
-    const updatedDeptIds = departmentIds.filter((id) => id !== departmentId);
-    setPersonName(updatedPersonName);
-    setDepartmentIds(updatedDeptIds);
-  };
-  const handleRemoveTag = (tag) => {
-    const updatedTags = tagName.filter((t) => t !== tag);
-    setTagName(updatedTags);
-  };
-
 
   const handleDateChange = (date) => {
     setFormData((prevData) => ({
@@ -248,11 +172,6 @@ export default function AddNewMeeting() {
    * handleAddMeeting POST call
    */
   const handleAddMeeting = async () => {
-    if (!validateForm()) {
-      toast.error("Please check the fields with red outlines.");
-      return;
-    }
-  
     const formDataSend = {
       departmentIds: departmentIds,
       tag: tagName,
@@ -278,7 +197,6 @@ export default function AddNewMeeting() {
       setIsLoading(false);
     }
   };
-  
 
   const handleOutput = (open) => {
     toggleDrawer();
@@ -287,33 +205,19 @@ export default function AddNewMeeting() {
     setOpen(!open);
   };
 
-  const getMeetingValue = (e) => {
-    const { name, value } = e.target;
-    if (name === 'date') {
-      setMeetingDate(value);
-      if (value) {
-        setError(prev => ({ ...prev, selectDate: false }));
-      }
+  function getMeetingValue(e) {
+    if (e.target.name === 'date') {
+      setMeetingDate(e.target.value);
     }
-    if (name === 'time') {
-      setMeetingTime(value);
-      if (value) {
-        setError(prev => ({ ...prev, selectTime: false }));
-      }
+    if (e.target.name === 'time') {
+      setMeetingTime(e.target.value);
     }
-  };
+  }
 
-  const handleMeetingTopicChange = (event) => {
-    setMeetingTopic(event.target.value);
-    if (event.target.value) {
-      setError(prev => ({ ...prev, meetingTopic: false }));
-    }
-  };
-
-  /**
-   * 
-   * All Handle change for image 
-   */
+/**
+ * 
+ * All Handle change for image 
+ */
 
   const handleChangeForImage = (event) => {
     const file = event.target.files[0];
@@ -321,20 +225,17 @@ export default function AddNewMeeting() {
       const reader = new FileReader();
       reader.onload = () => {
         setBase64Image(reader.result);
-        if (reader.result) {
-          setError(prev => ({ ...prev, base64Image: false }));
-        }
+        console.log(reader.result, base64Image)
       };
       reader.readAsDataURL(file);
     }
-  };
-  
+  }
 
   return (
     <ThemeProvider theme={defaultTheme}>
       {/* For Loader */}
       <LoadingIndicator isLoading={isLoading} />
-
+      
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>
@@ -417,11 +318,13 @@ export default function AddNewMeeting() {
                             <Select
                               fullWidth
                               name="department"
-                              value={departmentIds}
+                              value={personName}
                               onChange={handleChange}
                               size="small"
                               multiple
-                              input={<OutlinedInput />}
+                              input={
+                                <OutlinedInput />
+                              }
                               renderValue={(selected) => (
                                 <Box
                                   sx={{
@@ -430,33 +333,28 @@ export default function AddNewMeeting() {
                                     gap: 0.5,
                                   }}
                                 >
-                                  {selected.map((deptId) => (
-                                    <Chip
-                                      key={deptId}
-                                      label={allDepartmentData.find((dept) => dept._id === deptId)?.department_name}
-                                      onDelete={(event) => handleRemoveDepartment(event, deptId)}
-                                      onMouseDown={(event) => event.stopPropagation()}
-                                    />
-
+                                  {selected.map((value) => (
+                                    <Chip key={value} label={value} />
                                   ))}
                                 </Box>
                               )}
                               MenuProps={MenuProps}
-                              error={error.departmentIds}
-                              sx={{ borderColor: error.departmentIds ? 'red' : '' }}
                             >
                               {allDepartmentData.map((value) => (
                                 <MenuItem
                                   key={value?._id}
                                   value={value?._id}
-                                  style={getStyles(value?._id, departmentIds, theme)}
+                                  style={getStyles(
+                                    value?._id,
+                                    personName,
+                                    theme
+                                  )}
                                 >
                                   {value?.department_name}
                                 </MenuItem>
                               ))}
                             </Select>
                           </FormControl>
-
                         </Grid>
                         <Grid item xs={12} md={6}>
                           <InputLabel sx={{ mb: 1 }}>Tag</InputLabel>
@@ -471,23 +369,13 @@ export default function AddNewMeeting() {
                               renderValue={(selected) => (
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                   {selected.map((value) => (
-                                    <Chip
-                                      key={value}
-                                      label={value}
-                                      onDelete={() => handleRemoveTag(value)} // Attach onDelete event
-                                      onMouseDown={(event) => event.stopPropagation()}
-                                    />
+                                    <Chip key={value} label={value} />
                                   ))}
                                 </Box>
                               )}
-                              error={error.tagName}
-                              sx={{ borderColor: error.tagName ? 'red' : '' }}
                             >
-                              {Object.keys(tagMapping).map((key) => (
-                                <MenuItem key={key} value={key}>
-                                  {key === 'head_of_office' ? 'Head Of Office' : key}
-                                </MenuItem>
-                              ))}
+                              <MenuItem value="secretary">Secretary</MenuItem>
+                              <MenuItem value="head_of_office">Head Office</MenuItem>
                             </Select>
                           </FormControl>
                         </Grid>
@@ -520,25 +408,18 @@ export default function AddNewMeeting() {
                               setMeetingTopic(event.target.value)
                             }
                             size="small"
-                            error={error.meetingTopic}
-                            sx={{ borderColor: error.meetingTopic ? 'red' : '' }}
                             aria-readonly
                           />
                         </Grid>
 
                         <Grid item xs={12} md={6}>
-                          <InputLabel sx={{ mb: 1 }}>Select date</InputLabel>
+                        <InputLabel sx={{ mb: 1 }}>Select date</InputLabel>
                           <TextField
                             type="date"
                             name="date"
                             fullWidth
                             size="small"
                             onChange={getMeetingValue}
-                            InputProps={{
-                              inputProps: { min: getTodayDate() }
-                            }}
-                            error={error.selectDate}
-                            sx={{ borderColor: error.selectDate ? 'red' : '' }}
                           />
                         </Grid>
 
@@ -550,26 +431,20 @@ export default function AddNewMeeting() {
                             fullWidth
                             size="small"
                             onChange={getMeetingValue}
-                            error={error.selectTime}
-                            sx={{ borderColor: error.selectTime ? 'red' : '' }}
                           />
                         </Grid>
 
                         <Grid item xs={6} md={6}>
                           <InputLabel sx={{ mb: 1 }}>Upload Images</InputLabel>
-                          <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} border={error.base64Image ? '1px solid red' : '1px solid rgb(133, 133, 133)'} gap={2}>
-                            <input
+                          <Box display={'flex'} gap={2}>
+                            <TextField
                               variant="outlined"
                               fullWidth
                               placeholder="Enter task title"
                               name="uploadImage"
                               size="small"
                               type="file"
-                              accept="image/png, image/jpeg"
                               onChange={handleChangeForImage}
-                              className="inputfile inputfile-6"
-                             
-
                             />
                             <Box width={'40px'} height={'40px'} minWidth={'40px'} borderRadius={'6px'} backgroundColor='#ebebeb'>
                               {base64Image && (

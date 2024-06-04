@@ -2,7 +2,7 @@ export const TaskChartData = [
     {
       id: 1,
       percentage: 0,
-      label: "Total Tasks",
+      label: "Total Assigned",
       styles: {
         root: {},
         path: {
@@ -27,7 +27,7 @@ export const TaskChartData = [
     {
       id: 2,
       percentage: 0,
-      label: "Assigned",
+      label: "Initiated",
       styles: {
         root: {},
         path: {
