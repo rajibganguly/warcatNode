@@ -21,34 +21,20 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Chip from '@mui/material/Chip';
-import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import Sidebar from "../components/Sidebar";
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { toast } from "react-toastify";
 import ApiConfig from "../config/ApiConfig";
 import { MeetingContext } from './../context/MeetingContext';
-import { useParams } from "react-router-dom";
-import { format } from 'date-fns';
 import { useLocation } from "react-router-dom";
 import dayjs from 'dayjs';
 import LoadingIndicator from "../components/loadingIndicator";
 import { fetchTaskData } from "./common";
 
-const VisuallyHiddenInput = styled('input')({
-    clip: 'rect(0 0 0 0)',
-    clipPath: 'inset(50%)',
-    height: 1,
-    overflow: 'hidden',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    whiteSpace: 'nowrap',
-    width: 1,
-});
+
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -65,14 +51,7 @@ const names = [
     'head_of_office',
     'Secretary',
 ];
-function getStyles(name, personName, theme) {
-    return {
-        fontWeight:
-            personName.indexOf(name) === -1
-                ? theme.typography.fontWeightRegular
-                : theme.typography.fontWeightMedium,
-    };
-}
+
 
 const drawerWidth = 240;
 
@@ -114,9 +93,61 @@ export default function EditMeeting() {
     const [isLoading, setIsLoading] = useState(false);
     const [editMeetingId, seteditMeetingId] = useState('');
     const navigate = useNavigate();
+    const [error, setError] = useState({
+        departmentIds: false,
+        tag: false,
+        meetingTopic: false,
+        selectDate: false,
+        selectTime: false,
+        imageUrl: false,
+    });
 
-    console.log(editMeetingId)
-    const { id } = useParams();
+    const validateForm = () => {
+        let isValid = true;
+        let newError = {
+            departmentIds: false,
+            tag: false,
+            meetingTopic: false,
+            selectDate: false,
+            selectTime: false,
+            imageUrl: false,
+        };
+
+        if (formData.departmentIds.length === 0) {
+            newError.departmentIds = true;
+            isValid = false;
+        }
+
+        if (formData.tag.length === 0) {
+            newError.tag = true;
+            isValid = false;
+        }
+
+        if (!formData.meetingTopic) {
+            newError.meetingTopic = true;
+            isValid = false;
+        }
+
+        if (!formData.selectDate) {
+            newError.selectDate = true;
+            isValid = false;
+        }
+
+        if (!formData.selectTime) {
+            newError.selectTime = true;
+            isValid = false;
+        }
+
+        if (!formData.imageUrl) {
+            newError.imageUrl = true;
+            isValid = false;
+        }
+
+        setError(newError);
+
+        return isValid;
+    };
+
     const { allMeetingLists } = useContext(MeetingContext);
 
     const [formData, setFormData] = useState({
@@ -177,11 +208,25 @@ export default function EditMeeting() {
                     return dept ? dept.department._id : null;
                 }).filter(id => id !== null)
             }));
+            if (value.length > 0) {
+                setError(prev => ({ ...prev, departmentIds: false }));
+            }
+        } else if (name === "tag") {
+            setFormData(prevState => ({
+                ...prevState,
+                [name]: value
+            }));
+            if (value.length > 0) {
+                setError(prev => ({ ...prev, tag: false }));
+            }
         } else {
             setFormData(prevState => ({
                 ...prevState,
                 [name]: value
             }));
+            if (value) {
+                setError(prev => ({ ...prev, [name]: false }));
+            }
         }
     };
 
@@ -216,9 +261,13 @@ export default function EditMeeting() {
 
     const handleSubmit = async (e) => {
         const formattedTime = formData.selectTime.format('HH:mm');
-
-
         e.preventDefault();
+
+        if (!validateForm()) {
+            toast.error("Please check the fields with red outlines.");
+            return;
+        }
+
         try {
             setIsLoading(true);
             const updatedData = {
@@ -443,6 +492,8 @@ export default function EditMeeting() {
                                                                 </Box>
                                                             )}
                                                             MenuProps={MenuProps}
+                                                            error={error.departmentIds}
+                                                            sx={{ borderColor: error.departmentIds ? 'red' : '' }}
                                                         >
                                                             {departmentNames.map((deptName) => (
                                                                 <MenuItem key={deptName} value={deptName}>
@@ -478,6 +529,8 @@ export default function EditMeeting() {
                                                                 </Box>
                                                             )}
                                                             MenuProps={MenuProps}
+                                                            error={error.tag}
+                                                            sx={{ borderColor: error.tag ? 'red' : '' }}
                                                         >
                                                             {names.map((name) => (
                                                                 <MenuItem
@@ -493,12 +546,14 @@ export default function EditMeeting() {
                                                         name='meetingTopic'
                                                         value={formData.meetingTopic}
                                                         onChange={handleChange}
-                                                        variant="outlined" fullWidth />
+                                                        variant="outlined" fullWidth
+                                                        error={error.meetingTopic}
+                                                        sx={{ borderColor: error.meetingTopic ? 'red' : '' }} />
 
                                                 </Grid>
                                                 <Grid item xs={12}>
                                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                        <DemoContainer
+                                                        <DemoContainer sx={{ display: 'flex', justifyContent: 'start', alignItems: 'center' }}
                                                             components={['DatePicker', 'TimePicker']}
                                                         >
                                                             <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
@@ -508,7 +563,10 @@ export default function EditMeeting() {
                                                                     onChange={handleDateChange}
                                                                     renderInput={(params) => <TextField {...params} />}
                                                                     disablePast
-                                                                    fullWidth />
+                                                                    fullWidth
+
+                                                                    error={error.selectDate}
+                                                                    sx={{ width: 100 + '%', borderColor: error.selectDate ? 'red' : '' }} />
 
                                                             </Grid>
                                                             <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -523,10 +581,13 @@ export default function EditMeeting() {
                                                                     inputProps={{
                                                                         step: 300,
                                                                     }}
+                                                                    error={error.selectTime}
+                                                                    sx={{ borderColor: error.selectTime ? 'red' : '' }}
+
                                                                 />
 
                                                             </Grid>
-                                                            <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                                            <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'auto' }}>
 
                                                                 <TextField
                                                                     variant="outlined"
@@ -536,7 +597,12 @@ export default function EditMeeting() {
                                                                     size="small"
                                                                     type="file"
                                                                     onChange={handleFileChange}
+                                                                    error={error.imageUrl}
+                                                                    sx={{ padding: '17px', borderColor: error.imageUrl ? 'red' : '' }}
                                                                 />
+                                                                <Typography variant="caption" sx={{ marginTop: '0.5rem' }}>
+                                                                    Accepted formats: JPEG, PNG, GIF
+                                                                </Typography>
 
 
 

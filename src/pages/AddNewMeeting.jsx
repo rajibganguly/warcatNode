@@ -96,7 +96,6 @@ const reverseTagMapping = {
   'head_of_office': 'Head Office',
   'secretary': 'Secretary'
 };
-
 export default function AddNewMeeting() {
   const [open, setOpen] = React.useState(true);
   const [file, setFile] = useState(null);
@@ -141,43 +140,43 @@ export default function AddNewMeeting() {
       selectTime: false,
       base64Image: false,
     };
-  
+
     if (departmentIds.length === 0) {
       newError.departmentIds = true;
       isValid = false;
     }
-  
+
     if (tagName.length === 0) {
       newError.tagName = true;
       isValid = false;
     }
-  
+
     if (!meetingTopic) {
       newError.meetingTopic = true;
       isValid = false;
     }
-  
+
     if (!meetingDate) {
       newError.selectDate = true;
       isValid = false;
     }
-  
+
     if (!meetingTime) {
       newError.selectTime = true;
       isValid = false;
     }
-  
+
     if (!base64Image) {
       newError.base64Image = true;
       isValid = false;
     }
-  
+
     setError(newError);
-  
+
     return isValid;
   };
-  
-  
+
+
 
   /**
    * 
@@ -188,7 +187,7 @@ export default function AddNewMeeting() {
     const {
       target: { value, name },
     } = event;
-  
+
     if (name === "tag") {
       setTagName([...value]);
       if (value.length > 0) {
@@ -200,13 +199,13 @@ export default function AddNewMeeting() {
       const selectedDepts = allDepartmentData.filter((dept) =>
         value.includes(dept._id)
       );
-  
+
       // Update the departmentIds state
       setDepartmentIds(value);
       if (value.length > 0) {
         setError(prev => ({ ...prev, departmentIds: false }));
       }
-  
+
       // Update the personName state with the names of selected departments
       setPersonName(selectedDepts.map((dept) => dept.department_name));
     }
@@ -252,10 +251,12 @@ export default function AddNewMeeting() {
       toast.error("Please check the fields with red outlines.");
       return;
     }
-  
+
+    const mappedTags = tagName.map(tag => reverseTagMapping[tag]);
+
     const formDataSend = {
       departmentIds: departmentIds,
-      tag: tagName,
+      tag: mappedTags,
       meetingTopic: meetingTopic,
       selectDate: meetingDate,
       selectTime: meetingTime,
@@ -278,7 +279,7 @@ export default function AddNewMeeting() {
       setIsLoading(false);
     }
   };
-  
+
 
   const handleOutput = (open) => {
     toggleDrawer();
@@ -328,7 +329,7 @@ export default function AddNewMeeting() {
       reader.readAsDataURL(file);
     }
   };
-  
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -483,9 +484,9 @@ export default function AddNewMeeting() {
                               error={error.tagName}
                               sx={{ borderColor: error.tagName ? 'red' : '' }}
                             >
-                              {Object.keys(tagMapping).map((key) => (
-                                <MenuItem key={key} value={key}>
-                                  {key === 'head_of_office' ? 'Head Of Office' : key}
+                              {Object.keys(tagMapping).map((displayValue) => (
+                                <MenuItem key={displayValue} value={displayValue}>
+                                  {displayValue}
                                 </MenuItem>
                               ))}
                             </Select>
@@ -568,7 +569,7 @@ export default function AddNewMeeting() {
                               accept="image/png, image/jpeg"
                               onChange={handleChangeForImage}
                               className="inputfile inputfile-6"
-                             
+
 
                             />
                             <Box width={'40px'} height={'40px'} minWidth={'40px'} borderRadius={'6px'} backgroundColor='#ebebeb'>
