@@ -113,8 +113,8 @@ export default function Tasks() {
         { label: "In Progress", value: "inprogress" },
         { label: "Completed", value: "completed" },
       ],
-    },
-  ];
+    })
+  }
 
   React.useEffect(() => {
     const fetchData = async () => {
