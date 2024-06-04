@@ -215,13 +215,17 @@ export default function EditMeeting() {
     };
 
     const handleSubmit = async (e) => {
+        const formattedTime = formData.selectTime.format('HH:mm');
+
+
         e.preventDefault();
         try {
             setIsLoading(true);
             const updatedData = {
                 ...formData,
                 selectDate: formData.selectDate.toISOString(),
-                selectTime: formData.selectTime, //.format('hh:mm'),
+
+                selectTime: formattedTime,
                 departmentNames: departmentNames,
             };
 
@@ -276,6 +280,22 @@ export default function EditMeeting() {
         }
     };
 
+    const handleRemoveTag = (tag) => {
+        const updatedTags = formData.tag.filter((t) => t !== tag);
+        setFormData(prevState => ({
+            ...prevState,
+            tag: updatedTags
+        }));
+    };
+
+    const handleRemoveDepartment = (departmentId) => {
+        const updatedDepartments = formData.departmentIds.filter((id) => id !== departmentId);
+        setFormData(prevState => ({
+            ...prevState,
+            departmentIds: updatedDepartments
+        }));
+    };
+
 
 
     const handleOutput = (open) => {
@@ -289,7 +309,7 @@ export default function EditMeeting() {
     const departmentNames = data.map((dept) => dept.department.department_name);
 
     const formatTimeString = (isoString) => {
-        if(typeof(isoString) === 'string') {
+        if (typeof (isoString) === 'string') {
             return `${isoString}`;
         } else {
             const date = new Date(isoString);
@@ -395,7 +415,7 @@ export default function EditMeeting() {
                                                     <FormControl sx={{ width: '100%' }}>
                                                         <InputLabel id="demo-multiple-chip-label1">Department / Government Organisation</InputLabel>
                                                         <Select
-                                                            labelId="demo-multiple-chip-label1"
+                                                            label="Department / Government Organisation"
                                                             id="demo-multiple-chip"
                                                             fullWidth
                                                             multiple
@@ -409,11 +429,16 @@ export default function EditMeeting() {
                                                                     value: e.target.value
                                                                 }
                                                             })}
-                                                            input={<OutlinedInput id="select-multiple-chip1" label="Chip" name="departmentIds" />}
+
                                                             renderValue={(selected) => (
                                                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                                                     {selected.map((value) => (
-                                                                        <Chip key={value} label={value} />
+                                                                        <Chip
+                                                                            key={value}
+                                                                            label={value}
+                                                                            onDelete={() => handleRemoveDepartment(data.find(d => d.department.department_name === value).department._id)} // Attach onDelete event
+                                                                            onMouseDown={(event) => event.stopPropagation()}
+                                                                        />
                                                                     ))}
                                                                 </Box>
                                                             )}
@@ -443,7 +468,12 @@ export default function EditMeeting() {
                                                             renderValue={(selected) => (
                                                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                                                     {selected.map((value) => (
-                                                                        <Chip key={value} label={value} />
+                                                                        <Chip
+                                                                            key={value}
+                                                                            label={value}
+                                                                            onDelete={() => handleRemoveTag(value)} // Attach onDelete event
+                                                                            onMouseDown={(event) => event.stopPropagation()}
+                                                                        />
                                                                     ))}
                                                                 </Box>
                                                             )}
@@ -471,27 +501,29 @@ export default function EditMeeting() {
                                                         <DemoContainer
                                                             components={['DatePicker', 'TimePicker']}
                                                         >
-                                                            <Grid item xs={4}>
+                                                            <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
 
                                                                 <DatePicker
                                                                     value={formData.selectDate}
                                                                     onChange={handleDateChange}
-                                                                    renderInput={(params) => <TextField {...params} />} />
+                                                                    renderInput={(params) => <TextField {...params} />}
+                                                                    disablePast
+                                                                    fullWidth />
 
                                                             </Grid>
-                                                            <Grid item xs={4}>
-                                                            <TextField
-                                                                type="time"
-                                                                name="time"
-                                                                fullWidth
-                                                                value={formatTimeString(formData.selectTime)}
-                                                                size="small"
-                                                                onChange={handleTimeChange}
-                                                                renderInput={(params) => <TextField {...params} />} 
-                                                                inputProps={{
-                                                                    step: 300, // Set the step interval (in seconds) for the time picker
-                                                                  }}
-                                                            />
+                                                            <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                                                <TextField
+                                                                    type="time"
+                                                                    name="time"
+                                                                    fullWidth
+                                                                    value={formatTimeString(formData.selectTime)}
+                                                                    size="small"
+                                                                    onChange={handleTimeChange}
+                                                                    renderInput={(params) => <TextField {...params} />}
+                                                                    inputProps={{
+                                                                        step: 300,
+                                                                    }}
+                                                                />
 
                                                             </Grid>
                                                             <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
