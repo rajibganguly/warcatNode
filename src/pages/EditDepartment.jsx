@@ -47,6 +47,11 @@ const AppBar = styled(MuiAppBar, {
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
+const styles = {
+  labelAsterisk: {
+    color: "red"
+  }
+};
 
 
 
@@ -339,8 +344,14 @@ export default function EditDepartment() {
                   <CardContent>
                     {formData ? (
                       <Box component="form" noValidate autoComplete="off">
-                        <label>Department / Government Organisation</label>
+                       
                         <TextField
+                         label={
+                          <span>
+                         Department / Government Organisation
+                            <span style={styles.labelAsterisk}> *</span>
+                          </span>
+                        }
                           fullWidth
                           name="department_name"
                           value={formData?.department?.department_name}
@@ -364,8 +375,14 @@ export default function EditDepartment() {
                           sx={{ marginBottom: "20px" }}
                         >
                           <Grid item xs={12} sm={6}>
-                            <label>Secretary Name</label>
+                           
                             <TextField
+                             label={
+                              <span>
+                              Secretary Name
+                                <span style={styles.labelAsterisk}> *</span>
+                              </span>
+                            }
                               variant="outlined"
                               sx={{ width: "100%" }}
                               name="secretary.name"
@@ -376,8 +393,14 @@ export default function EditDepartment() {
                             />
                           </Grid>
                           <Grid item xs={12} sm={6}>
-                            <label>Secretary Phone Number</label>
+                           
                             <TextField
+                             label={
+                              <span>
+                               Secretary Phone Number
+                                <span style={styles.labelAsterisk}> *</span>
+                              </span>
+                            }
                               variant="outlined"
                               sx={{ width: "100%" }}
                               name="secretary.phone_number"
@@ -392,8 +415,14 @@ export default function EditDepartment() {
                             />
                           </Grid>
                           <Grid item xs={12} sm={6}>
-                            <label>Secretary Email Id</label>
+                           
                             <TextField
+                             label={
+                              <span>
+                              Secretary Email Id
+                                <span style={styles.labelAsterisk}> *</span>
+                              </span>
+                            }
                               variant="outlined"
                               sx={{ width: "100%" }}
                               name="secretary.email"
@@ -428,10 +457,16 @@ export default function EditDepartment() {
                         >
                           <Grid item xs={12} sm={6}>
                             <Stack direction="column" spacing={2}>
-                              <label>Head of Office Name</label>
+                              
                               <TextField
+                               label={
+                                <span>
+                                 Head of Office Name
+                                  <span style={styles.labelAsterisk}> *</span>
+                                </span>
+                              }
                                 id="outlined-basic-1"
-                                label="Enter Head of Office Name"
+                              
                                 variant="outlined"
                                 sx={{ width: "100%" }}
                                 name="headOffice.name"
@@ -440,10 +475,16 @@ export default function EditDepartment() {
                                 error={!!errors.headOfficeName}
                                 helperText={errors.headOfficeName}
                               />
-                              <label>Head of Office Designation</label>
+                            
                               <TextField
                                 id="outlined-basic-2"
-                                label="Enter Head of Office Designation"
+                                label={
+                                  <span>
+                                   Head of Office Designation
+                                    <span style={styles.labelAsterisk}> *</span>
+                                  </span>
+                                }
+
                                 variant="outlined"
                                 sx={{ width: "100%" }}
                                 name="headOffice.designation"
@@ -462,10 +503,16 @@ export default function EditDepartment() {
                           </Grid>
                           <Grid item xs={12} sm={6}>
                             <Stack direction="column" spacing={2}>
-                              <label>Head of Office Phone Number</label>
+                             
                               <TextField
                                 id="outlined-basic-1"
-                                label="Enter Head of Office Phone Number"
+                               
+                                label={
+                                  <span>
+                                  Enter Head of Office Phone Number
+                                    <span style={styles.labelAsterisk}> *</span>
+                                  </span>
+                                }
                                 variant="outlined"
                                 sx={{ width: "100%" }}
                                 name="headOffice.phone_number"
@@ -478,10 +525,16 @@ export default function EditDepartment() {
                                 error={!!errors.headOfficePhoneNumber}
                                 helperText={errors.headOfficePhoneNumber}
                               />
-                              <label>Head of Office Email Id</label>
+                            
                               <TextField
                                 id="outlined-basic-2"
-                                label="Head of Office Email Id"
+                                label={
+                                  <span>
+                                   Head of Office Email Id
+                                    <span style={styles.labelAsterisk}> *</span>
+                                  </span>
+                                }
+
                                 variant="outlined"
                                 sx={{ width: "100%" }}
                                 name="headOffice.email"
