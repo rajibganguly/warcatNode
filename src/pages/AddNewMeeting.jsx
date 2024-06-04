@@ -252,7 +252,7 @@ export default function AddNewMeeting() {
       return;
     }
 
-    const mappedTags = tagName.map(tag => reverseTagMapping[tag]);
+    const mappedTags = tagName.map(tag => tagMapping[tag]);
 
     const formDataSend = {
       departmentIds: departmentIds,
