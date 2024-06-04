@@ -5,7 +5,6 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import ApiConfig from '../config/ApiConfig';
 import { toast } from "react-toastify";
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { fetchTaskData } from '../pages/common';
 import { useNavigate } from 'react-router-dom';
 import LoadingIndicator from './loadingIndicator';
@@ -72,6 +71,13 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
         const file = event.currentTarget.files[0];
         formik.setFieldValue('uploadImage', file);
         if (file) {
+
+            if (!['image/jpeg', 'image/jpg', 'image/png', 'image/gif'].includes(file.type)) {
+                formik.setFieldError('uploadImage', 'Unsupported Format');
+                setupdateTaskFile(null); 
+                return; 
+            }
+
             const reader = new FileReader();
             reader.onloadend = () => {
                 setupdateTaskFile(reader.result);
@@ -143,16 +149,7 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
                 </Box>
                 <Box mb={2}>
                     <InputLabel sx={{ mb: 1 }}>Target Date</InputLabel>
-                    {/* <TextField
-                    name="date"
-                    // value={formValues.targetDate}
-                    onChange={handleDateChange}
-                    fullWidth
-                    required
-                    fo
-                    type='date'
-                    size='small'
-                /> */}
+                   
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
                             value={formik.values.targetDate}
@@ -166,6 +163,7 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
                                     size="small"
                                 />
                             )}
+                            disablePast
                             fullWidth
                             size="small"
                             sx={{ width: '100%' }}
