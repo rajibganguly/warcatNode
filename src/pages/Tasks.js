@@ -105,15 +105,15 @@ export default function Tasks() {
         ...departmentDropdownItems
       ],
     },
-      {
-        label: "Select",
-        items: [
-          { label: "ALL Tasks", value: "ALL" },
-          { label: "Assigned", value: "Assigned" },
-          { label: "In Progress", value: "inprogress" },
-          { label: "Completed", value: "completed" },
-        ],
-      })
+    {
+      label: "Select",
+      items: [
+        { label: "ALL Tasks", value: "ALL" },
+        { label: "Assigned", value: "initiated" },
+        { label: "In Progress", value: "inprogress" },
+        { label: "Completed", value: "completed" },
+      ],
+    })
   }
 
   React.useEffect(() => {
@@ -151,21 +151,29 @@ export default function Tasks() {
     { text: "Sub Task", dataField: 'subtask' },
     { text: "Operations", dataField: 'taskoperation' }
   ];
-
+  
   let filteredData = allTaskListsData; // 10
   // department filter
-  if (selectedDept) {
-    if (selectedDept === 'ALL') {
-      filteredData = allTaskListsData;
-    } else {
+  if(selectedDept){
+    if(selectedDept === 'ALL'){
+      if(selectedStatus === 'ALL' || selectedStatus === ''){
+        filteredData = allTaskListsData;
+      }else{
+        filteredData = filteredData.filter(task => task.status === selectedStatus);
+      }
+    }else{
       filteredData = filteredData.filter(task => task.department?.[0]?.dep_id === selectedDept);
     }
   }
   // status filter
-  if (selectedStatus) {
-    if (selectedStatus === 'ALL') {
-      filteredData = allTaskListsData;
-    } else {
+  if(selectedStatus){
+    if(selectedStatus === 'ALL'){
+      if(selectedDept === 'ALL' || selectedDept === ''){
+        filteredData = allTaskListsData;
+      }else{
+        filteredData = filteredData.filter(task => task.department?.[0]?.dep_id === selectedDept);
+      }
+    }else{
       filteredData = filteredData.filter(task => task.status === selectedStatus);
     }
   }
