@@ -34,17 +34,14 @@ import { toast } from "react-toastify";
 import LoadingIndicator from "../components/loadingIndicator";
 
 
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1,
-});
+const styles = {
+  labelAsterisk: {
+    color: "red"
+  }
+};
+
+
+
 
 
 const defaultTheme = createTheme();
@@ -96,7 +93,6 @@ const reverseTagMapping = {
   'head_of_office': 'Head Office',
   'secretary': 'Secretary'
 };
-
 export default function AddNewMeeting() {
   const [open, setOpen] = React.useState(true);
   const [file, setFile] = useState(null);
@@ -141,43 +137,43 @@ export default function AddNewMeeting() {
       selectTime: false,
       base64Image: false,
     };
-  
+
     if (departmentIds.length === 0) {
       newError.departmentIds = true;
       isValid = false;
     }
-  
+
     if (tagName.length === 0) {
       newError.tagName = true;
       isValid = false;
     }
-  
+
     if (!meetingTopic) {
       newError.meetingTopic = true;
       isValid = false;
     }
-  
+
     if (!meetingDate) {
       newError.selectDate = true;
       isValid = false;
     }
-  
+
     if (!meetingTime) {
       newError.selectTime = true;
       isValid = false;
     }
-  
+
     if (!base64Image) {
       newError.base64Image = true;
       isValid = false;
     }
-  
+
     setError(newError);
-  
+
     return isValid;
   };
-  
-  
+
+
 
   /**
    * 
@@ -188,7 +184,7 @@ export default function AddNewMeeting() {
     const {
       target: { value, name },
     } = event;
-  
+
     if (name === "tag") {
       setTagName([...value]);
       if (value.length > 0) {
@@ -200,13 +196,13 @@ export default function AddNewMeeting() {
       const selectedDepts = allDepartmentData.filter((dept) =>
         value.includes(dept._id)
       );
-  
+
       // Update the departmentIds state
       setDepartmentIds(value);
       if (value.length > 0) {
         setError(prev => ({ ...prev, departmentIds: false }));
       }
-  
+
       // Update the personName state with the names of selected departments
       setPersonName(selectedDepts.map((dept) => dept.department_name));
     }
@@ -252,10 +248,12 @@ export default function AddNewMeeting() {
       toast.error("Please check the fields with red outlines.");
       return;
     }
-  
+
+    const mappedTags = tagName.map(tag => tagMapping[tag]);
+
     const formDataSend = {
       departmentIds: departmentIds,
-      tag: tagName,
+      tag: mappedTags,
       meetingTopic: meetingTopic,
       selectDate: meetingDate,
       selectTime: meetingTime,
@@ -278,7 +276,7 @@ export default function AddNewMeeting() {
       setIsLoading(false);
     }
   };
-  
+
 
   const handleOutput = (open) => {
     toggleDrawer();
@@ -328,7 +326,7 @@ export default function AddNewMeeting() {
       reader.readAsDataURL(file);
     }
   };
-  
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -412,11 +410,17 @@ export default function AddNewMeeting() {
                         }}
                       >
                         <Grid item xs={12} md={6}>
-                          <InputLabel sx={{ mb: 1 }}>Department / Government Organisation</InputLabel>
+                          <InputLabel sx={{ mb: 1 }}> <span>
+                            Department / Government Organisation
+                            <span style={styles.labelAsterisk}> *</span>
+                          </span>
+                          </InputLabel>
                           <FormControl fullWidth>
                             <Select
                               fullWidth
                               name="department"
+
+
                               value={departmentIds}
                               onChange={handleChange}
                               size="small"
@@ -459,7 +463,12 @@ export default function AddNewMeeting() {
 
                         </Grid>
                         <Grid item xs={12} md={6}>
-                          <InputLabel sx={{ mb: 1 }}>Tag</InputLabel>
+                          <InputLabel sx={{ mb: 1 }}><span>
+                            Tag
+                            <span style={styles.labelAsterisk}> *</span>
+                          </span></InputLabel>
+
+
                           <FormControl fullWidth>
                             <Select
                               fullWidth
@@ -483,9 +492,9 @@ export default function AddNewMeeting() {
                               error={error.tagName}
                               sx={{ borderColor: error.tagName ? 'red' : '' }}
                             >
-                              {Object.keys(tagMapping).map((key) => (
-                                <MenuItem key={key} value={key}>
-                                  {key === 'head_of_office' ? 'Head Of Office' : key}
+                              {Object.keys(tagMapping).map((displayValue) => (
+                                <MenuItem key={displayValue} value={displayValue}>
+                                  {displayValue}
                                 </MenuItem>
                               ))}
                             </Select>
@@ -508,10 +517,15 @@ export default function AddNewMeeting() {
                           />
                         </Grid> */}
                         <Grid item xs={12} md={12}>
-                          <InputLabel sx={{ mb: 1 }}>Meeting Topic</InputLabel>
+
+
+                          <InputLabel sx={{ mb: 1 }}> <span>
+                            Meeting Topic
+                            <span style={styles.labelAsterisk}> *</span>
+                          </span>
+                          </InputLabel>
                           <TextField
                             id="outlined-basic"
-
                             variant="outlined"
                             fullWidth
                             name="meetingTopic"
@@ -527,7 +541,12 @@ export default function AddNewMeeting() {
                         </Grid>
 
                         <Grid item xs={12} md={6}>
-                          <InputLabel sx={{ mb: 1 }}>Select date</InputLabel>
+
+                          <InputLabel sx={{ mb: 1 }}> <span>
+                            Select date
+                            <span style={styles.labelAsterisk}> *</span>
+                          </span>
+                          </InputLabel>
                           <TextField
                             type="date"
                             name="date"
@@ -543,7 +562,12 @@ export default function AddNewMeeting() {
                         </Grid>
 
                         <Grid item xs={12} md={6}>
-                          <InputLabel sx={{ mb: 1 }}>Select time</InputLabel>
+
+                          <InputLabel sx={{ mb: 1 }}> <span>
+                            Select time
+                            <span style={styles.labelAsterisk}> *</span>
+                          </span>
+                          </InputLabel>
                           <TextField
                             type="time"
                             name="time"
@@ -556,7 +580,12 @@ export default function AddNewMeeting() {
                         </Grid>
 
                         <Grid item xs={6} md={6}>
-                          <InputLabel sx={{ mb: 1 }}>Upload Images</InputLabel>
+
+                          <InputLabel sx={{ mb: 1 }}> <span>
+                            Upload Images
+                            <span style={styles.labelAsterisk}> *</span>
+                          </span>
+                          </InputLabel>
                           <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} border={error.base64Image ? '1px solid red' : '1px solid rgb(133, 133, 133)'} gap={2}>
                             <input
                               variant="outlined"
@@ -568,7 +597,7 @@ export default function AddNewMeeting() {
                               accept="image/png, image/jpeg"
                               onChange={handleChangeForImage}
                               className="inputfile inputfile-6"
-                             
+
 
                             />
                             <Box width={'40px'} height={'40px'} minWidth={'40px'} borderRadius={'6px'} backgroundColor='#ebebeb'>
