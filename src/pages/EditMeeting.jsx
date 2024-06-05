@@ -47,10 +47,16 @@ const MenuProps = {
     },
 };
 
-const names = [
-    'head_of_office',
-    'Secretary',
-];
+
+const tagMapping = {
+    'Head Office': 'head_of_office',
+    'Secretary': 'secretary'
+};
+
+const reverseTagMapping = {
+    'head_of_office': 'Head Office',
+    'secretary': 'Secretary'
+};
 
 
 const drawerWidth = 240;
@@ -194,9 +200,11 @@ export default function EditMeeting() {
                 selectTime: dayjs(meetingData.selectTime, 'hh:mm'),
                 tag: meetingData.tag
             });
+            console.log(meetingData.tag);
         }
-    }, [filteredMeeting, data]);
 
+
+    }, [filteredMeeting, data]);
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -521,7 +529,7 @@ export default function EditMeeting() {
                                                                     {selected.map((value) => (
                                                                         <Chip
                                                                             key={value}
-                                                                            label={value}
+                                                                            label={reverseTagMapping[value]}
                                                                             onDelete={() => handleRemoveTag(value)} // Attach onDelete event
                                                                             onMouseDown={(event) => event.stopPropagation()}
                                                                         />
@@ -532,10 +540,9 @@ export default function EditMeeting() {
                                                             error={error.tag}
                                                             sx={{ borderColor: error.tag ? 'red' : '' }}
                                                         >
-                                                            {names.map((name) => (
-                                                                <MenuItem
-                                                                    key={name} value={name}>
-                                                                    {name}
+                                                            {Object.keys(tagMapping).map((key) => (
+                                                                <MenuItem key={tagMapping[key]} value={tagMapping[key]}>
+                                                                    {key}
                                                                 </MenuItem>
                                                             ))}
                                                         </Select>
