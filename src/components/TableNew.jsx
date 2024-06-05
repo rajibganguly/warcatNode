@@ -1,5 +1,6 @@
-import React from "react";
+import React,{useState} from "react";
 import { EyeOutlined, EditOutlined } from "@ant-design/icons";
+import { TablePagination } from "@mui/material";
 import {
   Box,
   Button,
@@ -38,6 +39,25 @@ function TableNew({
   setSearchText,
   handleEditOperationTaskNew
 }) {
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+
+
+
+
+
+
   const getNestedValue = (obj, path) => {
     const keys = path.split(".");
     let value = obj;
@@ -46,6 +66,16 @@ function TableNew({
     }
     return value;
   };
+  const filteredData = data?.filter(row =>
+    column.some(col => {
+        const cellValue = getNestedValue(row, col.dataField);
+        return cellValue
+            ? cellValue.toString().toLowerCase().includes(searchQuery.toLowerCase())
+            : false;
+    })
+);
+
+const currentPageData = filteredData?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   const styles = {
     buttonAccept: {
@@ -71,6 +101,8 @@ function TableNew({
       color: '#ffffff'
     }
   };
+
+  
 
   const renderCellValue = (row, column) => {
     const value = getNestedValue(row, column.dataField);
@@ -495,8 +527,8 @@ function TableNew({
             </thead>
             {/* Your table body */}
             <tbody>
-              {data && data.length > 0 ? (
-                data.map((row, index) => (
+              {currentPageData && currentPageData.length > 0 ? (
+                currentPageData.map((row, index) => (
                   <tr key={index}>
                     {column?.map((col) => (
                       <td key={col.dataField}>{renderCellValue(row, col)}</td>
@@ -512,6 +544,14 @@ function TableNew({
               )}
             </tbody>
           </table>
+          <TablePagination
+            component="div"
+            count={filteredData ? filteredData.length : 0}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         </div>
       </Box>
     </>
