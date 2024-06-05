@@ -376,9 +376,16 @@ export default function Tasks() {
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}
           >
 
-            <Grid container spacing={3}>
+            <Grid container spacing={3} sx={{
+             
+              '@media (min-width: 1200px)': {
+                '.css-1f2kw6w-MuiContainer-root': {
+                  maxWidth: '100%',
+                },
+              },
+            }}>
               {/* Recent Orders */}
-              <Grid item xs={12}>
+              <Grid item xs={12} >
                 <div
                   style={{
                     display: "flex",

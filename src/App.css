@@ -29,12 +29,12 @@
   overflow-x: auto;
 }
 
-.table-container .bordered-table tbody td {
+/* .table-container .bordered-table tbody td {
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: pre-wrap;
-  max-width: 200px;
-}
+  white-space: nowrap;
+  max-width: 140px;
+} */
 
 .table-scroll {
   overflow-x: auto;
