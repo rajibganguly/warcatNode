@@ -13,6 +13,7 @@ import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { useNavigate } from "react-router-dom";
+import { capitalizeFirstLetter } from "../pages/common";
 
 const Header = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -38,6 +39,7 @@ const Header = (props) => {
   const toggleDrawer = () => {
     props.onOutput(!props.open);
   };
+
 
   return (
     <>
@@ -81,7 +83,7 @@ const Header = (props) => {
             alignItems="center"
           >
             <Avatar alt="Avatar" src={null} />
-            <Typography sx={{ color: 'white', variant: 'body1', textTransform: 'none' }}>{user.name}</Typography>
+            <Typography sx={{ color: 'white', variant: 'body1', textTransform: 'none' }}> {capitalizeFirstLetter(user.name)}</Typography>
           </Stack>
 
         </Button>

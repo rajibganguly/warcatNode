@@ -96,7 +96,7 @@ export default function Tasks() {
   }));
 
   const dropdownData = [];
-  
+
   if (departmentDropdownItems && departmentDropdownItems.length > 0) {
     dropdownData.push({
       label: "Select",
@@ -105,15 +105,15 @@ export default function Tasks() {
         ...departmentDropdownItems
       ],
     },
-    {
-      label: "Select",
-      items: [
-        { label: "ALL Tasks", value: "ALL" },
-        { label: "Assigned", value: "Assigned" },
-        { label: "In Progress", value: "inprogress" },
-        { label: "Completed", value: "completed" },
-      ],
-    })
+      {
+        label: "Select",
+        items: [
+          { label: "ALL Tasks", value: "ALL" },
+          { label: "Assigned", value: "Assigned" },
+          { label: "In Progress", value: "inprogress" },
+          { label: "Completed", value: "completed" },
+        ],
+      })
   }
 
   React.useEffect(() => {
@@ -373,7 +373,8 @@ export default function Tasks() {
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}
+          >
 
             <Grid container spacing={3}>
               {/* Recent Orders */}
