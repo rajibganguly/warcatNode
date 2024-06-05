@@ -34,17 +34,14 @@ import { toast } from "react-toastify";
 import LoadingIndicator from "../components/loadingIndicator";
 
 
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1,
-});
+const styles = {
+  labelAsterisk: {
+    color: "red"
+  }
+};
+
+
+
 
 
 const defaultTheme = createTheme();
@@ -413,11 +410,17 @@ export default function AddNewMeeting() {
                         }}
                       >
                         <Grid item xs={12} md={6}>
-                          <InputLabel sx={{ mb: 1 }}>Department / Government Organisation</InputLabel>
+                          <InputLabel sx={{ mb: 1 }}> <span>
+                            Department / Government Organisation
+                            <span style={styles.labelAsterisk}> *</span>
+                          </span>
+                          </InputLabel>
                           <FormControl fullWidth>
                             <Select
                               fullWidth
                               name="department"
+
+
                               value={departmentIds}
                               onChange={handleChange}
                               size="small"
@@ -460,7 +463,12 @@ export default function AddNewMeeting() {
 
                         </Grid>
                         <Grid item xs={12} md={6}>
-                          <InputLabel sx={{ mb: 1 }}>Tag</InputLabel>
+                          <InputLabel sx={{ mb: 1 }}><span>
+                            Tag
+                            <span style={styles.labelAsterisk}> *</span>
+                          </span></InputLabel>
+
+
                           <FormControl fullWidth>
                             <Select
                               fullWidth
@@ -509,10 +517,15 @@ export default function AddNewMeeting() {
                           />
                         </Grid> */}
                         <Grid item xs={12} md={12}>
-                          <InputLabel sx={{ mb: 1 }}>Meeting Topic</InputLabel>
+
+
+                          <InputLabel sx={{ mb: 1 }}> <span>
+                            Meeting Topic
+                            <span style={styles.labelAsterisk}> *</span>
+                          </span>
+                          </InputLabel>
                           <TextField
                             id="outlined-basic"
-
                             variant="outlined"
                             fullWidth
                             name="meetingTopic"
@@ -528,7 +541,12 @@ export default function AddNewMeeting() {
                         </Grid>
 
                         <Grid item xs={12} md={6}>
-                          <InputLabel sx={{ mb: 1 }}>Select date</InputLabel>
+
+                          <InputLabel sx={{ mb: 1 }}> <span>
+                            Select date
+                            <span style={styles.labelAsterisk}> *</span>
+                          </span>
+                          </InputLabel>
                           <TextField
                             type="date"
                             name="date"
@@ -544,7 +562,12 @@ export default function AddNewMeeting() {
                         </Grid>
 
                         <Grid item xs={12} md={6}>
-                          <InputLabel sx={{ mb: 1 }}>Select time</InputLabel>
+
+                          <InputLabel sx={{ mb: 1 }}> <span>
+                            Select time
+                            <span style={styles.labelAsterisk}> *</span>
+                          </span>
+                          </InputLabel>
                           <TextField
                             type="time"
                             name="time"
@@ -557,7 +580,12 @@ export default function AddNewMeeting() {
                         </Grid>
 
                         <Grid item xs={6} md={6}>
-                          <InputLabel sx={{ mb: 1 }}>Upload Images</InputLabel>
+
+                          <InputLabel sx={{ mb: 1 }}> <span>
+                            Upload Images
+                            <span style={styles.labelAsterisk}> *</span>
+                          </span>
+                          </InputLabel>
                           <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} border={error.base64Image ? '1px solid red' : '1px solid rgb(133, 133, 133)'} gap={2}>
                             <input
                               variant="outlined"

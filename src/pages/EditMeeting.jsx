@@ -47,6 +47,13 @@ const MenuProps = {
     },
 };
 
+const styles = {
+    labelAsterisk: {
+        color: "red"
+    }
+};
+
+
 
 const tagMapping = {
     'Head Office': 'head_of_office',
@@ -470,7 +477,12 @@ export default function EditMeeting() {
                                             <Grid container spacing={2}>
                                                 <Grid item xs={6}>
                                                     <FormControl sx={{ width: '100%' }}>
-                                                        <InputLabel id="demo-multiple-chip-label1">Department / Government Organisation</InputLabel>
+
+                                                        <InputLabel sx={{ mb: 1 }}> <span>
+                                                            Department / Government Organisation
+                                                            <span style={styles.labelAsterisk}> *</span>
+                                                        </span>
+                                                        </InputLabel>
                                                         <Select
                                                             label="Department / Government Organisation"
                                                             id="demo-multiple-chip"
@@ -515,7 +527,12 @@ export default function EditMeeting() {
                                                 </Grid>
                                                 <Grid item xs={6}>
                                                     <FormControl sx={{ width: '100%' }}>
-                                                        <InputLabel id="demo-multiple-chip-label2">Tag</InputLabel>
+
+                                                        <InputLabel sx={{ mb: 1 }}> <span>
+                                                            Tag
+                                                            <span style={styles.labelAsterisk}> *</span>
+                                                        </span>
+                                                        </InputLabel>
                                                         <Select
                                                             labelId="demo-multiple-chip-label2"
                                                             id="demo-multiple-chip"
@@ -549,7 +566,17 @@ export default function EditMeeting() {
                                                     </FormControl>
                                                 </Grid>
                                                 <Grid item xs={12}>
-                                                    <TextField id="outlined-basic" label="Meeting Topic"
+
+                                                    {/* <InputLabel sx={{ mb: 1 }}> <span>
+                                                        Department / Government Organisation
+                                                        <span style={styles.labelAsterisk}> *</span>
+                                                    </span>
+                                                    </InputLabel> */}
+                                                    <TextField id="outlined-basic" label={
+                                                        <>
+                                                            Meeting Topic<span style={styles.labelAsterisk}>*</span>
+                                                        </>
+                                                    }
                                                         name='meetingTopic'
                                                         value={formData.meetingTopic}
                                                         onChange={handleChange}
@@ -596,13 +623,15 @@ export default function EditMeeting() {
                                                             </Grid>
                                                             <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'auto' }}>
 
-                                                                <TextField
+                                                                <input
                                                                     variant="outlined"
                                                                     fullWidth
                                                                     placeholder="Enter task title"
                                                                     name="uploadImage"
                                                                     size="small"
                                                                     type="file"
+                                                                    accept="image/png, image/jpeg"
+                                                                    className="inputfile inputfile-6"
                                                                     onChange={handleFileChange}
                                                                     error={error.imageUrl}
                                                                     sx={{ padding: '17px', borderColor: error.imageUrl ? 'red' : '' }}
