@@ -33,7 +33,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: pre-wrap;
-  max-width: 120px;
+ 
 }
 
 .table-scroll {
