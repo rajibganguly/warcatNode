@@ -156,7 +156,7 @@ export default function Tasks() {
   // department filter
   if(selectedDept){
     if(selectedDept === 'ALL'){
-      if(selectedStatus === 'ALL'){
+      if(selectedStatus === 'ALL' || selectedStatus === ''){
         filteredData = allTaskListsData;
       }else{
         filteredData = filteredData.filter(task => task.status === selectedStatus);
@@ -168,7 +168,7 @@ export default function Tasks() {
   // status filter
   if(selectedStatus){
     if(selectedStatus === 'ALL'){
-      if(selectedDept === 'ALL'){
+      if(selectedDept === 'ALL' || selectedDept === ''){
         filteredData = allTaskListsData;
       }else{
         filteredData = filteredData.filter(task => task.department?.[0]?.dep_id === selectedDept);
