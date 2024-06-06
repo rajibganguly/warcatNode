@@ -20,7 +20,7 @@ import CardContent from "@mui/material/CardContent";
 import Stack from "@mui/material/Stack";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-
+import { InputAdornment } from "@mui/material";
 import { DepartmentContext } from './../context/DepartmentContext'
 import { fetchDepartmentData } from "./common";
 import LoadingIndicator from "../components/loadingIndicator";
@@ -82,12 +82,12 @@ export default function EditDepartment() {
   const { setAllDepartmentList } = React.useContext(DepartmentContext);
 
   React.useEffect(() => {
-    console.log(selectedDepartmentData)
+
     const updateDataforCurrentData = {
       headOffice: selectedDepartmentData.headOffice,
       secretary: selectedDepartmentData.secretary,
       department: selectedDepartmentData.department,
-      department_id: selectedDepartmentData.department._id
+      department_id: selectedDepartmentData.department?._id
     }
     setFormData(updateDataforCurrentData)
     console.log('EDIT>>86>', selectedDepartmentData, formData)
@@ -112,58 +112,86 @@ export default function EditDepartment() {
   const isFormValid = () => {
     const newErrors = {};
     let valid = true;
-  
+
     if (!formData.department.department_name) {
       newErrors.department_name = "Department name is required";
       valid = false;
     }
-  
+
     if (!formData.secretary.name) {
       newErrors.secretaryName = "Secretary name is required";
       valid = false;
     }
-  
+
     if (!formData.secretary.phone_number) {
       newErrors.secretaryPhoneNumber = "Secretary phone number is required";
       valid = false;
+    } else if (secretaryphone.length !== 10) {
+      newErrors.secretaryPhoneNumber = "Phone number must be 10 digits";
+      valid = false;
     }
-  
+
     if (!formData.secretary.email) {
       newErrors.secretaryEmail = "Secretary email is required";
       valid = false;
     }
-  
+
     if (!formData.headOffice.name) {
       newErrors.headOfficeName = "Head of Office name is required";
       valid = false;
     }
-  
+
     if (!formData.headOffice.designation) {
       newErrors.headOfficeDesignation = "Head of Office designation is required";
       valid = false;
     }
-  
+
     if (!formData.headOffice.phone_number) {
       newErrors.headOfficePhoneNumber = "Head of Office phone number is required";
       valid = false;
+    } else if (headofficephone.length !== 10) {
+      newErrors.headOfficePhoneNumber = "Phone number must be 10 digits";
+      valid = false;
     }
-  
+
     if (!formData.headOffice.email) {
       newErrors.headOfficeEmail = "Head of Office email is required";
       valid = false;
     }
-  
+
     setErrors(newErrors);
-  
+
     if (!valid) {
       toast.error("Please correct the highlighted fields", {
         autoClose: 2000,
       });
     }
-  
+
     return valid;
   };
-  
+
+
+  const stripCountryCode = (phoneNumber) => {
+    if (phoneNumber?.startsWith('+91')) {
+      return phoneNumber.slice(3);
+    }
+    return phoneNumber;
+  };
+
+  const addCountryCode = (phoneNumber) => {
+    if (!phoneNumber.startsWith('+91')) {
+      return `+91${phoneNumber}`;
+    }
+    return phoneNumber;
+  };
+
+  const headofficephone = stripCountryCode(formData?.headOffice?.phone_number)
+  console.log(headofficephone);
+
+  const secretaryphone = stripCountryCode(formData?.secretary?.phone_number)
+  console.log(secretaryphone);
+
+
 
   /**
    * Check all fields if not empty
@@ -233,10 +261,12 @@ export default function EditDepartment() {
       dep_name: formData.department.department_name,
       secretary: {
         ...formData.secretary,
+        phone_number: addCountryCode(formData.secretary.phone_number), 
         role_type: 'secretary'
       },
       headOffice: {
         ...formData.headOffice,
+        phone_number: addCountryCode(formData.headOffice.phone_number), // Add country code
         role_type: 'head_of_office'
       }
     };
@@ -344,14 +374,14 @@ export default function EditDepartment() {
                   <CardContent>
                     {formData ? (
                       <Box component="form" noValidate autoComplete="off">
-                       
+
                         <TextField
-                         label={
-                          <span>
-                         Department / Government Organisation
-                            <span style={styles.labelAsterisk}> *</span>
-                          </span>
-                        }
+                          label={
+                            <span>
+                              Department / Government Organisation
+                              <span style={styles.labelAsterisk}> *</span>
+                            </span>
+                          }
                           fullWidth
                           name="department_name"
                           value={formData?.department?.department_name}
@@ -375,14 +405,14 @@ export default function EditDepartment() {
                           sx={{ marginBottom: "20px" }}
                         >
                           <Grid item xs={12} sm={6}>
-                           
+
                             <TextField
-                             label={
-                              <span>
-                              Secretary Name
-                                <span style={styles.labelAsterisk}> *</span>
-                              </span>
-                            }
+                              label={
+                                <span>
+                                  Secretary Name
+                                  <span style={styles.labelAsterisk}> *</span>
+                                </span>
+                              }
                               variant="outlined"
                               sx={{ width: "100%" }}
                               name="secretary.name"
@@ -393,36 +423,42 @@ export default function EditDepartment() {
                             />
                           </Grid>
                           <Grid item xs={12} sm={6}>
-                           
+
                             <TextField
-                             label={
-                              <span>
-                               Secretary Phone Number
-                                <span style={styles.labelAsterisk}> *</span>
-                              </span>
-                            }
+                              label={
+                                <span>
+                                  Secretary Phone Number
+                                  <span style={styles.labelAsterisk}> *</span>
+                                </span>
+                              }
                               variant="outlined"
                               sx={{ width: "100%" }}
                               name="secretary.phone_number"
-                              value={formData?.secretary?.phone_number}
+                              value={secretaryphone}
+
                               inputProps={{
-                                minLength: 13,
-                                maxLength: 13,
+                                maxLength: 10,
+                                onKeyPress: (event) => {
+                                  if (!/^\d*$/.test(event.key)) {
+                                    event.preventDefault();
+                                  }
+                                }
                               }}
+
                               onChange={handleChange}
                               error={!!errors.secretaryPhoneNumber}
                               helperText={errors.secretaryPhoneNumber}
                             />
                           </Grid>
                           <Grid item xs={12} sm={6}>
-                           
+
                             <TextField
-                             label={
-                              <span>
-                              Secretary Email Id
-                                <span style={styles.labelAsterisk}> *</span>
-                              </span>
-                            }
+                              label={
+                                <span>
+                                  Secretary Email Id
+                                  <span style={styles.labelAsterisk}> *</span>
+                                </span>
+                              }
                               variant="outlined"
                               sx={{ width: "100%" }}
                               name="secretary.email"
@@ -457,16 +493,16 @@ export default function EditDepartment() {
                         >
                           <Grid item xs={12} sm={6}>
                             <Stack direction="column" spacing={2}>
-                              
+
                               <TextField
-                               label={
-                                <span>
-                                 Head of Office Name
-                                  <span style={styles.labelAsterisk}> *</span>
-                                </span>
-                              }
+                                label={
+                                  <span>
+                                    Head of Office Name
+                                    <span style={styles.labelAsterisk}> *</span>
+                                  </span>
+                                }
                                 id="outlined-basic-1"
-                              
+
                                 variant="outlined"
                                 sx={{ width: "100%" }}
                                 name="headOffice.name"
@@ -475,12 +511,12 @@ export default function EditDepartment() {
                                 error={!!errors.headOfficeName}
                                 helperText={errors.headOfficeName}
                               />
-                            
+
                               <TextField
                                 id="outlined-basic-2"
                                 label={
                                   <span>
-                                   Head of Office Designation
+                                    Head of Office Designation
                                     <span style={styles.labelAsterisk}> *</span>
                                   </span>
                                 }
@@ -503,34 +539,39 @@ export default function EditDepartment() {
                           </Grid>
                           <Grid item xs={12} sm={6}>
                             <Stack direction="column" spacing={2}>
-                             
+
                               <TextField
                                 id="outlined-basic-1"
-                               
+
                                 label={
                                   <span>
-                                  Enter Head of Office Phone Number
+                                    Enter Head of Office Phone Number
                                     <span style={styles.labelAsterisk}> *</span>
                                   </span>
                                 }
                                 variant="outlined"
                                 sx={{ width: "100%" }}
                                 name="headOffice.phone_number"
-                                value={formData?.headOffice?.phone_number}
+                                value={headofficephone}
+
                                 inputProps={{
-                                  minLength: 13,
-                                  maxLength: 13,
+                                  maxLength: 10,
+                                  onKeyPress: (event) => {
+                                    if (!/^\d*$/.test(event.key)) {
+                                      event.preventDefault();
+                                    }
+                                  }
                                 }}
                                 onChange={handleChange}
                                 error={!!errors.headOfficePhoneNumber}
                                 helperText={errors.headOfficePhoneNumber}
                               />
-                            
+
                               <TextField
                                 id="outlined-basic-2"
                                 label={
                                   <span>
-                                   Head of Office Email Id
+                                    Head of Office Email Id
                                     <span style={styles.labelAsterisk}> *</span>
                                   </span>
                                 }
