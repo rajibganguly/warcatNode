@@ -231,5 +231,7 @@ export const getRoleTypename = (roleType) => {
 };
 
 export const formatDateFromDbValue = (timestamp) => {
-  return 'timestamp';
+  if (!timestamp) return '';
+  const [datePart] = timestamp.split('T');
+  return datePart;
 }

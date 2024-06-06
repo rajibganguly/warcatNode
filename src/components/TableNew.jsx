@@ -307,7 +307,7 @@ function TableNew({
     }
     if (col.dataField === "timestamp" || col.dataField === "target_date") {
       // handling date type values
-      return formatDateFromDbValue(row?.dataField);
+      return formatDateFromDbValue(row[col?.dataField]);
     }
     return row[col.dataField] || "";
   }
@@ -379,7 +379,7 @@ function TableNew({
       }, {})
     );
 
-    console.log(rows, 'rows excel'); return false;
+    console.log(rows, 'rows excel');
 
     // Create worksheet with filename, headers, and data
     const worksheetData = [filenameRow, headers, ...rows.map(row => headers.map(header => row[header]))];
