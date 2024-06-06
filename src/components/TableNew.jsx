@@ -1,4 +1,4 @@
-import React,{useState} from "react";
+import React, { useState } from "react";
 import { EyeOutlined, EditOutlined } from "@ant-design/icons";
 import { TablePagination } from "@mui/material";
 import {
@@ -66,16 +66,17 @@ function TableNew({
     }
     return value;
   };
+
   const filteredData = data?.filter(row =>
     column.some(col => {
-        const cellValue = getNestedValue(row, col.dataField);
-        return cellValue
-            ? cellValue.toString().toLowerCase().includes(searchQuery.toLowerCase())
-            : false;
+      const cellValue = getNestedValue(row, col.dataField);
+      return cellValue
+        ? cellValue.toString().toLowerCase().includes(searchQuery.toLowerCase())
+        : false;
     })
-);
+  );
 
-const currentPageData = filteredData?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  const currentPageData = filteredData?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   const styles = {
     buttonAccept: {
@@ -102,7 +103,7 @@ const currentPageData = filteredData?.slice(page * rowsPerPage, page * rowsPerPa
     }
   };
 
-  
+
 
   const renderCellValue = (row, column) => {
     const value = getNestedValue(row, column.dataField);
@@ -217,10 +218,14 @@ const currentPageData = filteredData?.slice(page * rowsPerPage, page * rowsPerPa
     }
 
     if (column.dataField === "status") {
+      
       return (
         getStatusText(row.status) + ' ' + formatVerifiedStatus(row.admin_verified)
+       
       )
+      
     }
+   console.log(row.status);
 
     if (column.dataField === "taskoperation") {
       return (
@@ -308,7 +313,7 @@ const currentPageData = filteredData?.slice(page * rowsPerPage, page * rowsPerPa
         >
           <img
             src={value}
-            alt="Meeting Image"
+            alt="Meeting"
             style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "cover" }}
           />
         </div>
@@ -321,13 +326,21 @@ const currentPageData = filteredData?.slice(page * rowsPerPage, page * rowsPerPa
   let filename = `WARCAT - War-room Assistant for Report Compilation & Task tracking | ${tableHeading}`;
 
   /** PDF generate  */
+
   const generatePDF = () => {
     const doc = new jsPDF();
     const tableColumn = column.map(col => col.text);
     const tableRows = [];
 
     data.forEach(row => {
-      const rowData = column.map(col => row[col.dataField]);
+      const rowData = column.map(col => {
+        let cellValue = getNestedValue(row, col.dataField);
+        // Handle specific formatting for known nested columns
+        if (col.dataField === "department") {
+          cellValue = cellValue ? cellValue.department_name : "";
+        }
+        return cellValue ? cellValue.toString() : '';
+      });
       tableRows.push(rowData);
     });
 
@@ -335,9 +348,8 @@ const currentPageData = filteredData?.slice(page * rowsPerPage, page * rowsPerPa
     const pageWidth = doc.internal.pageSize.getWidth();
     let textWidth = doc.getTextWidth(title);
     let textX = (pageWidth - textWidth) / 2;
-    let fontSize = 16; // Starting font size
+    let fontSize = 16;
 
-    // Adjust font size if the title is too wide
     while (textWidth > pageWidth - 20 && fontSize > 8) {
       fontSize -= 1;
       doc.setFontSize(fontSize);
@@ -345,26 +357,31 @@ const currentPageData = filteredData?.slice(page * rowsPerPage, page * rowsPerPa
       textX = (pageWidth - textWidth) / 2;
     }
 
-    // Set heading color
-    doc.setTextColor(0, 0, 0); // Table title color
-    doc.text(title, textX, 15); // Table title
+    doc.setTextColor(0, 0, 0);
+    doc.text(title, textX, 15);
 
-    // Add the table to PDF with body text color
+    console.log(tableColumn);
+
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
       startY: 20,
       styles: {
-        textColor: [0, 0, 0], // For body text
+        textColor: [0, 0, 0],
       },
       headStyles: {
-        textColor: [255, 255, 255], // For header text
-        fillColor: [44, 64, 83], // For header background
+        textColor: [255, 255, 255],
+        fillColor: [44, 64, 83],
       },
     });
 
     doc.save(`${filename}.pdf`);
   };
+
+
+
+
+
 
   /** Excel generate  */
   const generateExcel = () => {
@@ -537,7 +554,7 @@ const currentPageData = filteredData?.slice(page * rowsPerPage, page * rowsPerPa
                 ))
               ) : (
                 <tr>
-                  <td colSpan={column.length} style={{ textAlign: "center" }}>
+                  <td colSpan={column?.length} style={{ textAlign: "center" }}>
                     No records found
                   </td>
                 </tr>
