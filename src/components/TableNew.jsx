@@ -308,7 +308,7 @@ const currentPageData = filteredData?.slice(page * rowsPerPage, page * rowsPerPa
         >
           <img
             src={value}
-            alt="Meeting Image"
+            alt="Meeting "
             style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "cover" }}
           />
         </div>
