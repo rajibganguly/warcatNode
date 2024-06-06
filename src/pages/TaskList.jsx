@@ -264,54 +264,8 @@ export default function AddTasks() {
                             <CardContent>
 
                             <Card sx={{ width: 100 + '%', padding: 2 }}>
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'center',
-                                        padding: 2,
-                                        borderBottom: '1px solid #eff2f7',
-
-                                    }}
-                                >
-                                    <Typography variant="body1">Tasks 1</Typography>
-
-                                </Box>
-                                <CardContent>
-                                    <Box>
-                                        <Typography>
-                                            In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before the final copy is available.
-                                        </Typography>
-                                        <Divider sx={{my:2}}/>
-                                        <Typography>
-                                            In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before the final copy is available.
-                                        </Typography>
-                                    </Box>
-                                    <Box>
-                                        <img src="" alt="image" />
-                                    </Box>
-
-                                    <Grid container spacing={2}>
-                                    <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'start' }}>
-                                        <Button
-                                            variant="contained"
-                                            color="success"
-                                            sx={{ color: 'white', marginTop: '2%', mr: '10px', fontWeight: 'bold' }} // Added left margin for spacing
-                                            onClick={handleAddClick}
-                                        >
-                                            Accept
-                                        </Button>
-                                        <Button
-                                            variant="contained"
-                                            color="error"
-                                            sx={{ color: 'white', marginTop: '2%' ,fontWeight: 'bold'}}
-                                            onClick={handleSubmit}
-                                        >
-                                            Reject
-                                        </Button>
-                                    </Grid>
-                                </Grid>
-                                </CardContent>
+                                <p>Tabs will be here</p>
+                                <p>Table will be here</p>
                             </Card>
                                 
                             </CardContent>

@@ -467,7 +467,7 @@ export default function Tasks() {
                                 },
                               }}
                               component={Link}
-                              to="/tasks"
+                              to="/tasks-list"
                             >
                               Task list
                             </Button>

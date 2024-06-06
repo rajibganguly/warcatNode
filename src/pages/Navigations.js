@@ -85,7 +85,7 @@ const Navigations = () => {
         />
         <Route
           path="/tasks-list"
-          element={!authToken ? <Navigate to="/" /> : <TaskList />}
+          element={authToken && userRoleType === 'admin' ? <TaskList /> : <Navigate to="/tasks-list" />}
         />
         <Route
           path="/edit-departments/:id"
