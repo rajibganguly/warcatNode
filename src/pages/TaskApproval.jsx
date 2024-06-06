@@ -1,5 +1,5 @@
-
 import * as React from "react";
+import { useState } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -8,324 +8,332 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import { Link } from "react-router-dom";
-import { Button, TextField } from "@mui/material";
+import Paper from "@mui/material/Paper";
+import Link from "@mui/material/Link";
+import report from '../assets/Screenshot_2024-05-19_171305.png';
+import PropTypes from "prop-types";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Footer from "../components/Footer";
 import Header from "../components/header";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-//import { useNavigate } from "react-router-dom";
-import { useTheme } from '@mui/material/styles';
-import InputLabel from '@mui/material/InputLabel';
-import { Input as BaseInput } from '@mui/base/Input';
 import Sidebar from "../components/Sidebar";
-import ReactPlayer from "react-player";
-const Input = React.forwardRef(function CustomInput(props, ref) {
-    return (
-        <BaseInput
-            slots={{
-                root: RootDiv,
-                input: 'input',
-                textarea: TextareaElement,
-            }}
-            {...props}
-            ref={ref}
-        />
-    );
-});
-
-const blue = {
-    100: '#DAECFF',
-    200: '#80BFFF',
-    400: '#3399FF',
-    500: '#007FFF',
-    600: '#0072E5',
-    700: '#0059B2',
-};
-
-const grey = {
-    50: '#F3F6F9',
-    100: '#E5EAF2',
-    200: '#DAE2ED',
-    300: '#C7D0DD',
-    400: '#B0B8C4',
-    500: '#9DA8B7',
-    600: '#6B7A90',
-    700: '#434D5B',
-    800: '#303740',
-    900: '#1C2025',
-};
-
-const RootDiv = styled('div')`
-    display: flex;
-    max-width: 100%;
-  `;
-
-const TextareaElement = styled('textarea', {
-    shouldForwardProp: (prop) =>
-        !['ownerState', 'minRows', 'maxRows'].includes(prop.toString()),
-})(
-    ({ theme }) => `
-    width: 100%;
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-size: 0.875rem;
-    font-weight: 400;
-    line-height: 1.5rem;
-    padding: 8px 12px;
-    border-radius: 8px 8px 0 8px;
-    color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
-    background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
-    border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
-    box-shadow: 0px 2px 4px ${theme.palette.mode === 'dark' ? 'rgba(0,0,0, 0.5)' : 'rgba(0,0,0, 0.05)'
-        };
-  
-    &:hover {
-      border-color: ${blue[400]};
-    }
-  
-    &:focus {
-      border-color: ${blue[400]};
-      box-shadow: 0 0 0 3px ${theme.palette.mode === 'dark' ? blue[700] : blue[200]};
-    }
-  
-    // firefox
-    &:focus-visible {
-      outline: 0;
-    }
-  `,
-);
-
-
-
-
-
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-    PaperProps: {
-        style: {
-            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-            width: 250,
-        },
-    },
-};
-
-const names = [
-    'Oliver Hansen',
-    'Van Henry',
-    'April Tucker',
-    'Ralph Hubbard',
-    'Omar Alexander',
-    'Carlos Abbott',
-    'Miriam Wagner',
-    'Bradley Wilkerson',
-    'Virginia Andrews',
-    'Kelly Snyder',
-];
-function getStyles(name, personName, theme) {
-    return {
-        fontWeight:
-            personName.indexOf(name) === -1
-                ? theme.typography.fontWeightRegular
-                : theme.typography.fontWeightMedium,
-    };
-}
-
-function Label({ componentName, valueType }) {
-
-}
-
+import TableNew from "../components/TableNew";
+import { TaskContext } from "../context/TaskContext.js";
+import { fetchDepartmentData, fetchTaskData, formatPercentage, mapKeysToValues } from '../pages/common.js'
+import { DepartmentContext } from "../context/DepartmentContext.js";
 const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
-    shouldForwardProp: (prop) => prop !== "open",
+  shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
-    zIndex: theme.zIndex.drawer + 1,
+  zIndex: theme.zIndex.drawer + 1,
+  transition: theme.transitions.create(["width", "margin"], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  ...(open && {
+    marginLeft: drawerWidth,
+    width: `calc(100% - ${drawerWidth}px)`,
     transition: theme.transitions.create(["width", "margin"], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
     }),
-    ...(open && {
-        marginLeft: drawerWidth,
-        width: `calc(100% - ${drawerWidth}px)`,
-        transition: theme.transitions.create(["width", "margin"], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-    }),
+  }),
 }));
 
 
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
+const data = [
+  {
+    key: '1',
+    name: 'John Brown',
+    age: 32,
+    address: 'New York No. 1 Lake Park',
+    city: 'delhi',
+    description: 'Response Rate --',
+
+  },
+  {
+    key: '2',
+    name: 'Jim Green',
+    age: 42,
+    address: 'London No. 1 Lake Park',
+    city: 'delhi',
+    description: 'Response Rate --',
+  },
+  {
+    key: '3',
+    name: 'Joe Black',
+    age: 32,
+    address: 'Sydney No. 1 Lake Park',
+    city: 'delhi',
+    description: 'Response Rate --',
+  },
+  {
+    key: '4',
+    name: 'Jim Red',
+    age: 32,
+    address: 'London No. 2 Lake Park',
+    city: 'delhi',
+    description: 'Response Rate --',
+  },
+];
 
 export default function TaskApproval() {
-    const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(true);
+  const [filteredInfo, setFilteredInfo] = useState({});
+  const [sortedInfo, setSortedInfo] = useState({});
+  const { allTaskLists } = React.useContext(TaskContext);
+  const allTaskListsData = allTaskLists?.tasks;
+  const { setAllTaskLists } = React.useContext(TaskContext);
+  const { setAllDepartmentList } = React.useContext(DepartmentContext);
+  const [searchText, setSearchText] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedDept, setSelectedDept] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState('');
 
-    const [personName, setPersonName] = React.useState([]);
-    const theme = useTheme();
-    const handleChange = (event) => {
-        const {
-            target: { value },
-        } = event;
-        setPersonName(
-            // On autofill we get a stringified value.
-            typeof value === 'string' ? value.split(',') : value,
-        );
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+  // const [modalVisible, setModalVisible] = React.useState(false);
+  // const [selectedRecord, setSelectedRecord] = React.useState(null);
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const setAllTaskListsData = await fetchTaskData();
+        setAllTaskLists(setAllTaskListsData);
+        const fetchDepdata = await fetchDepartmentData();
+        setAllDepartmentList(fetchDepdata);
+      } catch (error) {
+        console.error('Error fetching task data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  
+  }, []);
+
+  
+
+
+  const column = [
+    { text: 'Assigned Date', dataField: 'timestamp' },
+    { text: "Assigned Title", dataField: 'tasks_title' },
+    { text: "Department", dataField: 'tasks_dept' },
+    { text: "Tag", dataField: 'tasks_tag' },
+    { text: "Target Date", dataField: 'target_date' },
+    { text: "Status", dataField: 'status' },
+    // { text: "Sub Task", dataField: 'subtask' },
+    // { text: "Operations", dataField: 'taskoperation' }
+  ];
+
+  let filteredData = allTaskListsData; // 10
+
+  console.log(filteredData);
+  // department filter
+  if(selectedDept){
+    if(selectedDept === 'ALL'){
+      if(selectedStatus === 'ALL' || selectedStatus === ''){
+        filteredData = allTaskListsData;
+      }else{
+        filteredData = filteredData.filter(task => task.status === selectedStatus);
+      }
+    }else{
+      filteredData = filteredData.filter(task => task.department?.[0]?.dep_id === selectedDept);
     }
+  }
+  // status filter
+  if(selectedStatus){
+    if(selectedStatus === 'ALL'){
+      if(selectedDept === 'ALL' || selectedDept === ''){
+        filteredData = allTaskListsData;
+      }else{
+        filteredData = filteredData.filter(task => task.department?.[0]?.dep_id === selectedDept);
+      }
+    }else{
+      filteredData = filteredData.filter(task => task.status === selectedStatus);
+    }
+  }
+  // search box filter
+  const matchesSearchText = (obj, searchText) => {
+    if (Array.isArray(obj)) {
+      return obj.some(item => matchesSearchText(item, searchText));
+    }
+    if (typeof obj === 'object' && obj !== null) {
+      return Object.values(obj).some(value => matchesSearchText(value, searchText));
+    }
+    return typeof obj === 'string' && obj.toLowerCase().includes(searchText.toLowerCase());
+  };
+  if (searchText) {
+    filteredData = filteredData.filter(task => matchesSearchText(task, searchText));
+  }
 
+  const handleOutput = (open) => {
+    toggleDrawer();
+  };
+  const toggleDrawer = () => {
+    setOpen(!open);
+  };
 
-    const handleOutput = (open) => {
-        toggleDrawer();
-    };
-    const toggleDrawer = () => {
-        setOpen(!open);
-    };
-
+  function CustomTabPanel(props) {
+    const { children, value, index, ...other } = props;
 
     return (
-        <ThemeProvider theme={defaultTheme}>
-            <Box sx={{ display: "flex" }}>
-                <CssBaseline />
-                <AppBar position="absolute" open={open}>
-                    <Header props={open} onOutput={handleOutput} />
-                </AppBar>
-                <Sidebar open={open} toggleDrawer={toggleDrawer} />
-                <Box
-                    component="main"
-                    sx={{
-                        backgroundColor: (theme) =>
-                            theme.palette.mode === "light"
-                                ? theme.palette.grey[100]
-                                : theme.palette.grey[900],
-                        width: "100%",
-                        paddingBottom: "20px",
-                    }}
-                >
-                    <Toolbar />
-                    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-                        <Grid container spacing={3}>
-                            {/* Recent Orders */}
-                            <Grid item xs={12}>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        alignItems: "start",
-                                        justifyContent: "space-between",
-                                    }}
-                                >
-                                    <div
-                                        style={{
-                                            textTransform: "uppercase",
-                                            paddingBottom: "10px",
-                                        }}
-                                    >
-                                        Approval
-                                    </div>
-                                    <div>
-                                        <Breadcrumbs aria-label="breadcrumb">
-                                            <Link underline="hover" color="inherit" href="/">
-                                                WARCAT
-                                            </Link>
-                                            <Link
-                                                underline="hover"
-                                                color="inherit"
-                                                href="/meetings"
-                                            >
-                                                Task Approval
-                                            </Link>
-
-                                        </Breadcrumbs>
-                                    </div>
-                                </div>
-                                <Card sx={{ width: 100 + "%", padding: 2 }}>
-
-                                    <Box
-                                        sx={{
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
-                                            alignItems: 'center',
-                                            padding: 2,
-                                            borderBottom: '1px solid #eff2f7',
-
-                                        }}
-                                    >
-                                        <Typography variant="body1">Task Approval</Typography>
-                                    </Box>
-                                    <CardContent>
-                                        <Box
-                                            component="form"
-
-                                            noValidate
-                                            autoComplete="off"
-                                            sx={{ marginTop: 2 }}
-                                        >
-
-                                            <Grid container spacing={2}>
-                                                <Grid item xs={12} sm={4}>
-                                                    <h5 style={{marginBottom: '0px'}}>Name</h5>
-                                                    <p style={{marginTop: '0px'}}>Rishi Kumar</p>
-                                                    <h5 style={{marginBottom: '0px'}}>Role</h5>
-                                                    <p style={{marginTop: '0px'}}>Secratary</p>
-                                                    <h5 style={{marginBottom: '0px'}}>Date</h5>
-                                                    <p style={{marginTop: '0px'}}>15-12-2023</p>
-                                                    
-                                                </Grid> 
-
-                                                <Grid item xs={12} sm={4}>
-                                                    <InputLabel id="demo-multiple-chip-label1" sx={{ marginBottom: '1%' }}>Note</InputLabel>
-                                                    <span>noteId</span>
-                                                    <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that</p>
-                                                    <Grid item xs={12} sx={{ borderBottom: '1px solid #eff2f7', pb: 2 }} />
-
-                                                    <InputLabel id="demo-multiple-chip-label1" sx={{ marginBottom: '1%' }}>Description</InputLabel>
-                                                    <span>noteId</span>
-                                                    <p>It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
-                                                    <Grid item xs={12} sx={{ borderBottom: '1px solid #eff2f7', pb: 2 }} />
-                                                </Grid>
-
-                                                <Grid item xs={12} sm={4}>
-                                                    <ReactPlayer
-                                                        url={"https://www.youtube.com/watch?v=668nUCeBHyY"}
-                                                        controls
-                                                        width="100%"
-                                                        height="100%"
-                                                    />
-                                                </Grid>
-
-
-
-
-
-                                            </Grid>
-                                            <Box sx={{ marginTop: 2 }}>
-                                                <Button variant="contained" color="success" onClick={null}>
-                                                    Approve
-                                                </Button>
-                                                <Button variant="contained" color="error" onClick={null} sx={{ marginLeft: 2 }}>
-                                                    Reject
-                                                </Button>
-                                            </Box>
-                                        </Box>
-                                    </CardContent>
-                                </Card>
-                            </Grid>
-                        </Grid>
-                    </Container>
-                    <Box
-                        component="footer"
-                        sx={{
-                            width: "100%",
-                            paddingBottom: "20px",
-                        }}
-                    >
-                        <Footer />
-                    </Box>
-                </Box>
-            </Box>
-        </ThemeProvider>
+      <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`simple-tabpanel-${index}`}
+        aria-labelledby={`simple-tab-${index}`}
+        {...other}
+      >
+        {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      </div>
     );
+  }
+
+  CustomTabPanel.propTypes = {
+    children: PropTypes.node,
+    index: PropTypes.number.isRequired,
+    value: PropTypes.number.isRequired,
+  };
+
+  function a11yProps(index) {
+    return {
+      id: `simple-tab-${index}`,
+      "aria-controls": `simple-tabpanel-${index}`,
+    };
+  }
+
+
+  // const profilePic = "../assets/user/user1.png"
+
+  return (
+    <ThemeProvider theme={defaultTheme}>
+      <Box sx={{ display: "flex" }}>
+        <CssBaseline />
+        <AppBar position="absolute" open={open}>
+          <Header props={open} onOutput={handleOutput} />
+        </AppBar>
+        <Sidebar open={open} toggleDrawer={toggleDrawer} />
+        <Box
+          component="main"
+          sx={{
+            backgroundColor: (theme) =>
+              theme.palette.mode === "light"
+                ? theme.palette.grey[100]
+                : theme.palette.grey[900],
+            width: "100%",
+            paddingBottom: "20px",
+          }}
+        >
+          <Toolbar />
+          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+            <Grid container spacing={3}>
+              {/* Recent Orders */}
+              <Grid item xs={12}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "start",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div
+                    style={{
+                      textTransform: "uppercase",
+                      paddingBottom: "10px",
+                    }}
+                  >
+                    All Reports
+                  </div>
+                  <div>
+                    <Breadcrumbs aria-label="breadcrumb">
+                      <Link underline="hover" color="inherit" href="/">
+                        WARCAT
+                      </Link>
+                      <Typography color="text.primary">Reports</Typography>
+                    </Breadcrumbs>
+                  </div>
+                </div>
+                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+                  <div
+                    style={{
+                      paddingLeft: "15px",
+                      paddingBottom: "15px",
+                      borderBottom: "1px solid #eee",
+                      display: 'flex',
+                      justifyContent: 'space-between'
+                    }}
+                  >
+                    <div>Departments wise report</div>
+                  </div>
+                  <hr />
+                  <Box sx={{ width: "100%" }}>
+                    <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                      <Tabs
+                        value={value}
+                        onChange={handleChange}
+                        aria-label="basic tabs example"
+                      >
+                        <Tab label="Provisional" {...a11yProps(0)} />
+                        <Tab label="Disapproved" {...a11yProps(1)} />
+                        <Tab label="Approved" {...a11yProps(2)} />
+
+                      </Tabs>
+                    </Box>
+                    <CustomTabPanel value={value} index={0}>
+                      <TableNew
+                        data={filteredData}
+                        column={column}
+                        icons={null}
+                        exportButton={true}
+                        searchBar={true}
+                        tableHeading={'Tasks list'}
+                        handleAddSubTaskClick={null}
+                        handleViewSubTask={null}
+                        handleViewParentOperationTask={null}
+                        handleEditOperationTask={null}
+                        // handleEditOperationTaskNew={handleEditOperationTaskNew}
+                        handleAddNoteClick={null}
+                        handleUploadClick={null}
+                        handleAcceptRejectClick={null}
+                        setSearchText={setSearchText}
+                      />
+                    </CustomTabPanel>
+                    <CustomTabPanel value={value} index={1}>
+                      Disapproved Table
+                    </CustomTabPanel>
+                    <CustomTabPanel value={value} index={2}>
+                      Approved Table
+                    </CustomTabPanel>
+
+                  </Box>
+
+
+                </Paper>
+              </Grid>
+            </Grid>
+          </Container>
+          <Box
+            component="footer"
+            sx={{
+              width: "100%",
+              paddingBottom: "20px",
+            }}
+          >
+            <Footer />
+          </Box>
+        </Box>
+      </Box>
+    </ThemeProvider>
+  );
 }

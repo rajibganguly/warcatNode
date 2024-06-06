@@ -80,7 +80,7 @@ export const getStatusText = (status) => {
       return 'TOTAL ASSIGNED';
     case 'initiated':
       return 'ASSIGNED';
-    case 'inprogress':
+    case 'inProgress':
       return 'IN PROGRESS';
     case 'completed':
       return 'COMPLETED';
@@ -228,7 +228,7 @@ export const getFileNameFromUrl = (url) => {
 };
 
 export const capitalizeFirstLetter = (str) => {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+  return str?.charAt(0).toUpperCase() + str?.slice(1);
 };
 
 export const formatVerifiedStatus = (admin_verified_status) => {
