@@ -246,3 +246,9 @@ export const getRoleTypename = (roleType) => {
       return 'Unknown';
   }
 };
+
+export const formatDateFromDbValue = (timestamp) => {
+  if (!timestamp) return '';
+  const [datePart] = timestamp.split('T');
+  return datePart;
+}
