@@ -96,7 +96,7 @@ export default function Tasks() {
   }));
 
   const dropdownData = [];
-  
+
   if (departmentDropdownItems && departmentDropdownItems.length > 0) {
     dropdownData.push({
       label: "Select",
@@ -381,11 +381,19 @@ export default function Tasks() {
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}
+          >
 
-            <Grid container spacing={3}>
+            <Grid container spacing={3} sx={{
+             
+              '@media (min-width: 1200px)': {
+                '.css-1f2kw6w-MuiContainer-root': {
+                  maxWidth: '100%',
+                },
+              },
+            }}>
               {/* Recent Orders */}
-              <Grid item xs={12}>
+              <Grid item xs={12} >
                 <div
                   style={{
                     display: "flex",
@@ -460,6 +468,7 @@ export default function Tasks() {
                               }}
                               component={Link}
                               to="/tasks"
+                              onClick={() => {alert('Work is on progress!')}}
                             >
                               Task list
                             </Button>

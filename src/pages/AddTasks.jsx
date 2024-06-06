@@ -179,12 +179,12 @@ export default function AddTasks() {
                 const departmentId = selectedDepartments?.filter(dep => dep !== null)?.map(dep => dep._id);
                 setDeptId(departmentId);
                 console.log(departmentId);
-                
+
                 const tags = [...new Set(filteredObject?.department?.flatMap(obj => obj.tag) || [])];
 
 
                 console.log(filteredObject?.target_date)
-               
+
                 setTagName(tags);
                 setUpdateTaskTitle(filteredObject?.task_title);
                 setUpdateSelectedDate(dateSelected(filteredObject?.target_date))
@@ -198,7 +198,7 @@ export default function AddTasks() {
 
     const handleUpdateFileChange = (event) => {
         let file = event.target.files[0];
-    
+
         const reader = new FileReader();
         reader.onloadend = async function () {
             file = reader.result.split(',')[1];
@@ -209,28 +209,34 @@ export default function AddTasks() {
         };
         reader.readAsDataURL(file);
     };
-    
+
+    const styles = {
+        labelAsterisk: {
+            color: "red"
+        }
+    };
+
 
     const handleChange = (event) => {
         const {
             target: { value },
         } = event;
-    
+
         // Find the department object with the matching _id
         const selectedDept = allDepartmentData.find(dept => dept._id === value);
         setSelectedDeparmentObj(selectedDept);
-    
+
         if (selectedDept) {
             setDeptId([selectedDept._id]);
             setPersonName([selectedDept.department_name]);
         }
-    
+
         setError(prev => ({
             ...prev,
             personName: !value.length
         }));
     };
-    
+
 
     let departmentData = selectedDeparmentobj ? [
         {
@@ -245,28 +251,29 @@ export default function AddTasks() {
         const selectedTags = selectedFormattedTags.map(tag => tagMapping[tag]);
         setTagName(selectedTags);
         setFormattedTagNames(selectedFormattedTags);
-    
+
         setError((prev) => ({
             ...prev,
             tagName: selectedFormattedTags.length === 0
         }));
     };
-    
+
+
     const handleRemoveTag = (tag) => {
         const displayValue = reverseTagMapping[tag];
         const updatedTags = tagName.filter((t) => t !== tag);
         const updatedFormattedTags = formattedTagNames.filter((t) => t !== displayValue);
-    
+
         setTagName(updatedTags);
         setFormattedTagNames(updatedFormattedTags);
-    
+
         setError((prev) => ({
             ...prev,
             tagName: updatedFormattedTags.length === 0
         }));
     };
-    
-    
+
+
 
     const handleOutput = (open) => {
         toggleDrawer();
@@ -288,26 +295,24 @@ export default function AddTasks() {
         const groupIndex = newInputGroups.findIndex(
             (group) => group[0].id === groupId
         );
-    
+
         if (groupIndex !== -1) {
             const inputIndex = newInputGroups[groupIndex].findIndex(
                 (input) => input.id === id
             );
-    
+
             if (inputIndex !== -1) {
                 newInputGroups[groupIndex][inputIndex].value = e.target.value;
                 setInputGroups(newInputGroups);
-    
-                // Ensure error objects exist for the groupIndex
+
                 if (!error.taskTitle[groupIndex]) error.taskTitle[groupIndex] = false;
                 if (!error.targetDate[groupIndex]) error.targetDate[groupIndex] = false;
                 if (!error.taskImage[groupIndex]) error.taskImage[groupIndex] = false;
-    
-                // Set error values
+
                 const taskTitle = newInputGroups[groupIndex].find(item => item.type === 'text').value;
                 const targetDate = newInputGroups[groupIndex].find(item => item.type === 'date').value;
                 const taskImage = newInputGroups[groupIndex].find(item => item.type === 'file').value;
-    
+
                 setError(prev => ({
                     ...prev,
                     taskTitle: { ...prev.taskTitle, [groupIndex]: !taskTitle },
@@ -317,8 +322,9 @@ export default function AddTasks() {
             }
         }
     }
-    
-    
+
+
+
 
 
 
@@ -343,12 +349,12 @@ export default function AddTasks() {
     const handleAddClick = () => {
         // Validate the existing input fields
         const isValid = validateFields();
-    
+
         if (!isValid) {
             toast.error('Please fill out all required fields before adding new ones.');
             return;
         }
-    
+
         // If validation passes, add new fields
         const lastGroupId = inputGroups[inputGroups.length - 1][0]?.id || 0;
         const newInputGroups = [...inputGroups];
@@ -359,7 +365,7 @@ export default function AddTasks() {
         ];
         newInputGroups.push(newGroup);
         setInputGroups(newInputGroups);
-    
+
         setError(prev => ({
             ...prev,
             taskTitle: { ...prev.taskTitle, [lastGroupId + 1]: true },
@@ -367,7 +373,7 @@ export default function AddTasks() {
             taskImage: { ...prev.taskImage, [lastGroupId + 3]: true }
         }));
     };
-    
+
     const validateFields = () => {
         let isValid = true;
 
@@ -431,71 +437,71 @@ export default function AddTasks() {
             updateSelectedDate: false,
             updateTaskFile: false,
         };
-    
+
         if (!personName[0]) {
             newError.personName = true;
             isValid = false;
         }
-    
+
         if (tagName.length === 0) {
             newError.tagName = true;
             isValid = false;
         }
-    
-        inputGroups.forEach((group, index) => {
-            const taskTitleInput = group.find(item => item.type === 'text');
-            const targetDateInput = group.find(item => item.type === 'date');
-            const taskImageInput = group.find(item => item.type === 'file');
-    
-            if (taskTitleInput && !taskTitleInput.value) {
-                newError.taskTitle[index] = true;
-                isValid = false;
-            }
-    
-            if (targetDateInput && !targetDateInput.value) {
-                newError.targetDate[index] = true;
-                isValid = false;
-            }
-    
-            if (taskImageInput && !taskImageInput.value) {
-                newError.taskImage[index] = true;
-                isValid = false;
-            }
-        });
 
-        if (taskId) {
+        if (!taskId) {
+            inputGroups.forEach((group, index) => {
+                const taskTitleInput = group.find(item => item.type === 'text');
+                const targetDateInput = group.find(item => item.type === 'date');
+                const taskImageInput = group.find(item => item.type === 'file');
+
+                if (taskTitleInput && !taskTitleInput.value) {
+                    newError.taskTitle[index] = true;
+                    isValid = false;
+                }
+
+                if (targetDateInput && !targetDateInput.value) {
+                    newError.targetDate[index] = true;
+                    isValid = false;
+                }
+
+                if (taskImageInput && !taskImageInput.value) {
+                    newError.taskImage[index] = true;
+                    isValid = false;
+                }
+            });
+        } else {
             if (!updateTaskTitle) {
                 newError.updateTaskTitle = true;
                 isValid = false;
             }
-    
+
             if (!updateSelectedDate) {
                 newError.updateSelectedDate = true;
                 isValid = false;
             }
-    
+
             if (!updateTaskFile) {
                 newError.updateTaskFile = true;
                 isValid = false;
             }
         }
-    
-    
+
         setError(newError);
-    
+
         if (!isValid) {
             toast.error("Please check the fields with red outlines.");
         }
-    
+
         return isValid;
     }
-    
+
+
 
     async function handleSubmit() {
         if (!validateForm()) {
             return;
         }
-    
+
         try {
             if (taskId) {
                 const data = {
@@ -507,7 +513,7 @@ export default function AddTasks() {
                     tag: tagName
                 };
                 console.log(data);
-    
+
                 await updateData(data);
             } else {
                 const taskData = transformData(inputGroups);
@@ -527,7 +533,8 @@ export default function AddTasks() {
             toast.error("An error occurred. Please try again later.");
         }
     }
-    
+
+
 
     /**
      * 
@@ -545,7 +552,7 @@ export default function AddTasks() {
     const handleChangeForImage = async (groupId, id, e) => {
         const file = e.target.files[0];
         let imageValue = '';
-    
+
         if (file) {
             if (!file.type.startsWith('image/')) {
                 setError(prev => ({
@@ -554,22 +561,22 @@ export default function AddTasks() {
                 }));
                 return;
             }
-    
+
             imageValue = await convertToBase64(file);
             const newInputGroups = [...inputGroups];
             const groupIndex = newInputGroups.findIndex(
                 (group) => group[0].id === groupId
             );
-    
+
             if (groupIndex !== -1) {
                 const inputIndex = newInputGroups[groupIndex].findIndex(
                     (input) => input.id === id
                 );
-    
+
                 if (inputIndex !== -1) {
                     newInputGroups[groupIndex][inputIndex].value = imageValue;
                     setInputGroups(newInputGroups);
-    
+
                     if (newInputGroups[groupIndex].find(item => item.type === 'file').value) {
                         setError(prev => ({
                             ...prev,
@@ -581,7 +588,7 @@ export default function AddTasks() {
             setBase64Image(imageValue);
         }
     };
-    
+
 
     async function updateData(data) {
         setIsLoading(true)
@@ -675,8 +682,13 @@ export default function AddTasks() {
                             <CardContent>
                                 <Grid container spacing={2} sx={{ mb: 4, borderBottom: '1px solid #eff2f7', pb: 2 }}>
                                     <Grid item xs={12} md={6}>
-                                        <InputLabel>Department / Government Organisation</InputLabel>
-                                        
+
+                                        <InputLabel sx={{ mb: 1 }}> <span>
+                                            Department / Government Organisation
+                                            <span style={styles.labelAsterisk}> *</span>
+                                        </span>
+                                        </InputLabel>
+
                                         <Select
                                             fullWidth
                                             value={personName}
@@ -707,7 +719,12 @@ export default function AddTasks() {
                                         </Select>
                                     </Grid>
                                     <Grid item xs={12} md={6}>
-                                        <label>Tag</label>
+
+                                        <InputLabel sx={{ mb: 1 }}> <span>
+                                            Tag
+                                            <span style={styles.labelAsterisk}> *</span>
+                                        </span>
+                                        </InputLabel>
                                         <Select
                                             labelId="tag"
                                             id="tag"
@@ -721,11 +738,11 @@ export default function AddTasks() {
                                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                                     {selected?.map((value) => (
                                                         <Chip
-                                                        key={value}
-                                                        label={value}
-                                                        onDelete={() => handleRemoveTag(tagMapping[value])} // Attach onDelete event
-                                                        onMouseDown={(event) => event.stopPropagation()}
-                                                      />
+                                                            key={value}
+                                                            label={value}
+                                                            onDelete={() => handleRemoveTag(tagMapping[value])} // Attach onDelete event
+                                                            onMouseDown={(event) => event.stopPropagation()}
+                                                        />
                                                     ))}
                                                 </Box>
                                             )}
@@ -779,7 +796,12 @@ export default function AddTasks() {
                                             <React.Fragment key={input.id}>
                                                 {input.type === 'file' ? (
                                                     <Grid item xs={6} md={6}>
-                                                        <InputLabel sx={{ mb: 1 }}>Upload Images</InputLabel>
+
+                                                        <InputLabel sx={{ mb: 1 }}> <span>
+                                                            Upload Images
+                                                            <span style={styles.labelAsterisk}> *</span>
+                                                        </span>
+                                                        </InputLabel>
                                                         <Box display={'flex'} gap={2}>
                                                             <TextField
                                                                 variant="outlined"
@@ -804,10 +826,18 @@ export default function AddTasks() {
                                                                 )}
                                                             </Box>
                                                         </Box>
+                                                        <Typography variant="caption" sx={{ marginTop: '0.5rem', color: 'red' }}>
+                                                            Accepted formats: JPEG, PNG, GIF*
+                                                        </Typography>
                                                     </Grid>
                                                 ) : input.type === 'date' ? (
                                                     <Grid item xs={6} md={6}>
-                                                        <InputLabel sx={{ mb: 1 }}>Target Date</InputLabel>
+
+                                                        <InputLabel sx={{ mb: 1 }}> <span>
+                                                            Target Date
+                                                            <span style={styles.labelAsterisk}> *</span>
+                                                        </span>
+                                                        </InputLabel>
                                                         <Controller
                                                             name="date"
                                                             control={control}
@@ -841,7 +871,12 @@ export default function AddTasks() {
                                                     </Grid>
                                                 ) : (
                                                     <Grid item xs={12} md={12}>
-                                                        <InputLabel sx={{ mb: 1 }}>Task Title</InputLabel>
+
+                                                        <InputLabel sx={{ mb: 1 }}> <span>
+                                                            Task Title
+                                                            <span style={styles.labelAsterisk}> *</span>
+                                                        </span>
+                                                        </InputLabel>
                                                         <TextField
                                                             variant="outlined"
                                                             placeholder="Enter task title"
@@ -880,7 +915,12 @@ export default function AddTasks() {
                                 {taskId && (
                                     <Grid container spacing={2}>
                                         <Grid item xs={12}>
-                                            <InputLabel sx={{ mb: 1 }}>Task Title</InputLabel>
+
+                                            <InputLabel sx={{ mb: 1 }}> <span>
+                                                Task Title
+                                                <span style={styles.labelAsterisk}> *</span>
+                                            </span>
+                                            </InputLabel>
                                             <TextField
                                                 variant="outlined"
                                                 fullWidth
@@ -896,12 +936,17 @@ export default function AddTasks() {
                                                 }}
                                                 error={error.updateTaskTitle}
                                                 sx={{ borderColor: error.updateTaskTitle ? 'red' : '' }}
-                                                
+
                                             />
                                         </Grid>
 
                                         <Grid item xs={6}>
-                                            <InputLabel sx={{ mb: 1 }}>Upload Image</InputLabel>
+
+                                            <InputLabel sx={{ mb: 1 }}> <span>
+                                                Upload Image
+                                                <span style={styles.labelAsterisk}> *</span>
+                                            </span>
+                                            </InputLabel>
                                             <Box display={'flex'} gap={2}>
                                                 <TextField
                                                     variant="outlined"
@@ -925,9 +970,17 @@ export default function AddTasks() {
                                                     )}
                                                 </Box>
                                             </Box>
+                                            <Typography variant="caption" sx={{ marginTop: '0.5rem', color: 'red' }}>
+                                                Accepted formats: JPEG, PNG, GIF*
+                                            </Typography>
                                         </Grid>
                                         <Grid item xs={6}>
-                                            <InputLabel sx={{ mb: 1 }}>Target Date</InputLabel>
+
+                                            <InputLabel sx={{ mb: 1 }}> <span>
+                                                Target Date
+                                                <span style={styles.labelAsterisk}> *</span>
+                                            </span>
+                                            </InputLabel>
                                             <Controller
                                                 name="task_date"
                                                 control={control}

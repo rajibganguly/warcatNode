@@ -31,23 +31,27 @@ import LoadingIndicator from "../components/loadingIndicator";
 import { DepartmentContext } from "../context/DepartmentContext";
 
 
+
+
+
+
 const userType = JSON.parse(localStorage.getItem("user"))?.role_type;
 const column = [
   { text: 'Meeting Id', dataField: 'meetingId' },
   { text: 'Meeting Topic', dataField: 'meetingTopic' },
   {
     text: 'Departments',
-    dataField: 'departmentNames', 
+    dataField: 'departmentNames',
     formatter: (cellContent, row) => {
       if (Array.isArray(cellContent)) {
         const departmentNames = cellContent.map(department => department.department_name);
         return departmentNames.filter(Boolean).join(', ');
       } else {
-        return cellContent; 
+        return cellContent;
       }
     },
   },
-  
+
   { text: 'Tag', dataField: 'meeting_tag' },
   { text: 'Date', dataField: 'selectDate' },
   { text: 'Time', dataField: 'selectTime' },
@@ -57,6 +61,12 @@ const column = [
 if (userType === 'admin') {
   column.push({ text: 'Operation', dataField: 'meetingoperation' });
 }
+
+
+
+
+
+
 
 
 const drawerWidth = 240;
@@ -102,7 +112,7 @@ export default function Meetings() {
       const fetchDepdata = await fetchDepartmentData();
       setAllDepartmentList(fetchDepdata);
       setIsLoading(false)
-      console.log(fetchDepdata)
+      // console.log(fetchDepdata)
     };
     fetchData();
   }, []);
@@ -138,7 +148,7 @@ export default function Meetings() {
 
   const handleEditmeeting = (row) => {
     // Check if row and row.meetings are defined
-    if (row && row.meetingId){
+    if (row && row.meetingId) {
       const encodededitMeetingId = window.btoa(row?.meetingId);
       navigate(`/edit-meeting?meetingId=${encodeURIComponent(encodededitMeetingId)}`);
     } else {
@@ -253,7 +263,7 @@ export default function Meetings() {
                           handleTasksAddInMeeting={handleTasksAddInMeeting}
                           handleTasksViewInMeeting={handleTasksViewInMeeting}
                           handleEditmeeting={handleEditmeeting}
-                         
+
                         />
                         {/* Task view dialog */}
                         <TaskViewDialog

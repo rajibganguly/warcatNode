@@ -29,6 +29,13 @@
   overflow-x: auto;
 }
 
+/* .table-container .bordered-table tbody td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 140px;
+} */
+
 .table-scroll {
   overflow-x: auto;
 }
@@ -38,7 +45,8 @@
   width: 100%;
 }
 
-.bordered-table th, .bordered-table td {
+.bordered-table th,
+.bordered-table td {
   border: 1px solid #ddd;
   padding: 8px;
 }
@@ -48,11 +56,11 @@
   text-align: left;
 }
 
-.textclr2{
+.textclr2 {
   color: #0a1832;
 }
 
-.inputfile{
+.inputfile {
   display: block;
   width: 100%;
   padding: .47rem .75rem;
@@ -162,7 +170,8 @@
 
 @media screen and (max-width: 50em) {
   .inputfile-6+label strong {
-      display: block;
+    display: block;
   }
 }
+
 /* input tag custom css above */

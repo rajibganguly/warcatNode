@@ -120,6 +120,9 @@ export default function AddDepartment() {
     if (!formData.secretary.phone_number) {
       newErrors.secretaryPhoneNumber = "Secretary phone number is required";
       valid = false;
+    } else if (formData.secretary.phone_number.length !== 10) {
+      newErrors.secretaryPhoneNumber = "Phone number must be 10 digits";
+      valid = false;
     }
 
     if (!formData.secretary.email || errors.secretaryEmail) {
@@ -139,6 +142,9 @@ export default function AddDepartment() {
 
     if (!formData.headOffice.phone_number) {
       newErrors.headOfficePhoneNumber = "Head of Office phone number is required";
+      valid = false;
+    } else if (formData.headOffice.phone_number.length !== 10) {
+      newErrors.headOfficePhoneNumber = "Phone number must be 10 digits";
       valid = false;
     }
 
@@ -379,10 +385,10 @@ export default function AddDepartment() {
 
                           <TextField
                             id="outlined-basic-1"
-                          
+
                             label={
                               <span>
-                               Enter Secretary Name
+                                Enter Secretary Name
                                 <span style={styles.labelAsterisk}> *</span>
                               </span>
                             }
@@ -401,10 +407,10 @@ export default function AddDepartment() {
 
                           <TextField
                             id="outlined-basic-2"
-                           
+
                             label={
                               <span>
-                              Enter Secretary Phone Number
+                                Enter Secretary Phone Number
                                 <span style={styles.labelAsterisk}> *</span>
                               </span>
                             }
@@ -426,8 +432,8 @@ export default function AddDepartment() {
                             InputProps={{
                               startAdornment: <InputAdornment position="start">+91</InputAdornment>,
                             }}
-                            error={isSubmitted && !formData.secretary.phone_number}
-                          // helperText={isSubmitted && !formData.secretary.phone_number ? "Secretary phone number is required" : ""}
+                            error={isSubmitted && (!!errors.secretaryPhoneNumber || formData.secretary.phone_number.length !== 10)}
+                            helperText={isSubmitted && formData.secretary.phone_number.length !== 10 ? "Phone number must be 10 digits" : ""}
                           />
 
                         </Grid>
@@ -435,10 +441,10 @@ export default function AddDepartment() {
 
                           <TextField
                             id="outlined-basic-3"
-                            
+
                             label={
                               <span>
-                               Enter Secretary Email Id
+                                Enter Secretary Email Id
                                 <span style={styles.labelAsterisk}> *</span>
                               </span>
                             }
@@ -476,10 +482,10 @@ export default function AddDepartment() {
 
                             <TextField
                               id="outlined-basic-1"
-                              
+
                               label={
                                 <span>
-                                Enter Head of Office Name
+                                  Enter Head of Office Name
                                   <span style={styles.labelAsterisk}> *</span>
                                 </span>
                               }
@@ -495,10 +501,10 @@ export default function AddDepartment() {
 
                             <TextField
                               id="outlined-basic-2"
-                            
+
                               label={
                                 <span>
-                                 Enter Head of Office Designation
+                                  Enter Head of Office Designation
                                   <span style={styles.labelAsterisk}> *</span>
                                 </span>
                               }
@@ -518,10 +524,10 @@ export default function AddDepartment() {
 
                             <TextField
                               id="outlined-basic-1"
-                              
+
                               label={
                                 <span>
-                                 Enter Head of Office Phone Number
+                                  Enter Head of Office Phone Number
                                   <span style={styles.labelAsterisk}> *</span>
                                 </span>
                               }
@@ -543,16 +549,16 @@ export default function AddDepartment() {
                               InputProps={{
                                 startAdornment: <InputAdornment position="start">+91</InputAdornment>,
                               }}
-                              error={isSubmitted && !formData.headOffice.phone_number}
-                            // helperText={isSubmitted && !formData.headOffice.phone_number ? "Head of Office phone number is required" : ""}
+                              error={isSubmitted && (!!errors.headOfficePhoneNumber || formData.headOffice.phone_number.length !== 10)}
+                              helperText={isSubmitted && formData.headOffice.phone_number.length !== 10 ? "Phone number must be 10 digits" : ""}
                             />
 
                             <TextField
                               id="outlined-basic-2"
-                              
+
                               label={
                                 <span>
-                                Head of Office Email Id
+                                  Head of Office Email Id
                                   <span style={styles.labelAsterisk}> *</span>
                                 </span>
                               }
