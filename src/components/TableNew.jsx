@@ -1,5 +1,6 @@
-import React from "react";
+import React,{useState} from "react";
 import { EyeOutlined, EditOutlined } from "@ant-design/icons";
+import { TablePagination } from "@mui/material";
 import {
   Box,
   Button,
@@ -12,8 +13,9 @@ import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import AddIcon from "@mui/icons-material/Add";
-import { fetchRoleType, formatDateFromDbValue, formatStatus, formatVerifiedStatus, getCommaSeparatedRoles, getStatusText, } from "../pages/common.js";
+import { capitalizeFirstLetter, fetchRoleType, formatDateFromDbValue, formatStatus, formatVerifiedStatus, getCommaSeparatedRoles, getStatusText, } from "../pages/common.js";
 import SearchIcon from "@mui/icons-material/Search";
+
 
 function TableNew({
   column,
@@ -37,6 +39,25 @@ function TableNew({
   setSearchText,
   handleEditOperationTaskNew
 }) {
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+
+
+
+
+
+
   const getNestedValue = (obj, path) => {
     const keys = path.split(".");
     let value = obj;
@@ -45,6 +66,16 @@ function TableNew({
     }
     return value;
   };
+  const filteredData = data?.filter(row =>
+    column.some(col => {
+        const cellValue = getNestedValue(row, col.dataField);
+        return cellValue
+            ? cellValue.toString().toLowerCase().includes(searchQuery.toLowerCase())
+            : false;
+    })
+);
+
+const currentPageData = filteredData?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   const styles = {
     buttonAccept: {
@@ -71,6 +102,8 @@ function TableNew({
     }
   };
 
+  
+
   const renderCellValue = (row, column) => {
     const value = getNestedValue(row, column.dataField);
     const userRoleType = fetchRoleType();
@@ -78,7 +111,7 @@ function TableNew({
     if (column.dataField === "meetingTopic") {
 
       return (<>
-        <p>{row?.meetingTopic}</p>
+        <p>{capitalizeFirstLetter(row?.meetingTopic)}</p>
       </>)
     }
     if (column.dataField === "Operations") {
@@ -100,13 +133,15 @@ function TableNew({
 
     if (column.dataField === "tasks_dept") {
       if (row?.department?.length > 0) {
-        return row?.department?.[0]?.dep_name ?? '-';
+        const depName = capitalizeFirstLetter(row?.department?.[0]?.dep_name);
+        return depName ?? '-';
       }
       return '-';
     }
 
+
     if (column.dataField === "tasks_title") {
-      return <p>{row?.task_title}</p>
+      return <p>{capitalizeFirstLetter(row?.task_title)}</p>
     }
 
     if (column.dataField === "meeting_dept") {
@@ -118,7 +153,7 @@ function TableNew({
 
     if (column.dataField === "department_dept") {
       if (row?.department) {
-        return row?.department?.department_name ?? '-';
+        return capitalizeFirstLetter(row?.department?.department_name) ?? '-';
       }
       return '-';
     }
@@ -126,6 +161,8 @@ function TableNew({
     if (column.dataField === "tasks_tag") {
       return getCommaSeparatedRoles(row?.department?.[0]?.tag ?? []);
     }
+
+
 
     if (column.dataField === "meeting_tag") {
       return getCommaSeparatedRoles(row?.tag ?? []);
@@ -150,13 +187,13 @@ function TableNew({
               onClick={() => handleAcceptRejectClick(row.task_id, 2)}>
               Reject
             </Button>
-
           </div>
         );
       } else {
         return <p>Pending</p>
       }
     }
+
     // console.log(row?.admin_verified);
 
     if (column.dataField === "subtask") {
@@ -178,8 +215,6 @@ function TableNew({
         </div>
       );
     }
-
-
 
     if (column.dataField === "status") {
       return (
@@ -528,8 +563,8 @@ function TableNew({
             </thead>
             {/* Your table body */}
             <tbody>
-              {data && data.length > 0 ? (
-                data.map((row, index) => (
+              {currentPageData && currentPageData.length > 0 ? (
+                currentPageData.map((row, index) => (
                   <tr key={index}>
                     {column?.map((col) => (
                       <td key={col.dataField}>{renderCellValue(row, col)}</td>
@@ -545,6 +580,14 @@ function TableNew({
               )}
             </tbody>
           </table>
+          <TablePagination
+            component="div"
+            count={filteredData ? filteredData.length : 0}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         </div>
       </Box>
     </>

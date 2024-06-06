@@ -28,6 +28,9 @@ import { DepartmentContext } from "../context/DepartmentContext";
 import { MeetingContext } from "../context/MeetingContext";
 import { TaskContext } from "../context/TaskContext";
 import LoadingIndicator from "../components/loadingIndicator";
+import DoneAllIcon from '@mui/icons-material/DoneAll';
+import EventNoteIcon from '@mui/icons-material/EventNote';
+import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
 
 
 const drawerWidth = 240;
@@ -69,10 +72,10 @@ export default function Dashboard() {
   const [userType, setUserType] = React.useState('');
   const [cardDataState, setCardDataState] = React.useState([
 
-    { id: 1, title: 'Total Department', value: 5, icon: <AccountBalanceIcon /> },
-    { id: 2, title: 'Completed Tasks', value: 0, icon: <PeopleIcon /> },
-    { id: 3, title: 'Total Meeting', value: 0, icon: <MonetizationOnIcon /> },
-    { id: 4, title: 'Assigned Task', value: 0, icon: <MonetizationOnIcon /> },
+    { id: 1, title: 'Total Department', value: 5, icon: <AccountBalanceIcon style={{ fill: '#ffbb44', backgroundColor: '#eff2f7', padding: '10px', borderRadius: '4px',height:'50px',width:'50px' }} /> },
+    { id: 2, title: 'Completed Tasks', value: 1, icon: <DoneAllIcon style={{ fill: '#6fd088', backgroundColor: '#eff2f7', padding: '10px', borderRadius: '4px',height:'50px',width:'50px' }} /> },
+    { id: 3, title: 'Total Meeting', value: 3, icon: <EventNoteIcon style={{ fill: '#0a1832', backgroundColor: '#eff2f7', padding: '10px', borderRadius: '4px',height:'50px',width:'50px' }}/> },
+    { id: 4, title: 'Assigned Task', value: 0, icon: <WorkHistoryIcon style={{ fill: '#f32f53', backgroundColor: '#eff2f7', padding: '10px', borderRadius: '4px',height:'50px',width:'50px' }}/> },
 
   ]);
 

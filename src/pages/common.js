@@ -61,6 +61,19 @@ export const fetchTaskData = async () => {
   }
 };
 
+// export const getStatusText = (status) => {
+//   switch (status) {
+//     case 'totalassigned':
+//       return 'TOTAL ASSIGNED';
+//     case 'initiated':
+//       return 'IN PROGRESS';
+//     case 'completed':
+//       return 'COMPLETED';
+//     default:
+//       return 'Pending';
+//   }
+// };
+
 export const getStatusText = (status) => {
   switch (status) {
     case 'totalassigned':
@@ -214,8 +227,12 @@ export const getFileNameFromUrl = (url) => {
   return url.split('/').pop();
 };
 
+export const capitalizeFirstLetter = (str) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
 export const formatVerifiedStatus = (admin_verified_status) => {
-  let VerifiedOrNot = admin_verified_status === 1? '(Verified)' : admin_verified_status === 2? '(Rejected)' : admin_verified_status === 0 ? '' : '(Unverified)';
+  let VerifiedOrNot = admin_verified_status === 1 ? '(Verified)' : admin_verified_status === 2 ? '(Rejected)' : admin_verified_status === 0 ? '' : '(Unverified)';
   return VerifiedOrNot;
 }
 

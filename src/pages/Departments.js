@@ -23,7 +23,6 @@ import { DepartmentContext } from '../context/DepartmentContext'
 import TableNew from "../components/TableNew";
 //import axiosInstance from "../config/axoisSetup";
 import Sidebar from "../components/Sidebar";
-
 import { CardActions } from '@mui/material';
 import { fetchDepartmentData } from './common';
 import LoadingIndicator from '../components/loadingIndicator';
@@ -34,6 +33,8 @@ const column = [
   { text: "Head Of Office", dataField: 'headOffice.name' },
   { text: "Operations", dataField: 'Operations' },
 ];
+
+
 
 const drawerWidth = 240;
 const AppBar = styled(MuiAppBar, {
@@ -85,18 +86,18 @@ export default function Departments() {
   const currentRoleType = localUser.role_type;
   const [searchText, setSearchText] = useState('');
   let filteredDepartmentList = allDepartmentList;
-  
+
   // search box filter
   const matchesSearchText = (obj, searchText) => {
     if (Array.isArray(obj)) {
-        return obj.some(item => matchesSearchText(item, searchText));
+      return obj.some(item => matchesSearchText(item, searchText));
     }
     if (typeof obj === 'object' && obj !== null) {
-        return Object.values(obj).some(value => matchesSearchText(value, searchText));
+      return Object.values(obj).some(value => matchesSearchText(value, searchText));
     }
     return typeof obj === 'string' && obj.toLowerCase().includes(searchText.toLowerCase());
   };
-  if(searchText){
+  if (searchText) {
     filteredDepartmentList = filteredDepartmentList.filter(task => matchesSearchText(task, searchText));
   }
 
