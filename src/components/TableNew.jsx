@@ -37,7 +37,8 @@ function TableNew({
   handleEditmeeting,
   handleAcceptRejectClick,
   setSearchText,
-  handleEditOperationTaskNew
+  handleEditOperationTaskNew,
+  pageName
 }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -320,43 +321,58 @@ const currentPageData = filteredData?.slice(page * rowsPerPage, page * rowsPerPa
 
   let filename = `WARCAT - War-room Assistant for Report Compilation & Task tracking | ${tableHeading}`;
 
-  const formateColumnValue = (row, col) => {
-    if (col.dataField === "tasks_dept") {
-      // Special handling for department
-      return row.department.map(dep => dep.dep_name).join(", ");
+  const formateColumnValue = (row, col, pageName) => {
+    // task page
+    if(pageName === 'task'){
+      if (col.dataField === "tasks_dept") {
+        // Special handling for department
+        return row.department.map(dep => dep.dep_name).join(", ");
+      }
+      if (col.dataField === "tasks_tag") {
+        // Special handling for tag
+        return row.department.map(dep => getCommaSeparatedRoles(dep.tag)).join(", ");
+      }
+      if (col.dataField === "tasks_title") {
+        return row?.task_title;
+      }
+      if (col.dataField === "status") {
+        return (
+          getStatusText(row?.status) + ' ' + formatVerifiedStatus(row?.admin_verified)
+        )
+      }
+      if (col.text === "Verified Status") {
+        return formatStatus(row?.admin_verified);
+      }
+      if (col.dataField === "timestamp" || col.dataField === "target_date") {
+        // handling date type values
+        return formatDateFromDbValue(row[col?.dataField]);
+      }
+      return row[col.dataField] || "";
     }
-    if (col.dataField === "tasks_tag") {
-      // Special handling for tag
-      return row.department.map(dep => getCommaSeparatedRoles(dep.tag)).join(", ");
+    // department page
+    if(pageName === 'department'){
+      if (col.dataField === 'headOffice.name') {
+        return row?.headOffice?.name;
+      }
+      if (col.dataField === 'secretary.name') {
+        return row?.secretary?.name;
+      }
+      if (col.dataField === 'department_dept') {
+        return row?.department?.department_name;
+      }
     }
-    if (col.dataField === "tasks_title") {
-      return row?.task_title;
-    }
-    if (col.dataField === "status") {
-      return (
-        getStatusText(row?.status) + ' ' + formatVerifiedStatus(row?.admin_verified)
-      )
-    }
-    if (col.text === "Verified Status") {
-      return formatStatus(row?.admin_verified);
-    }
-    if (col.dataField === "timestamp" || col.dataField === "target_date") {
-      // handling date type values
-      return formatDateFromDbValue(row[col?.dataField]);
-    }
-    return row[col.dataField] || "";
   }
 
   /** PDF generate  */
   const generatePDF = () => {
     const doc = new jsPDF();
-    const modifiedColumn = column.filter(col => col.dataField !== 'subtask' && col.dataField !== 'taskoperation');
+    const modifiedColumn = pageName === 'task' ? column.filter(col => col.dataField !== 'subtask' && col.dataField !== 'taskoperation') : column.filter(col => col.dataField !== 'Operations');
     const tableColumn = modifiedColumn.map(col => col.text);
     const tableRows = [];
     data.forEach(row => {
       const rowData = modifiedColumn.map(col => 
         {
-          return formateColumnValue(row, col);
+          return formateColumnValue(row, col, pageName);
         }
       );
       tableRows.push(rowData);
@@ -403,13 +419,13 @@ const currentPageData = filteredData?.slice(page * rowsPerPage, page * rowsPerPa
     const filenameRow = [filename];
 
     // Create the header row
-    const modifiedColumn = column.filter(col => col.dataField !== 'subtask' && col.dataField !== 'taskoperation');
+    const modifiedColumn = pageName === 'task' ? column.filter(col => col.dataField !== 'subtask' && col.dataField !== 'taskoperation') : column.filter(col => col.dataField !== 'Operations');
     const headers = modifiedColumn.map(col => col.text);
     console.log(column, 'col excel');
     const rows = data.map(row =>
       column.reduce((acc, col) => {
         
-        acc[col.text] = formateColumnValue(row, col);
+        acc[col.text] = formateColumnValue(row, col, pageName);
         return acc;
       }, {})
     );

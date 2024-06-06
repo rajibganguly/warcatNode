@@ -223,6 +223,7 @@ export default function Departments() {
                       handleSeeClick={handleSeeClick}
                       handleEditClick={handleEditClick}
                       setSearchText={setSearchText}
+                      pageName="department"
                     />
                     <Dialog
                       open={modalVisible}

@@ -263,7 +263,7 @@ export default function Meetings() {
                           handleTasksAddInMeeting={handleTasksAddInMeeting}
                           handleTasksViewInMeeting={handleTasksViewInMeeting}
                           handleEditmeeting={handleEditmeeting}
-
+                          pageName="meeting"
                         />
                         {/* Task view dialog */}
                         <TaskViewDialog
