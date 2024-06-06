@@ -468,6 +468,7 @@ export default function Tasks() {
                               }}
                               component={Link}
                               to="/tasks"
+                              onClick={() => {alert('Work is on progress!')}}
                             >
                               Task list
                             </Button>
