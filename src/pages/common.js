@@ -229,3 +229,7 @@ export const getRoleTypename = (roleType) => {
       return 'Unknown';
   }
 };
+
+export const formatDateFromDbValue = (timestamp) => {
+  return timestamp;
+}

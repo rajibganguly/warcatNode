@@ -12,7 +12,7 @@ import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import AddIcon from "@mui/icons-material/Add";
-import { fetchRoleType, formatStatus, formatVerifiedStatus, getCommaSeparatedRoles, getStatusText, } from "../pages/common.js";
+import { fetchRoleType, formatDateFromDbValue, formatStatus, formatVerifiedStatus, getCommaSeparatedRoles, getStatusText, } from "../pages/common.js";
 import SearchIcon from "@mui/icons-material/Search";
 
 function TableNew({
@@ -288,11 +288,38 @@ function TableNew({
   /** PDF generate  */
   const generatePDF = () => {
     const doc = new jsPDF();
-    const tableColumn = column.map(col => col.text);
+    const modifiedColumn = column.filter(col => col.dataField !== 'subtask' && col.dataField !== 'taskoperation');
+    const tableColumn = modifiedColumn.map(col => col.text);
     const tableRows = [];
-
     data.forEach(row => {
-      const rowData = column.map(col => row[col.dataField]);
+      const rowData = modifiedColumn.map(col => 
+        {
+          if (col.dataField === "tasks_dept") {
+            // Special handling for department
+            return row.department.map(dep => dep.dep_name).join(", ");
+          }
+          if (col.dataField === "tasks_tag") {
+            // Special handling for tag
+            return row.department.map(dep => getCommaSeparatedRoles(dep.tag)).join(", ");
+          }
+          if (col.dataField === "tasks_title") {
+            return row?.task_title;
+          }
+          if (col.dataField === "status") {
+            return (
+              getStatusText(row?.status) + ' ' + formatVerifiedStatus(row?.admin_verified)
+            )
+          }
+          if (col.text === "Verified Status") {
+            return formatStatus(row?.admin_verified);
+          }
+          if (col.dataField === "timestamp" || col.dataField === "target_date") {
+            // handling date type values
+            return formatDateFromDbValue(row?.dataField);
+          }
+          return row[col.dataField] || "";
+        }
+      );
       tableRows.push(rowData);
     });
 
