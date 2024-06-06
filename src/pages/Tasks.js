@@ -539,6 +539,7 @@ export default function Tasks() {
                           handleUploadClick={handleUploadClick}
                           handleAcceptRejectClick={handleAcceptRejectClick}
                           setSearchText={setSearchText}
+                          pageName="task"
                         />
                         {parentTaskView && parentModalVisible && (
                           <TaskViewDialog
