@@ -13,7 +13,7 @@ import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import AddIcon from "@mui/icons-material/Add";
-import { capitalizeFirstLetter, fetchRoleType, formatStatus, formatVerifiedStatus, getCommaSeparatedRoles, getStatusText, } from "../pages/common.js";
+import { capitalizeFirstLetter, fetchRoleType, formatDateFromDbValue, formatStatus, formatVerifiedStatus, getCommaSeparatedRoles, getStatusText, } from "../pages/common.js";
 import SearchIcon from "@mui/icons-material/Search";
 
 
@@ -325,22 +325,46 @@ function TableNew({
 
   let filename = `WARCAT - War-room Assistant for Report Compilation & Task tracking | ${tableHeading}`;
 
+  const formateColumnValue = (row, col) => {
+    if (col.dataField === "tasks_dept") {
+      // Special handling for department
+      return row.department.map(dep => dep.dep_name).join(", ");
+    }
+    if (col.dataField === "tasks_tag") {
+      // Special handling for tag
+      return row.department.map(dep => getCommaSeparatedRoles(dep.tag)).join(", ");
+    }
+    if (col.dataField === "tasks_title") {
+      return row?.task_title;
+    }
+    if (col.dataField === "status") {
+      return (
+        getStatusText(row?.status) + ' ' + formatVerifiedStatus(row?.admin_verified)
+      )
+    }
+    if (col.text === "Verified Status") {
+      return formatStatus(row?.admin_verified);
+    }
+    if (col.dataField === "timestamp" || col.dataField === "target_date") {
+      // handling date type values
+      return formatDateFromDbValue(row[col?.dataField]);
+    }
+    return row[col.dataField] || "";
+  }
+
   /** PDF generate  */
 
   const generatePDF = () => {
     const doc = new jsPDF();
-    const tableColumn = column.map(col => col.text);
+    const modifiedColumn = column.filter(col => col.dataField !== 'subtask' && col.dataField !== 'taskoperation');
+    const tableColumn = modifiedColumn.map(col => col.text);
     const tableRows = [];
-
     data.forEach(row => {
-      const rowData = column.map(col => {
-        let cellValue = getNestedValue(row, col.dataField);
-        // Handle specific formatting for known nested columns
-        if (col.dataField === "department") {
-          cellValue = cellValue ? cellValue.department_name : "";
+      const rowData = modifiedColumn.map(col => 
+        {
+          return formateColumnValue(row, col);
         }
-        return cellValue ? cellValue.toString() : '';
-      });
+      );
       tableRows.push(rowData);
     });
 
@@ -389,13 +413,18 @@ function TableNew({
     const filenameRow = [filename];
 
     // Create the header row
-    const headers = column.map(col => col.text);
+    const modifiedColumn = column.filter(col => col.dataField !== 'subtask' && col.dataField !== 'taskoperation');
+    const headers = modifiedColumn.map(col => col.text);
+    console.log(column, 'col excel');
     const rows = data.map(row =>
       column.reduce((acc, col) => {
-        acc[col.text] = row[col.dataField];
+        
+        acc[col.text] = formateColumnValue(row, col);
         return acc;
       }, {})
     );
+
+    console.log(rows, 'rows excel');
 
     // Create worksheet with filename, headers, and data
     const worksheetData = [filenameRow, headers, ...rows.map(row => headers.map(header => row[header]))];
