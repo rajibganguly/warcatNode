@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, InputLabel, TextField } from '@mui/material';
+import { Box, Button, InputLabel, TextField, Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -22,6 +22,11 @@ const convertToBase64 = (file) => {
 };
 
 const dateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+const styles = {
+    labelAsterisk: {
+        color: "red"
+    }
+};
 
 const validationSchema = Yup.object().shape({
     subTaskTitle: Yup.string()
@@ -74,8 +79,8 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
 
             if (!['image/jpeg', 'image/jpg', 'image/png', 'image/gif'].includes(file.type)) {
                 formik.setFieldError('uploadImage', 'Unsupported Format');
-                setupdateTaskFile(null); 
-                return; 
+                setupdateTaskFile(null);
+                return;
             }
 
             const reader = new FileReader();
@@ -136,7 +141,12 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
             <LoadingIndicator isLoading={isLoading} />
             <form onSubmit={formik.handleSubmit}>
                 <Box mb={2}>
-                    <InputLabel sx={{ mb: 1 }}>Sub Task Title</InputLabel>
+
+                    <InputLabel sx={{ mb: 1 }}> <span>
+                        Sub Task Title
+                        <span style={styles.labelAsterisk}> *</span>
+                    </span>
+                    </InputLabel>
                     <TextField
                         name="subTaskTitle"
                         value={formik.values.subTaskTitle}
@@ -148,8 +158,13 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
                     />
                 </Box>
                 <Box mb={2}>
-                    <InputLabel sx={{ mb: 1 }}>Target Date</InputLabel>
-                   
+
+                    <InputLabel sx={{ mb: 1 }}> <span>
+                        Target Date
+                        <span style={styles.labelAsterisk}> *</span>
+                    </span>
+                    </InputLabel>
+
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
                             value={formik.values.targetDate}
@@ -184,7 +199,12 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
                 </Button>
             </Box> */}
                 <Box mb={2}>
-                    <InputLabel sx={{ mb: 1 }}>Upload Images</InputLabel>
+
+                    <InputLabel sx={{ mb: 1 }}> <span>
+                        Upload Images
+                        <span style={styles.labelAsterisk}> *</span>
+                    </span>
+                    </InputLabel>
                     <Box display={'flex'} gap={2}>
                         <TextField
                             variant="outlined"
@@ -209,6 +229,9 @@ const SubTaskForm = ({ onSubmit, onClose, parentTaskId, forTaskDataView }) => {
                             )}
                         </Box>
                     </Box>
+                    <Typography variant="caption" sx={{ marginTop: '0.5rem', color: 'red' }}>
+                            Accepted formats: JPEG, PNG, GIF*
+                          </Typography>
                 </Box>
                 <Box display="flex" justifyContent="flex-end" gap={2}>
                     <Button onClick={onClose} variant="contained" color="secondary">
