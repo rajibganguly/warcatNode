@@ -228,7 +228,7 @@ export const getFileNameFromUrl = (url) => {
 };
 
 export const capitalizeFirstLetter = (str) => {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+  return str?.charAt(0).toUpperCase() + str?.slice(1);
 };
 
 export const formatVerifiedStatus = (admin_verified_status) => {
@@ -246,3 +246,9 @@ export const getRoleTypename = (roleType) => {
       return 'Unknown';
   }
 };
+
+export const formatDateFromDbValue = (timestamp) => {
+  if (!timestamp) return '';
+  const [datePart] = timestamp.split('T');
+  return datePart;
+}
