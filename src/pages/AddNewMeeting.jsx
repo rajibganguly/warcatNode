@@ -600,6 +600,9 @@ export default function AddNewMeeting() {
 
 
                             />
+
+
+
                             <Box width={'40px'} height={'40px'} minWidth={'40px'} borderRadius={'6px'} backgroundColor='#ebebeb'>
                               {base64Image && (
                                 <img
@@ -612,6 +615,9 @@ export default function AddNewMeeting() {
                               )}
                             </Box>
                           </Box>
+                          <Typography variant="caption" sx={{ marginTop: '0.5rem', color: 'red' }}>
+                            Accepted formats: JPEG, PNG, GIF*
+                          </Typography>
                         </Grid>
                       </Grid>
 

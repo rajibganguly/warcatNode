@@ -210,6 +210,12 @@ export default function AddTasks() {
         reader.readAsDataURL(file);
     };
 
+    const styles = {
+        labelAsterisk: {
+            color: "red"
+        }
+    };
+
 
     const handleChange = (event) => {
         const {
@@ -676,7 +682,12 @@ export default function AddTasks() {
                             <CardContent>
                                 <Grid container spacing={2} sx={{ mb: 4, borderBottom: '1px solid #eff2f7', pb: 2 }}>
                                     <Grid item xs={12} md={6}>
-                                        <InputLabel>Department / Government Organisation</InputLabel>
+
+                                        <InputLabel sx={{ mb: 1 }}> <span>
+                                            Department / Government Organisation
+                                            <span style={styles.labelAsterisk}> *</span>
+                                        </span>
+                                        </InputLabel>
 
                                         <Select
                                             fullWidth
@@ -708,7 +719,12 @@ export default function AddTasks() {
                                         </Select>
                                     </Grid>
                                     <Grid item xs={12} md={6}>
-                                        <label>Tag</label>
+
+                                        <InputLabel sx={{ mb: 1 }}> <span>
+                                            Tag
+                                            <span style={styles.labelAsterisk}> *</span>
+                                        </span>
+                                        </InputLabel>
                                         <Select
                                             labelId="tag"
                                             id="tag"
@@ -780,7 +796,12 @@ export default function AddTasks() {
                                             <React.Fragment key={input.id}>
                                                 {input.type === 'file' ? (
                                                     <Grid item xs={6} md={6}>
-                                                        <InputLabel sx={{ mb: 1 }}>Upload Images</InputLabel>
+
+                                                        <InputLabel sx={{ mb: 1 }}> <span>
+                                                            Upload Images
+                                                            <span style={styles.labelAsterisk}> *</span>
+                                                        </span>
+                                                        </InputLabel>
                                                         <Box display={'flex'} gap={2}>
                                                             <TextField
                                                                 variant="outlined"
@@ -805,10 +826,18 @@ export default function AddTasks() {
                                                                 )}
                                                             </Box>
                                                         </Box>
+                                                        <Typography variant="caption" sx={{ marginTop: '0.5rem', color: 'red' }}>
+                                                            Accepted formats: JPEG, PNG, GIF*
+                                                        </Typography>
                                                     </Grid>
                                                 ) : input.type === 'date' ? (
                                                     <Grid item xs={6} md={6}>
-                                                        <InputLabel sx={{ mb: 1 }}>Target Date</InputLabel>
+
+                                                        <InputLabel sx={{ mb: 1 }}> <span>
+                                                            Target Date
+                                                            <span style={styles.labelAsterisk}> *</span>
+                                                        </span>
+                                                        </InputLabel>
                                                         <Controller
                                                             name="date"
                                                             control={control}
@@ -842,7 +871,12 @@ export default function AddTasks() {
                                                     </Grid>
                                                 ) : (
                                                     <Grid item xs={12} md={12}>
-                                                        <InputLabel sx={{ mb: 1 }}>Task Title</InputLabel>
+
+                                                        <InputLabel sx={{ mb: 1 }}> <span>
+                                                            Task Title
+                                                            <span style={styles.labelAsterisk}> *</span>
+                                                        </span>
+                                                        </InputLabel>
                                                         <TextField
                                                             variant="outlined"
                                                             placeholder="Enter task title"
@@ -881,7 +915,12 @@ export default function AddTasks() {
                                 {taskId && (
                                     <Grid container spacing={2}>
                                         <Grid item xs={12}>
-                                            <InputLabel sx={{ mb: 1 }}>Task Title</InputLabel>
+
+                                            <InputLabel sx={{ mb: 1 }}> <span>
+                                                Task Title
+                                                <span style={styles.labelAsterisk}> *</span>
+                                            </span>
+                                            </InputLabel>
                                             <TextField
                                                 variant="outlined"
                                                 fullWidth
@@ -902,7 +941,12 @@ export default function AddTasks() {
                                         </Grid>
 
                                         <Grid item xs={6}>
-                                            <InputLabel sx={{ mb: 1 }}>Upload Image</InputLabel>
+
+                                            <InputLabel sx={{ mb: 1 }}> <span>
+                                                Upload Image
+                                                <span style={styles.labelAsterisk}> *</span>
+                                            </span>
+                                            </InputLabel>
                                             <Box display={'flex'} gap={2}>
                                                 <TextField
                                                     variant="outlined"
@@ -926,9 +970,17 @@ export default function AddTasks() {
                                                     )}
                                                 </Box>
                                             </Box>
+                                            <Typography variant="caption" sx={{ marginTop: '0.5rem', color: 'red' }}>
+                                                Accepted formats: JPEG, PNG, GIF*
+                                            </Typography>
                                         </Grid>
                                         <Grid item xs={6}>
-                                            <InputLabel sx={{ mb: 1 }}>Target Date</InputLabel>
+
+                                            <InputLabel sx={{ mb: 1 }}> <span>
+                                                Target Date
+                                                <span style={styles.labelAsterisk}> *</span>
+                                            </span>
+                                            </InputLabel>
                                             <Controller
                                                 name="task_date"
                                                 control={control}
