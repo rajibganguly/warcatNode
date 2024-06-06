@@ -636,8 +636,8 @@ export default function EditMeeting() {
                                                                     error={error.imageUrl}
                                                                     sx={{ padding: '17px', borderColor: error.imageUrl ? 'red' : '' }}
                                                                 />
-                                                                <Typography variant="caption" sx={{ marginTop: '0.5rem' }}>
-                                                                    Accepted formats: JPEG, PNG, GIF
+                                                                <Typography variant="caption" sx={{ marginTop: '0.5rem', color: 'red' }}>
+                                                                    Accepted formats: JPEG, PNG, GIF*
                                                                 </Typography>
 
 

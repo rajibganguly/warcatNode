@@ -112,7 +112,7 @@ export default function Meetings() {
       const fetchDepdata = await fetchDepartmentData();
       setAllDepartmentList(fetchDepdata);
       setIsLoading(false)
-      console.log(fetchDepdata)
+      // console.log(fetchDepdata)
     };
     fetchData();
   }, []);
