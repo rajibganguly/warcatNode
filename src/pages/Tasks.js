@@ -96,7 +96,7 @@ export default function Tasks() {
   }));
 
   const dropdownData = [];
-  
+
   if (departmentDropdownItems && departmentDropdownItems.length > 0) {
     dropdownData.push({
       label: "Select",
@@ -156,7 +156,7 @@ export default function Tasks() {
   // department filter
   if(selectedDept){
     if(selectedDept === 'ALL'){
-      if(selectedStatus === 'ALL'){
+      if(selectedStatus === 'ALL' || selectedStatus === ''){
         filteredData = allTaskListsData;
       }else{
         filteredData = filteredData.filter(task => task.status === selectedStatus);
@@ -168,7 +168,7 @@ export default function Tasks() {
   // status filter
   if(selectedStatus){
     if(selectedStatus === 'ALL'){
-      if(selectedDept === 'ALL'){
+      if(selectedDept === 'ALL' || selectedDept === ''){
         filteredData = allTaskListsData;
       }else{
         filteredData = filteredData.filter(task => task.department?.[0]?.dep_id === selectedDept);
@@ -381,11 +381,19 @@ export default function Tasks() {
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}
+          >
 
-            <Grid container spacing={3}>
+            <Grid container spacing={3} sx={{
+             
+              '@media (min-width: 1200px)': {
+                '.css-1f2kw6w-MuiContainer-root': {
+                  maxWidth: '100%',
+                },
+              },
+            }}>
               {/* Recent Orders */}
-              <Grid item xs={12}>
+              <Grid item xs={12} >
                 <div
                   style={{
                     display: "flex",
