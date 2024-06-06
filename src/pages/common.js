@@ -231,5 +231,5 @@ export const getRoleTypename = (roleType) => {
 };
 
 export const formatDateFromDbValue = (timestamp) => {
-  return timestamp;
+  return 'timestamp';
 }

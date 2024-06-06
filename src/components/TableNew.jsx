@@ -285,6 +285,33 @@ function TableNew({
 
   let filename = `WARCAT - War-room Assistant for Report Compilation & Task tracking | ${tableHeading}`;
 
+  const formateColumnValue = (row, col) => {
+    if (col.dataField === "tasks_dept") {
+      // Special handling for department
+      return row.department.map(dep => dep.dep_name).join(", ");
+    }
+    if (col.dataField === "tasks_tag") {
+      // Special handling for tag
+      return row.department.map(dep => getCommaSeparatedRoles(dep.tag)).join(", ");
+    }
+    if (col.dataField === "tasks_title") {
+      return row?.task_title;
+    }
+    if (col.dataField === "status") {
+      return (
+        getStatusText(row?.status) + ' ' + formatVerifiedStatus(row?.admin_verified)
+      )
+    }
+    if (col.text === "Verified Status") {
+      return formatStatus(row?.admin_verified);
+    }
+    if (col.dataField === "timestamp" || col.dataField === "target_date") {
+      // handling date type values
+      return formatDateFromDbValue(row?.dataField);
+    }
+    return row[col.dataField] || "";
+  }
+
   /** PDF generate  */
   const generatePDF = () => {
     const doc = new jsPDF();
@@ -294,30 +321,7 @@ function TableNew({
     data.forEach(row => {
       const rowData = modifiedColumn.map(col => 
         {
-          if (col.dataField === "tasks_dept") {
-            // Special handling for department
-            return row.department.map(dep => dep.dep_name).join(", ");
-          }
-          if (col.dataField === "tasks_tag") {
-            // Special handling for tag
-            return row.department.map(dep => getCommaSeparatedRoles(dep.tag)).join(", ");
-          }
-          if (col.dataField === "tasks_title") {
-            return row?.task_title;
-          }
-          if (col.dataField === "status") {
-            return (
-              getStatusText(row?.status) + ' ' + formatVerifiedStatus(row?.admin_verified)
-            )
-          }
-          if (col.text === "Verified Status") {
-            return formatStatus(row?.admin_verified);
-          }
-          if (col.dataField === "timestamp" || col.dataField === "target_date") {
-            // handling date type values
-            return formatDateFromDbValue(row?.dataField);
-          }
-          return row[col.dataField] || "";
+          return formateColumnValue(row, col);
         }
       );
       tableRows.push(rowData);
@@ -364,13 +368,18 @@ function TableNew({
     const filenameRow = [filename];
 
     // Create the header row
-    const headers = column.map(col => col.text);
+    const modifiedColumn = column.filter(col => col.dataField !== 'subtask' && col.dataField !== 'taskoperation');
+    const headers = modifiedColumn.map(col => col.text);
+    console.log(column, 'col excel');
     const rows = data.map(row =>
       column.reduce((acc, col) => {
-        acc[col.text] = row[col.dataField];
+        
+        acc[col.text] = formateColumnValue(row, col);
         return acc;
       }, {})
     );
+
+    console.log(rows, 'rows excel'); return false;
 
     // Create worksheet with filename, headers, and data
     const worksheetData = [filenameRow, headers, ...rows.map(row => headers.map(header => row[header]))];
