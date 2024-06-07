@@ -62,7 +62,7 @@ const defaultTheme = createTheme();
 
 export default function Dashboard() {
   const [open, setOpen] = React.useState(true);
-  const [data, setData] = React.useState([]);
+
   const [currUser, setCurrUser] = React.useState({});
   const [statistics, setStatistics] = React.useState({});
   const [isLoading, setIsLoading] = React.useState(false);
@@ -80,6 +80,54 @@ export default function Dashboard() {
   ]);
 
   // Bar graph data
+
+  const data = {
+    "2024-06": {
+      completed: 4,
+      initiated: 8,
+      inProgress: 1,
+      total: 13,
+    },
+    "2024-05": {
+      completed: 5,
+      initiated: 9,
+      inProgress: 2,
+      total: 13,
+    },
+    "2024-04": {
+      completed: 3,
+      initiated: 7,
+      inProgress: 3,
+      total: 13,
+    },
+  };
+  
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const initiatedData = new Array(12).fill(0);
+  const inProgressData = new Array(12).fill(0);
+  const completedData = new Array(12).fill(0);
+  const totalData = new Array(12).fill(0);
+  
+  for (const [key, value] of Object.entries(data)) {
+    const monthIndex = new Date(key).getMonth();
+    initiatedData[monthIndex] = value.initiated;
+    inProgressData[monthIndex] = value.inProgress;
+    completedData[monthIndex] = value.completed;
+    totalData[monthIndex] = value.total;
+  }
   
 
 
@@ -254,8 +302,8 @@ export default function Dashboard() {
                     return null;
                   }
                   return (
-                    <Grid item xs={12} sm={3} key={cardItems.id}>
-                      <Card sx={{ maxWidth: 345 }}>
+                    <Grid item xs={12}   sm={ userType !== 'admin' ? 4 : 3} key={cardItems.id}>
+                      <Card>
                         <CardContent>
                           <Stack spacing={2} direction="row" alignItems="center">
                             <Stack spacing={1} direction="column" alignItems="flex-start">
@@ -277,24 +325,36 @@ export default function Dashboard() {
               </Grid>
 
               <Box sx={{ my: 3 }} />
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <Card sx={{ maxWidth: 100 + "%" }}>
-                    <CardContent>
-                      <h5 style={{ textAlign: 'center' }}>Status Overview ['Initiated','Inprogress', 'Completed']</h5>
-                      <BarChart
-                        xAxis={[{ scaleType: 'band', data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], name: 'Status' }]}
-                        yAxis={[{ name: 'Number of Tasks' }]}
-                        series={[{ data: [4, 1, 2, 3, 5, 7, 2, 3, 2, 1, 3, 3] }, { data: [1, 3, 4, 4, 2, 2, 5, 7, 1, 3, 4, 6] }, { data: [3, 1, 2, 2, 3, 4, 5, 6, 7, 8, 2, 1] }, { data: [3, 1, 2, 2, 3, 4, 5, 6, 7, 8, 2, 1] }]}
-                        width={1100}
-                        height={300}
-                        title="Status Overview"
-                      />
-                    </CardContent>
-                  </Card>
-                </Grid>
-
-              </Grid>
+               <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <Card sx={{ maxWidth: "100%" }}>
+            <CardContent>
+              <h5 style={{ textAlign: "center" }}>
+                Status Overview ['Initiated','Inprogress', 'Completed', 'Total']
+              </h5>
+              <BarChart
+                xAxis={[
+                  {
+                    scaleType: "band",
+                    data: months,
+                    name: "Month",
+                  },
+                ]}
+                yAxis={[{ name: "Number of Tasks" }]}
+                series={[
+                  { data: initiatedData, label: "Initiated" },
+                  { data: inProgressData, label: "In Progress" },
+                  { data: completedData, label: "Completed" },
+                  { data: totalData, label: "Total" },
+                ]}
+                width={1100}
+                height={300}
+                title="Status Overview"
+              />
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
             </Container>
             <Box
               component="footer"
