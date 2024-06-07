@@ -110,7 +110,7 @@ export default function Tasks() {
       items: [
         { label: "ALL Tasks", value: "ALL" },
         { label: "Assigned", value: "initiated" },
-        { label: "In Progress", value: "inprogress" },
+        { label: "In Progress", value: "inProgress" },
         { label: "Completed", value: "completed" },
       ],
     })
