@@ -72,12 +72,15 @@ export default function Dashboard() {
   const [userType, setUserType] = React.useState('');
   const [cardDataState, setCardDataState] = React.useState([
 
-    { id: 1, title: 'Total Department', value: 5, icon: <AccountBalanceIcon style={{ fill: '#ffbb44', backgroundColor: '#eff2f7', padding: '10px', borderRadius: '4px',height:'50px',width:'50px' }} /> },
-    { id: 2, title: 'Completed Tasks', value: 1, icon: <DoneAllIcon style={{ fill: '#6fd088', backgroundColor: '#eff2f7', padding: '10px', borderRadius: '4px',height:'50px',width:'50px' }} /> },
-    { id: 3, title: 'Total Meeting', value: 3, icon: <EventNoteIcon style={{ fill: '#0a1832', backgroundColor: '#eff2f7', padding: '10px', borderRadius: '4px',height:'50px',width:'50px' }}/> },
-    { id: 4, title: 'Assigned Task', value: 0, icon: <WorkHistoryIcon style={{ fill: '#f32f53', backgroundColor: '#eff2f7', padding: '10px', borderRadius: '4px',height:'50px',width:'50px' }}/> },
+    { id: 1, title: 'Total Department', value: 5, icon: <AccountBalanceIcon style={{ fill: '#ffbb44', backgroundColor: '#eff2f7', padding: '10px', borderRadius: '4px', height: '50px', width: '50px' }} /> },
+    { id: 2, title: 'Completed Tasks', value: 1, icon: <DoneAllIcon style={{ fill: '#6fd088', backgroundColor: '#eff2f7', padding: '10px', borderRadius: '4px', height: '50px', width: '50px' }} /> },
+    { id: 3, title: 'Total Meeting', value: 3, icon: <EventNoteIcon style={{ fill: '#0a1832', backgroundColor: '#eff2f7', padding: '10px', borderRadius: '4px', height: '50px', width: '50px' }} /> },
+    { id: 4, title: 'Assigned Task', value: 0, icon: <WorkHistoryIcon style={{ fill: '#f32f53', backgroundColor: '#eff2f7', padding: '10px', borderRadius: '4px', height: '50px', width: '50px' }} /> },
 
   ]);
+
+  // Bar graph data
+  
 
 
 
@@ -282,7 +285,7 @@ export default function Dashboard() {
                       <BarChart
                         xAxis={[{ scaleType: 'band', data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], name: 'Status' }]}
                         yAxis={[{ name: 'Number of Tasks' }]}
-                        series={[{ data: [4, 1, 2, 3, 5, 7, 2, 3, 2, 1, 3, 3] }, { data: [1, 3, 4, 4, 2, 2, 5, 7, 1, 3, 4, 6] }, { data: [3, 1, 2, 2, 3, 4, 5, 6, 7, 8, 2, 1] }]}
+                        series={[{ data: [4, 1, 2, 3, 5, 7, 2, 3, 2, 1, 3, 3] }, { data: [1, 3, 4, 4, 2, 2, 5, 7, 1, 3, 4, 6] }, { data: [3, 1, 2, 2, 3, 4, 5, 6, 7, 8, 2, 1] }, { data: [3, 1, 2, 2, 3, 4, 5, 6, 7, 8, 2, 1] }]}
                         width={1100}
                         height={300}
                         title="Status Overview"
