@@ -254,8 +254,8 @@ export default function Dashboard() {
                     return null;
                   }
                   return (
-                    <Grid item xs={12} sm={3} key={cardItems.id}>
-                      <Card sx={{ maxWidth: 345 }}>
+                    <Grid item xs={12}   sm={ userType !== 'admin' ? 4 : 3} key={cardItems.id}>
+                      <Card>
                         <CardContent>
                           <Stack spacing={2} direction="row" alignItems="center">
                             <Stack spacing={1} direction="column" alignItems="flex-start">
