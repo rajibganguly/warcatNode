@@ -47,6 +47,12 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Reports" />
     </ListItemButton>
+    <ListItemButton component={Link} to="/task-approval">
+      <ListItemIcon>
+        <LayersIcon />
+      </ListItemIcon>
+      <ListItemText primary="Task Approval" />
+    </ListItemButton>
   </React.Fragment>
 );
 

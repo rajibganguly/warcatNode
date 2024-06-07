@@ -80,7 +80,7 @@ export const getStatusText = (status) => {
       return 'TOTAL ASSIGNED';
     case 'initiated':
       return 'ASSIGNED';
-    case 'InProgress':
+    case 'inProgress':
       return 'IN PROGRESS';
     case 'completed':
       return 'COMPLETED';

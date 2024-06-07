@@ -456,7 +456,7 @@ export default function Tasks() {
                             >
                               Add Task
                             </Button>)}
-                          {currentRoleType === "admin" && (
+                          {/* {currentRoleType === "admin" && (
                             <Button
                               variant="contained"
                               sx={{
@@ -471,7 +471,7 @@ export default function Tasks() {
                             >
                               Task list
                             </Button>
-                          )}
+                          )} */}
                         </Stack>
 
                         <Dropdowns
