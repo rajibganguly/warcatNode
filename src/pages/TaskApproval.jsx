@@ -22,6 +22,7 @@ import TableNew from "../components/TableNew";
 import { TaskContext } from "../context/TaskContext.js";
 import { fetchDepartmentData, fetchTaskData, formatPercentage, mapKeysToValues } from '../pages/common.js'
 import { DepartmentContext } from "../context/DepartmentContext.js";
+import LoadingIndicator from "../components/loadingIndicator.js";
 const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
@@ -103,19 +104,52 @@ export default function TaskApproval() {
   // const [modalVisible, setModalVisible] = React.useState(false);
   // const [selectedRecord, setSelectedRecord] = React.useState(null);
 
-  React.useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const setAllTaskListsData = await fetchTaskData();
-        setAllTaskLists(setAllTaskListsData);
-        const fetchDepdata = await fetchDepartmentData();
-        setAllDepartmentList(fetchDepdata);
-      } catch (error) {
-        console.error('Error fetching task data:', error);
-      } finally {
-        setIsLoading(false);
-      }
+    React.useEffect(() => {
+        const fetchData = async () => {
+            setIsLoading(true);
+            try {
+                const setAllTaskListsData = await fetchTaskData();
+                setAllTaskLists(setAllTaskListsData);
+                // const fetchDepdata = await fetchDepartmentData();
+                // setAllDepartmentList(fetchDepdata);
+            } catch (error) {
+                console.error('Error fetching task data:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchData();
+
+    }, []);
+
+
+
+
+    const column = [
+        { text: 'Assigned Date', dataField: 'timestamp' },
+        { text: "Assigned Title", dataField: 'tasks_title' },
+        { text: "Department", dataField: 'tasks_dept' },
+        { text: "Tag", dataField: 'tasks_tag' },
+        { text: "Target Date", dataField: 'target_date' },
+        { text: "Status", dataField: 'status' },
+        // { text: "Sub Task", dataField: 'subtask' },
+        // { text: "Operations", dataField: 'taskoperation' }
+    ];
+
+    let filteredData = allTaskListsData; // 10
+
+    console.log(filteredData?.filter(task => task.admin_verified === 0));
+    console.log(filteredData?.filter(task => task.admin_verified === 1));
+
+
+
+
+    const handleOutput = (open) => {
+        toggleDrawer();
+    };
+    const toggleDrawer = () => {
+        setOpen(!open);
     };
 
     fetchData();
@@ -155,15 +189,157 @@ export default function TaskApproval() {
     const { children, value, index, ...other } = props;
 
     return (
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`simple-tabpanel-${index}`}
-        aria-labelledby={`simple-tab-${index}`}
-        {...other}
-      >
-        {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
-      </div>
+        <ThemeProvider theme={defaultTheme}>
+            <LoadingIndicator isLoading={isLoading} />
+            <Box sx={{ display: "flex" }}>
+                <CssBaseline />
+                <AppBar position="absolute" open={open}>
+                    <Header props={open} onOutput={handleOutput} />
+                </AppBar>
+                <Sidebar open={open} toggleDrawer={toggleDrawer} />
+                <Box
+                    component="main"
+                    sx={{
+                        backgroundColor: (theme) =>
+                            theme.palette.mode === "light"
+                                ? theme.palette.grey[100]
+                                : theme.palette.grey[900],
+                        width: "100%",
+                        paddingBottom: "20px",
+                    }}
+                >
+                    <Toolbar />
+                    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+                        <Grid container spacing={3}>
+                            {/* Recent Orders */}
+                            <Grid item xs={12}>
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "start",
+                                        justifyContent: "space-between",
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            textTransform: "uppercase",
+                                            paddingBottom: "10px",
+                                        }}
+                                    >
+                                        All Reports
+                                    </div>
+                                    <div>
+                                        <Breadcrumbs aria-label="breadcrumb">
+                                            <Link underline="hover" color="inherit" href="/">
+                                                WARCAT
+                                            </Link>
+                                            <Typography color="text.primary">Reports</Typography>
+                                        </Breadcrumbs>
+                                    </div>
+                                </div>
+                                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+                                    <div
+                                        style={{
+                                            paddingLeft: "15px",
+                                            paddingBottom: "15px",
+                                            borderBottom: "1px solid #eee",
+                                            display: 'flex',
+                                            justifyContent: 'space-between'
+                                        }}
+                                    >
+                                        <div>Departments wise report</div>
+                                    </div>
+                                    <hr />
+                                    <Box sx={{ width: "100%" }}>
+                                        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                                            <Tabs
+                                                value={value}
+                                                onChange={handleChange}
+                                                aria-label="basic tabs example"
+                                            >
+                                                <Tab label="Pending For Approval" {...a11yProps(0)} />
+                                                <Tab label="Approved" {...a11yProps(1)} />
+                                                <Tab label="Rejected" {...a11yProps(2)} />
+
+                                            </Tabs>
+                                        </Box>
+                                        <CustomTabPanel value={value} index={0}>
+                                            <TableNew
+                                                data={filteredData?.filter(task => task.admin_verified === 0 && task?.complate_upload_task_details && task.complate_upload_task_details.length > 0)}
+                                                column={column}
+                                                icons={null}
+                                                exportButton={true}
+                                                searchBar={true}
+                                                tableHeading={'Tasks list'}
+                                                handleAddSubTaskClick={null}
+                                                handleViewSubTask={null}
+                                                handleViewParentOperationTask={null}
+                                                handleEditOperationTask={null}
+                                                // handleEditOperationTaskNew={handleEditOperationTaskNew}
+                                                handleAddNoteClick={null}
+                                                handleUploadClick={null}
+                                                handleAcceptRejectClick={null}
+                                                setSearchText={setSearchText}
+                                            />
+                                        </CustomTabPanel>
+                                        <CustomTabPanel value={value} index={1}>
+                                            <TableNew
+                                                data={filteredData?.filter(task => task.admin_verified === 1 && task?.complate_upload_task_details && task.complate_upload_task_details.length > 0)}
+                                                column={column}
+                                                icons={null}
+                                                exportButton={true}
+                                                searchBar={true}
+                                                tableHeading={'Tasks list'}
+                                                handleAddSubTaskClick={null}
+                                                handleViewSubTask={null}
+                                                handleViewParentOperationTask={null}
+                                                handleEditOperationTask={null}
+                                                // handleEditOperationTaskNew={handleEditOperationTaskNew}
+                                                handleAddNoteClick={null}
+                                                handleUploadClick={null}
+                                                handleAcceptRejectClick={null}
+                                                setSearchText={setSearchText}
+                                            />
+                                        </CustomTabPanel>
+                                        <CustomTabPanel value={value} index={2}>
+                                            <TableNew
+                                                data={filteredData?.filter(task => task.admin_verified === 2 && task?.complate_upload_task_details && task.complate_upload_task_details.length > 0)}
+                                                column={column}
+                                                icons={null}
+                                                exportButton={true}
+                                                searchBar={true}
+                                                tableHeading={'Tasks list'}
+                                                handleAddSubTaskClick={null}
+                                                handleViewSubTask={null}
+                                                handleViewParentOperationTask={null}
+                                                handleEditOperationTask={null}
+                                                // handleEditOperationTaskNew={handleEditOperationTaskNew}
+                                                handleAddNoteClick={null}
+                                                handleUploadClick={null}
+                                                handleAcceptRejectClick={null}
+                                                setSearchText={setSearchText}
+                                            />
+                                        </CustomTabPanel>
+
+                                    </Box>
+
+
+                                </Paper>
+                            </Grid>
+                        </Grid>
+                    </Container>
+                    <Box
+                        component="footer"
+                        sx={{
+                            width: "100%",
+                            paddingBottom: "20px",
+                        }}
+                    >
+                        <Footer />
+                    </Box>
+                </Box>
+            </Box>
+        </ThemeProvider>
     );
   }
 
