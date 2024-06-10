@@ -5,7 +5,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
+import { Link } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -133,7 +133,7 @@ export default function LogIn({ setAuthToken }) {
     try {
       if (response.status === 200) {
         toast.success('You are Successfully logged into Warcat', {
-          autoClose: 2000, 
+          autoClose: 2000,
         });
         const resData = await response.json();
         const token = resData.token;
@@ -145,7 +145,7 @@ export default function LogIn({ setAuthToken }) {
         navigate("/dashboard");
       } else {
         toast.error(`Login Failed`, {
-          autoClose: 2000, 
+          autoClose: 2000,
         });
       }
     } catch (error) {
@@ -264,13 +264,13 @@ export default function LogIn({ setAuthToken }) {
                     variant="contained"
                     color="success"
                     sx={{ mt: 3, mb: 2 }}
-                    // disabled={disabledLogin}
+                  // disabled={disabledLogin}
                   >
                     LogIn
                   </Button>
                   <Grid container>
                     <Grid item xs>
-                      <Link href="#" variant="body2">
+                      <Link to="/forget-password" variant="body2">
                         Forgot password?
                       </Link>
                     </Grid>

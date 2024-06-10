@@ -24,6 +24,7 @@ import TaskNote from "./TaskNote";
 import TaskUpload from "./TaskUpload";
 import TaskApproval from "./TaskApproval";
 import { fetchRoleType } from "./common";
+import Forgetpassword from "./Forgetpassword"
 
 import Logout from "./Logout";
 
@@ -78,7 +79,7 @@ const Navigations = () => {
           path="/add-tasks"
           element={authToken && userRoleType === 'admin' ? <AddTask /> : <Navigate to="/" />}
         />
-      
+
         <Route
           path="/edit-tasks"
           element={authToken && userRoleType === 'admin' ? <AddTask /> : <Navigate to="/" />}
@@ -107,6 +108,11 @@ const Navigations = () => {
         <Route
           path="/task-approval"
           element={!authToken ? <Navigate to="/" /> : <TaskApproval />}
+        />
+
+        <Route
+          path="/forget-password"
+          element= < Forgetpassword />
         />
         <Route path="*" element={<Navigate to="/" />} />
         {/* Add more routes as needed */}
